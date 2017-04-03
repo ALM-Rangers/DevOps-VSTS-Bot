@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Team_Services_Bot
+namespace Vsar.TSBot
 {
     public static class WebApiConfig
     {

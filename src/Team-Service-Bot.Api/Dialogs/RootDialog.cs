@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 
-namespace Team_Services_Bot.Dialogs
+namespace Vsar.TSBot.Dialogs
 {
     [Serializable]
     public class RootDialog : IDialog<object>

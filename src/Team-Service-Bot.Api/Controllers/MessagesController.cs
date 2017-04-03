@@ -5,7 +5,7 @@ using System.Web.Http;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 
-namespace Team_Services_Bot
+namespace Vsar.TSBot.Controllers
 {
     [BotAuthentication]
     public class MessagesController : ApiController
