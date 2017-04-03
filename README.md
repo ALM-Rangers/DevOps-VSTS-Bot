@@ -1,28 +1,20 @@
-#THIS PROJECT IS UNDER CONSTRUCTION *** PLEASE CHECK BACK LATER!
+# Team Services Bot
+![Build Status](TBD)
 
-[![Build Status](TBD)
+## Introduction
+**Team Services Bot** is Bot for Microsoft Teams, Skype and Slack, based on [Microsoft Bot Framework](https://dev.botframework.com/).
 
-#Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+## Getting Started
+1. Read the documention about [Microsoft Bot Framework](https://dev.botframework.com/).
+2. Download the [Bot Framework Emulator](https://docs.botframework.com/en-us/tools/bot-framework-emulator/#navtitle) to help you test.
 
-#Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+## Build and Test
+Open the **Team-Services-Bot.sln** in the [src](https://github.com/ALM-Rangers/Team-Services-Bot/tree/Master/src) folder. It contains the projects and tests, which you can run with the Test Explorer in Visual Studio.
 
-#Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+## Contributors
+We thank the following contributors for this extension: Robert Jarrett and Jeffrey Opdam.
 
-##Contributors
-
-We thank the following contributors for this extension: @.
-
-##Notices
-Notices for certain third party software included in this solution are provided here: [Third Party Notice](ThirdPartyNotices.txt).
-
-#Contribute
+## Contribute
 Contributions to this project are welcome. Here is how you can contribute:  
 
 - Submit bugs and help us verify fixes  
