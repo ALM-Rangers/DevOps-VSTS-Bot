@@ -1,6 +1,6 @@
 #THIS PROJECT IS UNDER CONSTRUCTION *** PLEASE CHECK BACK LATER!
 
-[![Build Status](TBD)
+[![Build Status](https://almrangers.visualstudio.com/_apis/public/build/definitions/7f3cfb9a-d1cb-4e66-9d36-1af87b906fe9/143/badge)
 
 #Introduction 
 TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
