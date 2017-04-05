@@ -11,7 +11,7 @@ using Microsoft.Bot.Connector;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vsar.TSBot.Dialogs;
 
-namespace Team_Services_Bot.Api.UnitTests
+namespace Vsar.TSBot.UnitTests
 {
     [Flags]
     public enum Options { None = 0, Reflection = 1, ScopedQueue = 2, MockConnectorFactory = 4, ResolveDialogFromContainer = 8, LastWriteWinsCachingBotDataStore = 16 };

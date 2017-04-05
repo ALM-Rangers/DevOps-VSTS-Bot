@@ -5,11 +5,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Team-Services-Bot.Api.UnitTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Team-Services-Bot.Api.UnitTests")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 
 [assembly: ComVisible(false)]
 
