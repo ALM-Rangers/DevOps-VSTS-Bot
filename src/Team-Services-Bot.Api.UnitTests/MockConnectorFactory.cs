@@ -12,40 +12,39 @@ using Microsoft.Bot.Connector;
 using Microsoft.Rest;
 using Moq;
 
-namespace Team_Services_Bot.Api.UnitTests
+namespace Vsar.TSBot.UnitTests
 {
-    public class MockConnectorFactory : IConnectorClientFactory
+    public class MockConnectorFactory : IConnectorClientFactory, IDisposable
     {
-        protected readonly IBotDataStore<BotData> memoryDataStore = new InMemoryDataStore();
-        protected readonly string botId;
-        public StateClient StateClient;
+        private readonly IBotDataStore<BotData> _memoryDataStore = new InMemoryDataStore();
+        private readonly string _botId;
+        private StateClient _stateClient;
 
         public MockConnectorFactory(string botId)
         {
-            SetField.NotNull(out this.botId, nameof(botId), botId);
+            SetField.NotNull(out _botId, nameof(botId), botId);
         }
 
         public IConnectorClient MakeConnectorClient()
         {
-            var client = new Mock<ConnectorClient>();
-            client.CallBase = true;
+            var client = new Mock<ConnectorClient> {CallBase = true};
             return client.Object;
         }
 
         public IStateClient MakeStateClient()
         {
-            if (this.StateClient == null)
+            if (this._stateClient == null)
             {
-                this.StateClient = MockIBots(this).Object;
+                this._stateClient = MockIBots(this).Object;
             }
-            return this.StateClient;
+            return this._stateClient;
         }
 
         protected IAddress AddressFrom(string channelId, string userId, string conversationId)
         {
             var address = new Address
             (
-                this.botId,
+                this._botId,
                 channelId,
                 userId ?? "AllUsers",
                 conversationId ?? "AllConversations",
@@ -55,12 +54,11 @@ namespace Team_Services_Bot.Api.UnitTests
         }
         protected async Task<HttpOperationResponse<object>> UpsertData(string channelId, string userId, string conversationId, BotStoreType storeType, BotData data)
         {
-            var _result = new HttpOperationResponse<object>();
-            _result.Request = new HttpRequestMessage();
+            var _result = new HttpOperationResponse<object> {Request = new HttpRequestMessage()};
             try
             {
                 var address = AddressFrom(channelId, userId, conversationId);
-                await memoryDataStore.SaveAsync(address, storeType, data, CancellationToken.None);
+                await _memoryDataStore.SaveAsync(address, storeType, data, CancellationToken.None);
             }
             catch (HttpException e)
             {
@@ -81,11 +79,10 @@ namespace Team_Services_Bot.Api.UnitTests
 
         protected async Task<HttpOperationResponse<object>> GetData(string channelId, string userId, string conversationId, BotStoreType storeType)
         {
-            var _result = new HttpOperationResponse<object>();
-            _result.Request = new HttpRequestMessage();
+            var _result = new HttpOperationResponse<object> {Request = new HttpRequestMessage()};
             BotData data;
             var address = AddressFrom(channelId, userId, conversationId);
-            data = await memoryDataStore.LoadAsync(address, storeType, CancellationToken.None);
+            data = await _memoryDataStore.LoadAsync(address, storeType, CancellationToken.None);
             _result.Body = data;
             _result.Response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
             return _result;
@@ -133,6 +130,25 @@ namespace Team_Services_Bot.Api.UnitTests
              });
 
             return botsClient;
+        }
+
+        protected void Dispose(bool disposing)
+        {
+            if (disposing && _stateClient != null)
+            {
+                _stateClient.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~MockConnectorFactory()
+        {
+            Dispose(false);
         }
     }
 }
