@@ -1,6 +1,6 @@
 # Team Services Bot
 
-!![Build Status](https://almrangers.visualstudio.com/_apis/public/build/definitions/7f3cfb9a-d1cb-4e66-9d36-1af87b906fe9/143/badge)
+![Build Status](https://almrangers.visualstudio.com/_apis/public/build/definitions/7f3cfb9a-d1cb-4e66-9d36-1af87b906fe9/143/badge)
 
 ## Introduction
 **Team Services Bot** is Bot for Microsoft Teams, Skype and Slack, based on [Microsoft Bot Framework](https://dev.botframework.com/).
