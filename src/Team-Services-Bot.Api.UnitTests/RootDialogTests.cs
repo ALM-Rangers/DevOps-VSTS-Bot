@@ -19,7 +19,7 @@ namespace Vsar.TSBot.UnitTests
     [TestClass]
     public class RootDialogTests
     {
-        public static class ChannelId
+        private static class ChannelId
         {
             public const string User = "testUser";
             public const string Bot = "testBot";
@@ -41,43 +41,27 @@ namespace Vsar.TSBot.UnitTests
             };
         }
 
-        public static IContainer Build(Options options, params object[] singletons)
+        private static IContainer Build(Options options, params object[] singletons)
         {
             var builder = new ContainerBuilder();
-            if (options.HasFlag(Options.ResolveDialogFromContainer))
-            {
-                builder.RegisterModule(new DialogModule());
-            }
-            else
-            {
-                builder.RegisterModule(new DialogModule_MakeRoot());
-            }
+            OptionsResolveDialogFromContainer(options, builder);
 
             // make a "singleton" MockConnectorFactory per unit test execution
             IConnectorClientFactory factory = null;
+
             builder
-                .Register((c, p) => factory ?? (factory = new MockConnectorFactory(c.Resolve<IAddress>().BotId)))
+                .Register((c, p) => factory ?? newFactory(c, out factory))
                 .As<IConnectorClientFactory>()
                 .InstancePerLifetimeScope();
 
-            if (options.HasFlag(Options.Reflection))
-            {
-                builder.RegisterModule(new ReflectionSurrogateModule());
-            }
+            OptionsReflection(options, builder);
 
             var r =
                 builder
                 .Register(c => new Queue<IMessageActivity>())
                 .AsSelf();
 
-            if (options.HasFlag(Options.ScopedQueue))
-            {
-                r.InstancePerLifetimeScope();
-            }
-            else
-            {
-                r.SingleInstance();
-            }
+            OptionsScopedQueue(options, r);
 
             builder
                 .RegisterType<BotToUserQueue>()
@@ -91,13 +75,7 @@ namespace Vsar.TSBot.UnitTests
                 .As<IBotToUser>()
                 .InstancePerLifetimeScope();
 
-            if (options.HasFlag(Options.LastWriteWinsCachingBotDataStore))
-            {
-                builder.Register(c => new CachingBotDataStore(c.ResolveKeyed<IBotDataStore<BotData>>(typeof(ConnectorStore)), CachingBotDataStoreConsistencyPolicy.LastWriteWins))
-                    .As<IBotDataStore<BotData>>()
-                    .AsSelf()
-                    .InstancePerLifetimeScope();
-            }
+            OptionsLastWriteWinsCachingBotDataStore(options, builder);
 
             foreach (var singleton in singletons)
             {
@@ -107,6 +85,54 @@ namespace Vsar.TSBot.UnitTests
             }
 
             return builder.Build();
+        }
+
+        private static IConnectorClientFactory newFactory(IComponentContext c, out IConnectorClientFactory factory)
+        {
+            return (factory = new MockConnectorFactory(c.Resolve<IAddress>().BotId));
+        }
+
+        private static void OptionsLastWriteWinsCachingBotDataStore(Options options, ContainerBuilder builder)
+        {
+            if (options.HasFlag(Options.LastWriteWinsCachingBotDataStore))
+            {
+                builder.Register(c => new CachingBotDataStore(c.ResolveKeyed<IBotDataStore<BotData>>(typeof(ConnectorStore)), CachingBotDataStoreConsistencyPolicy.LastWriteWins))
+                    .As<IBotDataStore<BotData>>()
+                    .AsSelf()
+                    .InstancePerLifetimeScope();
+            }
+        }
+
+        private static void OptionsScopedQueue(Options options, Autofac.Builder.IRegistrationBuilder<Queue<IMessageActivity>, Autofac.Builder.SimpleActivatorData, Autofac.Builder.SingleRegistrationStyle> r)
+        {
+            if (options.HasFlag(Options.ScopedQueue))
+            {
+                r.InstancePerLifetimeScope();
+            }
+            else
+            {
+                r.SingleInstance();
+            }
+        }
+
+        private static void OptionsReflection(Options options, ContainerBuilder builder)
+        {
+            if (options.HasFlag(Options.Reflection))
+            {
+                builder.RegisterModule(new ReflectionSurrogateModule());
+            }
+        }
+
+        private static void OptionsResolveDialogFromContainer(Options options, ContainerBuilder builder)
+        {
+            if (options.HasFlag(Options.ResolveDialogFromContainer))
+            {
+                builder.RegisterModule(new DialogModule());
+            }
+            else
+            {
+                builder.RegisterModule(new DialogModule_MakeRoot());
+            }
         }
 
         private async Task<IMessageActivity> GetResponse(IContainer container, Func<IDialog<object>> makeRoot, IMessageActivity toBot)
