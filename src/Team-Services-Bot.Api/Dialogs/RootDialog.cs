@@ -1,4 +1,13 @@
-﻿using System;
+﻿//———————————————————————————————
+// <copyright file=”name of this file, i.e. RootDialog.cs“>
+// Licensed under the MIT License. See License.txt in the project root for license information.
+// </copyright>
+// <summary>
+// Contains the Root Dialog logic to handle messages.
+// </summary>
+//———————————————————————————————
+
+using System;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;

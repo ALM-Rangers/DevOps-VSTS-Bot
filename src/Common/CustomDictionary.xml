@@ -1,3 +1,13 @@
+<!--
+//———————————————————————————————
+// <copyright file=”name of this file, i.e. CustomDictionary.xml“>
+// Licensed under the MIT License. See License.txt in the project root for license information.
+// </copyright>
+// <summary>
+// Contains words escaped words that violate the 'CA1704: Identifiers should be spelled correctly' check.
+// </summary>
+//———————————————————————————————
+-->
 <Dictionary>
   <Words>
     <Recognized>

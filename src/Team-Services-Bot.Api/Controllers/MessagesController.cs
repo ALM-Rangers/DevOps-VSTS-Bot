@@ -1,4 +1,13 @@
-﻿using System.Net;
+﻿//———————————————————————————————
+// <copyright file=”name of this file, i.e. MessagesController.cs“>
+// Licensed under the MIT License. See License.txt in the project root for license information.
+// </copyright>
+// <summary>
+// Contains the Controller logic to process messages from the Bot Connector.
+// </summary>
+//———————————————————————————————
+
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -28,7 +37,7 @@ namespace Vsar.TSBot.Controllers
             return response;
         }
 
-        private Activity HandleSystemMessage(Activity message)
+        private void HandleSystemMessage(Activity message)
         {
             if (message.Type == ActivityTypes.DeleteUserData)
             {
@@ -53,8 +62,6 @@ namespace Vsar.TSBot.Controllers
             else if (message.Type == ActivityTypes.Ping)
             {
             }
-
-            return null;
         }
     }
 }

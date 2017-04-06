@@ -1,4 +1,13 @@
-﻿using System;
+﻿//———————————————————————————————
+// <copyright file=”name of this file, i.e. MockConnectorFactory.cs“>
+// Licensed under the MIT License. See License.txt in the project root for license information.
+// </copyright>
+// <summary>
+// Contains a mocked implementation of IConnectorClientFactory.
+// </summary>
+//———————————————————————————————
+
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;

@@ -1,4 +1,13 @@
-﻿using System;
+﻿//———————————————————————————————
+// <copyright file=”name of this file, i.e. DialogFixture.cs“>
+// Licensed under the MIT License. See License.txt in the project root for license information.
+// </copyright>
+// <summary>
+// Contains a basic fixture for testing dialogs.
+// </summary>
+//———————————————————————————————
+
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;

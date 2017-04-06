@@ -1,4 +1,13 @@
-﻿using System.Web.Http;
+﻿//———————————————————————————————
+// <copyright file=”name of this file, i.e. WebApiConfig.cs“>
+// Licensed under the MIT License. See License.txt in the project root for license information.
+// </copyright>
+// <summary>
+// Contains the configuration for Web Api.
+// </summary>
+//———————————————————————————————
+
+using System.Web.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -15,7 +24,7 @@ namespace Vsar.TSBot
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings()
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Formatting = Newtonsoft.Json.Formatting.Indented,
+                Formatting = Formatting.Indented,
                 NullValueHandling = NullValueHandling.Ignore,
             };
 
@@ -23,12 +32,7 @@ namespace Vsar.TSBot
 
             // Web API routes
             config.MapHttpAttributeRoutes();
-
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
+            config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
         }
     }
 }

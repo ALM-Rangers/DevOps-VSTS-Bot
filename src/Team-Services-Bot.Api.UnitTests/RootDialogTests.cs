@@ -1,4 +1,13 @@
-﻿using System;
+﻿//———————————————————————————————
+// <copyright file=”name of this file, i.e. RootDialogTests.cs“>
+// Licensed under the MIT License. See License.txt in the project root for license information.
+// </copyright>
+// <summary>
+// Contains the tests for the RootDialog.
+// </summary>
+//———————————————————————————————
+
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

@@ -1,4 +1,13 @@
-﻿using System.Reflection;
+﻿//———————————————————————————————
+// <copyright file=”name of this file, i.e. AssemblyInfo.cs“>
+// Licensed under the MIT License. See License.txt in the project root for license information.
+// </copyright>
+// <summary>
+// Contains the Assembly info specific to Team-Services-Bot.Api.
+// </summary>
+//———————————————————————————————
+
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Team_Services_Bot.Api")]
