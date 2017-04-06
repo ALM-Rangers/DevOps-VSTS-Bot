@@ -34,18 +34,14 @@ namespace Vsar.TSBot.UnitTests
 
         public IStateClient MakeStateClient()
         {
-            if (this._stateClient == null)
-            {
-                this._stateClient = MockIBots(this).Object;
-            }
-            return this._stateClient;
+            return _stateClient ?? (_stateClient = MockIBots(this).Object);
         }
 
         protected IAddress AddressFrom(string channelId, string userId, string conversationId)
         {
             var address = new Address
             (
-                this._botId,
+                _botId,
                 channelId,
                 userId ?? "AllUsers",
                 conversationId ?? "AllConversations",
@@ -55,7 +51,7 @@ namespace Vsar.TSBot.UnitTests
         }
         protected async Task<HttpOperationResponse<object>> UpdateAndInsertData(string channelId, string userId, string conversationId, BotStoreType storeType, BotData data)
         {
-            var _result = new HttpOperationResponse<object> {Request = new HttpRequestMessage()};
+            var result = new HttpOperationResponse<object> {Request = new HttpRequestMessage()};
             try
             {
                 var address = AddressFrom(channelId, userId, conversationId);
@@ -63,30 +59,29 @@ namespace Vsar.TSBot.UnitTests
             }
             catch (HttpException e)
             {
-                _result.Body = e.Data;
-                _result.Response = new HttpResponseMessage { StatusCode = HttpStatusCode.PreconditionFailed };
-                return _result;
+                result.Body = e.Data;
+                result.Response = new HttpResponseMessage { StatusCode = HttpStatusCode.PreconditionFailed };
+                return result;
             }
             catch (Exception)
             {
-                _result.Response = new HttpResponseMessage { StatusCode = HttpStatusCode.InternalServerError };
-                return _result;
+                result.Response = new HttpResponseMessage { StatusCode = HttpStatusCode.InternalServerError };
+                return result;
             }
 
-            _result.Body = data;
-            _result.Response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
-            return _result;
+            result.Body = data;
+            result.Response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
+            return result;
         }
 
         protected async Task<HttpOperationResponse<object>> GetData(string channelId, string userId, string conversationId, BotStoreType storeType)
         {
-            var _result = new HttpOperationResponse<object> {Request = new HttpRequestMessage()};
-            BotData data;
             var address = AddressFrom(channelId, userId, conversationId);
-            data = await _memoryDataStore.LoadAsync(address, storeType, CancellationToken.None);
-            _result.Body = data;
-            _result.Response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
-            return _result;
+            var result = new HttpOperationResponse<object> {Request = new HttpRequestMessage()};
+            result.Body = await _memoryDataStore.LoadAsync(address, storeType, CancellationToken.None);
+            result.Response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
+
+            return result;
         }
 
         public static Mock<StateClient> MockIBots(MockConnectorFactory mockConnectorFactory)
@@ -110,25 +105,28 @@ namespace Vsar.TSBot.UnitTests
 
         private static void GetPrivateConversationDataWithHttpMessagesAsync(MockConnectorFactory mockConnectorFactory, Mock<StateClient> botsClient)
         {
-            botsClient.Setup(d => d.BotState.GetPrivateConversationDataWithHttpMessagesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, List<string>>>(), It.IsAny<CancellationToken>()))
-             .Returns<string, string, string, Dictionary<string, List<string>>, CancellationToken>(async (channelId, conversationId, userId, headers, token) =>
-             {
-                 return await mockConnectorFactory.GetData(channelId, userId, conversationId, BotStoreType.BotPrivateConversationData);
-             });
+            botsClient
+                .Setup(d => d.BotState.GetPrivateConversationDataWithHttpMessagesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, List<string>>>(), It.IsAny<CancellationToken>()))
+                .Returns<string, string, string, Dictionary<string, List<string>>, CancellationToken>(async (channelId, conversationId, userId, headers, token) =>
+                {
+                    return await mockConnectorFactory.GetData(channelId, userId, conversationId, BotStoreType.BotPrivateConversationData);
+                });
         }
 
         private static void SetPrivateConversationDataWithHttpMessagesAsync(MockConnectorFactory mockConnectorFactory, Mock<StateClient> botsClient)
         {
-            botsClient.Setup(d => d.BotState.SetPrivateConversationDataWithHttpMessagesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<BotData>(), It.IsAny<Dictionary<string, List<string>>>(), It.IsAny<CancellationToken>()))
-             .Returns<string, string, string, BotData, Dictionary<string, List<string>>, CancellationToken>(async (channelId, conversationId, userId, data, headers, token) =>
-             {
-                 return await mockConnectorFactory.UpdateAndInsertData(channelId, userId, conversationId, BotStoreType.BotPrivateConversationData, data);
-             });
+            botsClient
+                .Setup(d => d.BotState.SetPrivateConversationDataWithHttpMessagesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<BotData>(), It.IsAny<Dictionary<string, List<string>>>(), It.IsAny<CancellationToken>()))
+                .Returns<string, string, string, BotData, Dictionary<string, List<string>>, CancellationToken>(async (channelId, conversationId, userId, data, headers, token) =>
+                {
+                    return await mockConnectorFactory.UpdateAndInsertData(channelId, userId, conversationId, BotStoreType.BotPrivateConversationData, data);
+                });
         }
 
         private static void GetUserDataWithHttpMessagesAsync(MockConnectorFactory mockConnectorFactory, Mock<StateClient> botsClient)
         {
-            botsClient.Setup(d => d.BotState.GetUserDataWithHttpMessagesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, List<string>>>(), It.IsAny<CancellationToken>()))
+            botsClient
+                .Setup(d => d.BotState.GetUserDataWithHttpMessagesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, List<string>>>(), It.IsAny<CancellationToken>()))
                 .Returns<string, string, Dictionary<string, List<string>>, CancellationToken>(async (channelId, userId, headers, token) =>
                 {
                     return await mockConnectorFactory.GetData(channelId, userId, null, BotStoreType.BotUserData);
@@ -137,16 +135,18 @@ namespace Vsar.TSBot.UnitTests
 
         private static void SetUserDataWithHttpMessagesAsync(MockConnectorFactory mockConnectorFactory, Mock<StateClient> botsClient)
         {
-            botsClient.Setup(d => d.BotState.SetUserDataWithHttpMessagesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<BotData>(), It.IsAny<Dictionary<string, List<string>>>(), It.IsAny<CancellationToken>()))
-              .Returns<string, string, BotData, Dictionary<string, List<string>>, CancellationToken>(async (channelId, userId, data, headers, token) =>
-              {
-                  return await mockConnectorFactory.UpdateAndInsertData(channelId, userId, null, BotStoreType.BotUserData, data);
-              });
+            botsClient
+                .Setup(d => d.BotState.SetUserDataWithHttpMessagesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<BotData>(), It.IsAny<Dictionary<string, List<string>>>(), It.IsAny<CancellationToken>()))
+                .Returns<string, string, BotData, Dictionary<string, List<string>>, CancellationToken>(async (channelId, userId, data, headers, token) =>
+                {
+                    return await mockConnectorFactory.UpdateAndInsertData(channelId, userId, null, BotStoreType.BotUserData, data);
+                });
         }
 
         private static void GetConversationDataWithHttpMessagesAsync(MockConnectorFactory mockConnectorFactory, Mock<StateClient> botsClient)
         {
-            botsClient.Setup(d => d.BotState.GetConversationDataWithHttpMessagesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, List<string>>>(), It.IsAny<CancellationToken>()))
+            botsClient
+                .Setup(d => d.BotState.GetConversationDataWithHttpMessagesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, List<string>>>(), It.IsAny<CancellationToken>()))
                 .Returns<string, string, Dictionary<string, List<string>>, CancellationToken>(async (channelId, conversationId, headers, token) =>
                 {
                     return await mockConnectorFactory.GetData(channelId, null, conversationId, BotStoreType.BotConversationData);
@@ -155,7 +155,8 @@ namespace Vsar.TSBot.UnitTests
 
         private static void SetConversationDataWithHttpMessagesAsync(MockConnectorFactory mockConnectorFactory, Mock<StateClient> botsClient)
         {
-            botsClient.Setup(d => d.BotState.SetConversationDataWithHttpMessagesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<BotData>(), It.IsAny<Dictionary<string, List<string>>>(), It.IsAny<CancellationToken>()))
+            botsClient
+                .Setup(d => d.BotState.SetConversationDataWithHttpMessagesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<BotData>(), It.IsAny<Dictionary<string, List<string>>>(), It.IsAny<CancellationToken>()))
                 .Returns<string, string, BotData, Dictionary<string, List<string>>, CancellationToken>(async (channelId, conversationId, data, headers, token) =>
                 {
                     return await mockConnectorFactory.UpdateAndInsertData(channelId, null, conversationId, BotStoreType.BotConversationData, data);

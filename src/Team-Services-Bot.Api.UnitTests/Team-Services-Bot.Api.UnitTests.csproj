@@ -114,15 +114,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Common\CommonAssemblyInfo.cs">
-      <Link>CommonAssemblyInfo.cs</Link>
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Fixtures\DialogFixture.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="MockConnectorFactory.cs" />
+    <Compile Include="Fixtures\MockConnectorFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RootDialogTests.cs" />
+    <Compile Include="TestsBase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="App.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

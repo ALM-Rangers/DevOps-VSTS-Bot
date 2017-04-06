@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Team-Services-Bot.Api.UnitTests")]
@@ -10,6 +9,5 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("2812ff9c-9607-490c-93e2-fe4ff1fa8f54")]
 
-// [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
