@@ -131,7 +131,7 @@
     <None Include="TeamServiceBotApiUniTests.snk" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Team-Service-Bot.Api\Team-Services-Bot.Api.csproj">
+    <ProjectReference Include="..\Team-Services-Bot.Api\Team-Services-Bot.Api.csproj">
       <Project>{A8BA1066-5695-4D71-ABB4-65E5A5E0C3D4}</Project>
       <Name>Team-Services-Bot.Api</Name>
     </ProjectReference>
