@@ -3,8 +3,9 @@
 	Will be thrown away as soon as the project matures, 
 	But captures the basic test flow.
 
-@mytag
+Background: 
+	Given I started a conversation
+
 Scenario: Echo
-	Given I have a client
 	When I send a message 'Test'
 	Then I should receive a response 'You sent Test which was 4 characters'

@@ -85,6 +85,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonSteps.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="EchoSteps.cs" />
     <Compile Include="Features\Echo.feature.cs">
       <AutoGen>True</AutoGen>
