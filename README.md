@@ -8,7 +8,8 @@
 ## Getting Started
 1. Read the documention about [Microsoft Bot Framework](https://dev.botframework.com/).
 2. Download the [Bot Framework Emulator](https://docs.botframework.com/en-us/tools/bot-framework-emulator/#navtitle) to help you test.
-3. For the Acceptance tests:
+3. Run Git-Ignore-Changes.bat which will disable tracking of Team-Services-Bot.runsettings and AppSettings.config, so your local information will not get uploaded to the repository.
+4. For the Acceptance tests:
    1. Download [ngrok](https://ngrok.com/download) to help run the Acceptance tests.
    2. Run the Team-Services-Bot.Api within Visual Studio, which will run on: http://localhost:3979/
    3. Run 
