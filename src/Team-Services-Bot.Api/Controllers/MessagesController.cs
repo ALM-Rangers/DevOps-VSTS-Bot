@@ -7,7 +7,6 @@
 // </summary>
 //———————————————————————————————
 
-using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -24,25 +23,18 @@ namespace Vsar.TSBot.Controllers
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
         /// </summary>
-        public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
+        public async Task<HttpResponseMessage> Post([FromBody] Activity activity)
         {
-            try
+            if (activity.Type == ActivityTypes.Message)
             {
-                if (activity.Type == ActivityTypes.Message)
-                {
-                    await Conversation.SendAsync(activity, () => new Dialogs.RootDialog());
-                }
-                else
-                {
-                    HandleSystemMessage(activity);
-                }
-                var response = Request.CreateResponse(HttpStatusCode.OK);
-                return response;
+                await Conversation.SendAsync(activity, () => new Dialogs.RootDialog());
             }
-            catch (Exception ex)
+            else
             {
-                throw ex;
+                HandleSystemMessage(activity);
             }
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            return response;
         }
 
         private void HandleSystemMessage(Activity message)
