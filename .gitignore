@@ -260,7 +260,3 @@ paket-files/
 __pycache__/
 *.pyc
 
-# Project specific
-*.runsettings
-AppSettings.config
-AppSettings.config
