@@ -1,4 +1,13 @@
-﻿using System.Linq;
+﻿//———————————————————————————————
+// <copyright file=”name of this file, i.e. EchoSteps.cs“>
+// Licensed under the MIT License. See License.txt in the project root for license information.
+// </copyright>
+// <summary>
+// Contains the specflow steps to perform an echo.
+// </summary>
+//———————————————————————————————
+
+using System.Linq;
 using FluentAssertions;
 using Microsoft.Bot.Connector.DirectLine;
 using TechTalk.SpecFlow;

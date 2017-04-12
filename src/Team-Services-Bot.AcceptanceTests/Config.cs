@@ -1,4 +1,13 @@
-﻿using Microsoft.Bot.Connector.DirectLine;
+﻿//———————————————————————————————
+// <copyright file=”name of this file, i.e. Config.cs“>
+// Licensed under the MIT License. See License.txt in the project root for license information.
+// </copyright>
+// <summary>
+// Contains the general configuration settings.
+// </summary>
+//———————————————————————————————
+
+using Microsoft.Bot.Connector.DirectLine;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TechTalk.SpecFlow;
 
