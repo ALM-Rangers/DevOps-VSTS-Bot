@@ -262,3 +262,5 @@ __pycache__/
 
 # Project specific
 *.runsettings
+AppSettings.config
+AppSettings.config
