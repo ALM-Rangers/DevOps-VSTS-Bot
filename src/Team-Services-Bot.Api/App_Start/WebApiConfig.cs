@@ -8,6 +8,7 @@
 //———————————————————————————————
 
 using System.Web.Http;
+using Autofac.Integration.WebApi;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -29,6 +30,8 @@ namespace Vsar.TSBot
             };
 
             // Web API configuration and services
+            var container = Bootstrap.Build();
+            config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
             // Web API routes
             config.MapHttpAttributeRoutes();

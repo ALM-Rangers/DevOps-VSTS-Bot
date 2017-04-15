@@ -9,7 +9,10 @@
 
 using System;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extras.AttributeMetadata;
 using FluentAssertions;
+using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vsar.TSBot.Dialogs;
 
@@ -29,10 +32,15 @@ namespace Vsar.TSBot.UnitTests
             toBot.From.Id = Guid.NewGuid().ToString();
             toBot.Text = "Test";
 
-            var root = new RootDialog();
+            var builder = Fixture.Build();
+            builder
+                .RegisterType<EchoDialog>()
+                .As<IDialog<object>>();
 
-            using (var container = Fixture.Build(root))
+            using (var container = builder.Build())
             {
+                var root = new RootDialog(container);
+
                 var toUser = await Fixture.GetResponse(container, root, toBot);
 
                 toUser.Text.Should().Contain("4").And.Contain("Test");

@@ -8,15 +8,26 @@
 //———————————————————————————————
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
+using Autofac;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
+using Vsar.TSBot.DI;
 
 namespace Vsar.TSBot.Dialogs
 {
     [Serializable]
     public class RootDialog : IDialog<object>
     {
+        [NonSerialized]
+        private readonly IComponentContext _container;
+
+        public RootDialog(IComponentContext container)
+        {
+            _container = container;
+        }
+
         public Task StartAsync(IDialogContext context)
         {
             context.Wait(MessageReceivedAsync);
@@ -24,17 +35,27 @@ namespace Vsar.TSBot.Dialogs
             return Task.CompletedTask;
         }
 
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
+        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-            var activity = await result as Activity;
+            var activity = await result;
+            var dialog = _container.Find(activity.Text);
 
-            // calculate something for us to return
-            int length = (activity.Text ?? string.Empty).Length;
+            if (dialog == null)
+            {
+                // TODO: Forward to the the help dialog.
+                await context.PostAsync("Unknown command.");
+            }
+            else
+            {
+                await context.Forward(dialog, ResumeAfterChildDialog, activity, CancellationToken.None);
+            }
+        }
 
-            // return our reply to the user
-            await context.PostAsync($"You sent {activity.Text} which was {length} characters");
-
+        private Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
+        {
             context.Wait(MessageReceivedAsync);
+
+            return Task.CompletedTask;
         }
     }
 }

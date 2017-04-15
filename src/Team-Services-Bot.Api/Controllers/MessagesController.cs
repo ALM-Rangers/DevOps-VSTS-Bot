@@ -11,28 +11,40 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Autofac;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
+using Vsar.TSBot.Dialogs;
 
 namespace Vsar.TSBot.Controllers
 {
     [BotAuthentication]
     public class MessagesController : ApiController
     {
+        private readonly IComponentContext _container;
+
+        public MessagesController(IComponentContext container)
+        {
+            _container = container;
+        }
+
         /// <summary>
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
         /// </summary>
         public async Task<HttpResponseMessage> Post([FromBody] Activity activity)
         {
+            var dialog = _container.Resolve<RootDialog>();
+
             if (activity.Type == ActivityTypes.Message)
             {
-                await Conversation.SendAsync(activity, () => new Dialogs.RootDialog());
+                await Conversation.SendAsync(activity, () => dialog);
             }
             else
             {
                 HandleSystemMessage(activity);
             }
+
             var response = Request.CreateResponse(HttpStatusCode.OK);
             return response;
         }
