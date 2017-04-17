@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extras.AttributeMetadata;
 using FluentAssertions;
+using Microsoft.ApplicationInsights;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vsar.TSBot.Dialogs;
@@ -32,6 +33,8 @@ namespace Vsar.TSBot.UnitTests
             toBot.From.Id = Guid.NewGuid().ToString();
             toBot.Text = "Test";
 
+            var telemetryClient = new TelemetryClient();
+
             var builder = Fixture.Build();
             builder
                 .RegisterType<EchoDialog>()
@@ -39,7 +42,7 @@ namespace Vsar.TSBot.UnitTests
 
             using (var container = builder.Build())
             {
-                var root = new RootDialog(container);
+                var root = new RootDialog(container, telemetryClient);
 
                 var toUser = await Fixture.GetResponse(container, root, toBot);
 

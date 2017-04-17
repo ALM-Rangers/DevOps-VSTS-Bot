@@ -11,6 +11,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
+using Microsoft.ApplicationInsights;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using Vsar.TSBot.DI;
@@ -23,9 +24,13 @@ namespace Vsar.TSBot.Dialogs
         [NonSerialized]
         private readonly IComponentContext _container;
 
-        public RootDialog(IComponentContext container)
+        [NonSerialized]
+        private readonly TelemetryClient _telemetryClient;
+
+        public RootDialog(IComponentContext container, TelemetryClient telemetryClient)
         {
             _container = container;
+            _telemetryClient = telemetryClient;
         }
 
         public Task StartAsync(IDialogContext context)
@@ -42,11 +47,13 @@ namespace Vsar.TSBot.Dialogs
 
             if (dialog == null)
             {
-                // TODO: Forward to the the help dialog.
+                // TODO: Forward to the help dialog.
                 await context.PostAsync("Unknown command.");
             }
             else
             {
+                _telemetryClient.TrackEvent(activity.Text);
+
                 await context.Forward(dialog, ResumeAfterChildDialog, activity, CancellationToken.None);
             }
         }

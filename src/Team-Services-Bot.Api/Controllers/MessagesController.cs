@@ -7,11 +7,13 @@
 // </summary>
 //———————————————————————————————
 
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Autofac;
+using Microsoft.ApplicationInsights;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using Vsar.TSBot.Dialogs;
@@ -22,10 +24,12 @@ namespace Vsar.TSBot.Controllers
     public class MessagesController : ApiController
     {
         private readonly IComponentContext _container;
+        private readonly TelemetryClient _telemetryClient;
 
-        public MessagesController(IComponentContext container)
+        public MessagesController(IComponentContext container, TelemetryClient telemetryClient)
         {
             _container = container;
+            _telemetryClient = telemetryClient;
         }
 
         /// <summary>
@@ -34,19 +38,25 @@ namespace Vsar.TSBot.Controllers
         /// </summary>
         public async Task<HttpResponseMessage> Post([FromBody] Activity activity)
         {
-            var dialog = _container.Resolve<RootDialog>();
-
-            if (activity.Type == ActivityTypes.Message)
+            try
             {
-                await Conversation.SendAsync(activity, () => dialog);
+                var dialog = _container.Resolve<RootDialog>();
+
+                if (activity.Type == ActivityTypes.Message)
+                {
+                    await Conversation.SendAsync(activity, () => dialog);
+                }
+                else
+                {
+                    HandleSystemMessage(activity);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                HandleSystemMessage(activity);
+                _telemetryClient.TrackException(ex);
             }
 
-            var response = Request.CreateResponse(HttpStatusCode.OK);
-            return response;
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         private void HandleSystemMessage(Activity message)
