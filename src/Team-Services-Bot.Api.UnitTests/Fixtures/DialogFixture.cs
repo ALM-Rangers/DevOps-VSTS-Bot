@@ -1,31 +1,37 @@
-﻿//———————————————————————————————
-// <copyright file=”name of this file, i.e. DialogFixture.cs“>
+﻿// ———————————————————————————————
+// <copyright file="DialogFixture.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
 // Contains a basic fixture for testing dialogs.
 // </summary>
-//———————————————————————————————
-
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Autofac;
-using Autofac.Extras.AttributeMetadata;
-using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Builder.Dialogs.Internals;
-using Microsoft.Bot.Connector;
-using Vsar.TSBot.Dialogs;
+// ———————————————————————————————
 
 namespace Vsar.TSBot.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Autofac;
+    using Autofac.Extras.AttributeMetadata;
+    using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Builder.Dialogs.Internals;
+    using Microsoft.Bot.Connector;
+    using Vsar.TSBot.Dialogs;
+
+    /// <summary>
+    /// A fixture for dialogs.
+    /// </summary>
     public class DialogFixture
     {
-        public const string User = "testUser";
+        private const string Bot = "testBot";
+        private const string User = "testUser";
 
-        public const string Bot = "testBot";
-
+        /// <summary>
+        /// Creates a default <see cref="IMessageActivity"/>.
+        /// </summary>
+        /// <returns>A <see cref="IMessageActivity"/>.</returns>
         public IMessageActivity CreateMessage()
         {
             return new Activity
@@ -42,6 +48,10 @@ namespace Vsar.TSBot.UnitTests
             };
         }
 
+        /// <summary>
+        /// Instantiates a <see cref="ContainerBuilder"/> and registers some defaults.
+        /// </summary>
+        /// <returns>A <see cref="ContainerBuilder"/>.</returns>
         public ContainerBuilder Build()
         {
             var builder = new ContainerBuilder();
@@ -77,6 +87,13 @@ namespace Vsar.TSBot.UnitTests
             return builder;
         }
 
+        /// <summary>
+        /// Gets a response.
+        /// </summary>
+        /// <param name="container">A <see cref="IContainer"/>.</param>
+        /// <param name="root">A <see cref="IDialog{TResult}"/> as root.</param>
+        /// <param name="toBot">A <see cref="IMessageActivity"/> as the to bot message.</param>
+        /// <returns>A <see cref="IMessageActivity"/> as response.</returns>
         public async Task<IMessageActivity> GetResponse(IContainer container, IDialog<object> root, IMessageActivity toBot)
         {
             using (var scope = DialogModule.BeginLifetimeScope(container, toBot))

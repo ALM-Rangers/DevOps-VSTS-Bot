@@ -1,70 +1,147 @@
-﻿//———————————————————————————————
-// <copyright file=”name of this file, i.e. MockConnectorFactory.cs“>
+﻿// ———————————————————————————————
+// <copyright file="MockConnectorFactory.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
 // Contains a mocked implementation of IConnectorClientFactory.
 // </summary>
-//———————————————————————————————
-
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
-using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Builder.Dialogs.Internals;
-using Microsoft.Bot.Builder.Internals.Fibers;
-using Microsoft.Bot.Connector;
-using Microsoft.Rest;
-using Moq;
-
+// ———————————————————————————————
 
 namespace Vsar.TSBot.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Net;
+    using System.Net.Http;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using System.Web;
+    using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Builder.Dialogs.Internals;
+    using Microsoft.Bot.Builder.Internals.Fibers;
+    using Microsoft.Bot.Connector;
+    using Microsoft.Rest;
+    using Moq;
+
+    /// <summary>
+    /// An <see cref="IConnectorClientFactory"/> implementation that mocks the Connector Client.
+    /// </summary>
     public class MockConnectorFactory : IConnectorClientFactory, IDisposable
     {
-        private readonly IBotDataStore<BotData> _memoryDataStore = new InMemoryDataStore();
-        private readonly string _botId;
-        private StateClient _stateClient;
+        private readonly IBotDataStore<BotData> memoryDataStore = new InMemoryDataStore();
+        private readonly string botId;
+        private StateClient stateClient;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MockConnectorFactory"/> class.
+        /// </summary>
+        /// <param name="botId">The bot id.</param>
         public MockConnectorFactory(string botId)
         {
-            SetField.NotNull(out _botId, nameof(botId), botId);
+            SetField.NotNull(out this.botId, nameof(botId), botId);
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="MockConnectorFactory"/> class.
+        /// </summary>
+        ~MockConnectorFactory()
+        {
+            this.Dispose(false);
+        }
+
+        /// <summary>
+        /// Mocks a Stateclient.
+        /// </summary>
+        /// <param name="mockConnectorFactory">A <see cref="MockConnectorFactory"/>.</param>
+        /// <returns>A mocked version of StateClient.</returns>
+        public static Mock<StateClient> MockIBots(MockConnectorFactory mockConnectorFactory)
+        {
+            var botsClient = new Mock<StateClient>(MockBehavior.Loose);
+
+            SetConversationDataWithHttpMessagesAsync(mockConnectorFactory, botsClient);
+
+            GetConversationDataWithHttpMessagesAsync(mockConnectorFactory, botsClient);
+
+            SetUserDataWithHttpMessagesAsync(mockConnectorFactory, botsClient);
+
+            GetUserDataWithHttpMessagesAsync(mockConnectorFactory, botsClient);
+
+            SetPrivateConversationDataWithHttpMessagesAsync(mockConnectorFactory, botsClient);
+
+            GetPrivateConversationDataWithHttpMessagesAsync(mockConnectorFactory, botsClient);
+
+            return botsClient;
+        }
+
+        /// <inheritdoc />
         public IConnectorClient MakeConnectorClient()
         {
-            var client = new Mock<ConnectorClient> {CallBase = true};
+            var client = new Mock<ConnectorClient> { CallBase = true };
             return client.Object;
         }
 
+        /// <inheritdoc />
         public IStateClient MakeStateClient()
         {
-            return _stateClient ?? (_stateClient = MockIBots(this).Object);
+            return this.stateClient ?? (this.stateClient = MockIBots(this).Object);
         }
 
+        /// <summary>
+        /// Disposes the <see cref="MockConnectorFactory"/>.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Disposes the <see cref="MockConnectorFactory"/>.
+        /// </summary>
+        /// <param name="disposing">A boolean value that indicates it is disposing or deconstructing the object.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing && this.stateClient != null)
+            {
+                this.stateClient.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Creates a default Address.
+        /// </summary>
+        /// <param name="channelId">The channel id.</param>
+        /// <param name="userId">The user id.</param>
+        /// <param name="conversationId">The conversation id.</param>
+        /// <returns>Am <see cref="IAddress"/>.</returns>
         protected IAddress AddressFrom(string channelId, string userId, string conversationId)
         {
-            var address = new Address
-            (
-                _botId,
+            var address = new Address(
+                this.botId,
                 channelId,
                 userId ?? "AllUsers",
                 conversationId ?? "AllConversations",
-                "InvalidServiceUrl"
-            );
+                "InvalidServiceUrl");
+
             return address;
         }
+
+        /// <summary>
+        /// Creates an <see cref="HttpOperationResponse"/>.
+        /// </summary>
+        /// <param name="channelId">The channel id.</param>
+        /// <param name="userId">The user id.</param>
+        /// <param name="conversationId">The conversation id.</param>
+        /// <param name="storeType">The story type.</param>
+        /// <param name="data">The data.</param>
+        /// <returns>A <see cref="HttpOperationResponse"/>.</returns>
         protected async Task<HttpOperationResponse<object>> UpdateAndInsertData(string channelId, string userId, string conversationId, BotStoreType storeType, BotData data)
         {
-            var result = new HttpOperationResponse<object> {Request = new HttpRequestMessage()};
+            var result = new HttpOperationResponse<object> { Request = new HttpRequestMessage() };
             try
             {
-                var address = AddressFrom(channelId, userId, conversationId);
-                await _memoryDataStore.SaveAsync(address, storeType, data, CancellationToken.None);
+                var address = this.AddressFrom(channelId, userId, conversationId);
+                await this.memoryDataStore.SaveAsync(address, storeType, data, CancellationToken.None);
             }
             catch (HttpException e)
             {
@@ -83,33 +160,25 @@ namespace Vsar.TSBot.UnitTests
             return result;
         }
 
+        /// <summary>
+        /// Gets the data.
+        /// </summary>
+        /// <param name="channelId">The channel id.</param>
+        /// <param name="userId">The user id.</param>
+        /// <param name="conversationId">The conversation id.</param>
+        /// <param name="storeType">The story type.</param>
+        /// <returns>A <see cref="HttpOperationResponse"/>.</returns>
         protected async Task<HttpOperationResponse<object>> GetData(string channelId, string userId, string conversationId, BotStoreType storeType)
         {
-            var address = AddressFrom(channelId, userId, conversationId);
-            var result = new HttpOperationResponse<object> {Request = new HttpRequestMessage()};
-            result.Body = await _memoryDataStore.LoadAsync(address, storeType, CancellationToken.None);
-            result.Response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
+            var address = this.AddressFrom(channelId, userId, conversationId);
+            var result = new HttpOperationResponse<object>
+            {
+                Request = new HttpRequestMessage(),
+                Body = await this.memoryDataStore.LoadAsync(address, storeType, CancellationToken.None),
+                Response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK }
+            };
 
             return result;
-        }
-
-        public static Mock<StateClient> MockIBots(MockConnectorFactory mockConnectorFactory)
-        {
-            var botsClient = new Moq.Mock<StateClient>(MockBehavior.Loose);
-
-            SetConversationDataWithHttpMessagesAsync(mockConnectorFactory, botsClient);
-
-            GetConversationDataWithHttpMessagesAsync(mockConnectorFactory, botsClient);
-
-            SetUserDataWithHttpMessagesAsync(mockConnectorFactory, botsClient);
-
-            GetUserDataWithHttpMessagesAsync(mockConnectorFactory, botsClient);
-
-            SetPrivateConversationDataWithHttpMessagesAsync(mockConnectorFactory, botsClient);
-
-            GetPrivateConversationDataWithHttpMessagesAsync(mockConnectorFactory, botsClient);
-
-            return botsClient;
         }
 
         private static void GetPrivateConversationDataWithHttpMessagesAsync(MockConnectorFactory mockConnectorFactory, Mock<StateClient> botsClient)
@@ -170,25 +239,6 @@ namespace Vsar.TSBot.UnitTests
                 {
                     return await mockConnectorFactory.UpdateAndInsertData(channelId, null, conversationId, BotStoreType.BotConversationData, data);
                 });
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing && _stateClient != null)
-            {
-                _stateClient.Dispose();
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        ~MockConnectorFactory()
-        {
-            Dispose(false);
         }
     }
 }
