@@ -48,7 +48,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>TeamServiceBotApiUniTests.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Properties\TeamServiceBotApiUniTests.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=4.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
@@ -137,7 +137,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="TeamServiceBotApiUniTests.snk" />
+    <None Include="Properties\TeamServiceBotApiUniTests.snk" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Team-Services-Bot.Api\Team-Services-Bot.Api.csproj">
@@ -147,7 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\Common\CustomDictionary.xml">
-      <Link>CustomDictionary.xml</Link>
+      <Link>Properties\CustomDictionary.xml</Link>
     </CodeAnalysisDictionary>
   </ItemGroup>
   <ItemGroup>

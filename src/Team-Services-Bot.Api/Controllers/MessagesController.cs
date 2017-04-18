@@ -1,46 +1,55 @@
-﻿//———————————————————————————————
-// <copyright file=”name of this file, i.e. MessagesController.cs“>
+﻿// ———————————————————————————————
+// <copyright file="MessagesController.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
 // Contains the Controller logic to process messages from the Bot Connector.
 // </summary>
-//———————————————————————————————
+// ———————————————————————————————
 
-using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Http;
-using Autofac;
-using Microsoft.ApplicationInsights;
-using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Connector;
-using Vsar.TSBot.Dialogs;
-
-namespace Vsar.TSBot.Controllers
+namespace Vsar.TSBot
 {
+    using System;
+    using System.Net;
+    using System.Net.Http;
+    using System.Threading.Tasks;
+    using System.Web.Http;
+    using Autofac;
+    using Dialogs;
+    using Microsoft.ApplicationInsights;
+    using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Connector;
+
+    /// <summary>
+    /// Represents the <see cref="ApiController"/> that handles incoming messages from the bot connector.
+    /// </summary>
     [BotAuthentication]
     public class MessagesController : ApiController
     {
-        private readonly IComponentContext _container;
-        private readonly TelemetryClient _telemetryClient;
+        private readonly IComponentContext container;
+        private readonly TelemetryClient telemetryClient;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MessagesController"/> class.
+        /// </summary>
+        /// <param name="container">A <see cref="IComponentContext"/>.</param>
+        /// <param name="telemetryClient">A <see cref="TelemetryClient"/>.</param>
         public MessagesController(IComponentContext container, TelemetryClient telemetryClient)
         {
-            _container = container;
-            _telemetryClient = telemetryClient;
+            this.container = container;
+            this.telemetryClient = telemetryClient;
         }
 
         /// <summary>
-        /// POST: api/Messages
-        /// Receive a message from a user and reply to it
+        /// Handles the Post requests.
         /// </summary>
+        /// <param name="activity">The incoming <see cref="Activity"/>.</param>
+        /// <returns>a <see cref="HttpResponseMessage"/>.</returns>
         public async Task<HttpResponseMessage> Post([FromBody] Activity activity)
         {
             try
             {
-                var dialog = _container.Resolve<RootDialog>();
+                var dialog = this.container.Resolve<RootDialog>();
 
                 if (activity.Type == ActivityTypes.Message)
                 {
@@ -48,15 +57,15 @@ namespace Vsar.TSBot.Controllers
                 }
                 else
                 {
-                    HandleSystemMessage(activity);
+                    this.HandleSystemMessage(activity);
                 }
             }
             catch (Exception ex)
             {
-                _telemetryClient.TrackException(ex);
+                this.telemetryClient.TrackException(ex);
             }
 
-            return Request.CreateResponse(HttpStatusCode.OK);
+            return this.Request.CreateResponse(HttpStatusCode.OK);
         }
 
         private void HandleSystemMessage(Activity message)
