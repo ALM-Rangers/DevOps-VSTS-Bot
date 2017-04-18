@@ -11,7 +11,7 @@ using Microsoft.Bot.Connector.DirectLine;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TechTalk.SpecFlow;
 
-namespace TSBot.AcceptanceTests
+namespace Vsar.TSBot.AcceptanceTests
 {
     public static class Config
     {

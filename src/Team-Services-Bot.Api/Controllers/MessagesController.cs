@@ -1,40 +1,71 @@
-﻿//———————————————————————————————
-// <copyright file=”name of this file, i.e. MessagesController.cs“>
+﻿// ———————————————————————————————
+// <copyright file="MessagesController.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
 // Contains the Controller logic to process messages from the Bot Connector.
 // </summary>
-//———————————————————————————————
+// ———————————————————————————————
 
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Http;
-using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Connector;
-
-namespace Vsar.TSBot.Controllers
+namespace Vsar.TSBot
 {
+    using System;
+    using System.Net;
+    using System.Net.Http;
+    using System.Threading.Tasks;
+    using System.Web.Http;
+    using Autofac;
+    using Dialogs;
+    using Microsoft.ApplicationInsights;
+    using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Connector;
+
+    /// <summary>
+    /// Represents the <see cref="ApiController"/> that handles incoming messages from the bot connector.
+    /// </summary>
     [BotAuthentication]
     public class MessagesController : ApiController
     {
+        private readonly IComponentContext container;
+        private readonly TelemetryClient telemetryClient;
+
         /// <summary>
-        /// POST: api/Messages
-        /// Receive a message from a user and reply to it
+        /// Initializes a new instance of the <see cref="MessagesController"/> class.
         /// </summary>
+        /// <param name="container">A <see cref="IComponentContext"/>.</param>
+        /// <param name="telemetryClient">A <see cref="TelemetryClient"/>.</param>
+        public MessagesController(IComponentContext container, TelemetryClient telemetryClient)
+        {
+            this.container = container;
+            this.telemetryClient = telemetryClient;
+        }
+
+        /// <summary>
+        /// Handles the Post requests.
+        /// </summary>
+        /// <param name="activity">The incoming <see cref="Activity"/>.</param>
+        /// <returns>a <see cref="HttpResponseMessage"/>.</returns>
         public async Task<HttpResponseMessage> Post([FromBody] Activity activity)
         {
-            if (activity.Type == ActivityTypes.Message)
+            try
             {
-                await Conversation.SendAsync(activity, () => new Dialogs.RootDialog());
+                var dialog = this.container.Resolve<RootDialog>();
+
+                if (activity.Type == ActivityTypes.Message)
+                {
+                    await Conversation.SendAsync(activity, () => dialog);
+                }
+                else
+                {
+                    this.HandleSystemMessage(activity);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                HandleSystemMessage(activity);
+                this.telemetryClient.TrackException(ex);
             }
-            var response = Request.CreateResponse(HttpStatusCode.OK);
-            return response;
+
+            return this.Request.CreateResponse(HttpStatusCode.OK);
         }
 
         private void HandleSystemMessage(Activity message)

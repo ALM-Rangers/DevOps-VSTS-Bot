@@ -10,7 +10,7 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace TSBot.AcceptanceTests.Features
+namespace Vsar.TSBot.AcceptanceTests.Features
 {
     using TechTalk.SpecFlow;
     
@@ -51,7 +51,7 @@ namespace TSBot.AcceptanceTests.Features
             if (((testRunner.FeatureContext != null) 
                         && (testRunner.FeatureContext.FeatureInfo.Title != "Echo")))
             {
-                TSBot.AcceptanceTests.Features.EchoFeature.FeatureSetup(null);
+                Vsar.TSBot.AcceptanceTests.Features.EchoFeature.FeatureSetup(null);
             }
         }
         

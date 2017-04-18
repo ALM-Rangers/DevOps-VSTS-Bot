@@ -12,10 +12,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
+using Autofac.Extras.AttributeMetadata;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Internals;
-using Microsoft.Bot.Builder.Internals.Fibers;
 using Microsoft.Bot.Connector;
+using Vsar.TSBot.Dialogs;
 
 namespace Vsar.TSBot.UnitTests
 {
@@ -41,12 +42,15 @@ namespace Vsar.TSBot.UnitTests
             };
         }
 
-        public IContainer Build(params object[] singletons)
+        public ContainerBuilder Build()
         {
-            if(singletons == null)
-                throw new ArgumentNullException(nameof(singletons));
-
             var builder = new ContainerBuilder();
+
+            builder
+                .RegisterModule<AttributedMetadataModule>();
+            builder
+                .RegisterType<RootDialog>();
+
             builder
                 .RegisterModule(new DialogModule_MakeRoot());
 
@@ -70,14 +74,7 @@ namespace Vsar.TSBot.UnitTests
                 .As<IBotToUser>()
                 .InstancePerLifetimeScope();
 
-            foreach (var singleton in singletons)
-            {
-                builder
-                    .Register(c => singleton)
-                    .Keyed(FiberModule.Key_DoNotSerialize, singleton.GetType());
-            }
-
-            return builder.Build();
+            return builder;
         }
 
         public async Task<IMessageActivity> GetResponse(IContainer container, IDialog<object> root, IMessageActivity toBot)

@@ -6,10 +6,11 @@
 // Contains the common spec flow steps.
 // </summary>
 //———————————————————————————————
+
 using Microsoft.Bot.Connector.DirectLine;
 using TechTalk.SpecFlow;
 
-namespace TSBot.AcceptanceTests
+namespace Vsar.TSBot.AcceptanceTests
 {
     [Binding]
     public sealed class CommonSteps
