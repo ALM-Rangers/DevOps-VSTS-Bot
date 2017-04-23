@@ -10,6 +10,7 @@
 namespace Vsar.TSBot
 {
     using System.Linq;
+    using System.Web.Configuration;
     using Autofac;
     using Autofac.Extras.AttributeMetadata;
     using Autofac.Integration.WebApi;
@@ -44,7 +45,14 @@ namespace Vsar.TSBot
             builder
                 .RegisterAssemblyTypes(typeof(Bootstrap).Assembly)
                 .Where(t => t.GetInterfaces().Any(i => i.IsAssignableFrom(typeof(IDialog<object>))))
+                .Except<AccountConnectDialog>()
                 .Except<RootDialog>()
+                .AsImplementedInterfaces();
+
+            builder
+                .RegisterType<AccountConnectDialog>()
+                .WithParameter("appId", WebConfigurationManager.AppSettings["appId"])
+                .WithParameter("authorizeUrl", WebConfigurationManager.AppSettings["authorizeUrl"])
                 .AsImplementedInterfaces();
 
             builder

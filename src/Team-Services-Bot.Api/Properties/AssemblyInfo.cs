@@ -8,6 +8,7 @@
 // ———————————————————————————————
 
 using System.Reflection;
+using System.Resources;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Team_Services_Bot.Api")]
@@ -17,6 +18,8 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 [assembly: Guid("5c775ef3-67bf-4a61-8d74-3ee0694caffa")]
+
+[assembly: NeutralResourcesLanguage("en-US")]
 
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

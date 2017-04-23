@@ -110,7 +110,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Echo.feature</DependentUpon>
     </Compile>
-    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
