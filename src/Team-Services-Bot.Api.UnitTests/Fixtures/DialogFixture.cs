@@ -15,10 +15,10 @@ namespace Vsar.TSBot.UnitTests
     using System.Threading.Tasks;
     using Autofac;
     using Autofac.Extras.AttributeMetadata;
+    using Dialogs;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Connector;
-    using Dialogs;
 
     /// <summary>
     /// A fixture for dialogs.
