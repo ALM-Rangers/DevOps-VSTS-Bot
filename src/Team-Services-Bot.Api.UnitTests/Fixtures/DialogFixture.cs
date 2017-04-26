@@ -18,7 +18,7 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Connector;
-    using Vsar.TSBot.Dialogs;
+    using Dialogs;
 
     /// <summary>
     /// A fixture for dialogs.
