@@ -104,7 +104,13 @@
     </Compile>
     <Compile Include="CommonSteps.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="ControllerSteps.cs" />
     <Compile Include="EchoSteps.cs" />
+    <Compile Include="Features\Controller.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Controller.feature</DependentUpon>
+    </Compile>
     <Compile Include="Features\Echo.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -115,6 +121,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Features\Controller.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Controller.feature.cs</LastGenOutput>
+    </None>
     <None Include="Features\Echo.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>Echo.feature.cs</LastGenOutput>
@@ -141,6 +151,12 @@
     <CodeAnalysisDictionary Include="..\Common\CustomDictionary.xml">
       <Link>Properties\CustomDictionary.xml</Link>
     </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Team-Services-Bot.Api\Team-Services-Bot.Api.csproj">
+      <Project>{a8ba1066-5695-4d71-abb4-65e5a5e0c3d4}</Project>
+      <Name>Team-Services-Bot.Api</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
