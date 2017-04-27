@@ -12,7 +12,6 @@ namespace Vsar.TSBot
     using System.Web.Configuration;
     using System.Web.Http;
     using System.Web.Mvc;
-    using System.Web.Optimization;
     using System.Web.Routing;
     using Autofac.Integration.Mvc;
     using Microsoft.ApplicationInsights.Extensibility;
@@ -25,6 +24,7 @@ namespace Vsar.TSBot
         /// <summary>
         /// Method is called when the application starts.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Reviewed.")]
         protected void Application_Start()
         {
             TelemetryConfiguration.Active.InstrumentationKey = WebConfigurationManager.AppSettings["InstrumentationKey"];
