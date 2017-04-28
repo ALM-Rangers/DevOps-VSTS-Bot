@@ -12,7 +12,7 @@ namespace Vsar.TSBot.Dialogs
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Autofac;
+    using System.Web.Http;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
@@ -23,24 +23,7 @@ namespace Vsar.TSBot.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
-        [NonSerialized]
-        private readonly IComponentContext container;
-
-        [NonSerialized]
-        private readonly TelemetryClient telemetryClient;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RootDialog"/> class.
-        /// </summary>
-        /// <param name="container">A <see cref="IComponentContext"/>.</param>
-        /// <param name="telemetryClient">A <see cref="TelemetryClient"/>.</param>
-        public RootDialog(IComponentContext container, TelemetryClient telemetryClient)
-        {
-            this.container = container;
-            this.telemetryClient = telemetryClient;
-        }
-
-        /// <inheritdoc />
+         /// <inheritdoc />
         public Task StartAsync(IDialogContext context)
         {
             context.Wait(this.MessageReceivedAsync);
@@ -51,7 +34,8 @@ namespace Vsar.TSBot.Dialogs
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
-            var dialog = this.container.Find(activity.Text);
+            var dialog = GlobalConfiguration.Configuration.DependencyResolver.Find(activity.Text);
+            var telemetryClient = GlobalConfiguration.Configuration.DependencyResolver.GetService<TelemetryClient>();
 
             if (dialog == null)
             {
@@ -60,7 +44,7 @@ namespace Vsar.TSBot.Dialogs
             }
             else
             {
-                this.telemetryClient.TrackEvent(activity.Text);
+                telemetryClient.TrackEvent(activity.Text);
 
                 await context.Forward(dialog, this.ResumeAfterChildDialog, activity, CancellationToken.None);
             }
@@ -68,8 +52,6 @@ namespace Vsar.TSBot.Dialogs
 
         private Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
         {
-            context.Wait(this.MessageReceivedAsync);
-
             return Task.CompletedTask;
         }
     }

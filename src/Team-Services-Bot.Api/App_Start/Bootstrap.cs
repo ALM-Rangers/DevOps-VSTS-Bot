@@ -29,9 +29,15 @@ namespace Vsar.TSBot
         /// <summary>
         /// Builds a <see cref="IContainer"/>.
         /// </summary>
+        /// <param name="isDebugging">Flag that indicates if the application is in debugging modus.</param>
         /// <returns>A <see cref="IContainer"/>.</returns>
-        public static IContainer Build()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Reviewed.")]
+        public static IContainer Build(bool isDebugging)
         {
+            var microsoftAppCredentials = new MicrosoftAppCredentials(
+                WebConfigurationManager.AppSettings["MicrosoftAppId"],
+                WebConfigurationManager.AppSettings["MicrosoftAppPassword"]);
+
             var builder = new ContainerBuilder();
 
             builder
@@ -40,16 +46,18 @@ namespace Vsar.TSBot
             // Using a Telemetry Client per request, so user context, etc is unique per request.
             builder
                 .RegisterType<TelemetryClient>()
-                .InstancePerRequest();
+                .SingleInstance();
 
-            builder
-                .RegisterType<MicrosoftAppCredentials>()
-                .WithParameter("appId", WebConfigurationManager.AppSettings["MicrosoftAppId"])
-                .WithParameter("password", WebConfigurationManager.AppSettings["MicrosoftAppPassword"]);
-
-            builder
-                .RegisterType<StateClient>();
-
+            // When debugging with the bot emulator we need to use the listening url from the emulator.
+            if (isDebugging)
+            {
+                builder.Register(c => new StateClient(
+                    new Uri(WebConfigurationManager.AppSettings["EmulatorListeningUrl"]), microsoftAppCredentials));
+            }
+            else
+            {
+                builder.Register(c => new StateClient(microsoftAppCredentials));
+            }
 
             builder
                 .RegisterType<BotState>()

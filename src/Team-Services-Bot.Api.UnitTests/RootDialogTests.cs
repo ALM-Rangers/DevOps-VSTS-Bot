@@ -11,7 +11,9 @@ namespace Vsar.TSBot.UnitTests
 {
     using System;
     using System.Threading.Tasks;
+    using System.Web.Http;
     using Autofac;
+    using Autofac.Integration.WebApi;
     using Dialogs;
     using FluentAssertions;
     using Microsoft.ApplicationInsights;
@@ -43,21 +45,20 @@ namespace Vsar.TSBot.UnitTests
             toBot.From.Id = Guid.NewGuid().ToString();
             toBot.Text = "Test";
 
-            var telemetryClient = new TelemetryClient();
-
             var builder = this.Fixture.Build();
+            builder.RegisterType<TelemetryClient>();
             builder
                 .RegisterType<EchoDialog>()
                 .As<IDialog<object>>();
 
-            using (var container = builder.Build())
-            {
-                var root = new RootDialog(container, telemetryClient);
+            var container = builder.Build();
+            GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
 
-                var toUser = await this.Fixture.GetResponse(container, root, toBot);
+            var root = new RootDialog();
 
-                toUser.Text.Should().Contain("4").And.Contain("Test");
-            }
+            var toUser = await this.Fixture.GetResponse(container, root, toBot);
+
+            toUser.Text.Should().Contain("4").And.Contain("Test");
         }
     }
 }
