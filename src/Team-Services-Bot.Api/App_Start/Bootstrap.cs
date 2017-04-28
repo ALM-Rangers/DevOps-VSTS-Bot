@@ -19,6 +19,7 @@ namespace Vsar.TSBot
     using Dialogs;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Connector;
 
     /// <summary>
     /// Bootstraps Autofac.
@@ -42,7 +43,27 @@ namespace Vsar.TSBot
                 .InstancePerRequest();
 
             builder
-                .RegisterControllers(typeof(Bootstrap).Assembly);
+                .RegisterType<MicrosoftAppCredentials>()
+                .WithParameter("appId", WebConfigurationManager.AppSettings["MicrosoftAppId"])
+                .WithParameter("password", WebConfigurationManager.AppSettings["MicrosoftAppPassword"]);
+
+            builder
+                .RegisterType<StateClient>();
+
+
+            builder
+                .RegisterType<BotState>()
+                .AsImplementedInterfaces();
+
+            builder
+                .RegisterControllers(typeof(Bootstrap).Assembly)
+                .Except<AuthorizeController>();
+
+            builder
+                .RegisterType<AuthorizeController>()
+                .WithParameter("appSecret", WebConfigurationManager.AppSettings["AppSecret"])
+                .WithParameter("authorizeUrl", new Uri(WebConfigurationManager.AppSettings["AuthorizeUrl"]));
+
             builder
                 .RegisterApiControllers(typeof(Bootstrap).Assembly);
 
@@ -55,8 +76,8 @@ namespace Vsar.TSBot
 
             builder
                 .RegisterType<AccountConnectDialog>()
-                .WithParameter("appId", WebConfigurationManager.AppSettings["appId"])
-                .WithParameter("authorizeUrl", new Uri(WebConfigurationManager.AppSettings["authorizeUrl"]))
+                .WithParameter("appId", WebConfigurationManager.AppSettings["AppId"])
+                .WithParameter("authorizeUrl", new Uri(WebConfigurationManager.AppSettings["AuthorizeUrl"]))
                 .AsImplementedInterfaces();
 
             builder

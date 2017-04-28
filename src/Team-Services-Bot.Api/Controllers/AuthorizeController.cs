@@ -100,7 +100,7 @@ namespace Vsar.TSBot
 
                 using (var pcl = connection.GetClient<ProfileHttpClient>())
                 {
-                    var profile = await pcl.GetProfileAsync(new ProfileQueryContext(AttributesScope.Application));
+                    var profile = await pcl.GetProfileAsync(new ProfileQueryContext(AttributesScope.Core));
 
                     using (var acl = connection.GetClient<AccountHttpClient>())
                     {
