@@ -11,17 +11,9 @@ namespace Vsar.TSBot
 {
     using System;
     using System.Linq;
-    using System.Net.Http;
-    using System.Text;
     using System.Threading.Tasks;
     using System.Web.Mvc;
     using Microsoft.ApplicationInsights;
-    using Microsoft.Bot.Connector;
-    using Microsoft.VisualStudio.Services.Account.Client;
-    using Microsoft.VisualStudio.Services.OAuth;
-    using Microsoft.VisualStudio.Services.Profile;
-    using Microsoft.VisualStudio.Services.Profile.Client;
-    using Microsoft.VisualStudio.Services.WebApi;
     using Resources;
 
     /// <summary>
@@ -29,30 +21,23 @@ namespace Vsar.TSBot
     /// </summary>
     public class AuthorizeController : Controller
     {
-        private const string FormatPostData =
-                "client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&" +
-                "client_assertion={0}&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion={1}&redirect_uri={2}";
-
-        private const string MediaType = "application/x-www-form-urlencoded";
-        private const string TokenUrl = "https://app.vssps.visualstudio.com/oauth2/token";
-
-        private readonly string appSecret;
-        private readonly Uri authorizeUrl;
-        private readonly IBotState botState;
+        private readonly IAuthenticationService authenticationService;
+        private readonly IBotService botService;
+        private readonly IProfileService profileService;
         private readonly TelemetryClient telemetryClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthorizeController"/> class.
         /// </summary>
-        /// <param name="appSecret">The application secret.</param>
-        /// <param name="authorizeUrl">The authorizationUrl.</param>
         /// <param name="telemetryClient">The TelemetryClient.</param>
-        /// <param name="botState">The bot state.</param>
-        public AuthorizeController(string appSecret, Uri authorizeUrl, IBotState botState, TelemetryClient telemetryClient)
+        /// <param name="botService">The botService.</param>
+        /// <param name="profileService">The profileService.s</param>
+        /// <param name="authenticationService">The authenticationService.</param>
+        public AuthorizeController(IBotService botService, TelemetryClient telemetryClient, IAuthenticationService authenticationService, IProfileService profileService)
         {
-            this.appSecret = appSecret;
-            this.authorizeUrl = authorizeUrl;
-            this.botState = botState;
+            this.authenticationService = authenticationService;
+            this.botService = botService;
+            this.profileService = profileService;
             this.telemetryClient = telemetryClient;
         }
 
@@ -89,36 +74,21 @@ namespace Vsar.TSBot
             try
             {
                 // Get the security token.
-                var client = new HttpClient();
-                var postData = string.Format(FormatPostData, this.appSecret, code, this.authorizeUrl);
-                var response = await client.PostAsync(TokenUrl, new StringContent(postData, Encoding.UTF8, MediaType));
-                var token = await response.Content.ReadAsAsync<OAuthToken>();
-
-                var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
-
-                var connection = new VssConnection(new Uri("https://app.vssps.visualstudio.com"), credentials);
-
-                using (var pcl = connection.GetClient<ProfileHttpClient>())
+                var token = await this.authenticationService.GetToken(code);
+                var profile = await this.profileService.GetProfile(token);
+                var accounts = await this.profileService.GetAccounts(token, profile.Id);
+                var result = new VstsProfile
                 {
-                    var profile = await pcl.GetProfileAsync(new ProfileQueryContext(AttributesScope.Core));
+                    Accounts = accounts.Select(a => a.AccountName).ToList(),
+                    Id = profile.Id,
+                    Token = token
+                };
 
-                    using (var acl = connection.GetClient<AccountHttpClient>())
-                    {
-                        var accounts = await acl.GetAccountsByMemberAsync(profile.Id);
+                var data = await this.botService.GetUserData(channelId, userId);
 
-                        var p = new VstsProfile
-                        {
-                            Accounts = accounts.Select(a => a.AccountName).ToList(),
-                            Id = profile.Id
-                        };
+                data.SetProperty("Profile", result);
 
-                        var data = await this.botState.GetUserDataAsync(channelId, userId);
-
-                        data.SetProperty("VSTSProfile", p);
-
-                        await this.botState.SetUserDataAsync(channelId, userId, data);
-                    }
-                }
+                await this.botService.SetUserData(channelId, userId, data);
             }
             catch (Exception ex)
             {

@@ -20,23 +20,11 @@ namespace Vsar.TSBot
     public class VstsProfile
     {
         /// <summary>
-        /// Gets or sets the access tokens.
-        /// </summary>
-        [DataMember]
-        public string AccessToken { get; set; }
-
-        /// <summary>
         /// Gets or sets a list of account names.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Reviewed.")]
         [DataMember]
         public IList<string> Accounts { get; set; } = new List<string>();
-
-        /// <summary>
-        /// Gets or sets the time it expires in.
-        /// </summary>
-        [DataMember]
-        public string ExpiresIn { get; set; }
 
         /// <summary>
         /// Gets or sets the id.
@@ -45,15 +33,9 @@ namespace Vsar.TSBot
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the refresh token.
+        /// Gets or sets the Token.
         /// </summary>
         [DataMember]
-        public string RefreshToken { get; set; }
-
-        /// <summary>
-        /// Gets or sets the token type.
-        /// </summary>
-        [DataMember]
-        public string TokenType { get; set; }
+        public OAuthToken Token { get; set; }
     }
 }

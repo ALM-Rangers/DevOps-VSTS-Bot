@@ -64,13 +64,21 @@ namespace Vsar.TSBot
                 .AsImplementedInterfaces();
 
             builder
-                .RegisterControllers(typeof(Bootstrap).Assembly)
-                .Except<AuthorizeController>();
+                .RegisterType<AuthenticationService>()
+                .WithParameter("appSecret", WebConfigurationManager.AppSettings["AppSecret"])
+                .WithParameter("authorizeUrl", new Uri(WebConfigurationManager.AppSettings["AuthorizeUrl"]))
+                .AsImplementedInterfaces();
 
             builder
-                .RegisterType<AuthorizeController>()
-                .WithParameter("appSecret", WebConfigurationManager.AppSettings["AppSecret"])
-                .WithParameter("authorizeUrl", new Uri(WebConfigurationManager.AppSettings["AuthorizeUrl"]));
+                .RegisterType<BotService>()
+                .AsImplementedInterfaces();
+
+            builder
+                .RegisterType<ProfileService>()
+                .AsImplementedInterfaces();
+
+            builder
+                .RegisterControllers(typeof(Bootstrap).Assembly);
 
             builder
                 .RegisterApiControllers(typeof(Bootstrap).Assembly);
