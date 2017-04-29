@@ -11,6 +11,8 @@ namespace Vsar.TSBot
 {
     using System.Web.Configuration;
     using System.Web.Http;
+    using Autofac;
+    using DI;
     using Microsoft.ApplicationInsights.Extensibility;
 
     /// <summary>
@@ -25,7 +27,11 @@ namespace Vsar.TSBot
         {
             TelemetryConfiguration.Active.InstrumentationKey = WebConfigurationManager.AppSettings["InstrumentationKey"];
 
-            GlobalConfiguration.Configure(WebApiConfig.Register);
+            // DI
+            ContainerBuilder builder = new ContainerBuilder();
+            builder.RegisterType<IDialogInvoker>().As<DialogInvoker>();
+
+            GlobalConfiguration.Configure((config) => WebApiConfig.Register(config, builder));
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Vsar.TSBot
     using System.Threading.Tasks;
     using System.Web.Http;
     using Autofac;
+    using DI;
     using Dialogs;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
@@ -47,13 +48,15 @@ namespace Vsar.TSBot
         /// <returns>a <see cref="HttpResponseMessage"/>.</returns>
         public async Task<HttpResponseMessage> Post([FromBody] Activity activity)
         {
+            HttpStatusCode status = HttpStatusCode.OK;
+
             try
             {
-                var dialog = this.container.Resolve<RootDialog>();
-
                 if (activity.Type == ActivityTypes.Message)
                 {
-                    await Conversation.SendAsync(activity, () => dialog);
+                    IDialogInvoker invoker = this.container.Resolve<IDialogInvoker>();
+                    RootDialog dialog = this.container.Resolve<RootDialog>();
+                    await invoker.SendAsync(activity, () => dialog);
                 }
                 else
                 {
@@ -63,9 +66,10 @@ namespace Vsar.TSBot
             catch (Exception ex)
             {
                 this.telemetryClient.TrackException(ex);
+                status = HttpStatusCode.InternalServerError;
             }
 
-            return this.Request.CreateResponse(HttpStatusCode.OK);
+            return this.Request.CreateResponse(status);
         }
 
         private void HandleSystemMessage(Activity message)

@@ -88,6 +88,32 @@ this.ScenarioSetup(scenarioInfo);
  testRunner.When("I post a message activity to the controller", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 10
  testRunner.Then("the root dialog is invoked", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 11
+  testRunner.And("the activity is passed to the dialog", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 12
+  testRunner.And("I get a HTTP 200 response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Exception invoking the root dialog")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Controller")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Acceptance")]
+        public virtual void ExceptionInvokingTheRootDialog()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Exception invoking the root dialog", new string[] {
+                        "Acceptance"});
+#line 15
+this.ScenarioSetup(scenarioInfo);
+#line 16
+ testRunner.Given("I have a controller", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 17
+   testRunner.And("There is a problem invoking the root dialog", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 18
+ testRunner.When("I post a message activity to the controller", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 19
+ testRunner.Then("I get a HTTP 500 response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

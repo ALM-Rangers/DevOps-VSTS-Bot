@@ -13,6 +13,7 @@ namespace Vsar.TSBot
     using Autofac;
     using Autofac.Extras.AttributeMetadata;
     using Autofac.Integration.WebApi;
+    using DI;
     using Dialogs;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
@@ -25,11 +26,10 @@ namespace Vsar.TSBot
         /// <summary>
         /// Builds a <see cref="IContainer"/>.
         /// </summary>
+        /// <param name="builder">Container builder to be used.</param>
         /// <returns>A <see cref="IContainer"/>.</returns>
-        public static IContainer Build()
+        public static IContainer Build(ContainerBuilder builder)
         {
-            var builder = new ContainerBuilder();
-
             builder
                 .RegisterModule<AttributedMetadataModule>();
 

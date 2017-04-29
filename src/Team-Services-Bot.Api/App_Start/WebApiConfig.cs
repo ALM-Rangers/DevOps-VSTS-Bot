@@ -11,6 +11,7 @@ namespace Vsar.TSBot
 {
     using System;
     using System.Web.Http;
+    using Autofac;
     using Autofac.Integration.WebApi;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
@@ -24,7 +25,8 @@ namespace Vsar.TSBot
         /// Bootstraps Web Api.
         /// </summary>
         /// <param name="config">A <see cref="HttpConfiguration"/>.</param>
-        public static void Register(HttpConfiguration config)
+        /// <param name="builder">The container builder to be used. It is expected to contain registrations for types that are subject to DI.</param>
+        public static void Register(HttpConfiguration config, ContainerBuilder builder)
         {
             if (config == null)
             {
@@ -43,7 +45,7 @@ namespace Vsar.TSBot
             };
 
             // Web API configuration and services
-            var container = Bootstrap.Build();
+            var container = Bootstrap.Build(builder);
             config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
             // Web API routes
