@@ -10,6 +10,9 @@
 namespace Vsar.TSBot.AcceptanceTests
 {
     using System;
+    using System.Web.Http;
+    using System.Web.Http.Dependencies;
+    using Microsoft.Bot.Connector;
     using TechTalk.SpecFlow;
 
     [Binding]
@@ -20,15 +23,19 @@ namespace Vsar.TSBot.AcceptanceTests
         [Given(@"I have a controller")]
         public void GivenIHaveAController()
         {
-            ScenarioContext.Current.Pending();
+            HttpConfiguration config = new HttpConfiguration();
+            WebApiConfig.Register(config);
+            IDependencyScope scope = config.DependencyResolver.BeginScope();
+            this.controller = (MessagesController)scope.GetService(typeof(MessagesController));
         }
-        
+
         [When(@"I post a message activity to the controller")]
         public void WhenIPostAMessageActivityToTheController()
         {
-            ScenarioContext.Current.Pending();
+            Activity activity = new Activity();
+            this.controller.Post(activity).Wait();
         }
-        
+
         [Then(@"the root dialog is invoked")]
         public void ThenTheRootDialogIsInvoked()
         {
