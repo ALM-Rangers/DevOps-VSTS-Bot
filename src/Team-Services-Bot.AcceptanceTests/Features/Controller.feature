@@ -12,6 +12,13 @@ Scenario: Invoke the root dialog
 	 And I get a HTTP 200 response
 
 @Acceptance
+Scenario: Non-message activity sent to the controller
+	Given I have a controller
+	When I post a non-message activity to the controller
+	Then the root dialog is not invoked
+	 And I get a HTTP 200 response
+
+@Acceptance
 Scenario: Exception invoking the root dialog
 	Given I have a controller
 	  And There is a problem invoking the root dialog

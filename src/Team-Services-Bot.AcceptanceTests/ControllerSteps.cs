@@ -74,6 +74,20 @@ namespace Vsar.TSBot.AcceptanceTests
             this.response = this.controller.Post(this.activity).Result;
         }
 
+        [When(@"I post a non-message activity to the controller")]
+        public void WhenIPostANon_MessageActivityToTheController()
+        {
+            this.activity = new Activity();
+            this.activity.Type = ActivityTypes.ConversationUpdate;
+            this.response = this.controller.Post(this.activity).Result;
+        }
+
+        [Then(@"the root dialog is not invoked")]
+        public void ThenTheRootDialogIsNotInvoked()
+        {
+            this.mockInvoker.Verify(di => di.SendAsync(It.IsAny<IMessageActivity>(), It.IsAny<Func<IDialog<object>>>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
         [Then(@"the root dialog is invoked")]
         public void ThenTheRootDialogIsInvoked()
         {
