@@ -86,12 +86,12 @@ namespace Vsar.TSBot
             builder
                 .RegisterAssemblyTypes(typeof(Bootstrap).Assembly)
                 .Where(t => t.GetInterfaces().Any(i => i.IsAssignableFrom(typeof(IDialog<object>))))
-                .Except<AccountConnectDialog>()
+                .Except<ConnectDialog>()
                 .Except<RootDialog>()
                 .AsImplementedInterfaces();
 
             builder
-                .RegisterType<AccountConnectDialog>()
+                .RegisterType<ConnectDialog>()
                 .WithParameter("appId", WebConfigurationManager.AppSettings["AppId"])
                 .WithParameter("authorizeUrl", new Uri(WebConfigurationManager.AppSettings["AuthorizeUrl"]))
                 .AsImplementedInterfaces();

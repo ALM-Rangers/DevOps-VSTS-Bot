@@ -178,7 +178,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Controllers\AuthorizeControllerTests.cs" />
-    <Compile Include="Dialogs\AccountConnectDialogTests.cs" />
+    <Compile Include="Dialogs\ConnectDialogTests.cs" />
     <Compile Include="Fixtures\DialogFixture.cs" />
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="Fixtures\MockConnectorFactory.cs" />

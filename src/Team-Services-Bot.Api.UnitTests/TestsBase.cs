@@ -28,6 +28,6 @@ namespace Vsar.TSBot.UnitTests
         /// <summary>
         /// Gets a Fixture.
         /// </summary>
-        public T Fixture { get; private set; }
+        public T Fixture { get; }
     }
 }

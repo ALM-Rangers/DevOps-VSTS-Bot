@@ -261,7 +261,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AuthorizeController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
-    <Compile Include="Dialogs\AccountConnectDialog.cs" />
+    <Compile Include="Dialogs\ConnectDialog.cs" />
     <Compile Include="DI\CommandMetadataAttribute.cs" />
     <Compile Include="Dialogs\EchoDialog.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />
@@ -270,7 +270,7 @@
     <Compile Include="Extensions\BotDataBagExtensions.cs" />
     <Compile Include="Extensions\ActivityExtensions.cs" />
     <Compile Include="Model\OAuthToken.cs" />
-    <Compile Include="Model\VSTSProfile.cs" />
+    <Compile Include="Model\VstsProfile.cs" />
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Exceptions.Designer.cs">

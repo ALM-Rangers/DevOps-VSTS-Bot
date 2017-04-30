@@ -1,5 +1,5 @@
 ﻿// ———————————————————————————————
-// <copyright file="AccountConnectDialog.cs">
+// <copyright file="ConnectDialog.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
@@ -11,17 +11,19 @@ namespace Vsar.TSBot.Dialogs
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
+    using Resources;
 
     /// <summary>
     /// Represents the dialog to connect to an account.
     /// </summary>
     [CommandMetadata("connect")]
     [Serializable]
-    public class AccountConnectDialog : IDialog<object>
+    public class ConnectDialog : IDialog<object>
     {
         private const string CommandMatch = "connect (.*?)$";
         private const string Scope = "vso.agentpools_manage%20vso.build_execute%20vso.chat_manage%20vso.code_manage%20vso.code_status%20" +
@@ -36,11 +38,11 @@ namespace Vsar.TSBot.Dialogs
         private readonly string authorizeUrl;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AccountConnectDialog"/> class.
+        /// Initializes a new instance of the <see cref="ConnectDialog"/> class.
         /// </summary>
         /// <param name="appId">The registered application id.</param>
         /// <param name="authorizeUrl">The url to return to after authentication.</param>
-        public AccountConnectDialog(string appId, Uri authorizeUrl)
+        public ConnectDialog(string appId, Uri authorizeUrl)
         {
             if (authorizeUrl == null)
             {
@@ -63,23 +65,41 @@ namespace Vsar.TSBot.Dialogs
         {
             var activity = await result;
 
-            var match = Regex.Match(activity.Text, CommandMatch);
+            var match = Regex.Match(activity.Text.ToLowerInvariant(), CommandMatch);
             if (match.Success)
             {
                 var account = match.Groups[1].Value;
-                context.UserData.SetAccount(account);
+                context.UserData.SetCurrentAccount(account);
 
                 var reply = context.MakeMessage();
-                var plButton = new CardAction
+                var profiles = context.UserData.GetProfiles();
+                var profile = profiles.FirstOrDefault(p => p.Accounts.Any(a => a.Equals(account, StringComparison.OrdinalIgnoreCase)));
+
+                if (profile != null)
                 {
-                    Value = string.Format(UrlOAuth, this.appId, activity.ChannelId, activity.From.Id, Scope, this.authorizeUrl),
-                    Type = activity.IsTeamsChannel() ? "openUrl" : "signin",
-                    Title = Resources.Labels.AuthenticationRequired
-                };
+                    context.UserData.SetCurrentProfile(profile);
+                    reply.Text = string.Format(Labels.ConnectedTo, account);
+                }
+                else
+                {
+                    var plButton = new CardAction
+                    {
+                        Value = string.Format(
+                            UrlOAuth,
+                            this.appId,
+                            activity.ChannelId,
+                            activity.From.Id,
+                            Scope,
+                            this.authorizeUrl),
+                        Type = activity.IsTeamsChannel() ? "openUrl" : "signin",
+                        Title = Labels.AuthenticationRequired
+                    };
 
-                var plCard = new SigninCard(Resources.Labels.PleaseLogin, new List<CardAction> { plButton });
+                    var plCard = new SigninCard(Labels.PleaseLogin, new List<CardAction> { plButton });
 
-                reply.Attachments.Add(plCard);
+                    reply.Attachments.Add(plCard);
+                }
+
                 await context.PostAsync(reply);
 
                 context.Done(reply);

@@ -1,5 +1,5 @@
 ﻿// ———————————————————————————————
-// <copyright file="AccountConnectDialogTests.cs">
+// <copyright file="ConnectDialogTests.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
@@ -22,21 +22,21 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
-    /// Contains Test methods for <see cref="AccountConnectDialog"/>
+    /// Contains Test methods for <see cref="ConnectDialog"/>
     /// </summary>
     [TestClass]
-    public class AccountConnectDialogTests : TestsBase<DialogFixture>
+    public class ConnectDialogTests : TestsBase<DialogFixture>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AccountConnectDialogTests"/> class.
+        /// Initializes a new instance of the <see cref="ConnectDialogTests"/> class.
         /// </summary>
-        public AccountConnectDialogTests()
+        public ConnectDialogTests()
             : base(new DialogFixture())
         {
         }
 
         /// <summary>
-        /// Tests the connecting to an account for the first time.
+        /// Tests connecting to an account for the first time.
         /// </summary>
         /// <returns>Nothing.</returns>
         [TestMethod]
@@ -58,7 +58,7 @@ namespace Vsar.TSBot.UnitTests
             var builder = this.Fixture.Build();
             builder.RegisterType<TelemetryClient>();
             builder
-                .RegisterType<AccountConnectDialog>()
+                .RegisterType<ConnectDialog>()
                 .WithParameter("appId", appId)
                 .WithParameter("authorizeUrl", new Uri(authorizeUrl))
                 .As<IDialog<object>>();
@@ -81,6 +81,16 @@ namespace Vsar.TSBot.UnitTests
             var expected =
                 $"https://app.vssps.visualstudio.com/oauth2/authorize?client_id={appId}&response_type=Assertion&state={toBot.ChannelId};{toBot.From.Id}&scope={scope}&redirect_uri={authorizeUrl}/";
             Assert.AreEqual(expected.ToLower(), button.Value.ToString().ToLower(), "OAuth url is invalid.");
+        }
+
+        /// <summary>
+        /// Tests connecting to an account for the second time.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [TestMethod]
+        public async Task SecondTimeConnectionTask()
+        {
+            
         }
     }
 }

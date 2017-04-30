@@ -42,7 +42,11 @@ namespace Vsar.TSBot.UnitTests
             var accounts = new List<Account>();
             var botData = new BotData();
 
-            var controller = new AuthorizeController(botService.Object, new TelemetryClient(), authenticationService.Object, profileService.Object);
+            var controller = new AuthorizeController(
+                botService.Object,
+                new TelemetryClient(),
+                authenticationService.Object,
+                profileService.Object);
 
             var code = "1234567890";
             var state = "channel1;user1";
@@ -64,8 +68,11 @@ namespace Vsar.TSBot.UnitTests
                 .Returns(Task.CompletedTask);
 
             var result = await controller.Index(code, string.Empty, state) as ViewResult;
+            var profiles = botData.GetProfiles();
 
             Assert.IsNotNull(result);
+            Assert.IsNotNull(profiles);
+            Assert.AreEqual(1, profiles.Count);
         }
     }
 }

@@ -81,9 +81,15 @@ namespace Vsar.TSBot
                 var result = Map(accounts, profile, token);
 
                 var data = await this.botService.GetUserData(channelId, userId);
+                var profiles = data.GetProfiles();
 
-                data.SetProfile(result);
+                if (!profiles.Any(p => p.Id.Equals(result.Id)))
+                {
+                    profiles.Add(result);
+                }
 
+                data.SetCurrentProfile(result);
+                data.SetProfiles(profiles);
                 await this.botService.SetUserData(channelId, userId, data);
             }
             catch (Exception ex)

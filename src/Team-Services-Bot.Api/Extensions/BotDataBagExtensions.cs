@@ -10,6 +10,7 @@
 namespace Vsar.TSBot
 {
     using System;
+    using System.Collections.Generic;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
 
@@ -19,59 +20,95 @@ namespace Vsar.TSBot
     public static class BotDataBagExtensions
     {
         private const string Account = "Account";
-        private const string Profile = "VSTSProfile";
+        private const string Profile = "Profile";
+        private const string Profiles = "Profiles";
 
         /// <summary>
-        /// Gets the account name.
+        /// Gets the current account name.
         /// </summary>
         /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
         /// <returns>A string representing the account.</returns>
-        public static string GetAccount(this IBotDataBag dataBag)
+        public static string GetCurrentAccount(this IBotDataBag dataBag)
         {
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            return dataBag.Get<string>(Account);
+            return dataBag.TryGetValue(Account, out string result) ? result : string.Empty;
         }
 
         /// <summary>
-        /// Sets the account name.
+        /// Get the current profile.
         /// </summary>
-        /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
-        /// <param name="account">the account.</param>
-        public static void SetAccount(this IBotDataBag dataBag, string account)
+        /// <param name="dataBag">The data bag.</param>
+        /// <returns>A VstsProfile.</returns>
+        public static VstsProfile GetProfile(this IBotDataBag dataBag)
         {
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            dataBag.SetValue(account, Account);
+            return dataBag.TryGetValue(Profile, out VstsProfile profile) ? profile : null;
         }
 
         /// <summary>
-        /// Gets the profile.
+        /// Gets the profiles.
         /// </summary>
         /// <param name="data">the Botdata</param>
         /// <returns>The profile.</returns>
-        public static VstsProfile GetProfile(this BotData data)
+        public static IList<VstsProfile> GetProfiles(this BotData data)
         {
             if (data == null)
             {
                 throw new ArgumentNullException(nameof(data));
             }
 
-            return data.GetProperty<VstsProfile>(Profile);
+            return data.GetProperty<IList<VstsProfile>>(Profiles) ?? new List<VstsProfile>();
         }
 
         /// <summary>
-        /// Sets the profile.
+        /// Gets the profiles.
         /// </summary>
-        /// <param name="data">the botdats.</param>
-        /// <param name="profile">the profile.</param>
-        public static void SetProfile(this BotData data, VstsProfile profile)
+        /// <param name="dataBag">The data.</param>
+        /// <returns>A list of profiles.</returns>
+        public static IList<VstsProfile> GetProfiles(this IBotDataBag dataBag)
+        {
+            if (dataBag == null)
+            {
+                throw new ArgumentNullException(nameof(dataBag));
+            }
+
+            return dataBag.TryGetValue(Profiles, out IList<VstsProfile> results) ? results : new List<VstsProfile>();
+        }
+
+        /// <summary>
+        /// Sets the current account name.
+        /// </summary>
+        /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
+        /// <param name="account">the account.</param>
+        public static void SetCurrentAccount(this IBotDataBag dataBag, string account)
+        {
+            if (dataBag == null)
+            {
+                throw new ArgumentNullException(nameof(dataBag));
+            }
+
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
+            dataBag.SetValue(account, Account);
+        }
+
+        /// <summary>
+        /// Sets the current vsts profile.
+        /// </summary>
+        /// <param name="data">The bot data.</param>
+        /// <param name="profile">The profile.</param>
+        public static void SetCurrentProfile(this BotData data, VstsProfile profile)
         {
             if (data == null)
             {
@@ -84,6 +121,46 @@ namespace Vsar.TSBot
             }
 
             data.SetProperty(Profile, profile);
+        }
+
+        /// <summary>
+        /// Sets the current vsts profile.
+        /// </summary>
+        /// <param name="dataBag">The data bag.</param>
+        /// <param name="profile">The profile.</param>
+        public static void SetCurrentProfile(this IBotDataBag dataBag, VstsProfile profile)
+        {
+            if (dataBag == null)
+            {
+                throw new ArgumentNullException(nameof(dataBag));
+            }
+
+            if (profile == null)
+            {
+                throw new ArgumentNullException(nameof(profile));
+            }
+
+            dataBag.SetValue(Profile, profile);
+        }
+
+        /// <summary>
+        /// Sets the profile.
+        /// </summary>
+        /// <param name="data">the botdats.</param>
+        /// <param name="profiles">the profile.</param>
+        public static void SetProfiles(this BotData data, IList<VstsProfile> profiles)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            if (profiles == null)
+            {
+                throw new ArgumentNullException(nameof(profiles));
+            }
+
+            data.SetProperty(Profiles, profiles);
         }
     }
 }

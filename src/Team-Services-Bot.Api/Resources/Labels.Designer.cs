@@ -70,6 +70,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connected to {0}..
+        /// </summary>
+        internal static string ConnectedTo {
+            get {
+                return ResourceManager.GetString("ConnectedTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please login to Team Services..
         /// </summary>
         internal static string PleaseLogin {
