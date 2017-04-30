@@ -33,7 +33,7 @@ namespace Vsar.TSBot
         /// Gets the profile from vsts.
         /// </summary>
         /// <param name="token">A <see cref="OAuthToken"/>.s</param>
-        /// <returns>A <see cref="Profile"/>.</returns>
-        Task<Profile> GetProfile(OAuthToken token);
+        /// <returns>A <see cref="Microsoft.VisualStudio.Services.Profile.Profile"/>.</returns>
+        Task<Microsoft.VisualStudio.Services.Profile.Profile> GetProfile(OAuthToken token);
     }
 }

@@ -10,10 +10,12 @@
 namespace Vsar.TSBot
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Web.Mvc;
     using Microsoft.ApplicationInsights;
+    using Microsoft.VisualStudio.Services.Account;
     using Resources;
 
     /// <summary>
@@ -33,7 +35,11 @@ namespace Vsar.TSBot
         /// <param name="botService">The botService.</param>
         /// <param name="profileService">The profileService.s</param>
         /// <param name="authenticationService">The authenticationService.</param>
-        public AuthorizeController(IBotService botService, TelemetryClient telemetryClient, IAuthenticationService authenticationService, IProfileService profileService)
+        public AuthorizeController(
+            IBotService botService,
+            TelemetryClient telemetryClient,
+            IAuthenticationService authenticationService,
+            IProfileService profileService)
         {
             this.authenticationService = authenticationService;
             this.botService = botService;
@@ -51,42 +57,32 @@ namespace Vsar.TSBot
         /// <returns>A view</returns>
         public async Task<ActionResult> Index(string code, string error, string state)
         {
-            if (string.IsNullOrWhiteSpace(code) && string.IsNullOrWhiteSpace(error))
-            {
-                throw new ArgumentNullException(nameof(code));
-            }
-
-            if (string.IsNullOrWhiteSpace(state))
-            {
-                throw new ArgumentNullException(nameof(state));
-            }
-
-            var stateArray = state.Split(';');
-
-            if (stateArray.Length != 2)
-            {
-                throw new ArgumentException(Exceptions.InvalidState, nameof(state));
-            }
-
-            var channelId = stateArray[0];
-            var userId = stateArray[1];
-
             try
             {
+                var stateArray = (state ?? string.Empty).Split(';');
+
+                if (string.IsNullOrWhiteSpace(code) && string.IsNullOrWhiteSpace(error))
+                {
+                    throw new ArgumentNullException(nameof(code));
+                }
+
+                if (stateArray.Length != 2)
+                {
+                    throw new ArgumentException(Exceptions.InvalidState, nameof(state));
+                }
+
+                var channelId = stateArray[0];
+                var userId = stateArray[1];
+
                 // Get the security token.
                 var token = await this.authenticationService.GetToken(code);
                 var profile = await this.profileService.GetProfile(token);
                 var accounts = await this.profileService.GetAccounts(token, profile.Id);
-                var result = new VstsProfile
-                {
-                    Accounts = accounts.Select(a => a.AccountName).ToList(),
-                    Id = profile.Id,
-                    Token = token
-                };
+                var result = Map(accounts, profile, token);
 
                 var data = await this.botService.GetUserData(channelId, userId);
 
-                data.SetProperty("Profile", result);
+                data.SetProfile(result);
 
                 await this.botService.SetUserData(channelId, userId, data);
             }
@@ -97,6 +93,17 @@ namespace Vsar.TSBot
             }
 
             return this.View();
+        }
+
+        private static VstsProfile Map(IEnumerable<Account> accounts, Microsoft.VisualStudio.Services.Profile.Profile profile, OAuthToken token)
+        {
+            var result = new VstsProfile
+            {
+                Accounts = accounts.Select(a => a.AccountName).ToList(),
+                Id = profile.Id,
+                Token = token
+            };
+            return result;
         }
     }
 }

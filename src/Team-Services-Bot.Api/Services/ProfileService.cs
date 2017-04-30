@@ -39,7 +39,7 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc />
-        public async Task<Profile> GetProfile(OAuthToken token)
+        public async Task<Microsoft.VisualStudio.Services.Profile.Profile> GetProfile(OAuthToken token)
         {
             var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
             var connection = new VssConnection(new Uri(Url), credentials);
