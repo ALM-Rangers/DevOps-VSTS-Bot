@@ -52,7 +52,7 @@ namespace Vsar.TSBot
 
             try
             {
-                if (activity.Type == ActivityTypes.Message)
+                if (string.Compare(activity.Type, ActivityTypes.Message, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     IDialogInvoker invoker = this.container.Resolve<IDialogInvoker>();
                     RootDialog dialog = this.container.Resolve<RootDialog>();
@@ -74,27 +74,27 @@ namespace Vsar.TSBot
 
         private void HandleSystemMessage(Activity message)
         {
-            if (message.Type == ActivityTypes.DeleteUserData)
+            if (string.Compare(message.Type, ActivityTypes.DeleteUserData, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 // Implement user deletion here
                 // If we handle user deletion, return a real message
             }
-            else if (message.Type == ActivityTypes.ConversationUpdate)
+            else if (string.Compare(message.Type, ActivityTypes.ConversationUpdate, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 // Handle conversation state changes, like members being added and removed
                 // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
                 // Not available in all channels
             }
-            else if (message.Type == ActivityTypes.ContactRelationUpdate)
+            else if (string.Compare(message.Type, ActivityTypes.ContactRelationUpdate, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 // Handle add/remove from contact lists
                 // Activity.From + Activity.Action represent what happened
             }
-            else if (message.Type == ActivityTypes.Typing)
+            else if (string.Compare(message.Type, ActivityTypes.Typing, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 // Handle knowing tha the user is typing
             }
-            else if (message.Type == ActivityTypes.Ping)
+            else if (string.Compare(message.Type, ActivityTypes.Ping, StringComparison.OrdinalIgnoreCase) == 0)
             {
             }
         }

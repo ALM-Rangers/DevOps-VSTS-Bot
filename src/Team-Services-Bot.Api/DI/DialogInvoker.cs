@@ -27,9 +27,20 @@ namespace Vsar.TSBot.DI
         /// <param name="makeRoot">The factory method to make the root dialog.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>A task that represents the message to send inline back to the user.</returns>
-        public async Task SendAsync(IMessageActivity toBot, Func<IDialog<object>> makeRoot, CancellationToken token = default(CancellationToken))
+        public async Task SendAsync(IMessageActivity toBot, Func<IDialog<object>> makeRoot, CancellationToken token)
         {
             await Conversation.SendAsync(toBot, makeRoot, token);
+        }
+
+        /// <summary>
+        /// Process an incoming message within the conversation.
+        /// </summary>
+        /// <param name="toBot">The message sent to the bot.</param>
+        /// <param name="makeRoot">The factory method to make the root dialog.</param>
+        /// <returns>A task that represents the message to send inline back to the user.</returns>
+        public async Task SendAsync(IMessageActivity toBot, Func<IDialog<object>> makeRoot)
+        {
+            await Conversation.SendAsync(toBot, makeRoot, default(CancellationToken));
         }
     }
 }

@@ -9,6 +9,7 @@
 
 namespace Vsar.TSBot
 {
+    using System;
     using System.Linq;
     using Autofac;
     using Autofac.Extras.AttributeMetadata;
@@ -30,6 +31,11 @@ namespace Vsar.TSBot
         /// <returns>A <see cref="IContainer"/>.</returns>
         public static IContainer Build(ContainerBuilder builder)
         {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
             builder
                 .RegisterModule<AttributedMetadataModule>();
 

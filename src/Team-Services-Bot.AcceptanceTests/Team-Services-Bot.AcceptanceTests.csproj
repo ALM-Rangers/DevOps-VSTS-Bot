@@ -34,6 +34,7 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>..\Common\TestCodeRules.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Debug\Vsar.TSBot.AcceptanceTests.xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -45,6 +46,7 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Release\Vsar.TSBot.AcceptanceTests.xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -148,6 +150,7 @@
     </Compile>
     <Compile Include="CommonSteps.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="ControllerData.cs" />
     <Compile Include="ControllerSteps.cs" />
     <Compile Include="EchoSteps.cs" />
     <Compile Include="Features\Controller.feature.cs">
