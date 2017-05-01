@@ -162,5 +162,25 @@ namespace Vsar.TSBot
 
             data.SetProperty(Profiles, profiles);
         }
+
+        /// <summary>
+        /// Sets the profile.
+        /// </summary>
+        /// <param name="dataBag">the botdats.</param>
+        /// <param name="profiles">the profile.</param>
+        public static void SetProfiles(this IBotDataBag dataBag, IList<VstsProfile> profiles)
+        {
+            if (dataBag == null)
+            {
+                throw new ArgumentNullException(nameof(dataBag));
+            }
+
+            if (profiles == null)
+            {
+                throw new ArgumentNullException(nameof(profiles));
+            }
+
+            dataBag.SetValue(Profiles, profiles);
+        }
     }
 }

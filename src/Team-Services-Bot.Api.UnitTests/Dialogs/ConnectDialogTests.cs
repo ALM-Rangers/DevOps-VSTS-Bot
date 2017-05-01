@@ -10,6 +10,7 @@
 namespace Vsar.TSBot.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Web.Http;
@@ -20,6 +21,7 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Resources;
 
     /// <summary>
     /// Contains Test methods for <see cref="ConnectDialog"/>
@@ -88,9 +90,31 @@ namespace Vsar.TSBot.UnitTests
         /// </summary>
         /// <returns>Nothing.</returns>
         [TestMethod]
+        [Ignore]
         public async Task SecondTimeConnectionTask()
         {
-            
+            var toBot = this.Fixture.CreateMessage();
+            toBot.From.Id = Guid.NewGuid().ToString();
+            toBot.Text = "connect anaccount";
+
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var builder = this.Fixture.Build();
+            builder.RegisterType<TelemetryClient>();
+            builder
+                .RegisterType<ConnectDialog>()
+                .WithParameter("appId", appId)
+                .WithParameter("authorizeUrl", new Uri(authorizeUrl))
+                .As<IDialog<object>>();
+
+            var container = builder.Build();
+            GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
+            var root = new RootDialog();
+
+            var toUser = await this.Fixture.GetResponse(container, root, toBot);
+
+            Assert.AreEqual("Connected to anaccount.", toUser.Text);
         }
     }
 }
