@@ -11,6 +11,7 @@ namespace Vsar.TSBot
 {
     using System;
     using System.Web.Http;
+    using Autofac;
     using Autofac.Integration.WebApi;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
@@ -24,18 +25,24 @@ namespace Vsar.TSBot
         /// Bootstraps Web Api.
         /// </summary>
         /// <param name="config">A <see cref="HttpConfiguration"/>.</param>
-        public static void Register(HttpConfiguration config)
+        /// <param name="lifetimeScope"><see cref="ILifetimeScope"/> for autofac.</param>
+        public static void Register(HttpConfiguration config, ILifetimeScope lifetimeScope)
         {
             if (config == null)
             {
                 throw new ArgumentNullException(nameof(config));
             }
 
+            if (lifetimeScope == null)
+            {
+                throw new ArgumentNullException(nameof(lifetimeScope));
+            }
+
             // Json settings
             config.Formatters.JsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             config.Formatters.JsonFormatter.SerializerSettings.Formatting = Formatting.Indented;
-            JsonConvert.DefaultSettings = () => new JsonSerializerSettings()
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
                 Formatting = Formatting.Indented,
@@ -43,8 +50,7 @@ namespace Vsar.TSBot
             };
 
             // Web API configuration and services
-            var container = Bootstrap.Build();
-            config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+            config.DependencyResolver = new AutofacWebApiDependencyResolver(lifetimeScope);
 
             // Web API routes
             config.MapHttpAttributeRoutes();

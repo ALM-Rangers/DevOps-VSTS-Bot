@@ -11,6 +11,9 @@ namespace Vsar.TSBot
 {
     using System.Web.Configuration;
     using System.Web.Http;
+    using System.Web.Mvc;
+    using System.Web.Routing;
+    using Autofac.Integration.Mvc;
     using Microsoft.ApplicationInsights.Extensibility;
 
     /// <summary>
@@ -21,11 +24,22 @@ namespace Vsar.TSBot
         /// <summary>
         /// Method is called when the application starts.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Reviewed.")]
         protected void Application_Start()
         {
             TelemetryConfiguration.Active.InstrumentationKey = WebConfigurationManager.AppSettings["InstrumentationKey"];
 
-            GlobalConfiguration.Configure(WebApiConfig.Register);
+            // Web API configuration and services
+            var container = Bootstrap.Build(this.Context.IsDebuggingEnabled);
+
+            GlobalConfiguration.Configure(c => WebApiConfig.Register(c, container));
+            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+
+            AreaRegistration.RegisterAllAreas();
+            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+
+            // BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
     }
 }

@@ -68,6 +68,7 @@ namespace Vsar.TSBot
             return this.Request.CreateResponse(HttpStatusCode.OK);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Reviewed.")]
         private void HandleSystemMessage(Activity message)
         {
             if (message.Type == ActivityTypes.DeleteUserData)
