@@ -13,7 +13,9 @@ namespace Vsar.TSBot
     using System.Web.Http;
     using System.Web.Mvc;
     using System.Web.Routing;
+    using Autofac;
     using Autofac.Integration.Mvc;
+    using DI;
     using Microsoft.ApplicationInsights.Extensibility;
 
     /// <summary>
@@ -30,7 +32,9 @@ namespace Vsar.TSBot
             TelemetryConfiguration.Active.InstrumentationKey = WebConfigurationManager.AppSettings["InstrumentationKey"];
 
             // Web API configuration and services
-            var container = Bootstrap.Build(this.Context.IsDebuggingEnabled);
+            ContainerBuilder builder = new ContainerBuilder();
+            builder.RegisterType<IDialogInvoker>().As<DialogInvoker>();
+            var container = Bootstrap.Build(builder, this.Context.IsDebuggingEnabled);
 
             GlobalConfiguration.Configure(c => WebApiConfig.Register(c, container));
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));

@@ -15,6 +15,7 @@ namespace Vsar.TSBot
     using System.Threading.Tasks;
     using System.Web.Http;
     using Autofac;
+    using DI;
     using Dialogs;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
@@ -47,13 +48,15 @@ namespace Vsar.TSBot
         /// <returns>a <see cref="HttpResponseMessage"/>.</returns>
         public async Task<HttpResponseMessage> Post([FromBody] Activity activity)
         {
+            HttpStatusCode status = HttpStatusCode.OK;
+
             try
             {
-                var dialog = this.container.Resolve<RootDialog>();
-
-                if (activity.Type == ActivityTypes.Message)
+                if (string.Compare(activity.Type, ActivityTypes.Message, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    await Conversation.SendAsync(activity, () => dialog);
+                    IDialogInvoker invoker = this.container.Resolve<IDialogInvoker>();
+                    RootDialog dialog = this.container.Resolve<RootDialog>();
+                    await invoker.SendAsync(activity, () => dialog);
                 }
                 else
                 {
@@ -63,35 +66,36 @@ namespace Vsar.TSBot
             catch (Exception ex)
             {
                 this.telemetryClient.TrackException(ex);
+                status = HttpStatusCode.InternalServerError;
             }
 
-            return this.Request.CreateResponse(HttpStatusCode.OK);
+            return this.Request.CreateResponse(status);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Reviewed.")]
         private void HandleSystemMessage(Activity message)
         {
-            if (message.Type == ActivityTypes.DeleteUserData)
+            if (string.Compare(message.Type, ActivityTypes.DeleteUserData, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 // Implement user deletion here
                 // If we handle user deletion, return a real message
             }
-            else if (message.Type == ActivityTypes.ConversationUpdate)
+            else if (string.Compare(message.Type, ActivityTypes.ConversationUpdate, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 // Handle conversation state changes, like members being added and removed
                 // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
                 // Not available in all channels
             }
-            else if (message.Type == ActivityTypes.ContactRelationUpdate)
+            else if (string.Compare(message.Type, ActivityTypes.ContactRelationUpdate, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 // Handle add/remove from contact lists
                 // Activity.From + Activity.Action represent what happened
             }
-            else if (message.Type == ActivityTypes.Typing)
+            else if (string.Compare(message.Type, ActivityTypes.Typing, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 // Handle knowing tha the user is typing
             }
-            else if (message.Type == ActivityTypes.Ping)
+            else if (string.Compare(message.Type, ActivityTypes.Ping, StringComparison.OrdinalIgnoreCase) == 0)
             {
             }
         }

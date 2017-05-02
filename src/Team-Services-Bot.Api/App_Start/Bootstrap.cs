@@ -16,6 +16,7 @@ namespace Vsar.TSBot
     using Autofac.Extras.AttributeMetadata;
     using Autofac.Integration.Mvc;
     using Autofac.Integration.WebApi;
+    using DI;
     using Dialogs;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
@@ -29,16 +30,20 @@ namespace Vsar.TSBot
         /// <summary>
         /// Builds a <see cref="IContainer"/>.
         /// </summary>
+        /// <param name="builder">Container builder to be used.</param>
         /// <param name="isDebugging">Flag that indicates if the application is in debugging modus.</param>
         /// <returns>A <see cref="IContainer"/>.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Reviewed.")]
-        public static IContainer Build(bool isDebugging)
+        public static IContainer Build(ContainerBuilder builder, bool isDebugging)
         {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
             var microsoftAppCredentials = new MicrosoftAppCredentials(
                 WebConfigurationManager.AppSettings["MicrosoftAppId"],
                 WebConfigurationManager.AppSettings["MicrosoftAppPassword"]);
-
-            var builder = new ContainerBuilder();
 
             builder
                 .RegisterModule<AttributedMetadataModule>();

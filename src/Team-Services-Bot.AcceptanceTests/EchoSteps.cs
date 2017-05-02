@@ -9,6 +9,7 @@
 
 namespace Vsar.TSBot.AcceptanceTests
 {
+    using System;
     using System.Linq;
     using FluentAssertions;
     using Microsoft.Bot.Connector.DirectLine;
@@ -45,7 +46,7 @@ namespace Vsar.TSBot.AcceptanceTests
         public void ThenIShouldReceiveAResponse(string response)
         {
             var activities = Config.Client.Conversations.GetActivities(Config.ConversationId);
-            var activity = activities.Activities.LastOrDefault(a => a.From.Id == Config.BotId);
+            var activity = activities.Activities.LastOrDefault(a => string.CompareOrdinal(a.From.Id, Config.BotId) == 0);
 
             activity.Text.ShouldBeEquivalentTo(response);
         }

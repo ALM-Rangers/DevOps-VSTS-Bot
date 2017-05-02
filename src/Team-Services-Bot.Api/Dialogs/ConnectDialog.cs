@@ -82,7 +82,7 @@ namespace Vsar.TSBot.Dialogs
                 }
                 else
                 {
-                    var plButton = new CardAction
+                    var button = new CardAction
                     {
                         Value = string.Format(
                             UrlOAuth,
@@ -95,9 +95,9 @@ namespace Vsar.TSBot.Dialogs
                         Title = Labels.AuthenticationRequired
                     };
 
-                    var plCard = new SigninCard(Labels.PleaseLogin, new List<CardAction> { plButton });
+                    var card = new SigninCard(Labels.PleaseLogin, new List<CardAction> { button });
 
-                    reply.Attachments.Add(plCard);
+                    reply.Attachments.Add(card);
                 }
 
                 await context.PostAsync(reply);

@@ -6,6 +6,7 @@
 Background: 
 	Given I started a conversation
 
+@Integration
 Scenario: Echo
 	When I send a message 'Test'
 	Then I should receive a response 'You sent Test which was 4 characters'

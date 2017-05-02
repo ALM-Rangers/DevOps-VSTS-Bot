@@ -16,6 +16,9 @@
       <Word>OAuthToken</Word>
       <Word>Vsts</Word>
     </Recognized>
+    <Compound>
+      <Term CompoundAlternate="ANon">anon</Term>
+    </Compound>
   </Words>
   <Acronyms>
     <CasingExceptions>
