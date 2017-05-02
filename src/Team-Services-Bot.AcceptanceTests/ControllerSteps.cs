@@ -62,7 +62,7 @@ namespace Vsar.TSBot.AcceptanceTests
                 .Returns(Task.CompletedTask);
 
             this.data.HttpConfiguration = new HttpConfiguration();
-            WebApiConfig.Register(this.data.HttpConfiguration, builder);
+            WebApiConfig.Register(this.data.HttpConfiguration, builder.Build());
             IDependencyScope scope = this.data.HttpConfiguration.DependencyResolver.BeginScope();
             this.data.Controller = (MessagesController)scope.GetService(typeof(MessagesController));
             this.data.Controller.ControllerContext = new HttpControllerContext();

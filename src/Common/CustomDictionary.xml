@@ -13,6 +13,8 @@
     <Recognized>
       <Word>Vsar</Word>
       <Word>Api</Word>
+      <Word>OAuthToken</Word>
+      <Word>Vsts</Word>
     </Recognized>
     <Compound>
       <Term CompoundAlternate="ANon">anon</Term>

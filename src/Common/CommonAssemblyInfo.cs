@@ -16,4 +16,4 @@ using System.Reflection;
 [assembly: AssemblyProduct("Visual Studio ALM Rangers Team Services Bot")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyCulture("en")]
