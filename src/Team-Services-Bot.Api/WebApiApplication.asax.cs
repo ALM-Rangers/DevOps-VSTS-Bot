@@ -26,14 +26,16 @@ namespace Vsar.TSBot
         /// <summary>
         /// Method is called when the application starts.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Reviewed.")]
         protected void Application_Start()
         {
             TelemetryConfiguration.Active.InstrumentationKey = WebConfigurationManager.AppSettings["InstrumentationKey"];
 
             // Web API configuration and services
-            ContainerBuilder builder = new ContainerBuilder();
-            builder.RegisterType<IDialogInvoker>().As<DialogInvoker>();
+            var builder = new ContainerBuilder();
+            builder
+                .RegisterType<DialogInvoker>()
+                .As<IDialogInvoker>();
+
             var container = Bootstrap.Build(builder, this.Context.IsDebuggingEnabled);
 
             GlobalConfiguration.Configure(c => WebApiConfig.Register(c, container));

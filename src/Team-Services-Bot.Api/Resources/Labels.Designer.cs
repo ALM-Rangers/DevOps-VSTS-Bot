@@ -61,6 +61,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Approvals.
+        /// </summary>
+        internal static string Approvals {
+            get {
+                return ResourceManager.GetString("Approvals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Authentication is required..
         /// </summary>
         internal static string AuthenticationRequired {
@@ -84,6 +93,42 @@ namespace Vsar.TSBot.Resources {
         internal static string PleaseLogin {
             get {
                 return ResourceManager.GetString("PleaseLogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Queue Build.
+        /// </summary>
+        internal static string QueueBuild {
+            get {
+                return ResourceManager.GetString("QueueBuild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to QueueRelease.
+        /// </summary>
+        internal static string QueueRelease {
+            get {
+                return ResourceManager.GetString("QueueRelease", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome back {0}. I have connected you to Account &apos;{1}&apos;, Team Project &apos;{2}&apos;..
+        /// </summary>
+        internal static string WelcomeExistingUser {
+            get {
+                return ResourceManager.GetString("WelcomeExistingUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome {0}. I see this is the first team we speak..
+        /// </summary>
+        internal static string WelcomeNewUser {
+            get {
+                return ResourceManager.GetString("WelcomeNewUser", resourceCulture);
             }
         }
     }

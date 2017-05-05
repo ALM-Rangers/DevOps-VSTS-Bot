@@ -261,6 +261,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Cards\MainOptionsCard.cs" />
     <Compile Include="Controllers\AuthorizeController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Dialogs\ConnectDialog.cs" />

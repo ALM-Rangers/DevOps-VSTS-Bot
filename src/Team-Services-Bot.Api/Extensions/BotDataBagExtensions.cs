@@ -22,6 +22,7 @@ namespace Vsar.TSBot
         private const string Account = "Account";
         private const string Profile = "Profile";
         private const string Profiles = "Profiles";
+        private const string TeamProject = "TeamProject";
 
         /// <summary>
         /// Gets the current account name.
@@ -30,14 +31,27 @@ namespace Vsar.TSBot
         /// <returns>A string representing the account.</returns>
         public static string GetCurrentAccount(this IBotDataBag dataBag)
         {
-            string result;
-
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            return dataBag.TryGetValue(Account, out result) ? result : string.Empty;
+            return dataBag.TryGetValue(Account, out string result) ? result : string.Empty;
+        }
+
+        /// <summary>
+        /// Gets the current team project for the user.
+        /// </summary>
+        /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
+        /// <returns>the name of the current team project.</returns>
+        public static string GetCurrentTeamProject(this IBotDataBag dataBag)
+        {
+            if (dataBag == null)
+            {
+                throw new ArgumentNullException(nameof(dataBag));
+            }
+
+            return dataBag.TryGetValue(TeamProject, out string teamProject) ? teamProject : string.Empty;
         }
 
         /// <summary>
@@ -47,14 +61,12 @@ namespace Vsar.TSBot
         /// <returns>A VstsProfile.</returns>
         public static VstsProfile GetProfile(this IBotDataBag dataBag)
         {
-            VstsProfile profile;
-
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            return dataBag.TryGetValue(Profile, out profile) ? profile : null;
+            return dataBag.TryGetValue(Profile, out VstsProfile profile) ? profile : null;
         }
 
         /// <summary>
@@ -79,14 +91,12 @@ namespace Vsar.TSBot
         /// <returns>A list of profiles.</returns>
         public static IList<VstsProfile> GetProfiles(this IBotDataBag dataBag)
         {
-            IList<VstsProfile> results;
-
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            return dataBag.TryGetValue(Profiles, out results) ? results : new List<VstsProfile>();
+            return dataBag.TryGetValue(Profiles, out IList<VstsProfile> results) ? results : new List<VstsProfile>();
         }
 
         /// <summary>
