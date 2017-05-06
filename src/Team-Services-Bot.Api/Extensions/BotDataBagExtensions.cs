@@ -20,6 +20,7 @@ namespace Vsar.TSBot
     public static class BotDataBagExtensions
     {
         private const string Account = "Account";
+        private const string Pin = "Pin";
         private const string Profile = "Profile";
         private const string Profiles = "Profiles";
         private const string TeamProject = "TeamProject";
@@ -67,6 +68,36 @@ namespace Vsar.TSBot
             }
 
             return dataBag.TryGetValue(TeamProject, out string teamProject) ? teamProject : string.Empty;
+        }
+
+        /// <summary>
+        /// Gets the pin.
+        /// </summary>
+        /// <param name="data">The bot data.</param>
+        /// <returns>A pin.</returns>
+        public static string GetPin(this BotData data)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            return data.GetProperty<string>(Pin) ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Gets the pin.
+        /// </summary>
+        /// <param name="dataBag">The dataBag.</param>
+        /// <returns>A pin.</returns>
+        public static string GetPin(this IBotDataBag dataBag)
+        {
+            if (dataBag == null)
+            {
+                throw new ArgumentNullException(nameof(dataBag));
+            }
+
+            return dataBag.TryGetValue(Pin, out string result) ? result : string.Empty;
         }
 
         /// <summary>
@@ -192,6 +223,26 @@ namespace Vsar.TSBot
             }
 
             dataBag.SetValue(TeamProject, teamProject);
+        }
+
+        /// <summary>
+        /// Sets the pin.
+        /// </summary>
+        /// <param name="dataBag">The data bag.</param>
+        /// <param name="pin">The pin.</param>
+        public static void SetPin(this IBotDataBag dataBag, string pin)
+        {
+            if (dataBag == null)
+            {
+                throw new ArgumentNullException(nameof(dataBag));
+            }
+
+            if (string.IsNullOrWhiteSpace(pin))
+            {
+                throw new ArgumentNullException(nameof(pin));
+            }
+
+            dataBag.SetValue(Pin, pin);
         }
 
         /// <summary>

@@ -131,7 +131,7 @@
     <value>Please select an account to connect to.</value>
   </data>
   <data name="PleaseLogin" xml:space="preserve">
-    <value>Please login to Team Services.</value>
+    <value>Please login to Team Services. After login you will receive a four digit pin number, please enter the pin number.</value>
   </data>
   <data name="QueueBuild" xml:space="preserve">
     <value>Queue Build</value>

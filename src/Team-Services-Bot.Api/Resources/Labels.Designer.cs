@@ -97,7 +97,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please login to Team Services..
+        ///   Looks up a localized string similar to Please login to Team Services. After login you will receive a four digit pin number, please enter the pin number..
         /// </summary>
         internal static string PleaseLogin {
             get {

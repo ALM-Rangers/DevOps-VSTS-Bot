@@ -61,6 +61,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sorry, I do not recognize the provided pin. Please try again..
+        /// </summary>
+        internal static string InvalidPin {
+            get {
+                return ResourceManager.GetString("InvalidPin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to State is invalid. Expecting a ChannelId and UserId separated by a semicolon..
         /// </summary>
         internal static string InvalidState {

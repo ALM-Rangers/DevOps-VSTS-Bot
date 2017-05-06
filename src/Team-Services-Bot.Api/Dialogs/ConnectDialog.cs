@@ -26,10 +26,17 @@ namespace Vsar.TSBot.Dialogs
     [Serializable]
     public class ConnectDialog : IDialog<object>
     {
-        private const string CommandMatch = "(connect)? *(\\w*) *(\\w*)";
+        private const string CommandMatchConnect = "connect *(\\w*) *(\\w*)";
+        private const string CommandMatchPin = "(\\d{4})";
+        private const int Min = 0;
+        private const int Max = 9999;
 
         private readonly string appId;
         private readonly string authorizeUrl;
+
+        private string account;
+        private bool isPinActivated;
+        private string teamProject;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectDialog"/> class.
@@ -58,53 +65,87 @@ namespace Vsar.TSBot.Dialogs
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
+            var pin = context.UserData.GetPin();
             var profile = context.UserData.GetCurrentProfile();
             var profiles = context.UserData.GetProfiles();
             var reply = context.MakeMessage();
+            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
 
-            var match = Regex.Match(activity.Text.ToLowerInvariant(), CommandMatch);
-            if (!match.Success)
+            if (this.isPinActivated)
             {
-                return;
+                var isPinHandled = await this.HandlePin(context, activity, pin);
+                if (!isPinHandled)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                var match = Regex.Match(text, CommandMatchConnect);
+                if (match.Success)
+                {
+                    this.account = match.Groups[2].Value;
+                    this.teamProject = match.Groups[3].Value;
+                }
             }
 
-            var account = match.Groups[2].Value;
-            var teamProject = match.Groups[3].Value;
-
-            if (!profiles.Any())
+            if (!profiles.Any() || profile == null)
             {
                 await this.Login(context, activity, reply);
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(account))
+            if (string.IsNullOrWhiteSpace(this.account))
             {
                 await this.SelectAccount(context, profiles, reply);
                 return;
             }
 
-            context.UserData.SetCurrentAccount(account);
-
-            if (string.IsNullOrWhiteSpace(teamProject))
+            if (string.IsNullOrWhiteSpace(this.teamProject))
             {
                 // Select Team Project.
             }
 
-            context.UserData.SetCurrentTeamProject(teamProject);
+            context.UserData.SetCurrentAccount(this.account);
+            context.UserData.SetCurrentTeamProject(this.teamProject);
 
-            if (profile != null)
-            {
-                context.UserData.SetCurrentProfile(profile);
-                reply.Text = string.Format(Labels.ConnectedTo, account);
-
-                await context.PostAsync(reply);
-            }
+            reply.Text = string.Format(Labels.ConnectedTo, this.account);
+            await context.PostAsync(reply);
 
             context.Done(reply);
         }
 
+        private string GeneratePin()
+        {
+            var generator = new Random();
+            return generator.Next(Min, Max).ToString("0000");
+        }
+
+        private async Task<bool> HandlePin(IDialogContext context, IMessageActivity activity, string pin)
+        {
+            this.isPinActivated = false;
+
+            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
+            var match = Regex.Match(text, CommandMatchPin);
+
+            if (!match.Success || !string.Equals(pin, text, StringComparison.OrdinalIgnoreCase))
+            {
+                await context.PostAsync(Exceptions.InvalidPin);
+                context.Wait(this.MessageReceivedAsync);
+
+                return false;
+            }
+
+            return true;
+        }
+
         private async Task Login(IDialogContext context, IMessageActivity activity, IMessageActivity reply)
         {
+            // Set pin.
+            var pin = this.GeneratePin();
+            context.UserData.SetPin(pin);
+            this.isPinActivated = true;
+
             var card = new LoginCard(this.appId, this.authorizeUrl, activity.ChannelId, Labels.PleaseLogin, activity.From.Id);
 
             reply.Attachments.Add(card);
