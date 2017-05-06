@@ -14,6 +14,7 @@ namespace Vsar.TSBot.Dialogs
     using System.Linq;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
+    using Cards;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
     using Resources;
@@ -25,13 +26,7 @@ namespace Vsar.TSBot.Dialogs
     [Serializable]
     public class ConnectDialog : IDialog<object>
     {
-        private const string CommandMatch = "connect (.*?)$";
-        private const string Scope = "vso.agentpools%20vso.build_execute%20vso.chat_write%20vso.code%20vso.connected_server%20" +
-                                     "vso.dashboards%20vso.entitlements%20vso.extension%20vso.extension.data%20vso.gallery%20" +
-                                     "vso.identity%20vso.loadtest%20vso.notification%20vso.packaging%20vso.project%20" +
-                                     "vso.release_execute%20vso.serviceendpoint_query%20vso.taskgroups%20vso.test%20vso.work";
-
-        private const string UrlOAuth = "https://app.vssps.visualstudio.com/oauth2/authorize?client_id={0}&response_type=Assertion&state={1};{2}&scope={3}&redirect_uri={4}";
+        private const string CommandMatch = "(connect)? *(\\w*) *(\\w*)";
 
         private readonly string appId;
         private readonly string authorizeUrl;
@@ -63,46 +58,71 @@ namespace Vsar.TSBot.Dialogs
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
+            var profile = context.UserData.GetCurrentProfile();
+            var profiles = context.UserData.GetProfiles();
+            var reply = context.MakeMessage();
 
             var match = Regex.Match(activity.Text.ToLowerInvariant(), CommandMatch);
-            if (match.Success)
+            if (!match.Success)
             {
-                var account = match.Groups[1].Value;
-                context.UserData.SetCurrentAccount(account);
-
-                var reply = context.MakeMessage();
-                var profiles = context.UserData.GetProfiles();
-                var profile = profiles.FirstOrDefault(p => p.Accounts.Any(a => a.Equals(account, StringComparison.OrdinalIgnoreCase)));
-
-                if (profile != null)
-                {
-                    context.UserData.SetCurrentProfile(profile);
-                    reply.Text = string.Format(Labels.ConnectedTo, account);
-                }
-                else
-                {
-                    var button = new CardAction
-                    {
-                        Value = string.Format(
-                            UrlOAuth,
-                            this.appId,
-                            activity.ChannelId,
-                            activity.From.Id,
-                            Scope,
-                            this.authorizeUrl),
-                        Type = activity.IsTeamsChannel() ? "openUrl" : "signin",
-                        Title = Labels.AuthenticationRequired
-                    };
-
-                    var card = new SigninCard(Labels.PleaseLogin, new List<CardAction> { button });
-
-                    reply.Attachments.Add(card);
-                }
-
-                await context.PostAsync(reply);
-
-                context.Done(reply);
+                return;
             }
+
+            var account = match.Groups[1].Value;
+            var teamProject = match.Groups[2].Value;
+
+            if (!profiles.Any())
+            {
+                await this.Login(context, activity, reply);
+            }
+
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                await this.SelectAccount(context, profiles, reply);
+            }
+
+            context.UserData.SetCurrentAccount(account);
+
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                // Select Team Project.
+            }
+
+            context.UserData.SetCurrentTeamProject(teamProject);
+
+            if (profile != null)
+            {
+                context.UserData.SetCurrentProfile(profile);
+                reply.Text = string.Format(Labels.ConnectedTo, account);
+            }
+
+            await context.PostAsync(reply);
+
+            context.Done(reply);
+        }
+
+        private async Task Login(IDialogContext context, IMessageActivity activity, IMessageActivity reply)
+        {
+            var card = new LoginCard(this.appId, this.authorizeUrl, activity.ChannelId, Labels.PleaseLogin, activity.From.Id);
+
+            reply.Attachments.Add(card);
+
+            await context.PostAsync(reply);
+            context.Wait(this.MessageReceivedAsync);
+        }
+
+        private async Task SelectAccount(IDialogContext context, IList<VstsProfile> profiles, IMessageActivity reply)
+        {
+            reply.Text = Labels.ConnectToAccount;
+            foreach (var acc in profiles.SelectMany(a => a.Accounts).Distinct().OrderBy(a => a))
+            {
+                reply.Attachments.Add(new AccountCard(acc));
+            }
+
+            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+
+            await context.PostAsync(reply);
+            context.Wait(this.MessageReceivedAsync);
         }
     }
 }

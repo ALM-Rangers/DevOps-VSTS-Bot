@@ -40,6 +40,21 @@ namespace Vsar.TSBot
         }
 
         /// <summary>
+        /// Gets the current profile.
+        /// </summary>
+        /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
+        /// <returns>A string representing the account.</returns>
+        public static VstsProfile GetCurrentProfile(this IBotDataBag dataBag)
+        {
+            if (dataBag == null)
+            {
+                throw new ArgumentNullException(nameof(dataBag));
+            }
+
+            return dataBag.TryGetValue(Profile, out VstsProfile profile) ? profile : null;
+        }
+
+        /// <summary>
         /// Gets the current team project for the user.
         /// </summary>
         /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
@@ -157,6 +172,26 @@ namespace Vsar.TSBot
             }
 
             dataBag.SetValue(Profile, profile);
+        }
+
+        /// <summary>
+        /// Sets the current team project.
+        /// </summary>
+        /// <param name="dataBag">The data bag.</param>
+        /// <param name="teamProject">The team project.</param>
+        public static void SetCurrentTeamProject(this IBotDataBag dataBag, string teamProject)
+        {
+            if (dataBag == null)
+            {
+                throw new ArgumentNullException(nameof(dataBag));
+            }
+
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
+            }
+
+            dataBag.SetValue(TeamProject, teamProject);
         }
 
         /// <summary>

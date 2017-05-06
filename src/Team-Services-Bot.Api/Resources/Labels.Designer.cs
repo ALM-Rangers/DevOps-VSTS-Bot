@@ -88,6 +88,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please select an account to connect to..
+        /// </summary>
+        internal static string ConnectToAccount {
+            get {
+                return ResourceManager.GetString("ConnectToAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please login to Team Services..
         /// </summary>
         internal static string PleaseLogin {

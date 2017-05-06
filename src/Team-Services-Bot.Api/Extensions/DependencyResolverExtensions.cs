@@ -35,6 +35,11 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(resolver));
             }
 
+            if (string.IsNullOrWhiteSpace(activityText))
+            {
+                return null;
+            }
+
             var dialogs = resolver.GetServices<Meta<IDialog<object>>>();
 
             return dialogs

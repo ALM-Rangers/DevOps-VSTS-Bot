@@ -127,6 +127,9 @@
     <value>Connected to {0}.</value>
     <comment>{0} = accountname;</comment>
   </data>
+  <data name="ConnectToAccount" xml:space="preserve">
+    <value>Please select an account to connect to.</value>
+  </data>
   <data name="PleaseLogin" xml:space="preserve">
     <value>Please login to Team Services.</value>
   </data>

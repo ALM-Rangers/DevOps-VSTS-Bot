@@ -80,11 +80,8 @@ namespace Vsar.TSBot.Dialogs
             {
                 await context.PostAsync(string.Format(Labels.WelcomeNewUser, activity.From.Name));
 
-                var forward = context.MakeMessage();
-                forward.Text = $"connect {account}";
-
-                var dialog = GlobalConfiguration.Configuration.DependencyResolver.Find(forward.Text);
-                await context.Forward(dialog, this.ResumeAfterChildDialog, forward, CancellationToken.None);
+                var dialog = GlobalConfiguration.Configuration.DependencyResolver.Find("connect");
+                context.Call(dialog, this.ResumeAfterChildDialog);
             }
             else
             {
