@@ -51,8 +51,7 @@ namespace Vsar.TSBot
 
             try
             {
-                if (string.Equals(activity.Type, ActivityTypes.Message, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(activity.Type, ActivityTypes.ConversationUpdate, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(activity.Type, ActivityTypes.Message, StringComparison.OrdinalIgnoreCase))
                 {
                     var invoker = this.container.Resolve<IDialogInvoker>();
                     var dialog = this.container.Resolve<RootDialog>();

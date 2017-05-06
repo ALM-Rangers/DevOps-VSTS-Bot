@@ -68,17 +68,19 @@ namespace Vsar.TSBot.Dialogs
                 return;
             }
 
-            var account = match.Groups[1].Value;
-            var teamProject = match.Groups[2].Value;
+            var account = match.Groups[2].Value;
+            var teamProject = match.Groups[3].Value;
 
             if (!profiles.Any())
             {
                 await this.Login(context, activity, reply);
+                return;
             }
 
             if (string.IsNullOrWhiteSpace(account))
             {
                 await this.SelectAccount(context, profiles, reply);
+                return;
             }
 
             context.UserData.SetCurrentAccount(account);
@@ -94,9 +96,9 @@ namespace Vsar.TSBot.Dialogs
             {
                 context.UserData.SetCurrentProfile(profile);
                 reply.Text = string.Format(Labels.ConnectedTo, account);
-            }
 
-            await context.PostAsync(reply);
+                await context.PostAsync(reply);
+            }
 
             context.Done(reply);
         }
@@ -118,8 +120,6 @@ namespace Vsar.TSBot.Dialogs
             {
                 reply.Attachments.Add(new AccountCard(acc));
             }
-
-            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
 
             await context.PostAsync(reply);
             context.Wait(this.MessageReceivedAsync);

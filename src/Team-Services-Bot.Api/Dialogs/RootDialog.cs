@@ -26,6 +26,8 @@ namespace Vsar.TSBot.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
+        private bool initialized;
+
          /// <inheritdoc />
         public Task StartAsync(IDialogContext context)
         {
@@ -40,12 +42,15 @@ namespace Vsar.TSBot.Dialogs
             var telemetryClient = GlobalConfiguration.Configuration.DependencyResolver.GetService<TelemetryClient>();
 
             // Occurs when the conversation starts.
-            if (string.Equals(activity.Type, ActivityTypes.ConversationUpdate, StringComparison.OrdinalIgnoreCase))
+            if (!this.initialized)
             {
+                this.initialized = true;
                 await this.Welcome(context, activity);
             }
-
-            await this.ProcessCommand(context, activity, telemetryClient);
+            else
+            {
+                await this.ProcessCommand(context, activity, telemetryClient);
+            }
         }
 
         private async Task ProcessCommand(IDialogContext context, IMessageActivity activity, TelemetryClient telemetryClient)
@@ -81,7 +86,7 @@ namespace Vsar.TSBot.Dialogs
                 await context.PostAsync(string.Format(Labels.WelcomeNewUser, activity.From.Name));
 
                 var dialog = GlobalConfiguration.Configuration.DependencyResolver.Find("connect");
-                context.Call(dialog, this.ResumeAfterChildDialog);
+                await context.Forward(dialog, this.ResumeAfterChildDialog, activity, CancellationToken.None);
             }
             else
             {
