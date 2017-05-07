@@ -86,8 +86,8 @@ namespace Vsar.TSBot.Dialogs
                 var match = Regex.Match(text, CommandMatchConnect);
                 if (match.Success)
                 {
-                    this.account = match.Groups[2].Value;
-                    this.teamProject = match.Groups[3].Value;
+                    this.account = match.Groups[1].Value;
+                    this.teamProject = match.Groups[2].Value;
                 }
             }
 
@@ -109,12 +109,13 @@ namespace Vsar.TSBot.Dialogs
             if (string.IsNullOrWhiteSpace(this.teamProject))
             {
                 // Select Team Project.
+                // TODO:
             }
 
             context.UserData.SetCurrentAccount(this.account);
             context.UserData.SetCurrentTeamProject(this.teamProject);
 
-            reply.Text = string.Format(Labels.ConnectedTo, this.account);
+            reply.Text = string.Format(Labels.ConnectedTo, this.account, this.teamProject);
             await context.PostAsync(reply);
 
             context.Done(reply);

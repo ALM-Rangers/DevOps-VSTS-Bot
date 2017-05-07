@@ -124,8 +124,8 @@
     <value>Authentication is required.</value>
   </data>
   <data name="ConnectedTo" xml:space="preserve">
-    <value>Connected to {0}.</value>
-    <comment>{0} = accountname;</comment>
+    <value>Connected to {0} / {1}.</value>
+    <comment>{0} = accountname; {1} = team project.</comment>
   </data>
   <data name="ConnectToAccount" xml:space="preserve">
     <value>Please select an account to connect to.</value>
