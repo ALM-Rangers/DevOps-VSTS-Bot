@@ -71,6 +71,7 @@ namespace Vsar.TSBot.Dialogs
             var reply = context.MakeMessage();
             var text = (activity.Text ?? string.Empty).ToLowerInvariant();
 
+            // Pin was previously created, waiting for it to return.
             if (this.isPinActivated)
             {
                 var isPinHandled = await this.HandlePin(context, activity, pin);
@@ -81,6 +82,7 @@ namespace Vsar.TSBot.Dialogs
             }
             else
             {
+                // Wait for the normal expected input.
                 var match = Regex.Match(text, CommandMatchConnect);
                 if (match.Success)
                 {
@@ -89,18 +91,21 @@ namespace Vsar.TSBot.Dialogs
                 }
             }
 
+            // No Profiles, so we have to login.
             if (!profiles.Any() || profile == null)
             {
                 await this.Login(context, activity, reply);
                 return;
             }
 
+            // No account, show a list avaiable accounts.
             if (string.IsNullOrWhiteSpace(this.account))
             {
                 await this.SelectAccount(context, profiles, reply);
                 return;
             }
 
+            // No team project, ....
             if (string.IsNullOrWhiteSpace(this.teamProject))
             {
                 // Select Team Project.
@@ -128,15 +133,15 @@ namespace Vsar.TSBot.Dialogs
             var text = (activity.Text ?? string.Empty).ToLowerInvariant();
             var match = Regex.Match(text, CommandMatchPin);
 
-            if (!match.Success || !string.Equals(pin, text, StringComparison.OrdinalIgnoreCase))
+            if (match.Success && string.Equals(pin, text, StringComparison.OrdinalIgnoreCase))
             {
-                await context.PostAsync(Exceptions.InvalidPin);
-                context.Wait(this.MessageReceivedAsync);
-
-                return false;
+                return true;
             }
 
-            return true;
+            await context.PostAsync(Exceptions.InvalidPin);
+            context.Wait(this.MessageReceivedAsync);
+
+            return false;
         }
 
         private async Task Login(IDialogContext context, IMessageActivity activity, IMessageActivity reply)

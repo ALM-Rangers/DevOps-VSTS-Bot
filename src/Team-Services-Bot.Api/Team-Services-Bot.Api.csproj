@@ -268,7 +268,6 @@
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Dialogs\ConnectDialog.cs" />
     <Compile Include="DI\CommandMetadataAttribute.cs" />
-    <Compile Include="Dialogs\EchoDialog.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />
     <Compile Include="Extensions\DependencyResolverExtensions.cs" />
     <Compile Include="Extensions\AttachmentCollectionExtensions.cs" />
