@@ -11,6 +11,7 @@ namespace Vsar.TSBot.Dialogs
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
@@ -60,6 +61,12 @@ namespace Vsar.TSBot.Dialogs
             context.Wait(this.MessageReceivedAsync);
 
             return Task.CompletedTask;
+        }
+
+        private static string GeneratePin()
+        {
+            var generator = new Random();
+            return generator.Next(Min, Max).ToString("0000", CultureInfo.InvariantCulture);
         }
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
@@ -121,12 +128,6 @@ namespace Vsar.TSBot.Dialogs
             context.Done(reply);
         }
 
-        private string GeneratePin()
-        {
-            var generator = new Random();
-            return generator.Next(Min, Max).ToString("0000");
-        }
-
         private async Task<bool> HandlePin(IDialogContext context, IMessageActivity activity, string pin)
         {
             this.isPinActivated = false;
@@ -148,11 +149,11 @@ namespace Vsar.TSBot.Dialogs
         private async Task Login(IDialogContext context, IMessageActivity activity, IMessageActivity reply)
         {
             // Set pin.
-            var pin = this.GeneratePin();
+            var pin = GeneratePin();
             context.UserData.SetPin(pin);
             this.isPinActivated = true;
 
-            var card = new LoginCard(this.appId, this.authorizeUrl, activity.ChannelId, Labels.PleaseLogin, activity.From.Id);
+            var card = new LogOnCard(this.appId, new Uri(this.authorizeUrl), activity.ChannelId, Labels.PleaseLogin, activity.From.Id);
 
             reply.Attachments.Add(card);
 

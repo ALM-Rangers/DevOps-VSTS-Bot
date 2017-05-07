@@ -78,7 +78,7 @@ namespace Vsar.TSBot.UnitTests
             var attachment = toUser.Attachments.FirstOrDefault();
             Assert.IsNotNull(attachment, "Expecting an attachment.");
 
-            var card = attachment.Content as LoginCard;
+            var card = attachment.Content as LogOnCard;
             Assert.IsNotNull(card, "Missing signin card.");
 
             var button = card.Buttons.FirstOrDefault();
