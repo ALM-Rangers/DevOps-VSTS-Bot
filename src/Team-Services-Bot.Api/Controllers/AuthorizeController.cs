@@ -57,8 +57,6 @@ namespace Vsar.TSBot
         /// <returns>A view</returns>
         public async Task<ActionResult> Index(string code, string error, string state)
         {
-            var pin = string.Empty;
-
             try
             {
                 var stateArray = (state ?? string.Empty).Split(';');
@@ -83,7 +81,7 @@ namespace Vsar.TSBot
                 var result = Map(accounts, profile, token);
 
                 var data = await this.botService.GetUserData(channelId, userId);
-                pin = data.GetPin();
+                var pin = data.GetPin();
                 var profiles = data.GetProfiles();
 
                 if (!profiles.Any(p => p.Id.Equals(result.Id)))
@@ -94,14 +92,14 @@ namespace Vsar.TSBot
                 data.SetCurrentProfile(result);
                 data.SetProfiles(profiles);
                 await this.botService.SetUserData(channelId, userId, data);
+
+                return this.View(new Authorize(pin));
             }
             catch (Exception ex)
             {
                 this.telemetryClient.TrackException(ex);
                 throw new Exception(Exceptions.UnknownException, ex);
             }
-
-            return this.View(new Authorize(pin));
         }
 
         private static VstsProfile Map(IEnumerable<Account> accounts, Microsoft.VisualStudio.Services.Profile.Profile profile, OAuthToken token)
