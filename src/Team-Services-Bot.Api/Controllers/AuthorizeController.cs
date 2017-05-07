@@ -26,7 +26,6 @@ namespace Vsar.TSBot
         private readonly IAuthenticationService authenticationService;
         private readonly IBotService botService;
         private readonly IProfileService profileService;
-        private readonly TelemetryClient telemetryClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthorizeController"/> class.
@@ -44,7 +43,6 @@ namespace Vsar.TSBot
             this.authenticationService = authenticationService;
             this.botService = botService;
             this.profileService = profileService;
-            this.telemetryClient = telemetryClient;
         }
 
         /// <summary>
@@ -57,49 +55,41 @@ namespace Vsar.TSBot
         /// <returns>A view</returns>
         public async Task<ActionResult> Index(string code, string error, string state)
         {
-            try
+            var stateArray = (state ?? string.Empty).Split(';');
+
+            if (string.IsNullOrWhiteSpace(code) && string.IsNullOrWhiteSpace(error))
             {
-                var stateArray = (state ?? string.Empty).Split(';');
-
-                if (string.IsNullOrWhiteSpace(code) && string.IsNullOrWhiteSpace(error))
-                {
-                    throw new ArgumentNullException(nameof(code));
-                }
-
-                if (stateArray.Length != 2)
-                {
-                    throw new ArgumentException(Exceptions.InvalidState, nameof(state));
-                }
-
-                var channelId = stateArray[0];
-                var userId = stateArray[1];
-
-                // Get the security token.
-                var token = await this.authenticationService.GetToken(code);
-                var profile = await this.profileService.GetProfile(token);
-                var accounts = await this.profileService.GetAccounts(token, profile.Id);
-                var result = Map(accounts, profile, token);
-
-                var data = await this.botService.GetUserData(channelId, userId);
-                var pin = data.GetPin();
-                var profiles = data.GetProfiles();
-
-                if (!profiles.Any(p => p.Id.Equals(result.Id)))
-                {
-                    profiles.Add(result);
-                }
-
-                data.SetCurrentProfile(result);
-                data.SetProfiles(profiles);
-                await this.botService.SetUserData(channelId, userId, data);
-
-                return this.View(new Authorize(pin));
+                throw new ArgumentNullException(nameof(code));
             }
-            catch (Exception ex)
+
+            if (stateArray.Length != 2)
             {
-                this.telemetryClient.TrackException(ex);
-                throw new Exception(Exceptions.UnknownException, ex);
+                throw new ArgumentException(Exceptions.InvalidState, nameof(state));
             }
+
+            var channelId = stateArray[0];
+            var userId = stateArray[1];
+
+            // Get the security token.
+            var token = await this.authenticationService.GetToken(code);
+            var profile = await this.profileService.GetProfile(token);
+            var accounts = await this.profileService.GetAccounts(token, profile.Id);
+            var result = Map(accounts, profile, token);
+
+            var data = await this.botService.GetUserData(channelId, userId);
+            var pin = data.GetPin();
+            var profiles = data.GetProfiles();
+
+            if (!profiles.Any(p => p.Id.Equals(result.Id)))
+            {
+                profiles.Add(result);
+            }
+
+            data.SetCurrentProfile(result);
+            data.SetProfiles(profiles);
+            await this.botService.SetUserData(channelId, userId, data);
+
+            return this.View(new Authorize(pin));
         }
 
         private static VstsProfile Map(IEnumerable<Account> accounts, Microsoft.VisualStudio.Services.Profile.Profile profile, OAuthToken token)

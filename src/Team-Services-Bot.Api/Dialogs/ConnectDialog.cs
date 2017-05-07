@@ -71,6 +71,16 @@ namespace Vsar.TSBot.Dialogs
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            if (result == null)
+            {
+                throw new ArgumentNullException(nameof(result));
+            }
+
             var activity = await result;
             var pin = context.UserData.GetPin();
             var profile = context.UserData.GetCurrentProfile();
