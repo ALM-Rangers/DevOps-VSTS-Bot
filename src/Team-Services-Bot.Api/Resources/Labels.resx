@@ -117,14 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Approvals" xml:space="preserve">
+    <value>Approvals</value>
+  </data>
   <data name="AuthenticationRequired" xml:space="preserve">
     <value>Authentication is required.</value>
   </data>
   <data name="ConnectedTo" xml:space="preserve">
-    <value>Connected to {0}.</value>
-    <comment>{0} = accountname;</comment>
+    <value>Connected to {0} / {1}.</value>
+    <comment>{0} = accountname; {1} = team project.</comment>
+  </data>
+  <data name="ConnectToAccount" xml:space="preserve">
+    <value>Please select an account to connect to.</value>
   </data>
   <data name="PleaseLogin" xml:space="preserve">
-    <value>Please login to Team Services.</value>
+    <value>Please login to Team Services. After login you will receive a four digit pin number, please enter the pin number.</value>
+  </data>
+  <data name="QueueBuild" xml:space="preserve">
+    <value>Queue Build</value>
+  </data>
+  <data name="QueueRelease" xml:space="preserve">
+    <value>QueueRelease</value>
+  </data>
+  <data name="WelcomeExistingUser" xml:space="preserve">
+    <value>Welcome back {0}. I have connected you to Account '{1}', Team Project '{2}'.</value>
+    <comment>{0} = from name; {1] = account name; {2} = team project name;</comment>
+  </data>
+  <data name="WelcomeNewUser" xml:space="preserve">
+    <value>Welcome {0}. I see this is the first team we speak.</value>
+    <comment>{0} = from name</comment>
   </data>
 </root>

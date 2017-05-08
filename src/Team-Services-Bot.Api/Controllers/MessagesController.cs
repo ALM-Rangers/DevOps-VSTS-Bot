@@ -18,7 +18,6 @@ namespace Vsar.TSBot
     using DI;
     using Dialogs;
     using Microsoft.ApplicationInsights;
-    using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
 
     /// <summary>
@@ -52,10 +51,10 @@ namespace Vsar.TSBot
 
             try
             {
-                if (string.Compare(activity.Type, ActivityTypes.Message, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(activity.Type, ActivityTypes.Message, StringComparison.OrdinalIgnoreCase))
                 {
-                    IDialogInvoker invoker = this.container.Resolve<IDialogInvoker>();
-                    RootDialog dialog = this.container.Resolve<RootDialog>();
+                    var invoker = this.container.Resolve<IDialogInvoker>();
+                    var dialog = this.container.Resolve<RootDialog>();
                     await invoker.SendAsync(activity, () => dialog);
                 }
                 else
