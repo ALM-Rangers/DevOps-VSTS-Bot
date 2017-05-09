@@ -44,7 +44,6 @@ namespace Vsar.TSBot.UnitTests
 
             var controller = new AuthorizeController(
                 botService.Object,
-                new TelemetryClient(),
                 authenticationService.Object,
                 profileService.Object);
 

@@ -9,6 +9,7 @@
 
 namespace Vsar.TSBot.Cards
 {
+    using System;
     using System.Collections.Generic;
     using Microsoft.Bot.Connector;
 
@@ -23,7 +24,7 @@ namespace Vsar.TSBot.Cards
         /// <param name="account">The account.</param>
         public AccountCard(string account)
         {
-            var button = new CardAction(ActionTypes.ImBack, account, value: $"connect {account}");
+            var button = new CardAction(ActionTypes.ImBack, account, value: FormattableString.Invariant($"connect {account}"));
             this.Buttons = new List<CardAction> { button };
         }
     }

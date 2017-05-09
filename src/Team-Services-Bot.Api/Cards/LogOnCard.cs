@@ -11,6 +11,7 @@ namespace Vsar.TSBot.Cards
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using Microsoft.Bot.Connector;
     using Resources;
 
@@ -39,7 +40,7 @@ namespace Vsar.TSBot.Cards
         {
             var button = new CardAction
             {
-                Value = string.Format(UrlOAuth, appId, channelId, userId, Scope, authorizeUrl),
+                Value = string.Format(CultureInfo.InvariantCulture, UrlOAuth, appId, channelId, userId, Scope, authorizeUrl),
                 Type = ActionTypes.Signin,
                 Title = Labels.AuthenticationRequired
             };
