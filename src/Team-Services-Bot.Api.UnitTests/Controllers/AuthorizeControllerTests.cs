@@ -13,7 +13,6 @@ namespace Vsar.TSBot.UnitTests
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Web.Mvc;
-    using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.Services.Account;
     using Microsoft.VisualStudio.Services.Profile;
@@ -44,7 +43,6 @@ namespace Vsar.TSBot.UnitTests
 
             var controller = new AuthorizeController(
                 botService.Object,
-                new TelemetryClient(),
                 authenticationService.Object,
                 profileService.Object);
 

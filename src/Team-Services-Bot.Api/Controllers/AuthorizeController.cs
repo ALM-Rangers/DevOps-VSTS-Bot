@@ -14,7 +14,6 @@ namespace Vsar.TSBot
     using System.Linq;
     using System.Threading.Tasks;
     using System.Web.Mvc;
-    using Microsoft.ApplicationInsights;
     using Microsoft.VisualStudio.Services.Account;
     using Resources;
 
@@ -30,13 +29,11 @@ namespace Vsar.TSBot
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthorizeController"/> class.
         /// </summary>
-        /// <param name="telemetryClient">The TelemetryClient.</param>
         /// <param name="botService">The botService.</param>
         /// <param name="profileService">The profileService.s</param>
         /// <param name="authenticationService">The authenticationService.</param>
         public AuthorizeController(
             IBotService botService,
-            TelemetryClient telemetryClient,
             IAuthenticationService authenticationService,
             IProfileService profileService)
         {
