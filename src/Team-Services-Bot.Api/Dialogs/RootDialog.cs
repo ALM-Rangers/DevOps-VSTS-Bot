@@ -11,6 +11,7 @@ namespace Vsar.TSBot.Dialogs
 {
     using System;
     using System.Linq;
+    using System.Runtime.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Web.Http;
@@ -27,16 +28,27 @@ namespace Vsar.TSBot.Dialogs
     public class RootDialog : IDialog<object>
     {
         private bool initialized;
+        [NonSerialized]
+        private IWrapperFactory wrapperFactory;
 
-         /// <inheritdoc />
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RootDialog"/> class.
+        /// </summary>
+        /// <param name="wrapperFactory">The wrapper factory.</param>
+        public RootDialog(IWrapperFactory wrapperFactory)
+        {
+            this.wrapperFactory = wrapperFactory;
+        }
+
+        /// <inheritdoc />
         public Task StartAsync(IDialogContext context)
         {
-            context.Wait(this.MessageReceivedAsync);
+            context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapperFactory.Wrap(c)));
 
             return Task.CompletedTask;
         }
 
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result, IWrapper wrapper)
         {
             var activity = await result;
             var telemetryClient = GlobalConfiguration.Configuration.DependencyResolver.GetService<TelemetryClient>();
@@ -45,12 +57,18 @@ namespace Vsar.TSBot.Dialogs
             if (!this.initialized)
             {
                 this.initialized = true;
-                await this.Welcome(context, activity);
+                await this.Welcome(context, activity, wrapper);
             }
             else
             {
                 await this.ProcessCommand(context, activity, telemetryClient);
             }
+        }
+
+        [OnSerializing]
+        private void OnSerializingMethod(StreamingContext context)
+        {
+            this.wrapperFactory = GlobalConfiguration.Configuration.DependencyResolver.GetService<IWrapperFactory>();
         }
 
         private async Task ProcessCommand(IDialogContext context, IMessageActivity activity, TelemetryClient telemetryClient)
@@ -63,7 +81,7 @@ namespace Vsar.TSBot.Dialogs
 
                 reply.Attachments.Add(new MainOptionsCard());
 
-                context.Wait(this.MessageReceivedAsync);
+                context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapperFactory.Wrap(c)));
             }
             else
             {
@@ -73,12 +91,12 @@ namespace Vsar.TSBot.Dialogs
             }
         }
 
-        private async Task Welcome(IDialogContext context, IMessageActivity activity)
+        private async Task Welcome(IDialogContext context, IMessageActivity activity, IWrapper wrapper)
         {
-            var account = context.UserData.GetCurrentAccount();
-            var profile = context.UserData.GetProfile();
-            var profiles = context.UserData.GetProfiles();
-            var teamProject = context.UserData.GetCurrentTeamProject();
+            var account = wrapper.UserData.GetCurrentAccount();
+            var profile = wrapper.UserData.GetProfile();
+            var profiles = wrapper.UserData.GetProfiles();
+            var teamProject = wrapper.UserData.GetCurrentTeamProject();
 
             if (string.IsNullOrWhiteSpace(account) || profile == null || !profiles.Any() ||
                 string.IsNullOrWhiteSpace(teamProject))
@@ -96,7 +114,7 @@ namespace Vsar.TSBot.Dialogs
 
         private Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
         {
-            context.Wait(this.MessageReceivedAsync);
+            context.Wait((c, r) => this.MessageReceivedAsync(c, r, this.wrapperFactory.Wrap(c)));
             return Task.CompletedTask;
         }
     }

@@ -10,6 +10,7 @@
 namespace Vsar.TSBot.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Web.Http;
@@ -20,6 +21,7 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
 
     /// <summary>
     /// Contains Test methods for <see cref="ConnectDialog"/>
@@ -59,7 +61,12 @@ namespace Vsar.TSBot.UnitTests
                 "vso.identity%20vso.loadtest%20vso.notification%20vso.packaging%20vso.project%20" +
                 "vso.release_execute%20vso.serviceendpoint%20vso.taskgroups%20vso.test%20vso.work";
 
+            var wrapperFactory = new Mock<IWrapperFactory>();
+
             var builder = this.Fixture.Build();
+            builder
+                .Register(c => wrapperFactory.Object)
+                .As<IWrapperFactory>();
             builder.RegisterType<TelemetryClient>();
             builder
                 .RegisterType<ConnectDialog>()
@@ -69,7 +76,7 @@ namespace Vsar.TSBot.UnitTests
 
             var container = builder.Build();
             GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
-            var root = new RootDialog();
+            var root = new RootDialog(wrapperFactory.Object);
 
             // First trigger the welcome message.
             await this.Fixture.GetResponse(container, root, toBot1);
@@ -94,28 +101,59 @@ namespace Vsar.TSBot.UnitTests
         /// </summary>
         /// <returns>Nothing.</returns>
         [TestMethod]
-        [Ignore]
         public async Task SecondTimeConnectionTask()
         {
             var toBot = this.Fixture.CreateMessage();
             toBot.From.Id = Guid.NewGuid().ToString();
+            toBot.From.Name = "User";
             toBot.Text = "connect anaccount";
 
             const string appId = "AnAppId";
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
+            var account = "anaccount";
+            var profile = new VstsProfile();
+            IList<VstsProfile> profiles = new List<VstsProfile> { profile };
+            var teamProject = "TeamProject1";
+
+            var wrapperFactory = new Mock<IWrapperFactory>();
+            var wrapper = new Mock<IWrapper>();
+            var userData = new Mock<IBotDataBag>();
+
             var builder = this.Fixture.Build();
+            builder
+                .Register(c => wrapperFactory.Object)
+                .As<IWrapperFactory>();
             builder.RegisterType<TelemetryClient>();
             builder
                 .RegisterType<ConnectDialog>()
                 .WithParameter("appId", appId)
                 .WithParameter("authorizeUrl", new Uri(authorizeUrl))
+                .WithParameter("wrapperFactory", wrapperFactory.Object)
                 .As<IDialog<object>>();
-
             var container = builder.Build();
             GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
-            var root = new RootDialog();
 
+            wrapperFactory
+                .Setup(wf => wf.Wrap(It.IsAny<IDialogContext>()))
+                .Returns(wrapper.Object);
+            wrapper
+                .Setup(w => w.UserData)
+                .Returns(userData.Object);
+            userData
+                .Setup(ud => ud.TryGetValue("Account", out account))
+                .Returns(true);
+            userData
+                .Setup(ud => ud.TryGetValue("Profile", out profile))
+                .Returns(true);
+            userData
+                .Setup(ud => ud.TryGetValue("Profiles", out profiles))
+                .Returns(true);
+            userData
+                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
+                .Returns(true);
+
+            var root = new RootDialog(wrapperFactory.Object);
             var toUser = await this.Fixture.GetResponse(container, root, toBot);
 
             Assert.AreEqual("Connected to anaccount.", toUser.Text);
