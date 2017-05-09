@@ -16,7 +16,6 @@ namespace Vsar.TSBot
     using Autofac.Extras.AttributeMetadata;
     using Autofac.Integration.Mvc;
     using Autofac.Integration.WebApi;
-    using DI;
     using Dialogs;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
@@ -33,7 +32,7 @@ namespace Vsar.TSBot
         /// <param name="builder">Container builder to be used.</param>
         /// <param name="isDebugging">Flag that indicates if the application is in debugging modus.</param>
         /// <returns>A <see cref="IContainer"/>.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Reviewed.")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Bootstrapper for Autofac. So it is intented to hit all needed dependencies in one place.")]
         public static IContainer Build(ContainerBuilder builder, bool isDebugging)
         {
             if (builder == null)

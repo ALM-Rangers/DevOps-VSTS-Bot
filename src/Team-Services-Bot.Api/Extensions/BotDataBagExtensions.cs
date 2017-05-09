@@ -20,8 +20,10 @@ namespace Vsar.TSBot
     public static class BotDataBagExtensions
     {
         private const string Account = "Account";
+        private const string Pin = "Pin";
         private const string Profile = "Profile";
         private const string Profiles = "Profiles";
+        private const string TeamProject = "TeamProject";
 
         /// <summary>
         /// Gets the current account name.
@@ -30,14 +32,72 @@ namespace Vsar.TSBot
         /// <returns>A string representing the account.</returns>
         public static string GetCurrentAccount(this IBotDataBag dataBag)
         {
-            string result;
-
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            return dataBag.TryGetValue(Account, out result) ? result : string.Empty;
+            return dataBag.TryGetValue(Account, out string result) ? result : string.Empty;
+        }
+
+        /// <summary>
+        /// Gets the current profile.
+        /// </summary>
+        /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
+        /// <returns>A string representing the account.</returns>
+        public static VstsProfile GetCurrentProfile(this IBotDataBag dataBag)
+        {
+            if (dataBag == null)
+            {
+                throw new ArgumentNullException(nameof(dataBag));
+            }
+
+            return dataBag.TryGetValue(Profile, out VstsProfile profile) ? profile : null;
+        }
+
+        /// <summary>
+        /// Gets the current team project for the user.
+        /// </summary>
+        /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
+        /// <returns>the name of the current team project.</returns>
+        public static string GetCurrentTeamProject(this IBotDataBag dataBag)
+        {
+            if (dataBag == null)
+            {
+                throw new ArgumentNullException(nameof(dataBag));
+            }
+
+            return dataBag.TryGetValue(TeamProject, out string teamProject) ? teamProject : string.Empty;
+        }
+
+        /// <summary>
+        /// Gets the pin.
+        /// </summary>
+        /// <param name="data">The bot data.</param>
+        /// <returns>A pin.</returns>
+        public static string GetPin(this BotData data)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            return data.GetProperty<string>(Pin) ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Gets the pin.
+        /// </summary>
+        /// <param name="dataBag">The dataBag.</param>
+        /// <returns>A pin.</returns>
+        public static string GetPin(this IBotDataBag dataBag)
+        {
+            if (dataBag == null)
+            {
+                throw new ArgumentNullException(nameof(dataBag));
+            }
+
+            return dataBag.TryGetValue(Pin, out string result) ? result : string.Empty;
         }
 
         /// <summary>
@@ -47,14 +107,12 @@ namespace Vsar.TSBot
         /// <returns>A VstsProfile.</returns>
         public static VstsProfile GetProfile(this IBotDataBag dataBag)
         {
-            VstsProfile profile;
-
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            return dataBag.TryGetValue(Profile, out profile) ? profile : null;
+            return dataBag.TryGetValue(Profile, out VstsProfile profile) ? profile : null;
         }
 
         /// <summary>
@@ -79,14 +137,12 @@ namespace Vsar.TSBot
         /// <returns>A list of profiles.</returns>
         public static IList<VstsProfile> GetProfiles(this IBotDataBag dataBag)
         {
-            IList<VstsProfile> results;
-
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            return dataBag.TryGetValue(Profiles, out results) ? results : new List<VstsProfile>();
+            return dataBag.TryGetValue(Profiles, out IList<VstsProfile> results) ? results : new List<VstsProfile>();
         }
 
         /// <summary>
@@ -147,6 +203,46 @@ namespace Vsar.TSBot
             }
 
             dataBag.SetValue(Profile, profile);
+        }
+
+        /// <summary>
+        /// Sets the current team project.
+        /// </summary>
+        /// <param name="dataBag">The data bag.</param>
+        /// <param name="teamProject">The team project.</param>
+        public static void SetCurrentTeamProject(this IBotDataBag dataBag, string teamProject)
+        {
+            if (dataBag == null)
+            {
+                throw new ArgumentNullException(nameof(dataBag));
+            }
+
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
+            }
+
+            dataBag.SetValue(TeamProject, teamProject);
+        }
+
+        /// <summary>
+        /// Sets the pin.
+        /// </summary>
+        /// <param name="dataBag">The data bag.</param>
+        /// <param name="pin">The pin.</param>
+        public static void SetPin(this IBotDataBag dataBag, string pin)
+        {
+            if (dataBag == null)
+            {
+                throw new ArgumentNullException(nameof(dataBag));
+            }
+
+            if (string.IsNullOrWhiteSpace(pin))
+            {
+                throw new ArgumentNullException(nameof(pin));
+            }
+
+            dataBag.SetValue(Pin, pin);
         }
 
         /// <summary>

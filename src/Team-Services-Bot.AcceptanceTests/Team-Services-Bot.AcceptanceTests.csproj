@@ -166,11 +166,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Controller.feature</DependentUpon>
     </Compile>
-    <Compile Include="Features\Echo.feature.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Echo.feature</DependentUpon>
-    </Compile>
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -179,10 +174,6 @@
     <None Include="Features\Controller.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>Controller.feature.cs</LastGenOutput>
-    </None>
-    <None Include="Features\Echo.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>Echo.feature.cs</LastGenOutput>
     </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>

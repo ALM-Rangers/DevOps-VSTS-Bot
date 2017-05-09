@@ -9,7 +9,6 @@
 
 namespace Vsar.TSBot.AcceptanceTests
 {
-    using System;
     using System.Linq;
     using FluentAssertions;
     using Microsoft.Bot.Connector.DirectLine;

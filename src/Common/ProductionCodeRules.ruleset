@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="Production code ruleset" Description="This rule set contains all rules except a few which are not appropriate for production code." ToolsVersion="14.0">
+<RuleSet Name="Production code ruleset" Description="This rule set contains all rules except a few which are not appropriate for production code." ToolsVersion="15.0">
   <IncludeAll Action="Warning" />
   <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
     <Rule Id="CA1020" Action="None" />
+    <Rule Id="CA1305" Action="None" />
   </Rules>
   <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
     <Rule Id="SA1305" Action="Warning" />

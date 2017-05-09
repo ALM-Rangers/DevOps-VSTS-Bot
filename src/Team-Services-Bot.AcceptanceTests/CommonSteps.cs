@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the specflow steps to perform an echo.
+// Contains the common specflow steps.
 // </summary>
 // ———————————————————————————————
 
