@@ -14,7 +14,6 @@ namespace Vsar.TSBot
     using System.Linq;
     using System.Threading.Tasks;
     using System.Web.Mvc;
-    using Microsoft.ApplicationInsights;
     using Microsoft.VisualStudio.Services.Account;
     using Resources;
 
