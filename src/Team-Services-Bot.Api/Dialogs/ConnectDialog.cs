@@ -69,7 +69,9 @@ namespace Vsar.TSBot.Dialogs
                 var data = new byte[4];
 
                 generator.GetBytes(data);
-                var value = BitConverter.ToUInt16(data, 0);
+
+                // Get the 5 significant numbers.
+                var value = BitConverter.ToUInt32(data, 0) % 100000;
 
                 return value.ToString("00000", CultureInfo.InvariantCulture);
             }
