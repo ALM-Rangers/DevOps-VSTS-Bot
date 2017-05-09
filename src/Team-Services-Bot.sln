@@ -14,6 +14,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "General", "General", "{CA3F
 		Team-Services-Bot.runsettings = Team-Services-Bot.runsettings
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common Files", "Common Files", "{8D6039D5-30BF-4802-9E85-756354114B31}"
+	ProjectSection(SolutionItems) = preProject
+		Common\CommonAssemblyInfo.cs = Common\CommonAssemblyInfo.cs
+		Common\CustomDictionary.xml = Common\CustomDictionary.xml
+		Common\ProductionCodeRules.ruleset = Common\ProductionCodeRules.ruleset
+		Common\StrongNameKey.snk = Common\StrongNameKey.snk
+		Common\TestCodeRules.ruleset = Common\TestCodeRules.ruleset
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
