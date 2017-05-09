@@ -85,7 +85,7 @@ namespace Vsar.TSBot.UnitTests
             Assert.IsNotNull(button, "Button is missing");
 
             var expected =
-                $"https://app.vssps.visualstudio.com/oauth2/authorize?client_id={appId}&response_type=Assertion&state={toBot2.ChannelId};{toBot2.From.Id}&scope={scope}&redirect_uri={authorizeUrl}/";
+                FormattableString.Invariant($"https://app.vssps.visualstudio.com/oauth2/authorize?client_id={appId}&response_type=Assertion&state={toBot2.ChannelId};{toBot2.From.Id}&scope={scope}&redirect_uri={authorizeUrl}/");
             Assert.AreEqual(expected.ToLower(), button.Value.ToString().ToLower(), "OAuth url is invalid.");
         }
 
