@@ -16,8 +16,10 @@ namespace Vsar.TSBot.UnitTests
     using Autofac;
     using Cards;
     using Dialogs;
+    using FluentAssertions;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
 
     /// <summary>
     /// Contains Test methods for <see cref="ConnectDialog"/>
@@ -45,11 +47,6 @@ namespace Vsar.TSBot.UnitTests
 
             const string appId = "AnAppId";
             const string authorizeUrl = "https://www.authorizationUrl.com";
-            const string scope =
-                "vso.agentpools%20vso.build_execute%20vso.chat_write%20vso.code%20vso.connected_server%20" +
-                "vso.dashboards%20vso.entitlements%20vso.extension%20vso.extension.data%20vso.gallery%20" +
-                "vso.identity%20vso.loadtest%20vso.notification%20vso.packaging%20vso.project%20" +
-                "vso.release_execute%20vso.serviceendpoint%20vso.taskgroups%20vso.test%20vso.work";
 
             var builder = new ContainerBuilder();
             builder
@@ -66,17 +63,55 @@ namespace Vsar.TSBot.UnitTests
             var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
 
             var attachment = toUser.Attachments.FirstOrDefault();
-            Assert.IsNotNull(attachment, "Expecting an attachment.");
+            attachment.Should().NotBeNull();
 
-            var card = attachment.Content as LogOnCard;
-            Assert.IsNotNull(card, "Missing signin card.");
+            var card = attachment.Content;
+            card.Should().BeOfType<LogOnCard>();
 
-            var button = card.Buttons.FirstOrDefault();
-            Assert.IsNotNull(button, "Button is missing");
+            this.Fixture.UserData.Verify(ud => ud.SetValue("Pin", It.IsRegex("\\d{4}")));
+        }
 
-            var expected =
-                FormattableString.Invariant($"https://app.vssps.visualstudio.com/oauth2/authorize?client_id={appId}&response_type=Assertion&state={toBot.ChannelId};{toBot.From.Id}&scope={scope}&redirect_uri={authorizeUrl}/");
-            Assert.AreEqual(expected.ToLower(), button.Value.ToString().ToLower(), "OAuth url is invalid.");
+        /// <summary>
+        /// Tests connecting to an account for the second time.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [TestMethod]
+        public async Task Connect_To_An_Account_Select_An_Account()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "connect";
+
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var profile = new VstsProfile();
+            IList<VstsProfile> profiles = new List<VstsProfile> { profile };
+
+            var builder = new ContainerBuilder();
+            builder
+                .RegisterType<ConnectDialog>()
+                .WithParameter("appId", appId)
+                .WithParameter("authorizeUrl", new Uri(authorizeUrl))
+                .As<IDialog<object>>();
+
+            var container = this.Fixture.Build(builder);
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("Profile", out profile))
+                .Returns(true);
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("Profiles", out profiles))
+                .Returns(true);
+
+            this.Fixture.RootDialog.Initialized = true;
+
+            var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
+
+            var attachment = toUser.Attachments.FirstOrDefault();
+            attachment.Should().NotBeNull();
+
+            var card = attachment.Content;
+            card.Should().BeOfType<AccountsCard>();
         }
 
         /// <summary>
@@ -123,7 +158,7 @@ namespace Vsar.TSBot.UnitTests
 
             var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
 
-            Assert.AreEqual("Connected to anaccount / ateamproject.", toUser.Text);
+            toUser.Text.Should().Be("Connected to anaccount / ateamproject.");
         }
     }
 }

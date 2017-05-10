@@ -82,8 +82,9 @@ namespace Vsar.TSBot.Dialogs
             if (dialog == null)
             {
                 var reply = context.MakeMessage();
-
                 reply.Attachments.Add(new MainOptionsCard());
+
+                await context.PostAsync(reply);
 
                 context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
             }
@@ -108,7 +109,11 @@ namespace Vsar.TSBot.Dialogs
                 await context.PostAsync(string.Format(Labels.WelcomeNewUser, activity.From.Name));
 
                 var dialog = GlobalConfiguration.Configuration.DependencyResolver.Find("connect");
-                await context.Forward(dialog, this.ResumeAfterChildDialog, activity, CancellationToken.None);
+
+                if (dialog != null)
+                {
+                    await context.Forward(dialog, this.ResumeAfterChildDialog, activity, CancellationToken.None);
+                }
             }
             else
             {

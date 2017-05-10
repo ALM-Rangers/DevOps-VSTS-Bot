@@ -185,11 +185,9 @@ namespace Vsar.TSBot.Dialogs
 
         private async Task SelectAccount(IDialogContext context, IList<VstsProfile> profiles, IMessageActivity reply)
         {
+            var accounts = profiles.SelectMany(a => a.Accounts).Distinct().OrderBy(a => a).ToArray();
             reply.Text = Labels.ConnectToAccount;
-            foreach (var acc in profiles.SelectMany(a => a.Accounts).Distinct().OrderBy(a => a))
-            {
-                reply.Attachments.Add(new AccountCard(acc));
-            }
+            reply.Attachments.Add(new AccountsCard(accounts));
 
             await context.PostAsync(reply);
             context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));

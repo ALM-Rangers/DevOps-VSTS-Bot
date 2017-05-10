@@ -1,5 +1,5 @@
 ﻿// ———————————————————————————————
-// <copyright file="AccountCard.cs">
+// <copyright file="AccountsCard.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
@@ -11,21 +11,23 @@ namespace Vsar.TSBot.Cards
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Microsoft.Bot.Connector;
 
     /// <summary>
     /// Represents the Account Card.
     /// </summary>
-    public class AccountCard : HeroCard
+    public class AccountsCard : HeroCard
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AccountCard"/> class.
+        /// Initializes a new instance of the <see cref="AccountsCard"/> class.
         /// </summary>
-        /// <param name="account">The account.</param>
-        public AccountCard(string account)
+        /// <param name="accounts">The account.</param>
+        public AccountsCard(string[] accounts)
         {
-            var button = new CardAction(ActionTypes.ImBack, account, value: FormattableString.Invariant($"connect {account}"));
-            this.Buttons = new List<CardAction> { button };
+            this.Buttons = accounts
+                .Select(a => new CardAction(ActionTypes.ImBack, a, value: FormattableString.Invariant($"connect {a}")))
+                .ToList();
         }
     }
 }

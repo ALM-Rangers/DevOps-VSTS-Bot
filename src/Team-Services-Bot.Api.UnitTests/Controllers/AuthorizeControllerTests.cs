@@ -13,6 +13,7 @@ namespace Vsar.TSBot.UnitTests
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Web.Mvc;
+    using FluentAssertions;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.Services.Account;
     using Microsoft.VisualStudio.Services.Profile;
@@ -46,8 +47,8 @@ namespace Vsar.TSBot.UnitTests
                 authenticationService.Object,
                 profileService.Object);
 
-            var code = "1234567890";
-            var state = "channel1;user1";
+            const string code = "1234567890";
+            const string state = "channel1;user1";
 
             authenticationService
                 .Setup(a => a.GetToken(code))
@@ -68,9 +69,8 @@ namespace Vsar.TSBot.UnitTests
             var result = await controller.Index(code, string.Empty, state) as ViewResult;
             var profiles = botData.GetProfiles();
 
-            Assert.IsNotNull(result);
-            Assert.IsNotNull(profiles);
-            Assert.AreEqual(1, profiles.Count);
+            result.Should().NotBeNull();
+            profiles.Should().NotBeNull().And.HaveCount(1);
         }
     }
 }
