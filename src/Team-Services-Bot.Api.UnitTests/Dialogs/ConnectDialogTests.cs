@@ -13,15 +13,11 @@ namespace Vsar.TSBot.UnitTests
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using System.Web.Http;
     using Autofac;
-    using Autofac.Integration.WebApi;
     using Cards;
     using Dialogs;
-    using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
 
     /// <summary>
     /// Contains Test methods for <see cref="ConnectDialog"/>
@@ -44,11 +40,8 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Connect_To_An_Account_For_The_First_Time()
         {
-            var fromId = Guid.NewGuid().ToString();
-
-            var toBot2 = this.Fixture.CreateMessage();
-            toBot2.From.Id = fromId;
-            toBot2.Text = "connect anaccount";
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "connect anaccount";
 
             const string appId = "AnAppId";
             const string authorizeUrl = "https://www.authorizationUrl.com";
@@ -58,31 +51,19 @@ namespace Vsar.TSBot.UnitTests
                 "vso.identity%20vso.loadtest%20vso.notification%20vso.packaging%20vso.project%20" +
                 "vso.release_execute%20vso.serviceendpoint%20vso.taskgroups%20vso.test%20vso.work";
 
-            var wrapper = new Mock<IDialogContextWrapper>();
-            var userData = new Mock<IBotDataBag>();
-
-            var builder = this.Fixture.Build();
-            builder
-                .Register(c => wrapper.Object)
-                .As<IDialogContextWrapper>();
-            builder.RegisterType<TelemetryClient>();
+            var builder = new ContainerBuilder();
             builder
                 .RegisterType<ConnectDialog>()
                 .WithParameter("appId", appId)
                 .WithParameter("authorizeUrl", new Uri(authorizeUrl))
                 .As<IDialog<object>>();
 
-            var container = builder.Build();
-            GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
+            var container = this.Fixture.Build(builder);
 
-            wrapper
-                .Setup(w => w.GetUserData(It.IsAny<IDialogContext>()))
-                .Returns(userData.Object);
-
-            var root = new RootDialog(wrapper.Object) { Initialized = true };
+            this.Fixture.RootDialog.Initialized = true;
 
             // First trigger the welcome message.
-            var toUser = await this.Fixture.GetResponse(container, root, toBot2);
+            var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
 
             var attachment = toUser.Attachments.FirstOrDefault();
             Assert.IsNotNull(attachment, "Expecting an attachment.");
@@ -94,7 +75,7 @@ namespace Vsar.TSBot.UnitTests
             Assert.IsNotNull(button, "Button is missing");
 
             var expected =
-                FormattableString.Invariant($"https://app.vssps.visualstudio.com/oauth2/authorize?client_id={appId}&response_type=Assertion&state={toBot2.ChannelId};{toBot2.From.Id}&scope={scope}&redirect_uri={authorizeUrl}/");
+                FormattableString.Invariant($"https://app.vssps.visualstudio.com/oauth2/authorize?client_id={appId}&response_type=Assertion&state={toBot.ChannelId};{toBot.From.Id}&scope={scope}&redirect_uri={authorizeUrl}/");
             Assert.AreEqual(expected.ToLower(), button.Value.ToString().ToLower(), "OAuth url is invalid.");
         }
 
@@ -106,8 +87,6 @@ namespace Vsar.TSBot.UnitTests
         public async Task Connect_To_An_Account_Where_Previously_Connected_To()
         {
             var toBot = this.Fixture.CreateMessage();
-            toBot.From.Id = Guid.NewGuid().ToString();
-            toBot.From.Name = "User";
             toBot.Text = "connect anaccount ateamproject";
 
             const string appId = "AnAppId";
@@ -118,41 +97,31 @@ namespace Vsar.TSBot.UnitTests
             IList<VstsProfile> profiles = new List<VstsProfile> { profile };
             var teamProject = "TeamProject1";
 
-            var wrapper = new Mock<IDialogContextWrapper>();
-            var userData = new Mock<IBotDataBag>();
-
-            var builder = this.Fixture.Build();
-            builder
-                .Register(c => wrapper.Object)
-                .As<IDialogContextWrapper>();
-            builder.RegisterType<TelemetryClient>();
+            var builder = new ContainerBuilder();
             builder
                 .RegisterType<ConnectDialog>()
                 .WithParameter("appId", appId)
                 .WithParameter("authorizeUrl", new Uri(authorizeUrl))
                 .As<IDialog<object>>();
-            var container = builder.Build();
-            GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
 
-            wrapper
-                .Setup(w => w.GetUserData(It.IsAny<IDialogContext>()))
-                .Returns(userData.Object);
-            userData
+            var container = this.Fixture.Build(builder);
+
+            this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("Account", out account))
                 .Returns(true);
-            userData
+            this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("Profile", out profile))
                 .Returns(true);
-            userData
+            this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("Profiles", out profiles))
                 .Returns(true);
-            userData
+            this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
                 .Returns(true);
 
-            var root = new RootDialog(wrapper.Object) { Initialized = true };
+            this.Fixture.RootDialog.Initialized = true;
 
-            var toUser = await this.Fixture.GetResponse(container, root, toBot);
+            var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
 
             Assert.AreEqual("Connected to anaccount / ateamproject.", toUser.Text);
         }
