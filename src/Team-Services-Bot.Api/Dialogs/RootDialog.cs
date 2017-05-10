@@ -27,37 +27,41 @@ namespace Vsar.TSBot.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
-        private bool initialized;
         [NonSerialized]
-        private IWrapperFactory wrapperFactory;
+        private IDialogContextWrapper wrapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RootDialog"/> class.
         /// </summary>
-        /// <param name="wrapperFactory">The wrapper factory.</param>
-        public RootDialog(IWrapperFactory wrapperFactory)
+        /// <param name="wrapper">The wrapper.</param>
+        public RootDialog(IDialogContextWrapper wrapper)
         {
-            this.wrapperFactory = wrapperFactory;
+            this.wrapper = wrapper;
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the dialog is initialized.
+        /// </summary>
+        public bool Initialized { get; set; }
 
         /// <inheritdoc />
         public Task StartAsync(IDialogContext context)
         {
-            context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapperFactory.Wrap(c)));
+            context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
 
             return Task.CompletedTask;
         }
 
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result, IWrapper wrapper)
+        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result, IBotDataBag userData)
         {
             var activity = await result;
             var telemetryClient = GlobalConfiguration.Configuration.DependencyResolver.GetService<TelemetryClient>();
 
             // Occurs when the conversation starts.
-            if (!this.initialized)
+            if (!this.Initialized)
             {
-                this.initialized = true;
-                await this.Welcome(context, activity, wrapper);
+                this.Initialized = true;
+                await this.Welcome(context, activity, userData);
             }
             else
             {
@@ -68,7 +72,7 @@ namespace Vsar.TSBot.Dialogs
         [OnSerializing]
         private void OnSerializingMethod(StreamingContext context)
         {
-            this.wrapperFactory = GlobalConfiguration.Configuration.DependencyResolver.GetService<IWrapperFactory>();
+            this.wrapper = GlobalConfiguration.Configuration.DependencyResolver.GetService<IDialogContextWrapper>();
         }
 
         private async Task ProcessCommand(IDialogContext context, IMessageActivity activity, TelemetryClient telemetryClient)
@@ -81,7 +85,7 @@ namespace Vsar.TSBot.Dialogs
 
                 reply.Attachments.Add(new MainOptionsCard());
 
-                context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapperFactory.Wrap(c)));
+                context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
             }
             else
             {
@@ -91,12 +95,12 @@ namespace Vsar.TSBot.Dialogs
             }
         }
 
-        private async Task Welcome(IDialogContext context, IMessageActivity activity, IWrapper wrapper)
+        private async Task Welcome(IDialogContext context, IMessageActivity activity, IBotDataBag userData)
         {
-            var account = wrapper.UserData.GetCurrentAccount();
-            var profile = wrapper.UserData.GetProfile();
-            var profiles = wrapper.UserData.GetProfiles();
-            var teamProject = wrapper.UserData.GetCurrentTeamProject();
+            var account = userData.GetCurrentAccount();
+            var profile = userData.GetProfile();
+            var profiles = userData.GetProfiles();
+            var teamProject = userData.GetCurrentTeamProject();
 
             if (string.IsNullOrWhiteSpace(account) || profile == null || !profiles.Any() ||
                 string.IsNullOrWhiteSpace(teamProject))
@@ -114,7 +118,7 @@ namespace Vsar.TSBot.Dialogs
 
         private Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
         {
-            context.Wait((c, r) => this.MessageReceivedAsync(c, r, this.wrapperFactory.Wrap(c)));
+            context.Wait((c, r) => this.MessageReceivedAsync(c, r, this.wrapper.GetUserData(c)));
             return Task.CompletedTask;
         }
     }

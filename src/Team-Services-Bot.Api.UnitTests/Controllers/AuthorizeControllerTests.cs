@@ -30,7 +30,7 @@ namespace Vsar.TSBot.UnitTests
         /// </summary>
         /// <returns>.</returns>
         [TestMethod]
-        public async Task AuthorizeTest()
+        public async Task Authorize_A_Valid_LogOn()
         {
             var authenticationService = new Mock<IAuthenticationService>();
             var botService = new Mock<IBotService>();

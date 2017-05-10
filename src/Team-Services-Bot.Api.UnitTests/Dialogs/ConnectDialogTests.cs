@@ -42,12 +42,9 @@ namespace Vsar.TSBot.UnitTests
         /// </summary>
         /// <returns>Nothing.</returns>
         [TestMethod]
-        public async Task FirstTimeConnectionTest()
+        public async Task Connect_To_An_Account_For_The_First_Time()
         {
             var fromId = Guid.NewGuid().ToString();
-            var toBot1 = this.Fixture.CreateMessage();
-            toBot1.From.Id = fromId;
-            toBot1.Text = "Hi";
 
             var toBot2 = this.Fixture.CreateMessage();
             toBot2.From.Id = fromId;
@@ -61,12 +58,13 @@ namespace Vsar.TSBot.UnitTests
                 "vso.identity%20vso.loadtest%20vso.notification%20vso.packaging%20vso.project%20" +
                 "vso.release_execute%20vso.serviceendpoint%20vso.taskgroups%20vso.test%20vso.work";
 
-            var wrapperFactory = new Mock<IWrapperFactory>();
+            var wrapper = new Mock<IDialogContextWrapper>();
+            var userData = new Mock<IBotDataBag>();
 
             var builder = this.Fixture.Build();
             builder
-                .Register(c => wrapperFactory.Object)
-                .As<IWrapperFactory>();
+                .Register(c => wrapper.Object)
+                .As<IDialogContextWrapper>();
             builder.RegisterType<TelemetryClient>();
             builder
                 .RegisterType<ConnectDialog>()
@@ -76,10 +74,14 @@ namespace Vsar.TSBot.UnitTests
 
             var container = builder.Build();
             GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
-            var root = new RootDialog(wrapperFactory.Object);
+
+            wrapper
+                .Setup(w => w.GetUserData(It.IsAny<IDialogContext>()))
+                .Returns(userData.Object);
+
+            var root = new RootDialog(wrapper.Object) { Initialized = true };
 
             // First trigger the welcome message.
-            await this.Fixture.GetResponse(container, root, toBot1);
             var toUser = await this.Fixture.GetResponse(container, root, toBot2);
 
             var attachment = toUser.Attachments.FirstOrDefault();
@@ -101,12 +103,12 @@ namespace Vsar.TSBot.UnitTests
         /// </summary>
         /// <returns>Nothing.</returns>
         [TestMethod]
-        public async Task SecondTimeConnectionTask()
+        public async Task Connect_To_An_Account_Where_Previously_Connected_To()
         {
             var toBot = this.Fixture.CreateMessage();
             toBot.From.Id = Guid.NewGuid().ToString();
             toBot.From.Name = "User";
-            toBot.Text = "connect anaccount";
+            toBot.Text = "connect anaccount ateamproject";
 
             const string appId = "AnAppId";
             const string authorizeUrl = "https://www.authorizationUrl.com";
@@ -116,29 +118,24 @@ namespace Vsar.TSBot.UnitTests
             IList<VstsProfile> profiles = new List<VstsProfile> { profile };
             var teamProject = "TeamProject1";
 
-            var wrapperFactory = new Mock<IWrapperFactory>();
-            var wrapper = new Mock<IWrapper>();
+            var wrapper = new Mock<IDialogContextWrapper>();
             var userData = new Mock<IBotDataBag>();
 
             var builder = this.Fixture.Build();
             builder
-                .Register(c => wrapperFactory.Object)
-                .As<IWrapperFactory>();
+                .Register(c => wrapper.Object)
+                .As<IDialogContextWrapper>();
             builder.RegisterType<TelemetryClient>();
             builder
                 .RegisterType<ConnectDialog>()
                 .WithParameter("appId", appId)
                 .WithParameter("authorizeUrl", new Uri(authorizeUrl))
-                .WithParameter("wrapperFactory", wrapperFactory.Object)
                 .As<IDialog<object>>();
             var container = builder.Build();
             GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
 
-            wrapperFactory
-                .Setup(wf => wf.Wrap(It.IsAny<IDialogContext>()))
-                .Returns(wrapper.Object);
             wrapper
-                .Setup(w => w.UserData)
+                .Setup(w => w.GetUserData(It.IsAny<IDialogContext>()))
                 .Returns(userData.Object);
             userData
                 .Setup(ud => ud.TryGetValue("Account", out account))
@@ -153,10 +150,11 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
                 .Returns(true);
 
-            var root = new RootDialog(wrapperFactory.Object);
+            var root = new RootDialog(wrapper.Object) { Initialized = true };
+
             var toUser = await this.Fixture.GetResponse(container, root, toBot);
 
-            Assert.AreEqual("Connected to anaccount.", toUser.Text);
+            Assert.AreEqual("Connected to anaccount / ateamproject.", toUser.Text);
         }
     }
 }

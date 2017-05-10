@@ -142,8 +142,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            var x = dataBag.TryGetValue(Profiles, out IList<VstsProfile> results);
-            return x ? results : new List<VstsProfile>();
+            return dataBag.TryGetValue(Profiles, out IList<VstsProfile> results) ? results : new List<VstsProfile>();
         }
 
         /// <summary>

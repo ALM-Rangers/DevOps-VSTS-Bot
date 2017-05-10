@@ -88,8 +88,8 @@ namespace Vsar.TSBot
                 .RegisterApiControllers(typeof(Bootstrap).Assembly);
 
             builder
-                .RegisterType<WrapperFactory>()
-                .As<IWrapperFactory>();
+                .RegisterType<DialogContextWrapper>()
+                .As<IDialogContextWrapper>();
 
             builder
                 .RegisterAssemblyTypes(typeof(Bootstrap).Assembly)
