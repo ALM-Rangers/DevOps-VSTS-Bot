@@ -11,11 +11,12 @@ namespace Vsar.TSBot
 {
     using System;
     using System.Linq;
-    using System.Web.Configuration;
+    using App_Start;
     using Autofac;
     using Autofac.Extras.AttributeMetadata;
     using Autofac.Integration.Mvc;
     using Autofac.Integration.WebApi;
+    using DI;
     using Dialogs;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
@@ -30,19 +31,28 @@ namespace Vsar.TSBot
         /// Builds a <see cref="IContainer"/>.
         /// </summary>
         /// <param name="builder">Container builder to be used.</param>
+        /// <param name="configurationProvider">The provider used to access configuration information.</param>
         /// <param name="isDebugging">Flag that indicates if the application is in debugging modus.</param>
         /// <returns>A <see cref="IContainer"/>.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Bootstrapper for Autofac. So it is intented to hit all needed dependencies in one place.")]
-        public static IContainer Build(ContainerBuilder builder, bool isDebugging)
+        public static IContainer Build(ContainerBuilder builder, IConfigurationProvider configurationProvider, bool isDebugging)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
+            if (configurationProvider == null)
+            {
+                throw new ArgumentNullException(nameof(configurationProvider));
+            }
+
+            builder
+                .RegisterInstance(configurationProvider);
+
             var microsoftAppCredentials = new MicrosoftAppCredentials(
-                WebConfigurationManager.AppSettings["MicrosoftAppId"],
-                WebConfigurationManager.AppSettings["MicrosoftAppPassword"]);
+                configurationProvider.GetValue(ConfigurationSettingName.MicrosoftApplicationId),
+                configurationProvider.GetValue(ConfigurationSettingName.MicrosoftApplicationPassword));
 
             builder
                 .RegisterModule<AttributedMetadataModule>();
@@ -56,7 +66,7 @@ namespace Vsar.TSBot
             if (isDebugging)
             {
                 builder.Register(c => new StateClient(
-                    new Uri(WebConfigurationManager.AppSettings["EmulatorListeningUrl"]), microsoftAppCredentials));
+                    new Uri(configurationProvider.GetValue(ConfigurationSettingName.EmulatorListeningUrl)), microsoftAppCredentials));
             }
             else
             {
@@ -69,8 +79,8 @@ namespace Vsar.TSBot
 
             builder
                 .RegisterType<AuthenticationService>()
-                .WithParameter("appSecret", WebConfigurationManager.AppSettings["AppSecret"])
-                .WithParameter("authorizeUrl", new Uri(WebConfigurationManager.AppSettings["AuthorizeUrl"]))
+                .WithParameter("appSecret", configurationProvider.GetValue(ConfigurationSettingName.ApplicationSecret))
+                .WithParameter("authorizeUrl", new Uri(configurationProvider.GetValue(ConfigurationSettingName.AuthorizeUrl)))
                 .AsImplementedInterfaces();
 
             builder
@@ -96,8 +106,8 @@ namespace Vsar.TSBot
 
             builder
                 .RegisterType<ConnectDialog>()
-                .WithParameter("appId", WebConfigurationManager.AppSettings["AppId"])
-                .WithParameter("authorizeUrl", new Uri(WebConfigurationManager.AppSettings["AuthorizeUrl"]))
+                .WithParameter("appId", configurationProvider.GetValue(ConfigurationSettingName.ApplicationId))
+                .WithParameter("authorizeUrl", new Uri(configurationProvider.GetValue(ConfigurationSettingName.AuthorizeUrl)))
                 .AsImplementedInterfaces();
 
             builder

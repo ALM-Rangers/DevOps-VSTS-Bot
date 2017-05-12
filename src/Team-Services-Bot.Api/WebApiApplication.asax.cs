@@ -36,7 +36,7 @@ namespace Vsar.TSBot
                 .RegisterType<DialogInvoker>()
                 .As<IDialogInvoker>();
 
-            var container = Bootstrap.Build(builder, this.Context.IsDebuggingEnabled);
+            var container = Bootstrap.Build(builder, new WebConfigurationProvider(), this.Context.IsDebuggingEnabled);
 
             GlobalConfiguration.Configure(c => WebApiConfig.Register(c, container));
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
