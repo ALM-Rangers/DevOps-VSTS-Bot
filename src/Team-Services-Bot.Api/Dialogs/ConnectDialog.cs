@@ -13,6 +13,7 @@ namespace Vsar.TSBot.Dialogs
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Security.Cryptography;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Cards;
@@ -29,8 +30,6 @@ namespace Vsar.TSBot.Dialogs
     {
         private const string CommandMatchConnect = "connect *(\\w*) *(\\w*)";
         private const string CommandMatchPin = "(\\d{4})";
-        private const int Min = 0;
-        private const int Max = 9999;
 
         private readonly string appId;
         private readonly string authorizeUrl;
@@ -65,8 +64,17 @@ namespace Vsar.TSBot.Dialogs
 
         private static string GeneratePin()
         {
-            var generator = new Random();
-            return generator.Next(Min, Max).ToString("0000", CultureInfo.InvariantCulture);
+            using (var generator = new RNGCryptoServiceProvider())
+            {
+                var data = new byte[4];
+
+                generator.GetBytes(data);
+
+                // Get the 5 significant numbers.
+                var value = BitConverter.ToUInt32(data, 0) % 100000;
+
+                return value.ToString("00000", CultureInfo.InvariantCulture);
+            }
         }
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
