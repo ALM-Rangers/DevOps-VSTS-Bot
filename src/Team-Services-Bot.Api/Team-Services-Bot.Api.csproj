@@ -258,6 +258,7 @@
     </Compile>
     <Compile Include="App_Start\Bootstrap.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\ConfigurationSettingName.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
@@ -271,6 +272,8 @@
     <Compile Include="Dialogs\DialogContextWrapper.cs" />
     <Compile Include="DI\CommandMetadataAttribute.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />
+    <Compile Include="DI\IConfigurationProvider.cs" />
+    <Compile Include="DI\WebConfigurationProvider.cs" />
     <Compile Include="Extensions\DependencyResolverExtensions.cs" />
     <Compile Include="Extensions\AttachmentCollectionExtensions.cs" />
     <Compile Include="Extensions\BotDataBagExtensions.cs" />

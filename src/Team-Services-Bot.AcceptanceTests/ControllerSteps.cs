@@ -10,6 +10,7 @@
 namespace Vsar.TSBot.AcceptanceTests
 {
     using System;
+    using System.Collections.Specialized;
     using System.Diagnostics.CodeAnalysis;
     using System.Net.Http;
     using System.Threading;
@@ -17,6 +18,7 @@ namespace Vsar.TSBot.AcceptanceTests
     using System.Web.Http;
     using System.Web.Http.Controllers;
     using System.Web.Http.Dependencies;
+    using App_Start;
     using Autofac;
     using DI;
     using Dialogs;
@@ -50,8 +52,10 @@ namespace Vsar.TSBot.AcceptanceTests
         [Given(@"I have a controller")]
         public void GivenIHaveAController()
         {
+            IConfigurationProvider configProvider = SetupConfiguration();
             ContainerBuilder builder = new ContainerBuilder();
             builder.RegisterInstance<IDialogInvoker>(this.mockInvoker.Object);
+            IContainer container = Bootstrap.Build(builder, configProvider, false);
             this.mockInvoker
                 .Setup(di => di.SendAsync(It.IsAny<IMessageActivity>(), It.IsAny<Func<IDialog<object>>>()))
                 .Callback<IMessageActivity, Func<IDialog<object>>>((toBot, makeRoot) =>
@@ -62,7 +66,7 @@ namespace Vsar.TSBot.AcceptanceTests
                 .Returns(Task.CompletedTask);
 
             this.data.HttpConfiguration = new HttpConfiguration();
-            WebApiConfig.Register(this.data.HttpConfiguration, builder.Build());
+            WebApiConfig.Register(this.data.HttpConfiguration, container);
             IDependencyScope scope = this.data.HttpConfiguration.DependencyResolver.BeginScope();
             this.data.Controller = (MessagesController)scope.GetService(typeof(MessagesController));
             this.data.Controller.ControllerContext = new HttpControllerContext();
@@ -117,6 +121,22 @@ namespace Vsar.TSBot.AcceptanceTests
         public void ThenTheActivityIsPassedToTheDialog()
         {
             this.invokedActivity.Should().BeSameAs(this.activity);
+        }
+
+        private static IConfigurationProvider SetupConfiguration()
+        {
+            NameValueCollection config = new NameValueCollection();
+            config.Add(ConfigurationSettingName.MicrosoftApplicationId, Guid.NewGuid().ToString());
+            config.Add(ConfigurationSettingName.MicrosoftApplicationPassword, Guid.NewGuid().ToString());
+            config.Add(ConfigurationSettingName.ApplicationId, Guid.NewGuid().ToString());
+            config.Add(ConfigurationSettingName.ApplicationSecret, Guid.NewGuid().ToString());
+            config.Add(ConfigurationSettingName.AuthorizeUrl, "http://localhost/");
+
+            Mock<IConfigurationProvider> mockConfigProvider = new Mock<IConfigurationProvider>();
+            mockConfigProvider
+                .Setup(cp => cp.GetValue(It.IsAny<string>()))
+                .Returns((string name) => config[name]);
+            return mockConfigProvider.Object;
         }
     }
 }
