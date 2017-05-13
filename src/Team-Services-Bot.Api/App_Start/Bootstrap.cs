@@ -11,7 +11,6 @@ namespace Vsar.TSBot
 {
     using System;
     using System.Linq;
-    using App_Start;
     using Autofac;
     using Autofac.Extras.AttributeMetadata;
     using Autofac.Integration.Mvc;

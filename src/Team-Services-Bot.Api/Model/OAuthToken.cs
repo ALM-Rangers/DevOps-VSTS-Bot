@@ -14,7 +14,6 @@ namespace Vsar.TSBot
     /// <summary>
     /// Represents the OAuth token.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Auth", Justification = "Reviewed.")]
     [DataContract]
     public class OAuthToken
     {

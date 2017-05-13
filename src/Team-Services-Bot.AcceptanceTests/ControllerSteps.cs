@@ -18,7 +18,6 @@ namespace Vsar.TSBot.AcceptanceTests
     using System.Web.Http;
     using System.Web.Http.Controllers;
     using System.Web.Http.Dependencies;
-    using App_Start;
     using Autofac;
     using DI;
     using Dialogs;
