@@ -13,12 +13,16 @@ namespace Vsar.TSBot.UnitTests
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Web.Http;
     using Autofac;
     using Autofac.Extras.AttributeMetadata;
+    using Autofac.Integration.WebApi;
     using Dialogs;
+    using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Connector;
+    using Moq;
 
     /// <summary>
     /// A fixture for dialogs.
@@ -27,6 +31,23 @@ namespace Vsar.TSBot.UnitTests
     {
         private const string Bot = "testBot";
         private const string User = "testUser";
+
+        private RootDialog rootDialog;
+
+        /// <summary>
+        /// Gets the root dialog.
+        /// </summary>
+        public RootDialog RootDialog => this.rootDialog ?? (this.rootDialog = new RootDialog(this.Wrapper.Object));
+
+        /// <summary>
+        /// Gets a mocked user data.
+        /// </summary>
+        public Mock<IBotDataBag> UserData { get; } = new Mock<IBotDataBag>();
+
+        /// <summary>
+        /// Gets a mocked <see cref="IDialogContextWrapper"/>.
+        /// </summary>
+        public Mock<IDialogContextWrapper> Wrapper { get; } = new Mock<IDialogContextWrapper>();
 
         /// <summary>
         /// Creates a default <see cref="IMessageActivity"/>.
@@ -38,7 +59,7 @@ namespace Vsar.TSBot.UnitTests
             {
                 Id = Guid.NewGuid().ToString(),
                 Type = ActivityTypes.Message,
-                From = new ChannelAccount { Id = User },
+                From = new ChannelAccount { Id = User, Name = User },
                 Conversation = new ConversationAccount { Id = Guid.NewGuid().ToString() },
                 Recipient = new ChannelAccount { Id = Bot },
                 ServiceUrl = "InvalidServiceUrl",
@@ -51,10 +72,24 @@ namespace Vsar.TSBot.UnitTests
         /// <summary>
         /// Instantiates a <see cref="ContainerBuilder"/> and registers some defaults.
         /// </summary>
+        /// <param name="builder">A container builder.</param>
         /// <returns>A <see cref="ContainerBuilder"/>.</returns>
-        public ContainerBuilder Build()
+        public IContainer Build(ContainerBuilder builder)
         {
-            var builder = new ContainerBuilder();
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            builder
+                .Register(c => this.Wrapper.Object)
+                .As<IDialogContextWrapper>();
+
+            builder
+                .RegisterType<TelemetryClient>();
+
+            builder
+                .Register(c => this.RootDialog);
 
             builder
                 .RegisterModule<AttributedMetadataModule>();
@@ -84,7 +119,14 @@ namespace Vsar.TSBot.UnitTests
                 .As<IBotToUser>()
                 .InstancePerLifetimeScope();
 
-            return builder;
+            var container = builder.Build();
+            GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
+
+            this.Wrapper
+                .Setup(w => w.GetUserData(It.IsAny<IDialogContext>()))
+                .Returns(this.UserData.Object);
+
+            return container;
         }
 
         /// <summary>

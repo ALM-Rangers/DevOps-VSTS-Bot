@@ -1,9 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="Test code ruleset" Description="This rule set contains all rules except a few which are not appropriate for test code." ToolsVersion="14.0">
+<RuleSet Name="Test code ruleset" Description="This rule set contains all rules except a few which are not appropriate for test code." ToolsVersion="15.0">
   <IncludeAll Action="Warning" />
   <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
     <Rule Id="CA1014" Action="None" />
     <Rule Id="CA1020" Action="None" />
+    <Rule Id="CA1506" Action="None" />
+    <Rule Id="CA1707" Action="None" />
+    <Rule Id="CA1822" Action="None" />
   </Rules>
   <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp" RuleNamespace="Microsoft.CodeAnalysis.CSharp">
     <Rule Id="CS1591" Action="None" />

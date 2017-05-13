@@ -98,6 +98,10 @@ namespace Vsar.TSBot
                 .RegisterApiControllers(typeof(Bootstrap).Assembly);
 
             builder
+                .RegisterType<DialogContextWrapper>()
+                .As<IDialogContextWrapper>();
+
+            builder
                 .RegisterAssemblyTypes(typeof(Bootstrap).Assembly)
                 .Where(t => t.GetInterfaces().Any(i => i.IsAssignableFrom(typeof(IDialog<object>))))
                 .Except<ConnectDialog>()

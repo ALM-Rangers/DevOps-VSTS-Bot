@@ -13,9 +13,11 @@ namespace Vsar.TSBot.Dialogs
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Runtime.Serialization;
     using System.Security.Cryptography;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
+    using System.Web.Http;
     using Cards;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
@@ -33,6 +35,8 @@ namespace Vsar.TSBot.Dialogs
 
         private readonly string appId;
         private readonly string authorizeUrl;
+        [NonSerialized]
+        private IDialogContextWrapper wrapper;
 
         private string account;
         private bool isPinActivated;
@@ -43,7 +47,8 @@ namespace Vsar.TSBot.Dialogs
         /// </summary>
         /// <param name="appId">The registered application id.</param>
         /// <param name="authorizeUrl">The url to return to after authentication.</param>
-        public ConnectDialog(string appId, Uri authorizeUrl)
+        /// <param name="wrapper">The wrapper</param>
+        public ConnectDialog(string appId, Uri authorizeUrl, IDialogContextWrapper wrapper)
         {
             if (authorizeUrl == null)
             {
@@ -52,12 +57,13 @@ namespace Vsar.TSBot.Dialogs
 
             this.appId = appId;
             this.authorizeUrl = authorizeUrl.ToString();
+            this.wrapper = wrapper ?? throw new ArgumentNullException(nameof(wrapper));
         }
 
         /// <inheritdoc />
         public Task StartAsync(IDialogContext context)
         {
-            context.Wait(this.MessageReceivedAsync);
+            context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
 
             return Task.CompletedTask;
         }
@@ -77,7 +83,7 @@ namespace Vsar.TSBot.Dialogs
             }
         }
 
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result, IBotDataBag userData)
         {
             if (context == null)
             {
@@ -90,9 +96,9 @@ namespace Vsar.TSBot.Dialogs
             }
 
             var activity = await result;
-            var pin = context.UserData.GetPin();
-            var profile = context.UserData.GetCurrentProfile();
-            var profiles = context.UserData.GetProfiles();
+            var pin = userData.GetPin();
+            var profile = userData.GetCurrentProfile();
+            var profiles = userData.GetProfiles();
             var reply = context.MakeMessage();
             var text = (activity.Text ?? string.Empty).ToLowerInvariant();
 
@@ -119,7 +125,7 @@ namespace Vsar.TSBot.Dialogs
             // No Profiles, so we have to login.
             if (!profiles.Any() || profile == null)
             {
-                await this.Login(context, activity, reply);
+                await this.Login(context, activity, reply, userData);
                 return;
             }
 
@@ -137,8 +143,8 @@ namespace Vsar.TSBot.Dialogs
                 // TODO:
             }
 
-            context.UserData.SetCurrentAccount(this.account);
-            context.UserData.SetCurrentTeamProject(this.teamProject);
+            userData.SetCurrentAccount(this.account);
+            userData.SetCurrentTeamProject(this.teamProject);
 
             reply.Text = string.Format(Labels.ConnectedTo, this.account, this.teamProject);
             await context.PostAsync(reply);
@@ -159,16 +165,16 @@ namespace Vsar.TSBot.Dialogs
             }
 
             await context.PostAsync(Exceptions.InvalidPin);
-            context.Wait(this.MessageReceivedAsync);
+            context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
 
             return false;
         }
 
-        private async Task Login(IDialogContext context, IMessageActivity activity, IMessageActivity reply)
+        private async Task Login(IDialogContext context, IMessageActivity activity, IMessageActivity reply, IBotDataBag userData)
         {
             // Set pin.
             var pin = GeneratePin();
-            context.UserData.SetPin(pin);
+            userData.SetPin(pin);
             this.isPinActivated = true;
 
             var card = new LogOnCard(this.appId, new Uri(this.authorizeUrl), activity.ChannelId, Labels.PleaseLogin, activity.From.Id);
@@ -176,19 +182,23 @@ namespace Vsar.TSBot.Dialogs
             reply.Attachments.Add(card);
 
             await context.PostAsync(reply);
-            context.Wait(this.MessageReceivedAsync);
+            context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
+        }
+
+        [OnSerializing]
+        private void OnSerializingMethod(StreamingContext context)
+        {
+            this.wrapper = GlobalConfiguration.Configuration.DependencyResolver.GetService<IDialogContextWrapper>();
         }
 
         private async Task SelectAccount(IDialogContext context, IList<VstsProfile> profiles, IMessageActivity reply)
         {
+            var accounts = profiles.SelectMany(a => a.Accounts).Distinct().OrderBy(a => a).ToArray();
             reply.Text = Labels.ConnectToAccount;
-            foreach (var acc in profiles.SelectMany(a => a.Accounts).Distinct().OrderBy(a => a))
-            {
-                reply.Attachments.Add(new AccountCard(acc));
-            }
+            reply.Attachments.Add(new AccountsCard(accounts));
 
             await context.PostAsync(reply);
-            context.Wait(this.MessageReceivedAsync);
+            context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
         }
     }
 }

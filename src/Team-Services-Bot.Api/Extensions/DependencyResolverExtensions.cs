@@ -42,7 +42,7 @@ namespace Vsar.TSBot
 
             var dialogs = resolver.GetServices<Meta<IDialog<object>>>();
 
-            return dialogs
+            return dialogs?
                 .Where(m => activityText.Trim().StartsWith(m.Metadata["Command"].ToString(), StringComparison.OrdinalIgnoreCase))
                 .Select(m => m.Value)
                 .FirstOrDefault();
