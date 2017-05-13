@@ -299,8 +299,8 @@
     <Compile Include="Services\BotService.cs" />
     <Compile Include="Services\IAuthenticationService.cs" />
     <Compile Include="Services\IBotService.cs" />
-    <Compile Include="Services\IProfileService.cs" />
-    <Compile Include="Services\ProfileService.cs" />
+    <Compile Include="Services\IVstsService.cs" />
+    <Compile Include="Services\VstsService.cs" />
     <Compile Include="WebApiApplication.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

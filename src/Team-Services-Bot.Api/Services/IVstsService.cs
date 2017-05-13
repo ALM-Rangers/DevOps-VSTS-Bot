@@ -1,5 +1,5 @@
 ﻿// ———————————————————————————————
-// <copyright file="IProfileService.cs">
+// <copyright file="IVstsService.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
@@ -18,7 +18,7 @@ namespace Vsar.TSBot
     /// <summary>
     /// Interface for the ProfileService implementation.
     /// </summary>
-    public interface IProfileService
+    public interface IVstsService
     {
         /// <summary>
         /// Gets the accounts for which an user is a member.
@@ -34,6 +34,6 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="token">A <see cref="OAuthToken"/>.s</param>
         /// <returns>A <see cref="Microsoft.VisualStudio.Services.Profile.Profile"/>.</returns>
-        Task<Microsoft.VisualStudio.Services.Profile.Profile> GetProfile(OAuthToken token);
+        Task<Profile> GetProfile(OAuthToken token);
     }
 }

@@ -87,7 +87,7 @@ namespace Vsar.TSBot
                 .AsImplementedInterfaces();
 
             builder
-                .RegisterType<ProfileService>()
+                .RegisterType<VstsService>()
                 .AsImplementedInterfaces();
 
             builder

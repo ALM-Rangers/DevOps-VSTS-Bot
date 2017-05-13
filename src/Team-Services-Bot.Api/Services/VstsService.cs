@@ -1,5 +1,5 @@
 ﻿// ———————————————————————————————
-// <copyright file="ProfileService.cs">
+// <copyright file="VstsService.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
@@ -20,13 +20,18 @@ namespace Vsar.TSBot
     using Microsoft.VisualStudio.Services.WebApi;
 
     /// <summary>
-    /// Contains method(s) for accessing the profile.
+    /// Contains method(s) for accessing VSTS.
     /// </summary>
-    public class ProfileService : IProfileService
+    public class VstsService : IVstsService
     {
         private const string Url = "https://app.vssps.visualstudio.com";
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Gets the VTST accounts for which an user is a member.
+        /// </summary>
+        /// <param name="token">A <see cref="OAuthToken"/>.</param>
+        /// <param name="memberId">The memberId.</param>
+        /// <returns>A list with <see cref="Account"/>.</returns>
         public async Task<IList<Account>> GetAccounts(OAuthToken token, Guid memberId)
         {
             var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
@@ -38,8 +43,12 @@ namespace Vsar.TSBot
             }
         }
 
-        /// <inheritdoc />
-        public async Task<Microsoft.VisualStudio.Services.Profile.Profile> GetProfile(OAuthToken token)
+        /// <summary>
+        /// Gets the user profile from VSTS.
+        /// </summary>
+        /// <param name="token">A <see cref="OAuthToken"/>.s</param>
+        /// <returns>A <see cref="Profile"/>.</returns>
+        public async Task<Profile> GetProfile(OAuthToken token)
         {
             var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
             var connection = new VssConnection(new Uri(Url), credentials);

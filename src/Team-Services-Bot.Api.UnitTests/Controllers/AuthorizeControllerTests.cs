@@ -35,7 +35,7 @@ namespace Vsar.TSBot.UnitTests
         {
             var authenticationService = new Mock<IAuthenticationService>();
             var botService = new Mock<IBotService>();
-            var profileService = new Mock<IProfileService>();
+            var profileService = new Mock<IVstsService>();
 
             var token = new OAuthToken();
             var profile = new Profile();
