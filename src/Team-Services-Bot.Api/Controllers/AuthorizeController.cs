@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the Controller logic to handle the response from the oauth action.
+// Provides method(s) so the user can authorize himself against VSTS.
 // </summary>
 // ———————————————————————————————
 
@@ -18,7 +18,7 @@ namespace Vsar.TSBot
     using Resources;
 
     /// <summary>
-    /// Handles the response from the oauth action.
+    /// Provides method(s) so the user can authorize himself against VSTS.
     /// </summary>
     public class AuthorizeController : Controller
     {
@@ -43,7 +43,7 @@ namespace Vsar.TSBot
         }
 
         /// <summary>
-        /// Handles the response for the oauth action.
+        /// Handles the response for the oauth action for VSTS.
         /// </summary>
         /// <param name="code">The code.</param>
         /// <param name="error">A error.</param>

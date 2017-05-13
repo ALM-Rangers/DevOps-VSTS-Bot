@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the Root Dialog logic to handle messages.
+// Represents the dialog for connecting to a VSTS account and team project.
 // </summary>
 // ———————————————————————————————
 
@@ -24,7 +24,7 @@ namespace Vsar.TSBot.Dialogs
     using Resources;
 
     /// <summary>
-    /// Represents the dialog to connect to an account.
+    /// Represents the dialog for connecting to a VSTS account and team project.
     /// </summary>
     [CommandMetadata("connect")]
     [Serializable]
@@ -55,9 +55,14 @@ namespace Vsar.TSBot.Dialogs
                 throw new ArgumentNullException(nameof(authorizeUrl));
             }
 
+            if (wrapper == null)
+            {
+                throw new ArgumentNullException(nameof(wrapper));
+            }
+
             this.appId = appId;
             this.authorizeUrl = authorizeUrl.ToString();
-            this.wrapper = wrapper ?? throw new ArgumentNullException(nameof(wrapper));
+            this.wrapper = wrapper;
         }
 
         /// <inheritdoc />

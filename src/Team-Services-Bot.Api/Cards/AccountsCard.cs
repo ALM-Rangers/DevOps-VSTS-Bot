@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the account from wich the user can choose.
+// Represents the card for a list of accounts.
 // </summary>
 // ———————————————————————————————
 
@@ -15,7 +15,7 @@ namespace Vsar.TSBot.Cards
     using Microsoft.Bot.Connector;
 
     /// <summary>
-    /// Represents the Account Card.
+    /// Represents the card for a list of accounts.
     /// </summary>
     public class AccountsCard : HeroCard
     {
@@ -23,7 +23,7 @@ namespace Vsar.TSBot.Cards
         /// Initializes a new instance of the <see cref="AccountsCard"/> class.
         /// </summary>
         /// <param name="accounts">The account.</param>
-        public AccountsCard(string[] accounts)
+        public AccountsCard(IEnumerable<string> accounts)
         {
             this.Buttons = accounts
                 .Select(a => new CardAction(ActionTypes.ImBack, a, value: FormattableString.Invariant($"connect {a}")))

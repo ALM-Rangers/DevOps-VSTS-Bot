@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the Root Dialog logic to handle messages.
+// Represents the root dialog where all conversations start or ends.
 // </summary>
 // ———————————————————————————————
 
@@ -22,7 +22,7 @@ namespace Vsar.TSBot.Dialogs
     using Resources;
 
     /// <summary>
-    /// Represents the Root dialog from where all conversations start.
+    /// Represents the root dialog where all conversations start or ends.
     /// </summary>
     [Serializable]
     public class RootDialog : IDialog<object>

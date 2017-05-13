@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the configuration for Web Api.
+// Provides method(s) to configure web api.
 // </summary>
 // ———————————————————————————————
 
@@ -17,7 +17,7 @@ namespace Vsar.TSBot
     using Newtonsoft.Json.Serialization;
 
     /// <summary>
-    /// Class that bootstraps anything regarding Web Api.
+    /// Provides method(s) to configure web api.
     /// </summary>
     public static class WebApiConfig
     {
