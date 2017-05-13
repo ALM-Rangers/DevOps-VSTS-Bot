@@ -16,6 +16,7 @@ namespace Vsar.TSBot.UnitTests
     using Autofac;
     using Autofac.Integration.WebApi;
     using Cards;
+    using Common;
     using Dialogs;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
@@ -40,6 +41,7 @@ namespace Vsar.TSBot.UnitTests
         /// </summary>
         /// <returns>Nothing.</returns>
         [TestMethod]
+        [TestCategory(TestCategories.Unit)]
         public async Task FirstTimeConnectionTest()
         {
             var fromId = Guid.NewGuid().ToString();
@@ -94,6 +96,7 @@ namespace Vsar.TSBot.UnitTests
         /// </summary>
         /// <returns>Nothing.</returns>
         [TestMethod]
+        [TestCategory(TestCategories.Unit)]
         [Ignore]
         public async Task SecondTimeConnectionTask()
         {

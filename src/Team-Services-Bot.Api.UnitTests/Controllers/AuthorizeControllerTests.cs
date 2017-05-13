@@ -13,6 +13,7 @@ namespace Vsar.TSBot.UnitTests
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Web.Mvc;
+    using Common;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.Services.Account;
     using Microsoft.VisualStudio.Services.Profile;
@@ -23,6 +24,7 @@ namespace Vsar.TSBot.UnitTests
     /// Contains the tests for the Authorize Controller.
     /// </summary>
     [TestClass]
+    [TestCategory(TestCategories.Unit)]
     public class AuthorizeControllerTests
     {
         /// <summary>

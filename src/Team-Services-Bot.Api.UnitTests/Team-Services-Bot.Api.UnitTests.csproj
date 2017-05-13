@@ -177,6 +177,9 @@
     <Compile Include="..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="..\Common\TestCategories.cs">
+      <Link>Properties\TestCategories.cs</Link>
+    </Compile>
     <Compile Include="Controllers\AuthorizeControllerTests.cs" />
     <Compile Include="Dialogs\ConnectDialogTests.cs" />
     <Compile Include="Fixtures\DialogFixture.cs" />
