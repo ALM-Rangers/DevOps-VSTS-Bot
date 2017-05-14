@@ -25,37 +25,53 @@ namespace Vsar.TSBot.AcceptanceTests
     [Binding]
     public sealed class CommonSteps
     {
-        [StepArgumentTransformation("'config:(.+)'")]
-        public string TransformConfigProperty(string propertyName)
+        [Given(@"A user '(.*)'")]
+        public void GivenAUser(string userName)
+        {
+            Config.UserName = userName;
+        }
+
+        [Given(@"A clean state")]
+        public void GivenACleanState()
+        {
+            Config.BotState.SetUserData(ChannelIds.Directline, Config.UserName, new BotData());
+        }
+
+        [StepArgumentTransformation("config:(.+)")]
+        public KeyValuePair<string, string> TransformConfigProperty(string propertyName)
         {
             var type = typeof(Config);
             var property = type.GetProperty(propertyName);
 
-            return property.GetValue(null, null).ToString();
+            var value = property.GetValue(null, null).ToString();
+
+            return new KeyValuePair<string, string>(propertyName, value);
         }
 
-        [Given(@"I started a conversation as '(.*)'")]
-        public void GivenIStartedAConversationAs(string userName)
+        [Given(@"I started a conversation")]
+        public void GivenIStartedAConversationAs()
         {
             var client = new DirectLineClient(Config.BotSecret);
             var conversation = client.Conversations.StartConversation();
 
             Config.Client = client;
             Config.ConversationId = conversation.ConversationId;
-            Config.UserName = userName;
         }
 
         [Given(@"The user has previously logged in into the account and team project '(.*)'")]
-        public void GivenTheUserHasPreviouslyLoggedInIntoTheAccountAndTeamProject(string teamProject)
+        public void GivenTheUserHasPreviouslyLoggedInIntoTheAccountAndTeamProject(KeyValuePair<string, string> pair)
         {
             var profile = new VstsProfile();
             profile.Accounts.Add(Config.Account);
 
             var userData = Config.BotState.GetUserData(ChannelIds.Directline, Config.UserName);
+
             userData.SetCurrentAccount(Config.Account);
             userData.SetCurrentProfile(profile);
             userData.SetProfiles(new List<VstsProfile> { profile });
-            userData.SetCurrentTeamProject(teamProject);
+            userData.SetCurrentTeamProject(pair.Value);
+
+            Config.BotState.SetUserData(ChannelIds.Directline, Config.UserName, userData);
         }
 
         [When(@"I say '(.*)'")]
@@ -74,15 +90,15 @@ namespace Vsar.TSBot.AcceptanceTests
         [Then(@"the bot should respond with '(.*)'")]
         public void ThenTheBotShouldRespondWith(string message)
         {
-            var matches = Regex.Matches(message, "'config:(.+)'");
+            var matches = Regex.Matches(message, "'config:(.+?)'");
             foreach (Match match in matches)
             {
-                var value = this.TransformConfigProperty(match.Groups[1].Value);
-                message = message.Replace(match.Groups[0].Value, value);
+                var pair = this.TransformConfigProperty(match.Groups[1].Value);
+                message = message.Replace(match.Groups[0].Value, FormattableString.Invariant($"'{pair.Value}'"));
             }
 
             var activities = Config.Client.Conversations.GetActivities(Config.ConversationId);
-            var activity = activities.Activities.LastOrDefault(a => string.Equals(a.From.Id, Config.BotId, StringComparison.OrdinalIgnoreCase));
+            var activity = activities.Activities.FirstOrDefault(a => string.Equals(a.From.Id, Config.BotId, StringComparison.OrdinalIgnoreCase));
 
             activity.Text.ShouldBeEquivalentTo(message);
         }
