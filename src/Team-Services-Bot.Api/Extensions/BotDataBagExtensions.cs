@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains extensions for the IBotDataBag.
+// Provides extensions for IBotDataBag and BotData.
 // </summary>
 // ———————————————————————————————
 
@@ -15,7 +15,7 @@ namespace Vsar.TSBot
     using Microsoft.Bot.Connector;
 
     /// <summary>
-    /// Extensions for <see cref="IBotDataBag"/>.
+    /// Provides extensions for <see cref="IBotDataBag"/> and <see cref="BotData"/>.
     /// </summary>
     public static class BotDataBagExtensions
     {

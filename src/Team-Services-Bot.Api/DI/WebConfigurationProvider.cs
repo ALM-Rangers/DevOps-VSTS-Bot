@@ -3,11 +3,11 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Provider to access configuration for a web application.
+// Provides access configuration for a web application.
 // </summary>
 // ———————————————————————————————
 
-namespace Vsar.TSBot.DI
+namespace Vsar.TSBot
 {
     using System.Web.Configuration;
 

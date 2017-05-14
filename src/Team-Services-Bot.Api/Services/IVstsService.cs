@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the interface for the ProfileService
+// Represents an interface for getting profile information for a user from VSTS.
 // </summary>
 // ———————————————————————————————
 
@@ -17,7 +17,7 @@ namespace Vsar.TSBot
     using Microsoft.VisualStudio.Services.Profile;
 
     /// <summary>
-    /// Interface for the IVstsService implementation.
+    /// Interface for accessing VSTS.
     /// </summary>
     public interface IVstsService
     {

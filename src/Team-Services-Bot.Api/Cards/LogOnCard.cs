@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the login card.
+// Represents the card that is used to logon.
 // </summary>
 // ———————————————————————————————
 
@@ -16,7 +16,7 @@ namespace Vsar.TSBot.Cards
     using Resources;
 
     /// <summary>
-    /// Represent the login card.
+    /// Represents the card that is used to logon.
     /// </summary>
     public class LogOnCard : SigninCard
     {

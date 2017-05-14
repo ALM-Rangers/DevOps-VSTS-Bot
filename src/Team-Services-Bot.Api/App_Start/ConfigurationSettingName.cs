@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Defines the name of configuration settings.
+// Defines the names for the configuration settings.
 // </summary>
 // ———————————————————————————————
 

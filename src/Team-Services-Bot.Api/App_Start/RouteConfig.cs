@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the routing configuration.
+// Provides method(s) to register routes for the controllers.
 // </summary>
 // ———————————————————————————————
 
@@ -13,7 +13,7 @@ namespace Vsar.TSBot
     using System.Web.Routing;
 
     /// <summary>
-    /// Contains the routing configuration.
+    /// Provides method(s) to register routes for the controllers.
     /// </summary>
     public static class RouteConfig
     {

@@ -7,7 +7,7 @@
 // </summary>
 // ———————————————————————————————
 
-namespace Vsar.TSBot.DI
+namespace Vsar.TSBot
 {
     using System;
     using System.Threading;

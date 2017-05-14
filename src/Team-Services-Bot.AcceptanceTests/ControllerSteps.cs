@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the specflow steps to perform an echo.
+// Provides steps that tests the controller.
 // </summary>
 // ———————————————————————————————
 
@@ -19,7 +19,6 @@ namespace Vsar.TSBot.AcceptanceTests
     using System.Web.Http.Controllers;
     using System.Web.Http.Dependencies;
     using Autofac;
-    using DI;
     using Dialogs;
     using FluentAssertions;
     using Microsoft.Bot.Builder.Dialogs;
@@ -32,28 +31,24 @@ namespace Vsar.TSBot.AcceptanceTests
     [SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", Justification = "Managed by specflow")]
     public class ControllerSteps
     {
-        private ControllerData data;
-        private Mock<IDialogInvoker> mockInvoker = new Mock<IDialogInvoker>();
+        private readonly Mock<IDialogInvoker> mockInvoker = new Mock<IDialogInvoker>();
+        private readonly ControllerData data;
+        private Activity activity;
         private Func<IDialog<object>> invokedMakeRoot;
         private IMessageActivity invokedActivity;
-        private Activity activity;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ControllerSteps"/> class.
-        /// </summary>
-        /// <param name="data">The controller data to be used by the tests.</param>
         public ControllerSteps(ControllerData data)
         {
             this.data = data;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Controller setup needs it")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Controller setup needs it")]
         [Given(@"I have a controller")]
         public void GivenIHaveAController()
         {
             IConfigurationProvider configProvider = SetupConfiguration();
-            ContainerBuilder builder = new ContainerBuilder();
-            builder.RegisterInstance<IDialogInvoker>(this.mockInvoker.Object);
+            var builder = new ContainerBuilder();
+            builder.RegisterInstance(this.mockInvoker.Object);
             IContainer container = Bootstrap.Build(builder, configProvider, false);
             this.mockInvoker
                 .Setup(di => di.SendAsync(It.IsAny<IMessageActivity>(), It.IsAny<Func<IDialog<object>>>()))
@@ -84,16 +79,14 @@ namespace Vsar.TSBot.AcceptanceTests
         [When(@"I post a message activity to the controller")]
         public void WhenIPostAMessageActivityToTheController()
         {
-            this.activity = new Activity();
-            this.activity.Type = ActivityTypes.Message;
+            this.activity = new Activity { Type = ActivityTypes.Message };
             this.data.Response = this.data.Controller.Post(this.activity).Result;
         }
 
         [When(@"I post a non-message activity to the controller")]
         public void WhenIPostANonMessageActivityToTheController()
         {
-            this.activity = new Activity();
-            this.activity.Type = ActivityTypes.ConversationUpdate;
+            this.activity = new Activity { Type = ActivityTypes.ConversationUpdate };
             this.data.Response = this.data.Controller.Post(this.activity).Result;
         }
 
@@ -124,12 +117,14 @@ namespace Vsar.TSBot.AcceptanceTests
 
         private static IConfigurationProvider SetupConfiguration()
         {
-            NameValueCollection config = new NameValueCollection();
-            config.Add(ConfigurationSettingName.MicrosoftApplicationId, Guid.NewGuid().ToString());
-            config.Add(ConfigurationSettingName.MicrosoftApplicationPassword, Guid.NewGuid().ToString());
-            config.Add(ConfigurationSettingName.ApplicationId, Guid.NewGuid().ToString());
-            config.Add(ConfigurationSettingName.ApplicationSecret, Guid.NewGuid().ToString());
-            config.Add(ConfigurationSettingName.AuthorizeUrl, "http://localhost/");
+            NameValueCollection config = new NameValueCollection
+            {
+                { ConfigurationSettingName.MicrosoftApplicationId, Guid.NewGuid().ToString() },
+                { ConfigurationSettingName.MicrosoftApplicationPassword, Guid.NewGuid().ToString() },
+                { ConfigurationSettingName.ApplicationId, Guid.NewGuid().ToString() },
+                { ConfigurationSettingName.ApplicationSecret, Guid.NewGuid().ToString() },
+                { ConfigurationSettingName.AuthorizeUrl, "http://localhost/" }
+            };
 
             Mock<IConfigurationProvider> mockConfigProvider = new Mock<IConfigurationProvider>();
             mockConfigProvider

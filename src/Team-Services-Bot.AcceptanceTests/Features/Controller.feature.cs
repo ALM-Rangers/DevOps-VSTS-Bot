@@ -23,10 +23,22 @@ namespace Vsar.TSBot.AcceptanceTests.Features
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
-        private static Microsoft.VisualStudio.TestTools.UnitTesting.TestContext _testContext;
+        private Microsoft.VisualStudio.TestTools.UnitTesting.TestContext _testContext;
         
 #line 1 "Controller.feature"
 #line hidden
+        
+        public Microsoft.VisualStudio.TestTools.UnitTesting.TestContext TestContext
+        {
+            get
+            {
+                return this._testContext;
+            }
+            set
+            {
+                this._testContext = value;
+            }
+        }
         
         [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute()]
         public static void FeatureSetup(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext testContext)
@@ -35,7 +47,6 @@ namespace Vsar.TSBot.AcceptanceTests.Features
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Controller", "\tAs a chat user\r\n\tI want to be able to invoke the Team Services Bot\r\n\tSo that I c" +
                     "an get it to help me with Team Services tasks", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
-            _testContext = testContext;
         }
         
         [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute()]
@@ -64,7 +75,7 @@ namespace Vsar.TSBot.AcceptanceTests.Features
         public virtual void ScenarioSetup(TechTalk.SpecFlow.ScenarioInfo scenarioInfo)
         {
             testRunner.OnScenarioStart(scenarioInfo);
-            testRunner.ScenarioContext.Add("TestContext", _testContext);
+            testRunner.ScenarioContext.Add("TestContext", TestContext);
         }
         
         public virtual void ScenarioCleanup()
@@ -75,11 +86,11 @@ namespace Vsar.TSBot.AcceptanceTests.Features
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Invoke the root dialog")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Controller")]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Acceptance")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Behavioural")]
         public virtual void InvokeTheRootDialog()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Invoke the root dialog", new string[] {
-                        "Acceptance"});
+                        "Behavioural"});
 #line 7
 this.ScenarioSetup(scenarioInfo);
 #line 8
@@ -99,11 +110,11 @@ this.ScenarioSetup(scenarioInfo);
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Non-message activity sent to the controller")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Controller")]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Acceptance")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Behavioural")]
         public virtual void Non_MessageActivitySentToTheController()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Non-message activity sent to the controller", new string[] {
-                        "Acceptance"});
+                        "Behavioural"});
 #line 15
 this.ScenarioSetup(scenarioInfo);
 #line 16
@@ -121,11 +132,11 @@ this.ScenarioSetup(scenarioInfo);
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Exception invoking the root dialog")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Controller")]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Acceptance")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Behavioural")]
         public virtual void ExceptionInvokingTheRootDialog()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Exception invoking the root dialog", new string[] {
-                        "Acceptance"});
+                        "Behavioural"});
 #line 22
 this.ScenarioSetup(scenarioInfo);
 #line 23

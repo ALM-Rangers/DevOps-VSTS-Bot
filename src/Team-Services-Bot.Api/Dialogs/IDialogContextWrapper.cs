@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains interface for the wrapper
+// Represents an interface for wrapping around the IDialogContext which makes it easier to do unit testing.
 // </summary>
 // ———————————————————————————————
 

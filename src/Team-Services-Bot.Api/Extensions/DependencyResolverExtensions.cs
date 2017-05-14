@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains extension methods for IDependencyResolver.
+// Provides extension methods for IDependencyResolver.
 // </summary>
 // ———————————————————————————————
 
@@ -18,7 +18,7 @@ namespace Vsar.TSBot
     using Microsoft.Bot.Builder.Dialogs;
 
     /// <summary>
-    /// Contains extensions for <see cref="IComponentContext"/>/
+    /// Provides extension methods for <see cref="IDependencyResolver"/>.
     /// </summary>
     public static class DependencyResolverExtensions
     {

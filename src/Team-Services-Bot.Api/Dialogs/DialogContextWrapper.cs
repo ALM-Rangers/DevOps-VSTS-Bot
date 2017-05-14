@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the wrapper.
+// Provides an implementation for IDialogContextWrapper.
 // </summary>
 // ———————————————————————————————
 
@@ -13,7 +13,7 @@ namespace Vsar.TSBot.Dialogs
     using Microsoft.Bot.Builder.Dialogs;
 
     /// <summary>
-    /// Represents the wrapper.
+    /// Provides an implementation for <see cref="IDialogContextWrapper"/>.
     /// </summary>
     public class DialogContextWrapper : IDialogContextWrapper
     {

@@ -14,22 +14,17 @@ namespace Vsar.TSBot.UnitTests
     using System.Threading.Tasks;
     using System.Web.Mvc;
     using FluentAssertions;
+    using Common;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.Services.Account;
     using Microsoft.VisualStudio.Services.Profile;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
-    /// <summary>
-    /// Contains the tests for the Authorize Controller.
-    /// </summary>
     [TestClass]
+    [TestCategory(TestCategories.Unit)]
     public class AuthorizeControllerTests
     {
-        /// <summary>
-        /// Tests the normal Authorization flow.
-        /// </summary>
-        /// <returns>.</returns>
         [TestMethod]
         public async Task Authorize_A_Valid_LogOn()
         {
