@@ -9,6 +9,7 @@
 
 namespace Vsar.TSBot
 {
+    using System;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -24,10 +25,21 @@ namespace Vsar.TSBot
         public string AccessToken { get; set; }
 
         /// <summary>
+        /// Gets when this OAuthToken is created (UTC).
+        /// </summary>
+        [DataMember(Name = "created_on")]
+        public DateTime CreatedOn { get; } = DateTime.UtcNow;
+
+        /// <summary>
         /// Gets or sets the time it expires in.
         /// </summary>
         [DataMember(Name = "expires_in")]
-        public string ExpiresIn { get; set; }
+        public int ExpiresIn { get; set; }
+
+        /// <summary>
+        /// Gets the moment the token expires (UTC).
+        /// </summary>
+        public DateTime ExpiresOn => this.CreatedOn.AddSeconds(this.ExpiresIn);
 
         /// <summary>
         /// Gets or sets the refresh token.

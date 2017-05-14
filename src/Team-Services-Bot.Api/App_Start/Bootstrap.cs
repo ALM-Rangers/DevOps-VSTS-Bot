@@ -61,7 +61,7 @@ namespace Vsar.TSBot
                 configurationProvider.GetValue(ConfigurationSettingName.MicrosoftApplicationPassword));
 
             // When debugging with the bot emulator we need to use the listening url from the emulator.
-            if (isDebugging)
+            if (isDebugging && !string.IsNullOrEmpty(configurationProvider.GetValue(ConfigurationSettingName.EmulatorListeningUrl)))
             {
                 builder.Register(c => new StateClient(
                     new Uri(configurationProvider.GetValue(ConfigurationSettingName.EmulatorListeningUrl)), microsoftAppCredentials));
