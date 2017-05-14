@@ -12,8 +12,10 @@ namespace Vsar.TSBot
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Microsoft.TeamFoundation.Core.WebApi;
     using Microsoft.VisualStudio.Services.Account;
     using Microsoft.VisualStudio.Services.Account.Client;
+    using Microsoft.VisualStudio.Services.Common;
     using Microsoft.VisualStudio.Services.OAuth;
     using Microsoft.VisualStudio.Services.Profile;
     using Microsoft.VisualStudio.Services.Profile.Client;
@@ -24,39 +26,63 @@ namespace Vsar.TSBot
     /// </summary>
     public class VstsService : IVstsService
     {
-        private const string Url = "https://app.vssps.visualstudio.com";
+        private readonly Uri vstsAppUrl = new Uri("https://app.vssps.visualstudio.com");
 
-        /// <summary>
-        /// Gets the VTST accounts for which an user is a member.
-        /// </summary>
-        /// <param name="token">A <see cref="OAuthToken"/>.</param>
-        /// <param name="memberId">The memberId.</param>
-        /// <returns>A list with <see cref="Account"/>.</returns>
+        /// <inheritdoc/>
         public async Task<IList<Account>> GetAccounts(OAuthToken token, Guid memberId)
         {
-            var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
-            var connection = new VssConnection(new Uri(Url), credentials);
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
 
-            using (var client = connection.GetClient<AccountHttpClient>())
+            using (AccountHttpClient client = ConnectAndGetClient<AccountHttpClient>(this.vstsAppUrl, token))
             {
                 return await client.GetAccountsByMemberAsync(memberId);
             }
         }
 
-        /// <summary>
-        /// Gets the user profile from VSTS.
-        /// </summary>
-        /// <param name="token">A <see cref="OAuthToken"/>.s</param>
-        /// <returns>A <see cref="Profile"/>.</returns>
+        /// <inheritdoc/>
         public async Task<Profile> GetProfile(OAuthToken token)
         {
-            var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
-            var connection = new VssConnection(new Uri(Url), credentials);
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
 
-            using (var client = connection.GetClient<ProfileHttpClient>())
+            using (ProfileHttpClient client = ConnectAndGetClient<ProfileHttpClient>(this.vstsAppUrl, token))
             {
                 return await client.GetProfileAsync(new ProfileQueryContext(AttributesScope.Core));
             }
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<TeamProjectReference>> GetProjects(Uri accountUrl, OAuthToken token)
+        {
+            if (accountUrl == null)
+            {
+                throw new ArgumentNullException(nameof(accountUrl));
+            }
+
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            using (ProjectHttpClient client = ConnectAndGetClient<ProjectHttpClient>(accountUrl, token))
+            {
+                return await client.GetProjects();
+            }
+        }
+
+        private static T ConnectAndGetClient<T>(Uri accountUri, OAuthToken token)
+            where T : VssHttpClientBase
+        {
+            var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
+            var connection = new VssConnection(accountUri, credentials);
+            T client = connection.GetClient<T>();
+
+            return client;
         }
     }
 }
