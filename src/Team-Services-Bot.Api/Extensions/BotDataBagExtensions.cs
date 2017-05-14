@@ -154,6 +154,26 @@ namespace Vsar.TSBot
         /// <summary>
         /// Sets the current account name.
         /// </summary>
+        /// <param name="data">The bot data.</param>
+        /// <param name="account">The account.</param>
+        public static void SetCurrentAccount(this BotData data, string account)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
+            data.SetProperty(Account, account);
+        }
+
+        /// <summary>
+        /// Sets the current account name.
+        /// </summary>
         /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
         /// <param name="account">the account.</param>
         public static void SetCurrentAccount(this IBotDataBag dataBag, string account)
@@ -209,6 +229,26 @@ namespace Vsar.TSBot
             }
 
             dataBag.SetValue(Profile, profile);
+        }
+
+        /// <summary>
+        /// Sets the current team project.
+        /// </summary>
+        /// <param name="data">The bot data.</param>
+        /// <param name="teamProject">The team project.</param>
+        public static void SetCurrentTeamProject(this BotData data, string teamProject)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
+            }
+
+            data.SetProperty(TeamProject, teamProject);
         }
 
         /// <summary>

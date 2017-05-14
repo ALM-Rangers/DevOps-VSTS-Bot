@@ -1,7 +1,15 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <RunSettings>
   <TestRunParameters>
+    <Parameter name="Account" value="" />
+    <Parameter name="AppId" value="" />
+    <Parameter name="AppSecret" value="" />
     <Parameter name="BotId" value="" />
     <Parameter name="BotSecret" value="" />
+    <Parameter name="MicrosoftApplicationId" value="" />
+    <Parameter name="MicrosoftApplicationPassword" value="" />
+    <Parameter name="RefreshToken" value="" />
+    <Parameter name="TeamProjectOne" value="Team-Services-Bot_Project-One" />
+    <Parameter name="TeamProjectTwo" value="Team-Services-Bot_Project-Two" />
   </TestRunParameters>
 </RunSettings>
