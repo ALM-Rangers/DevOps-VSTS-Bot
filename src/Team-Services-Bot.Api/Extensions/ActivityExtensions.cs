@@ -10,6 +10,7 @@
 namespace Vsar.TSBot
 {
     using System;
+    using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
 
     /// <summary>
@@ -17,8 +18,6 @@ namespace Vsar.TSBot
     /// </summary>
     public static class ActivityExtensions
     {
-        private const string Teams = "msteams";
-
         /// <summary>
         /// Checks if the <see cref="IActivity"/> comes from the MS Teams channel.
         /// </summary>
@@ -31,7 +30,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(activity));
             }
 
-            return activity.ChannelId.Equals(Teams, StringComparison.OrdinalIgnoreCase);
+            return activity.ChannelId.Equals(ChannelIds.Msteams, StringComparison.OrdinalIgnoreCase);
         }
     }
 }
