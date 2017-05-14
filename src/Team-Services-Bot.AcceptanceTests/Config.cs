@@ -22,6 +22,7 @@ namespace Vsar.TSBot.AcceptanceTests
 
         public static string BotSecret => TestContext.Properties["BotSecret"].ToString();
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "As we are using Specflow we can not determine when the client is out of scope.")]
         public static IBotState BotState
         {
             get

@@ -48,6 +48,7 @@ namespace Vsar.TSBot.AcceptanceTests
             return new KeyValuePair<string, string>(propertyName, value);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "As we are using Specflow we can not determine when the client is out of scope.")]
         [Given(@"I started a conversation")]
         public void GivenIStartedAConversationAs()
         {
