@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Bootstraps Autofac.
+// Provides method(s) to bootstrap the dependency injection framework.
 // </summary>
 // ———————————————————————————————
 
@@ -11,26 +11,24 @@ namespace Vsar.TSBot
 {
     using System;
     using System.Linq;
-    using App_Start;
     using Autofac;
     using Autofac.Extras.AttributeMetadata;
     using Autofac.Integration.Mvc;
     using Autofac.Integration.WebApi;
-    using DI;
     using Dialogs;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
 
     /// <summary>
-    /// Bootstraps Autofac.
+    /// Provides method(s) to bootstrap the dependency injection framework.
     /// </summary>
     public static class Bootstrap
     {
         /// <summary>
-        /// Builds a <see cref="IContainer"/>.
+        /// Builds a <see cref="IContainer"/> that has all the necessary types registered to run the application.
         /// </summary>
-        /// <param name="builder">Container builder to be used.</param>
+        /// <param name="builder">A container builder to be used.</param>
         /// <param name="configurationProvider">The provider used to access configuration information.</param>
         /// <param name="isDebugging">Flag that indicates if the application is in debugging modus.</param>
         /// <returns>A <see cref="IContainer"/>.</returns>
@@ -96,6 +94,10 @@ namespace Vsar.TSBot
 
             builder
                 .RegisterApiControllers(typeof(Bootstrap).Assembly);
+
+            builder
+                .RegisterType<DialogContextWrapper>()
+                .As<IDialogContextWrapper>();
 
             builder
                 .RegisterAssemblyTypes(typeof(Bootstrap).Assembly)

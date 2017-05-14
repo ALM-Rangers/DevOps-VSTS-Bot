@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the Root Dialog logic to handle messages.
+// Represents the root dialog where all conversations start or ends.
 // </summary>
 // ———————————————————————————————
 
@@ -11,6 +11,7 @@ namespace Vsar.TSBot.Dialogs
 {
     using System;
     using System.Linq;
+    using System.Runtime.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Web.Http;
@@ -21,36 +22,57 @@ namespace Vsar.TSBot.Dialogs
     using Resources;
 
     /// <summary>
-    /// Represents the Root dialog from where all conversations start.
+    /// Represents the root dialog where all conversations start or ends.
     /// </summary>
     [Serializable]
     public class RootDialog : IDialog<object>
     {
-        private bool initialized;
+        [NonSerialized]
+        private IDialogContextWrapper wrapper;
 
-         /// <inheritdoc />
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RootDialog"/> class.
+        /// </summary>
+        /// <param name="wrapper">The wrapper.</param>
+        public RootDialog(IDialogContextWrapper wrapper)
+        {
+            this.wrapper = wrapper;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the dialog is initialized.
+        /// </summary>
+        public bool Initialized { get; set; }
+
+        /// <inheritdoc />
         public Task StartAsync(IDialogContext context)
         {
-            context.Wait(this.MessageReceivedAsync);
+            context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
 
             return Task.CompletedTask;
         }
 
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result, IBotDataBag userData)
         {
             var activity = await result;
             var telemetryClient = GlobalConfiguration.Configuration.DependencyResolver.GetService<TelemetryClient>();
 
             // Occurs when the conversation starts.
-            if (!this.initialized)
+            if (!this.Initialized)
             {
-                this.initialized = true;
-                await this.Welcome(context, activity);
+                this.Initialized = true;
+                await this.Welcome(context, activity, userData);
             }
             else
             {
                 await this.ProcessCommand(context, activity, telemetryClient);
             }
+        }
+
+        [OnSerializing]
+        private void OnSerializingMethod(StreamingContext context)
+        {
+            this.wrapper = GlobalConfiguration.Configuration.DependencyResolver.GetService<IDialogContextWrapper>();
         }
 
         private async Task ProcessCommand(IDialogContext context, IMessageActivity activity, TelemetryClient telemetryClient)
@@ -60,10 +82,11 @@ namespace Vsar.TSBot.Dialogs
             if (dialog == null)
             {
                 var reply = context.MakeMessage();
-
                 reply.Attachments.Add(new MainOptionsCard());
 
-                context.Wait(this.MessageReceivedAsync);
+                await context.PostAsync(reply);
+
+                context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
             }
             else
             {
@@ -73,12 +96,12 @@ namespace Vsar.TSBot.Dialogs
             }
         }
 
-        private async Task Welcome(IDialogContext context, IMessageActivity activity)
+        private async Task Welcome(IDialogContext context, IMessageActivity activity, IBotDataBag userData)
         {
-            var account = context.UserData.GetCurrentAccount();
-            var profile = context.UserData.GetProfile();
-            var profiles = context.UserData.GetProfiles();
-            var teamProject = context.UserData.GetCurrentTeamProject();
+            var account = userData.GetCurrentAccount();
+            var profile = userData.GetProfile();
+            var profiles = userData.GetProfiles();
+            var teamProject = userData.GetCurrentTeamProject();
 
             if (string.IsNullOrWhiteSpace(account) || profile == null || !profiles.Any() ||
                 string.IsNullOrWhiteSpace(teamProject))
@@ -86,7 +109,11 @@ namespace Vsar.TSBot.Dialogs
                 await context.PostAsync(string.Format(Labels.WelcomeNewUser, activity.From.Name));
 
                 var dialog = GlobalConfiguration.Configuration.DependencyResolver.Find("connect");
-                await context.Forward(dialog, this.ResumeAfterChildDialog, activity, CancellationToken.None);
+
+                if (dialog != null)
+                {
+                    await context.Forward(dialog, this.ResumeAfterChildDialog, activity, CancellationToken.None);
+                }
             }
             else
             {
@@ -96,7 +123,7 @@ namespace Vsar.TSBot.Dialogs
 
         private Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
         {
-            context.Wait(this.MessageReceivedAsync);
+            context.Wait((c, r) => this.MessageReceivedAsync(c, r, this.wrapper.GetUserData(c)));
             return Task.CompletedTask;
         }
     }

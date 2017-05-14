@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains extensions for IList{Attachment}.
+// Provides extensions for a list with attachments.
 // </summary>
 // ———————————————————————————————
 
@@ -14,7 +14,7 @@ namespace Vsar.TSBot
     using Microsoft.Bot.Connector;
 
     /// <summary>
-    /// Contains extensions for <see cref="IList{T}"/>
+    /// Provides extensions for a list with <see cref="Attachment"/>.
     /// </summary>
     public static class AttachmentCollectionExtensions
     {

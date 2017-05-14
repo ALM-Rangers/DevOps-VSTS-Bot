@@ -7,7 +7,7 @@
 // </summary>
 // ———————————————————————————————
 
-namespace Vsar.TSBot.DI
+namespace Vsar.TSBot
 {
     /// <summary>
     /// Defines the operations for accessing configuration values.

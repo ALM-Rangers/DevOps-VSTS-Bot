@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the interface for the AuthenticationService
+// Represents an interface for handling authentication with VSTS.
 // </summary>
 // ———————————————————————————————
 
@@ -13,7 +13,7 @@ namespace Vsar.TSBot
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Contains the interface for the AuthenticationService.
+    /// Represents an interface for handling authentication with VSTS.
     /// </summary>
     public interface IAuthenticationService
     {

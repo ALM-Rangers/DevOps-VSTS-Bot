@@ -15,7 +15,6 @@ namespace Vsar.TSBot
     using System.Web.Routing;
     using Autofac;
     using Autofac.Integration.Mvc;
-    using DI;
     using Microsoft.ApplicationInsights.Extensibility;
 
     /// <summary>

@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the BotService.
+// Represents an implementation for IBotService.
 // </summary>
 // ———————————————————————————————
 
@@ -13,7 +13,7 @@ namespace Vsar.TSBot
     using Microsoft.Bot.Connector;
 
     /// <summary>
-    /// The BotService.
+    /// Represents an implementation for IBotService.
     /// </summary>
     public class BotService : IBotService
     {

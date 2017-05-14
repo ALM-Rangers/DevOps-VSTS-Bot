@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the main options.
+// Represents the card that shows the main options.
 // </summary>
 // ———————————————————————————————
 
@@ -14,7 +14,7 @@ namespace Vsar.TSBot.Cards
     using Resources;
 
     /// <summary>
-    /// Contains the main options.
+    /// Represents the card that shows the main options.
     /// </summary>
     public class MainOptionsCard : HeroCard
     {

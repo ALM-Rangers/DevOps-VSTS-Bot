@@ -13,6 +13,7 @@ namespace Vsar.TSBot.UnitTests
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Web.Mvc;
+    using FluentAssertions;
     using Common;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.Services.Account;
@@ -20,19 +21,12 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
-    /// <summary>
-    /// Contains the tests for the Authorize Controller.
-    /// </summary>
     [TestClass]
     [TestCategory(TestCategories.Unit)]
     public class AuthorizeControllerTests
     {
-        /// <summary>
-        /// Tests the normal Authorization flow.
-        /// </summary>
-        /// <returns>.</returns>
         [TestMethod]
-        public async Task AuthorizeTest()
+        public async Task Authorize_A_Valid_LogOn()
         {
             var authenticationService = new Mock<IAuthenticationService>();
             var botService = new Mock<IBotService>();
@@ -48,8 +42,8 @@ namespace Vsar.TSBot.UnitTests
                 authenticationService.Object,
                 profileService.Object);
 
-            var code = "1234567890";
-            var state = "channel1;user1";
+            const string code = "1234567890";
+            const string state = "channel1;user1";
 
             authenticationService
                 .Setup(a => a.GetToken(code))
@@ -70,9 +64,8 @@ namespace Vsar.TSBot.UnitTests
             var result = await controller.Index(code, string.Empty, state) as ViewResult;
             var profiles = botData.GetProfiles();
 
-            Assert.IsNotNull(result);
-            Assert.IsNotNull(profiles);
-            Assert.AreEqual(1, profiles.Count);
+            result.Should().NotBeNull();
+            profiles.Should().NotBeNull().And.HaveCount(1);
         }
     }
 }

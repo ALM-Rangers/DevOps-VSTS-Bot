@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Implementation of AuthenticationService
+// Represents an implementation of IAuthenticationService.
 // </summary>
 // ———————————————————————————————
 
@@ -15,7 +15,7 @@ namespace Vsar.TSBot
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Implementation of <see cref="IAuthenticationService"/> that handles the authentication towards vsts.
+    /// Represents an implementation of <see cref="IAuthenticationService"/>.
     /// </summary>
     public class AuthenticationService : IAuthenticationService
     {
