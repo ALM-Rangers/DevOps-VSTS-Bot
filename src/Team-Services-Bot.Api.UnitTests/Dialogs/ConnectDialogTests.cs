@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the tests for the AccountConnectionDialog.
+// Contains the tests for the ConnectDialog.
 // </summary>
 // ———————————————————————————————
 
@@ -21,24 +21,14 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
-    /// <summary>
-    /// Contains Test methods for <see cref="ConnectDialog"/>
-    /// </summary>
     [TestClass]
     public class ConnectDialogTests : TestsBase<DialogFixture>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConnectDialogTests"/> class.
-        /// </summary>
         public ConnectDialogTests()
             : base(new DialogFixture())
         {
         }
 
-        /// <summary>
-        /// Tests connecting to an account for the first time.
-        /// </summary>
-        /// <returns>Nothing.</returns>
         [TestMethod]
         public async Task Connect_To_An_Account_For_The_First_Time()
         {
@@ -71,10 +61,6 @@ namespace Vsar.TSBot.UnitTests
             this.Fixture.UserData.Verify(ud => ud.SetValue("Pin", It.IsRegex("\\d{4}")));
         }
 
-        /// <summary>
-        /// Tests connecting to an account for the second time.
-        /// </summary>
-        /// <returns>Nothing.</returns>
         [TestMethod]
         public async Task Connect_To_An_Account_Select_An_Account()
         {
@@ -114,10 +100,6 @@ namespace Vsar.TSBot.UnitTests
             card.Should().BeOfType<AccountsCard>();
         }
 
-        /// <summary>
-        /// Tests connecting to an account for the second time.
-        /// </summary>
-        /// <returns>Nothing.</returns>
         [TestMethod]
         public async Task Connect_To_An_Account_Where_Previously_Connected_To()
         {

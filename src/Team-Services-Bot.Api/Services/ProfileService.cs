@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the ProfileService
+// Represents an implementation of IProfileService.
 // </summary>
 // ———————————————————————————————
 
@@ -20,7 +20,7 @@ namespace Vsar.TSBot
     using Microsoft.VisualStudio.Services.WebApi;
 
     /// <summary>
-    /// Contains method(s) for accessing the profile.
+    /// Represents an implementation of <see cref="IProfileService"/>.
     /// </summary>
     public class ProfileService : IProfileService
     {
@@ -39,7 +39,7 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc />
-        public async Task<Microsoft.VisualStudio.Services.Profile.Profile> GetProfile(OAuthToken token)
+        public async Task<Profile> GetProfile(OAuthToken token)
         {
             var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
             var connection = new VssConnection(new Uri(Url), credentials);

@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the Controller logic to process messages from the Bot Connector.
+// Provides the controller logic to process messages from the Bot Connector.
 // </summary>
 // ———————————————————————————————
 
@@ -15,7 +15,6 @@ namespace Vsar.TSBot
     using System.Threading.Tasks;
     using System.Web.Http;
     using Autofac;
-    using DI;
     using Dialogs;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Connector;
@@ -47,7 +46,7 @@ namespace Vsar.TSBot
         /// <returns>a <see cref="HttpResponseMessage"/>.</returns>
         public async Task<HttpResponseMessage> Post([FromBody] Activity activity)
         {
-            HttpStatusCode status = HttpStatusCode.OK;
+            var status = HttpStatusCode.OK;
 
             try
             {

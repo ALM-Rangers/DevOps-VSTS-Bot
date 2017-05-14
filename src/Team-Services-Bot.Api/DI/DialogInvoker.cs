@@ -3,11 +3,11 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Concrete dialog invoker.
+// Represents the dialog invoker.
 // </summary>
 // ———————————————————————————————
 
-namespace Vsar.TSBot.DI
+namespace Vsar.TSBot
 {
     using System;
     using System.Threading;
@@ -16,12 +16,12 @@ namespace Vsar.TSBot.DI
     using Microsoft.Bot.Connector;
 
     /// <summary>
-    /// Invokes dialogs.
+    /// Represents the dialog invoker.
     /// </summary>
     public class DialogInvoker : IDialogInvoker
     {
         /// <summary>
-        /// Process an incoming message within the conversation.
+        /// Process an incoming message within the conversation and invokes the dialog.
         /// </summary>
         /// <param name="toBot">The message sent to the bot.</param>
         /// <param name="makeRoot">The factory method to make the root dialog.</param>
@@ -33,14 +33,14 @@ namespace Vsar.TSBot.DI
         }
 
         /// <summary>
-        /// Process an incoming message within the conversation.
+        /// Process an incoming message within the conversation and invokes the dialog.
         /// </summary>
         /// <param name="toBot">The message sent to the bot.</param>
         /// <param name="makeRoot">The factory method to make the root dialog.</param>
         /// <returns>A task that represents the message to send inline back to the user.</returns>
         public async Task SendAsync(IMessageActivity toBot, Func<IDialog<object>> makeRoot)
         {
-            await Conversation.SendAsync(toBot, makeRoot, default(CancellationToken));
+            await Conversation.SendAsync(toBot, makeRoot);
         }
     }
 }

@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Registers global filters.
+// Provides method(s) to register global filters.
 // </summary>
 // ———————————————————————————————
 
@@ -13,7 +13,7 @@ namespace Vsar.TSBot
     using System.Web.Mvc;
 
     /// <summary>
-    /// Registers global filters.
+    /// Provides method(s) to register global filters.
     /// </summary>
     public static class FilterConfig
     {
