@@ -11,10 +11,12 @@
 <Dictionary>
   <Words>
     <Recognized>
+      <Word>Behavioural</Word>
       <Word>Vsar</Word>
       <Word>Api</Word>
       <Word>OAuthToken</Word>
       <Word>Vsts</Word>
+      <Word>Auth</Word>
     </Recognized>
     <Compound>
       <Term CompoundAlternate="ANon">anon</Term>

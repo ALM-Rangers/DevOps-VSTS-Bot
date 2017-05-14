@@ -13,6 +13,7 @@ namespace Vsar.TSBot.UnitTests
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Web.Mvc;
+    using Common;
     using FluentAssertions;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.Services.Account;
@@ -21,6 +22,7 @@ namespace Vsar.TSBot.UnitTests
     using Moq;
 
     [TestClass]
+    [TestCategory(TestCategories.Unit)]
     public class AuthorizeControllerTests
     {
         [TestMethod]
@@ -28,7 +30,7 @@ namespace Vsar.TSBot.UnitTests
         {
             var authenticationService = new Mock<IAuthenticationService>();
             var botService = new Mock<IBotService>();
-            var profileService = new Mock<IProfileService>();
+            var profileService = new Mock<IVstsService>();
 
             var token = new OAuthToken();
             var profile = new Profile();

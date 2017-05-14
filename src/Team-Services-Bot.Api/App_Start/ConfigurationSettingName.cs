@@ -15,7 +15,7 @@ namespace Vsar.TSBot
     public static class ConfigurationSettingName
     {
         /// <summary>
-        /// The Microsoft app id setting name
+        /// The Microsoft Application ID setting name
         /// </summary>
         public const string MicrosoftApplicationId = "MicrosoftAppId";
 
