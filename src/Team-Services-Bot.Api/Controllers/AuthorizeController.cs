@@ -24,22 +24,22 @@ namespace Vsar.TSBot
     {
         private readonly IAuthenticationService authenticationService;
         private readonly IBotService botService;
-        private readonly IProfileService profileService;
+        private readonly IVstsService vstsService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthorizeController"/> class.
         /// </summary>
         /// <param name="botService">The botService.</param>
-        /// <param name="profileService">The profileService.s</param>
+        /// <param name="vstsService">The profileService.s</param>
         /// <param name="authenticationService">The authenticationService.</param>
         public AuthorizeController(
             IBotService botService,
             IAuthenticationService authenticationService,
-            IProfileService profileService)
+            IVstsService vstsService)
         {
             this.authenticationService = authenticationService;
             this.botService = botService;
-            this.profileService = profileService;
+            this.vstsService = vstsService;
         }
 
         /// <summary>
@@ -69,8 +69,8 @@ namespace Vsar.TSBot
 
             // Get the security token.
             var token = await this.authenticationService.GetToken(code);
-            var profile = await this.profileService.GetProfile(token);
-            var accounts = await this.profileService.GetAccounts(token, profile.Id);
+            var profile = await this.vstsService.GetProfile(token);
+            var accounts = await this.vstsService.GetAccounts(token, profile.Id);
             var result = Map(accounts, profile, token);
 
             var data = await this.botService.GetUserData(channelId, userId);
