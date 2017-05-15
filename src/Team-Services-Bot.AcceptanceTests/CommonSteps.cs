@@ -99,6 +99,11 @@ namespace Vsar.TSBot.AcceptanceTests
             }
 
             var activities = Config.Client.Conversations.GetActivities(Config.ConversationId);
+
+            Console.WriteLine($"has activities: {activities != null}");
+            Console.WriteLine($"has activities.Activities: {activities.Activities != null}");
+            Console.WriteLine($"has activities.Activities.count: {activities.Activities.Count}");
+
             var activity = activities.Activities.FirstOrDefault(a => string.Equals(a.From.Id, Config.BotId, StringComparison.OrdinalIgnoreCase));
 
             activity.Text.ShouldBeEquivalentTo(message);
