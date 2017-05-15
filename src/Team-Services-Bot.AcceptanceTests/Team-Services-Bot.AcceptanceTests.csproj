@@ -166,6 +166,11 @@
     <Compile Include="ControllerData.cs" />
     <Compile Include="ControllerSteps.cs" />
     <Compile Include="EchoSteps.cs" />
+    <Compile Include="Features\Approvals.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Approvals.feature</DependentUpon>
+    </Compile>
     <Compile Include="Features\Controller.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -181,6 +186,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Features\Approvals.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Approvals.feature.cs</LastGenOutput>
+    </None>
     <None Include="Features\Controller.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>Controller.feature.cs</LastGenOutput>
