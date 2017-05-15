@@ -66,11 +66,11 @@ namespace Vsar.TSBot.Dialogs
         }
 
         /// <inheritdoc />
-        public Task StartAsync(IDialogContext context)
+        public async Task StartAsync(IDialogContext context)
         {
             context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
 
-            return Task.CompletedTask;
+            await Task.CompletedTask;
         }
 
         private static string GeneratePin()

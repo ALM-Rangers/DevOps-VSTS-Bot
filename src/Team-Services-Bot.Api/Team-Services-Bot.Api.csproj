@@ -304,6 +304,7 @@
     <Compile Include="Cards\MainOptionsCard.cs" />
     <Compile Include="Controllers\AuthorizeController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
+    <Compile Include="Dialogs\ApprovalsDialog.cs" />
     <Compile Include="Dialogs\ConnectDialog.cs" />
     <Compile Include="Dialogs\IDialogContextWrapper.cs" />
     <Compile Include="Dialogs\DialogContextWrapper.cs" />

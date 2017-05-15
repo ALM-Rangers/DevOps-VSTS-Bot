@@ -45,11 +45,11 @@ namespace Vsar.TSBot.Dialogs
         public bool Initialized { get; set; }
 
         /// <inheritdoc />
-        public Task StartAsync(IDialogContext context)
+        public async Task StartAsync(IDialogContext context)
         {
             context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
 
-            return Task.CompletedTask;
+            await Task.CompletedTask;
         }
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result, IBotDataBag userData)
