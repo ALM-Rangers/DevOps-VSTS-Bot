@@ -99,12 +99,6 @@ namespace Vsar.TSBot.AcceptanceTests
             }
 
             var activities = Config.Client.Conversations.GetActivities(Config.ConversationId);
-
-            foreach (var act in activities.Activities)
-            {
-                Console.WriteLine($"botid: {act.From.Id} says {act.Text}");
-            }
-
             var activity = activities.Activities.FirstOrDefault(a => string.Equals(a.From.Id, Config.BotId, StringComparison.OrdinalIgnoreCase));
 
             activity.Text.ShouldBeEquivalentTo(message);
