@@ -33,7 +33,6 @@
     <CodeAnalysisRuleSet>..\Common\TestCodeRules.ruleset</CodeAnalysisRuleSet>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>bin\Debug\Vsar.TSBot.UnitTests.xml</DocumentationFile>
-    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -52,7 +51,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Properties\TeamServiceBotApiUniTests.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Common\StrongNameKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=4.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
@@ -179,9 +178,6 @@
     <Compile Include="..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\Common\TestCategories.cs">
-      <Link>Properties\TestCategories.cs</Link>
-    </Compile>
     <Compile Include="Controllers\AuthorizeControllerTests.cs" />
     <Compile Include="Dialogs\ConnectDialogTests.cs" />
     <Compile Include="Fixtures\DialogFixture.cs" />
@@ -198,12 +194,16 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Properties\TeamServiceBotApiUniTests.snk" />
+    <None Include="..\Common\StrongNameKey.snk" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Team-Services-Bot.Api\Team-Services-Bot.Api.csproj">
       <Project>{A8BA1066-5695-4D71-ABB4-65E5A5E0C3D4}</Project>
       <Name>Team-Services-Bot.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Team-Services-Bot.Common.Tests\Team-Services-Bot.Common.Tests.csproj">
+      <Project>{8164747d-607d-449f-ae5c-3170e5676954}</Project>
+      <Name>Team-Services-Bot.Common.Tests</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

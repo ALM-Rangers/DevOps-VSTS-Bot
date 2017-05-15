@@ -7,7 +7,7 @@
 // </summary>
 // ———————————————————————————————
 
-namespace Vsar.TSBot.Common
+namespace Vsar.TSBot.Common.Tests
 {
     /// <summary>
     /// Defines the test categories
