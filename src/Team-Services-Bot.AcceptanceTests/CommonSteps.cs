@@ -100,9 +100,10 @@ namespace Vsar.TSBot.AcceptanceTests
 
             var activities = Config.Client.Conversations.GetActivities(Config.ConversationId);
 
-            Console.WriteLine($"has activities: {activities != null}");
-            Console.WriteLine($"has activities.Activities: {activities.Activities != null}");
-            Console.WriteLine($"has activities.Activities.count: {activities.Activities.Count}");
+            foreach (var act in activities.Activities)
+            {
+                Console.WriteLine($"botid: {act.From.Id} says {act.Text}");
+            }
 
             var activity = activities.Activities.FirstOrDefault(a => string.Equals(a.From.Id, Config.BotId, StringComparison.OrdinalIgnoreCase));
 
