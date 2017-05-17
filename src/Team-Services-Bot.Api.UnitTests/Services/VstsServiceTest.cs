@@ -34,9 +34,7 @@ namespace Vsar.TSBot.UnitTests.Services
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetProfile(null));
 
-            // TODO: Implement mocking of VSTS calls
-            // var profile = await service.GetProfile(this.token);
-            // Assert.IsNotNull(profile);
+            // TODO: Implement mocking of VSTS calls and test real behavior
         }
 
         /// <summary>
@@ -53,9 +51,7 @@ namespace Vsar.TSBot.UnitTests.Services
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetAccounts(null, memberId));
 
-            // TODO: Implement mocking of VSTS calls
-            // IList<Account> accounts = await service.GetAccounts(this.token, memberId);
-            // Assert.IsNotNull(accounts);
+            // TODO: Implement mocking of VSTS calls and test real behavior
         }
 
         /// <summary>
@@ -73,9 +69,7 @@ namespace Vsar.TSBot.UnitTests.Services
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetProjects(null, this.token));
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetProjects(accountUrl, null));
 
-            // TODO: Implement mocking of VSTS calls
-            // IEnumerable<TeamProjectReference> result = await service.GetProjects(accountUrl, this.token);
-            // Assert.IsNotNull(result);
+            // TODO: Implement mocking of VSTS calls and test real behavior
         }
     }
 }
