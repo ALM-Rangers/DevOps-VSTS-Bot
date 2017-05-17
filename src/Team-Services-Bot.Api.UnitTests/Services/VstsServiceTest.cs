@@ -9,17 +9,15 @@
 namespace Vsar.TSBot.UnitTests.Services
 {
     using System;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.TeamFoundation.Core.WebApi;
-    using Microsoft.VisualStudio.Services.Account;
+    using Common.Tests;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
     /// Unit tests for <see cref="VstsService"/>.
     /// </summary>
     [TestClass]
-    [TestCategory("Unit")]
+    [TestCategory(TestCategories.Unit)]
     public class VstsServiceTest
     {
         private readonly OAuthToken token = new OAuthToken { AccessToken = @"x25onorum4neacdjmvzvaxjeosik7qxo7fbnn6lebefeday7fxmq" };
