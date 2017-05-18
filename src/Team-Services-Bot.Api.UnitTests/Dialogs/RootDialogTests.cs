@@ -14,6 +14,7 @@ namespace Vsar.TSBot.UnitTests
     using System.Threading.Tasks;
     using Autofac;
     using Cards;
+    using Common.Tests;
     using FluentAssertions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -26,6 +27,7 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.Unit)]
         public async Task Welcome_First_Time()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -41,6 +43,7 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.Unit)]
         public async Task Welcome_Second_Time()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -73,6 +76,7 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.Unit)]
         public async Task Show_Options()
         {
             var toBot = this.Fixture.CreateMessage();
