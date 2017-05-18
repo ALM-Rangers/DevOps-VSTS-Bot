@@ -15,7 +15,7 @@ namespace Vsar.TSBot.UnitTests
     using System.Threading.Tasks;
     using Autofac;
     using Cards;
-    using Common;
+    using Common.Tests;
     using Dialogs;
     using FluentAssertions;
     using Microsoft.Bot.Builder.Dialogs;
@@ -64,6 +64,7 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.Unit)]
         public async Task Connect_To_An_Account_Select_An_Account()
         {
             var toBot = this.Fixture.CreateMessage();

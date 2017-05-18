@@ -13,7 +13,7 @@ namespace Vsar.TSBot.UnitTests
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Web.Mvc;
-    using Common;
+    using Common.Tests;
     using FluentAssertions;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.Services.Account;

@@ -53,7 +53,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Properties\TeamServiceBotAcceptanceTests.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Common\StrongNameKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=4.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
@@ -158,9 +158,6 @@
     <Compile Include="..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\Common\TestCategories.cs">
-      <Link>Properties\TestCategories.cs</Link>
-    </Compile>
     <Compile Include="CommonSteps.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ControllerData.cs" />
@@ -201,7 +198,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Properties\TeamServiceBotAcceptanceTests.snk" />
+    <None Include="..\Common\StrongNameKey.snk" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Desktop.Analyzers.1.1.0\analyzers\dotnet\cs\Desktop.Analyzers.dll" />
@@ -227,6 +224,10 @@
     <ProjectReference Include="..\Team-Services-Bot.Api\Team-Services-Bot.Api.csproj">
       <Project>{a8ba1066-5695-4d71-abb4-65e5a5e0c3d4}</Project>
       <Name>Team-Services-Bot.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Team-Services-Bot.Common.Tests\Team-Services-Bot.Common.Tests.csproj">
+      <Project>{8164747d-607d-449f-ae5c-3170e5676954}</Project>
+      <Name>Team-Services-Bot.Common.Tests</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

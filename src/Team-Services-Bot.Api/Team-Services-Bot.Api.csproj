@@ -352,7 +352,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
-    <Content Include="Properties\TeamServicesBotApi.snk" />
+    <Content Include="..\Common\StrongNameKey.snk" />
     <Content Include="AppSettings.config" />
     <None Include="Views\Authorize\Index.cshtml" />
     <Content Include="Views\Web.config" />
@@ -403,7 +403,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Properties\TeamServicesBotApi.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Common\StrongNameKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
