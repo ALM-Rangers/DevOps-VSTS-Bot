@@ -30,8 +30,8 @@ namespace Vsar.TSBot.Dialogs
     [Serializable]
     public class ConnectDialog : IDialog<object>
     {
-        private const string CommandMatchConnect = "connect *(\\w*) *(\\w*)";
-        private const string CommandMatchPin = "(\\d{4})";
+        private const string CommandMatchConnect = @"connect *(\w*) *(\w*)";
+        private const string CommandMatchPin = @"(\d{4})";
 
         private readonly string appId;
         private readonly string authorizeUrl;

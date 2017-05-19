@@ -147,4 +147,16 @@
     <value>Welcome {0}. I see this is the first team we speak.</value>
     <comment>{0} = from name</comment>
   </data>
+  <data name="Approve" xml:space="preserve">
+    <value>Approve</value>
+  </data>
+  <data name="Reject" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="Approved" xml:space="preserve">
+    <value>The deployment is approved.</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>The deployment is rejected.</value>
+  </data>
 </root>

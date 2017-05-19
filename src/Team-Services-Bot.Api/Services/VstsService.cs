@@ -15,10 +15,11 @@ namespace Vsar.TSBot
     using Microsoft.TeamFoundation.Core.WebApi;
     using Microsoft.VisualStudio.Services.Account;
     using Microsoft.VisualStudio.Services.Account.Client;
-    using Microsoft.VisualStudio.Services.Common;
     using Microsoft.VisualStudio.Services.OAuth;
     using Microsoft.VisualStudio.Services.Profile;
     using Microsoft.VisualStudio.Services.Profile.Client;
+    using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
+    using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
     using Microsoft.VisualStudio.Services.WebApi;
 
     /// <summary>
@@ -26,7 +27,41 @@ namespace Vsar.TSBot
     /// </summary>
     public class VstsService : IVstsService
     {
+        private readonly string vstsRmUrl = "https://{0}.vsrm.visualstudio.com";
         private readonly Uri vstsAppUrl = new Uri("https://app.vssps.visualstudio.com");
+
+        /// <inheritdoc />
+        public async Task ApproveDeployment(string account, string teamProject, VstsProfile profile, int approvalId, string comments)
+        {
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
+            }
+
+            if (profile == null)
+            {
+                throw new ArgumentNullException(nameof(profile));
+            }
+
+            if (string.IsNullOrWhiteSpace(comments))
+            {
+                throw new ArgumentNullException(nameof(comments));
+            }
+
+            using (var client = ConnectAndGetClient<ReleaseHttpClient2>(this.vstsAppUrl, profile.Token))
+            {
+                var approval = await client.GetApprovalAsync(teamProject, approvalId);
+                approval.Status = ApprovalStatus.Approved;
+                approval.Comments = comments;
+
+                await client.UpdateReleaseApprovalAsync(approval, teamProject, approvalId);
+            }
+        }
 
         /// <inheritdoc/>
         public async Task<IList<Account>> GetAccounts(OAuthToken token, Guid memberId)
@@ -36,9 +71,33 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(token));
             }
 
-            using (AccountHttpClient client = ConnectAndGetClient<AccountHttpClient>(this.vstsAppUrl, token))
+            using (var client = ConnectAndGetClient<AccountHttpClient>(this.vstsAppUrl, token))
             {
                 return await client.GetAccountsByMemberAsync(memberId);
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<IList<ReleaseApproval>> GetApprovals(string account, string teamProject, VstsProfile profile)
+        {
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
+            }
+
+            if (profile == null)
+            {
+                throw new ArgumentNullException(nameof(profile));
+            }
+
+            using (var client = ConnectAndGetClient<ReleaseHttpClient2>(new Uri(string.Format(this.vstsRmUrl, account)), profile.Token))
+            {
+                return await client.GetApprovalsAsync2(teamProject, profile.Id.ToString());
             }
         }
 
@@ -50,7 +109,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(token));
             }
 
-            using (ProfileHttpClient client = ConnectAndGetClient<ProfileHttpClient>(this.vstsAppUrl, token))
+            using (var client = ConnectAndGetClient<ProfileHttpClient>(this.vstsAppUrl, token))
             {
                 return await client.GetProfileAsync(new ProfileQueryContext(AttributesScope.Core));
             }
@@ -69,9 +128,42 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(token));
             }
 
-            using (ProjectHttpClient client = ConnectAndGetClient<ProjectHttpClient>(accountUrl, token))
+            using (var client = ConnectAndGetClient<ProjectHttpClient>(accountUrl, token))
             {
                 return await client.GetProjects();
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task RejectDeployment(string account, string teamProject, VstsProfile profile, int approvalId, string comments)
+        {
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
+            }
+
+            if (profile == null)
+            {
+                throw new ArgumentNullException(nameof(profile));
+            }
+
+            if (string.IsNullOrWhiteSpace(comments))
+            {
+                throw new ArgumentNullException(nameof(comments));
+            }
+
+            using (var client = ConnectAndGetClient<ReleaseHttpClient2>(this.vstsAppUrl, profile.Token))
+            {
+                var approval = await client.GetApprovalAsync(teamProject, approvalId);
+                approval.Status = ApprovalStatus.Rejected;
+                approval.Comments = comments;
+
+                await client.UpdateReleaseApprovalAsync(approval, teamProject, approvalId);
             }
         }
 
@@ -80,7 +172,7 @@ namespace Vsar.TSBot
         {
             var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
             var connection = new VssConnection(accountUri, credentials);
-            T client = connection.GetClient<T>();
+            var client = connection.GetClient<T>();
 
             return client;
         }
