@@ -1,33 +1,30 @@
 ﻿// ———————————————————————————————
-// <copyright file="ApprovalsDialog.cs">
+// <copyright file="RejectDeploymentDialog.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Represents the dialog to retrieve and approve/reject approvals.
+// Represents a dialog for rejecting a deployment.
 // </summary>
 // ———————————————————————————————
-
 namespace Vsar.TSBot.Dialogs
 {
     using System;
-    using System.Linq;
     using System.Runtime.Serialization;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Web.Http;
-    using Cards;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
     using Resources;
 
     /// <summary>
-    /// Represents the dialog to retrieve and approve/reject approvals.
+    /// Represents a dialog for rejecting a deployment.
     /// </summary>
-    [CommandMetadata("approvals")]
+    [CommandMetadata("reject")]
     [Serializable]
-    public class ApprovalsDialog : IDialog<object>
+    public class RejectDeploymentDialog : IDialog<object>
     {
-        private const string CommandMatchApprovals = "approvals";
+        private const string CommandMatch = @"reject (\d+) *(.*?)$";
 
         [NonSerialized]
         private IVstsService vstsService;
@@ -35,11 +32,11 @@ namespace Vsar.TSBot.Dialogs
         private IDialogContextWrapper wrapper;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ApprovalsDialog"/> class.
+        /// Initializes a new instance of the <see cref="RejectDeploymentDialog"/> class.
         /// </summary>
         /// <param name="vstsService">The <see cref="IVstsService"/>.</param>
         /// <param name="wrapper">The wrapper around the <see cref="IDialogContext"/>.</param>
-        public ApprovalsDialog(IVstsService vstsService, IDialogContextWrapper wrapper)
+        public RejectDeploymentDialog(IVstsService vstsService, IDialogContextWrapper wrapper)
         {
             this.vstsService = vstsService;
             this.wrapper = wrapper;
@@ -62,17 +59,17 @@ namespace Vsar.TSBot.Dialogs
             var reply = context.MakeMessage();
             var teamProject = userData.GetCurrentTeamProject();
 
-            if (activity.Text.Equals(CommandMatchApprovals, StringComparison.OrdinalIgnoreCase))
+            var matchApprove = Regex.Match(activity.Text, CommandMatch);
+
+            if (matchApprove.Success)
             {
-                var approvals = await this.vstsService.GetApprovals(account, teamProject, profile);
-                var cards = approvals.Select(a => new ApprovalCard(a)).ToList();
+                var approvalId = Convert.ToInt32(matchApprove.Groups[1].Value);
+                var comment = matchApprove.Groups[2].Value;
 
-                foreach (var card in cards)
-                {
-                    reply.Attachments.Add(card);
-                }
+                await this.vstsService.RejectDeployment(account, teamProject, profile, approvalId, comment);
 
-                reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+                reply.Text = Labels.Rejected;
+
                 await context.PostAsync(reply);
             }
         }

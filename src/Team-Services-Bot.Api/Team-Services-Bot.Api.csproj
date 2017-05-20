@@ -310,6 +310,8 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Cards\AccountsCard.cs" />
     <Compile Include="Cards\ApprovalCard.cs" />
+    <Compile Include="Dialogs\RejectDeploymentDialog.cs" />
+    <Compile Include="Dialogs\ApproveDeploymentDialog.cs" />
     <Compile Include="Cards\LogOnCard.cs" />
     <Compile Include="Cards\MainOptionsCard.cs" />
     <Compile Include="Controllers\AuthorizeController.cs" />

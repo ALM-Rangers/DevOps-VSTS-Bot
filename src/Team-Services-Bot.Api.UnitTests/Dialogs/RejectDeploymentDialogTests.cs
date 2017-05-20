@@ -1,51 +1,38 @@
 ﻿// ———————————————————————————————
-// <copyright file="ApprovalsDialogTests.cs">
+// <copyright file="RejectDeploymentDialogTests.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the tests for the ApprovalsDialog.
+// Contains the tests for the RejectDeploymentDialog.
 // </summary>
 // ———————————————————————————————
 namespace Vsar.TSBot.UnitTests
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using Autofac;
-    using Cards;
     using Common.Tests;
     using Dialogs;
     using FluentAssertions;
     using Microsoft.Bot.Builder.Dialogs;
-    using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
-    using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Contracts;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
     [TestClass]
-    public class ApprovalsDialogTests : TestsBase<DialogFixture>
+    public class RejectDeploymentDialogTests : TestsBase<DialogFixture>
     {
-        public ApprovalsDialogTests()
+        public RejectDeploymentDialogTests()
             : base(new DialogFixture())
         {
         }
 
         [TestMethod]
         [TestCategory(TestCategories.Unit)]
-        public async Task List_Approvals()
+        public async Task Reject_Approval()
         {
             var toBot = this.Fixture.CreateMessage();
-            toBot.Text = "approvals";
+            toBot.Text = "reject 1 a comment";
 
             var account = "anaccount";
-            var approval1 = new ReleaseApproval
-            {
-                Id = 1,
-                ReleaseReference = new ReleaseShallowReference { Name = "Release 1", Url = "urlToRelease" },
-                ReleaseDefinitionReference = new ReleaseDefinitionShallowReference { Name = "Release Definition 1" },
-                ReleaseEnvironmentReference = new ReleaseEnvironmentShallowReference { Name = "Development" }
-            };
-            var approvals = new List<ReleaseApproval> { approval1 };
             var profile = new VstsProfile();
             var teamProject = "anteamproject";
 
@@ -56,7 +43,7 @@ namespace Vsar.TSBot.UnitTests
                 .Register(c => service.Object)
                 .As<IVstsService>();
             builder
-                .RegisterType<ApprovalsDialog>()
+                .RegisterType<RejectDeploymentDialog>()
                 .As<IDialog<object>>();
 
             var container = this.Fixture.Build(builder);
@@ -73,22 +60,12 @@ namespace Vsar.TSBot.UnitTests
 
             this.Fixture.RootDialog.Initialized = true;
 
-            service
-                .Setup(s => s.GetApprovals(account, teamProject, profile))
-                .ReturnsAsync(approvals);
-
-            // List of Approvals
             var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
 
-            var attachment = toUser.Attachments.FirstOrDefault();
-            attachment.Should().NotBeNull();
+            toUser.Text.Should().Be("The deployment is rejected.");
 
-            var card = attachment.Content;
-
-            card.Should().BeOfType<ApprovalCard>().Subject.Title.Should().Be(approval1.ReleaseDefinitionReference.Name);
-            card.Should().BeOfType<ApprovalCard>().Subject.Subtitle.Should().Be(approval1.ReleaseReference.Name);
-            card.Should().BeOfType<ApprovalCard>().Subject.Text.Should().Be(approval1.ReleaseEnvironmentReference.Name);
-            card.Should().BeOfType<ApprovalCard>().Subject.Tap.Value.Should().Be(approval1.ReleaseReference.Url);
+            service
+                .Verify(s => s.RejectDeployment(account, teamProject, profile, 1, "a comment"));
         }
     }
 }
