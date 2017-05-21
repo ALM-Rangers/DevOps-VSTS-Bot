@@ -31,7 +31,7 @@ namespace Vsar.TSBot
         private readonly Uri vstsAppUrl = new Uri("https://app.vssps.visualstudio.com");
 
         /// <inheritdoc />
-        public async Task ApproveDeployment(string account, string teamProject, VstsProfile profile, int approvalId, string comments)
+        public async Task ChangeApprovalStatus(string account, string teamProject, VstsProfile profile, int approvalId, ApprovalStatus status, string comments)
         {
             if (string.IsNullOrWhiteSpace(account))
             {
@@ -56,7 +56,7 @@ namespace Vsar.TSBot
             using (var client = ConnectAndGetClient<ReleaseHttpClient2>(this.vstsAppUrl, profile.Token))
             {
                 var approval = await client.GetApprovalAsync(teamProject, approvalId);
-                approval.Status = ApprovalStatus.Approved;
+                approval.Status = status;
                 approval.Comments = comments;
 
                 await client.UpdateReleaseApprovalAsync(approval, teamProject, approvalId);
@@ -131,39 +131,6 @@ namespace Vsar.TSBot
             using (var client = ConnectAndGetClient<ProjectHttpClient>(accountUrl, token))
             {
                 return await client.GetProjects();
-            }
-        }
-
-        /// <inheritdoc />
-        public async Task RejectDeployment(string account, string teamProject, VstsProfile profile, int approvalId, string comments)
-        {
-            if (string.IsNullOrWhiteSpace(account))
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
-
-            if (string.IsNullOrWhiteSpace(teamProject))
-            {
-                throw new ArgumentNullException(nameof(teamProject));
-            }
-
-            if (profile == null)
-            {
-                throw new ArgumentNullException(nameof(profile));
-            }
-
-            if (string.IsNullOrWhiteSpace(comments))
-            {
-                throw new ArgumentNullException(nameof(comments));
-            }
-
-            using (var client = ConnectAndGetClient<ReleaseHttpClient2>(this.vstsAppUrl, profile.Token))
-            {
-                var approval = await client.GetApprovalAsync(teamProject, approvalId);
-                approval.Status = ApprovalStatus.Rejected;
-                approval.Comments = comments;
-
-                await client.UpdateReleaseApprovalAsync(approval, teamProject, approvalId);
             }
         }
 

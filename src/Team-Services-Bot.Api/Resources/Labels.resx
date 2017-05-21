@@ -159,4 +159,7 @@
   <data name="Rejected" xml:space="preserve">
     <value>The deployment is rejected.</value>
   </data>
+  <data name="MissingComment" xml:space="preserve">
+    <value>Please provide a comment.</value>
+  </data>
 </root>

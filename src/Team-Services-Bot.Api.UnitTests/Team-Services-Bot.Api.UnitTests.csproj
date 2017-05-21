@@ -183,9 +183,8 @@
     </Compile>
     <Compile Include="Controllers\AuthorizeControllerTests.cs" />
     <Compile Include="Dialogs\ApprovalsDialogTests.cs" />
-    <Compile Include="Dialogs\RejectDeploymentDialogTests.cs" />
-    <Compile Include="Dialogs\ApproveDeploymentDialogTests.cs" />
     <Compile Include="Dialogs\ConnectDialogTests.cs" />
+    <Compile Include="Fixtures\AwaitableFromItem.cs" />
     <Compile Include="Fixtures\DialogFixture.cs" />
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="Fixtures\MockConnectorFactory.cs" />

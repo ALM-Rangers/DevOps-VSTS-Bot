@@ -9,14 +9,11 @@
 namespace Vsar.TSBot.UnitTests
 {
     using System.Collections.Generic;
-    using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
-    using Autofac;
-    using Cards;
     using Common.Tests;
     using Dialogs;
-    using FluentAssertions;
-    using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Contracts;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -38,28 +35,52 @@ namespace Vsar.TSBot.UnitTests
             toBot.Text = "approvals";
 
             var account = "anaccount";
-            var approval1 = new ReleaseApproval
+            var approval = new ReleaseApproval
             {
                 Id = 1,
                 ReleaseReference = new ReleaseShallowReference { Name = "Release 1", Url = "urlToRelease" },
                 ReleaseDefinitionReference = new ReleaseDefinitionShallowReference { Name = "Release Definition 1" },
                 ReleaseEnvironmentReference = new ReleaseEnvironmentShallowReference { Name = "Development" }
             };
-            var approvals = new List<ReleaseApproval> { approval1 };
+            var approvals = new List<ReleaseApproval> { approval };
             var profile = new VstsProfile();
             var teamProject = "anteamproject";
 
             var service = new Mock<IVstsService>();
 
-            var builder = new ContainerBuilder();
-            builder
-                .Register(c => service.Object)
-                .As<IVstsService>();
-            builder
-                .RegisterType<ApprovalsDialog>()
-                .As<IDialog<object>>();
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("Account", out account))
+                .Returns(true);
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("Profile", out profile))
+                .Returns(true);
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
+                .Returns(true);
+            service
+                .Setup(s => s.GetApprovals(account, teamProject, profile))
+                .ReturnsAsync(approvals);
 
-            var container = this.Fixture.Build(builder);
+            var target = new ApprovalsDialog(service.Object);
+
+            await target.ApprovalsAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            this.Fixture.DialogContext
+                .Verify(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None));
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Unit)]
+        public async Task Approve_Approval()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "approve 1 a comment";
+
+            var account = "anaccount";
+            var profile = new VstsProfile();
+            var teamProject = "anteamproject";
+
+            var service = new Mock<IVstsService>();
 
             this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("Account", out account))
@@ -71,24 +92,57 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
                 .Returns(true);
 
-            this.Fixture.RootDialog.Initialized = true;
+            var target = new ApprovalsDialog(service.Object)
+            {
+                Account = account,
+                Profile = profile,
+                TeamProject = teamProject
+            };
+
+            await target.ApproveOrReject(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
             service
-                .Setup(s => s.GetApprovals(account, teamProject, profile))
-                .ReturnsAsync(approvals);
+                .Verify(s => s.ChangeApprovalStatus(account, teamProject, profile, 1, ApprovalStatus.Approved, "a comment"));
+            this.Fixture.DialogContext
+                .Verify(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None));
+        }
 
-            // List of Approvals
-            var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
+        [TestMethod]
+        [TestCategory(TestCategories.Unit)]
+        public async Task Reject_Approval()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "reject 1 a comment";
 
-            var attachment = toUser.Attachments.FirstOrDefault();
-            attachment.Should().NotBeNull();
+            var account = "anaccount";
+            var profile = new VstsProfile();
+            var teamProject = "anteamproject";
 
-            var card = attachment.Content;
+            var service = new Mock<IVstsService>();
 
-            card.Should().BeOfType<ApprovalCard>().Subject.Title.Should().Be(approval1.ReleaseDefinitionReference.Name);
-            card.Should().BeOfType<ApprovalCard>().Subject.Subtitle.Should().Be(approval1.ReleaseReference.Name);
-            card.Should().BeOfType<ApprovalCard>().Subject.Text.Should().Be(approval1.ReleaseEnvironmentReference.Name);
-            card.Should().BeOfType<ApprovalCard>().Subject.Tap.Value.Should().Be(approval1.ReleaseReference.Url);
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("Account", out account))
+                .Returns(true);
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("Profile", out profile))
+                .Returns(true);
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
+                .Returns(true);
+
+            var target = new ApprovalsDialog(service.Object)
+            {
+                Account = account,
+                Profile = profile,
+                TeamProject = teamProject
+            };
+
+            await target.ApproveOrReject(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            service
+                .Verify(s => s.ChangeApprovalStatus(account, teamProject, profile, 1, ApprovalStatus.Rejected, "a comment"));
+            this.Fixture.DialogContext
+                .Verify(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None));
         }
     }
 }

@@ -17,6 +17,7 @@ namespace Vsar.TSBot
     /// Represents a Team Services VSTSProfile.
     /// </summary>
     [DataContract]
+    [Serializable]
     public class VstsProfile
     {
         /// <summary>

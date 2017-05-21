@@ -23,15 +23,16 @@ namespace Vsar.TSBot
     public interface IVstsService
     {
         /// <summary>
-        /// Approves a deployment.
+        /// Changes the status for an approval.
         /// </summary>
         /// <param name="account">The VSTS account.</param>
         /// <param name="teamProject">The team project.</param>
         /// <param name="profile">The user profile.</param>
         /// <param name="approvalId">The id of the approval.</param>
+        /// <param name="status">The approval status.</param>
         /// <param name="comments">A comment.</param>
         /// <returns>A void task.</returns>
-        Task ApproveDeployment(string account, string teamProject, VstsProfile profile, int approvalId, string comments);
+        Task ChangeApprovalStatus(string account, string teamProject, VstsProfile profile, int approvalId, ApprovalStatus status, string comments);
 
         /// <summary>
         /// Gets the accounts for which an user is a member.
@@ -66,16 +67,5 @@ namespace Vsar.TSBot
         /// <returns>Collection of <see cref="TeamProjectReference"/></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Reviewed.")]
         Task<IEnumerable<TeamProjectReference>> GetProjects(Uri accountUrl, OAuthToken token);
-
-        /// <summary>
-        /// Rejects a deployment.
-        /// </summary>
-        /// <param name="account">The VSTS account.</param>
-        /// <param name="teamProject">The team project.</param>
-        /// <param name="profile">The user profile.</param>
-        /// <param name="approvalId">The id of the approval.</param>
-        /// <param name="comments">A comment.</param>
-        /// <returns>A void task.</returns>
-        Task RejectDeployment(string account, string teamProject, VstsProfile profile, int approvalId, string comments);
     }
 }

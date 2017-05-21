@@ -16,6 +16,7 @@ namespace Vsar.TSBot
     /// Represents the OAuth token.
     /// </summary>
     [DataContract]
+    [Serializable]
     public class OAuthToken
     {
         /// <summary>
