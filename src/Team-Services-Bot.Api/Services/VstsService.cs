@@ -27,7 +27,8 @@ namespace Vsar.TSBot
     /// </summary>
     public class VstsService : IVstsService
     {
-        private readonly string vstsRmUrl = "https://{0}.vsrm.visualstudio.com";
+        private const string VstsRmUrl = "https://{0}.vsrm.visualstudio.com";
+
         private readonly Uri vstsAppUrl = new Uri("https://app.vssps.visualstudio.com");
 
         /// <inheritdoc />
@@ -53,7 +54,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(comments));
             }
 
-            using (var client = ConnectAndGetClient<ReleaseHttpClient2>(this.vstsAppUrl, profile.Token))
+            using (var client = this.GetConnectedClient<ReleaseHttpClient2>(this.vstsAppUrl, profile.Token))
             {
                 var approval = await client.GetApprovalAsync(teamProject, approvalId);
                 approval.Status = status;
@@ -71,7 +72,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(token));
             }
 
-            using (var client = ConnectAndGetClient<AccountHttpClient>(this.vstsAppUrl, token))
+            using (var client = this.GetConnectedClient<AccountHttpClient>(this.vstsAppUrl, token))
             {
                 return await client.GetAccountsByMemberAsync(memberId);
             }
@@ -95,7 +96,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(profile));
             }
 
-            using (var client = ConnectAndGetClient<ReleaseHttpClient2>(new Uri(string.Format(this.vstsRmUrl, account)), profile.Token))
+            using (var client = this.GetConnectedClient<ReleaseHttpClient2>(new Uri(string.Format(VstsRmUrl, account)), profile.Token))
             {
                 return await client.GetApprovalsAsync2(teamProject, profile.Id.ToString());
             }
@@ -109,7 +110,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(token));
             }
 
-            using (var client = ConnectAndGetClient<ProfileHttpClient>(this.vstsAppUrl, token))
+            using (var client = this.GetConnectedClient<ProfileHttpClient>(this.vstsAppUrl, token))
             {
                 return await client.GetProfileAsync(new ProfileQueryContext(AttributesScope.Core));
             }
@@ -128,13 +129,13 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(token));
             }
 
-            using (var client = ConnectAndGetClient<ProjectHttpClient>(accountUrl, token))
+            using (var client = this.GetConnectedClient<ProjectHttpClient>(accountUrl, token))
             {
                 return await client.GetProjects();
             }
         }
 
-        private static T ConnectAndGetClient<T>(Uri accountUri, OAuthToken token)
+        private T GetConnectedClient<T>(Uri accountUri, OAuthToken token)
             where T : VssHttpClientBase
         {
             var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));

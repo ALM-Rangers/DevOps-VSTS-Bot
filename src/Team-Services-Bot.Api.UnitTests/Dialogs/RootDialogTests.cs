@@ -50,7 +50,7 @@ namespace Vsar.TSBot.UnitTests
             toBot.Text = "Hi";
 
             var account = "anaccount";
-            var profile = new VstsProfile();
+            var profile = this.Fixture.CreateProfile();
             IList<VstsProfile> profiles = new List<VstsProfile> { profile };
             var teamProject = "TeamProject1";
 

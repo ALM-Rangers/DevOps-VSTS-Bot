@@ -26,10 +26,10 @@ namespace Vsar.TSBot
         public string AccessToken { get; set; }
 
         /// <summary>
-        /// Gets when this OAuthToken is created (UTC).
+        /// Gets or sets when this OAuthToken is created (UTC).
         /// </summary>
         [DataMember(Name = "created_on")]
-        public DateTime CreatedOn { get; } = DateTime.UtcNow;
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
 
         /// <summary>
         /// Gets or sets the time it expires in.

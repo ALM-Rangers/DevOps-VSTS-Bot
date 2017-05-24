@@ -34,7 +34,8 @@ namespace Vsar.TSBot.UnitTests
 
         public DialogFixture()
         {
-            this.RootDialog = new RootDialog(this.Wrapper.Object);
+            this.AuthenticationService = new Mock<IAuthenticationService>();
+            this.RootDialog = new RootDialog(this.AuthenticationService.Object, this.Wrapper.Object);
             this.DialogContext
                 .Setup(c => c.UserData)
                 .Returns(this.UserData.Object);
@@ -42,6 +43,8 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(c => c.MakeMessage())
                 .Returns(this.CreateMessage);
         }
+
+        public Mock<IAuthenticationService> AuthenticationService { get; }
 
         public Mock<IDialogContext> DialogContext { get; } = new Mock<IDialogContext>();
 
@@ -80,6 +83,14 @@ namespace Vsar.TSBot.UnitTests
             };
         }
 
+        public VstsProfile CreateProfile()
+        {
+            return new VstsProfile
+            {
+                Token = new OAuthToken { ExpiresIn = 3600 }
+            };
+        }
+
         /// <summary>
         /// Instantiates a <see cref="ContainerBuilder"/> and registers some defaults.
         /// </summary>
@@ -91,6 +102,10 @@ namespace Vsar.TSBot.UnitTests
             {
                 throw new ArgumentNullException(nameof(builder));
             }
+
+            builder
+                .Register(c => this.AuthenticationService.Object)
+                .As<IAuthenticationService>();
 
             builder
                 .Register(c => this.Wrapper.Object)
@@ -105,7 +120,7 @@ namespace Vsar.TSBot.UnitTests
             builder
                 .RegisterModule<AttributedMetadataModule>();
             builder
-                .RegisterType<RootDialog>();
+                .Register(c => this.RootDialog);
 
             builder
                 .RegisterModule(new DialogModule_MakeRoot());

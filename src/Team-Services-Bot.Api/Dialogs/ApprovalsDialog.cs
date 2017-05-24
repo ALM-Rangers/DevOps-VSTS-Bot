@@ -33,14 +33,18 @@ namespace Vsar.TSBot.Dialogs
         private const string CommandMatchReject = @"reject (\d+) *(.*?)$";
 
         [NonSerialized]
+        private IAuthenticationService authenticationService;
+        [NonSerialized]
         private IVstsService vstsService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ApprovalsDialog"/> class.
         /// </summary>
+        /// <param name="authenticationService">a <see cref="IAuthenticationService"/>.</param>
         /// <param name="vstsService">The <see cref="IVstsService"/>.</param>
-        public ApprovalsDialog(IVstsService vstsService)
+        public ApprovalsDialog(IAuthenticationService authenticationService, IVstsService vstsService)
         {
+            this.authenticationService = authenticationService;
             this.vstsService = vstsService;
         }
 
@@ -79,7 +83,7 @@ namespace Vsar.TSBot.Dialogs
             var reply = context.MakeMessage();
 
             this.Account = context.UserData.GetCurrentAccount();
-            this.Profile = context.UserData.GetProfile();
+            this.Profile = context.UserData.GetProfile(this.authenticationService);
             this.TeamProject = context.UserData.GetCurrentTeamProject();
 
             if (activity.Text.Equals(CommandMatchApprovals, StringComparison.OrdinalIgnoreCase))
@@ -177,6 +181,7 @@ namespace Vsar.TSBot.Dialogs
         [OnSerializing]
         private void OnSerializingMethod(StreamingContext context)
         {
+            this.authenticationService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IAuthenticationService>();
             this.vstsService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IVstsService>();
         }
     }

@@ -28,14 +28,18 @@ namespace Vsar.TSBot.Dialogs
     public class RootDialog : IDialog<object>
     {
         [NonSerialized]
+        private IAuthenticationService authenticationService;
+        [NonSerialized]
         private IDialogContextWrapper wrapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RootDialog"/> class.
         /// </summary>
+        /// <param name="authenticationService">A <see cref="IAuthenticationService"/>.</param>
         /// <param name="wrapper">The wrapper.</param>
-        public RootDialog(IDialogContextWrapper wrapper)
+        public RootDialog(IAuthenticationService authenticationService, IDialogContextWrapper wrapper)
         {
+            this.authenticationService = authenticationService;
             this.wrapper = wrapper;
         }
 
@@ -72,6 +76,7 @@ namespace Vsar.TSBot.Dialogs
         [OnSerializing]
         private void OnSerializingMethod(StreamingContext context)
         {
+            this.authenticationService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IAuthenticationService>();
             this.wrapper = GlobalConfiguration.Configuration.DependencyResolver.GetService<IDialogContextWrapper>();
         }
 
@@ -99,7 +104,7 @@ namespace Vsar.TSBot.Dialogs
         private async Task Welcome(IDialogContext context, IMessageActivity activity, IBotDataBag userData)
         {
             var account = userData.GetCurrentAccount();
-            var profile = userData.GetProfile();
+            var profile = userData.GetProfile(this.authenticationService);
             var profiles = userData.GetProfiles();
             var teamProject = userData.GetCurrentTeamProject();
 

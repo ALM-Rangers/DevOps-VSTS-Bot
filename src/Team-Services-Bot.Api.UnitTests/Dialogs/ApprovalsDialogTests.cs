@@ -43,7 +43,7 @@ namespace Vsar.TSBot.UnitTests
                 ReleaseEnvironmentReference = new ReleaseEnvironmentShallowReference { Name = "Development" }
             };
             var approvals = new List<ReleaseApproval> { approval };
-            var profile = new VstsProfile();
+            var profile = this.Fixture.CreateProfile();
             var teamProject = "anteamproject";
 
             var service = new Mock<IVstsService>();
@@ -61,7 +61,7 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(s => s.GetApprovals(account, teamProject, profile))
                 .ReturnsAsync(approvals);
 
-            var target = new ApprovalsDialog(service.Object);
+            var target = new ApprovalsDialog(this.Fixture.AuthenticationService.Object, service.Object);
 
             await target.ApprovalsAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -77,7 +77,7 @@ namespace Vsar.TSBot.UnitTests
             toBot.Text = "approve 1 a comment";
 
             var account = "anaccount";
-            var profile = new VstsProfile();
+            var profile = this.Fixture.CreateProfile();
             var teamProject = "anteamproject";
 
             var service = new Mock<IVstsService>();
@@ -92,7 +92,7 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
                 .Returns(true);
 
-            var target = new ApprovalsDialog(service.Object)
+            var target = new ApprovalsDialog(this.Fixture.AuthenticationService.Object, service.Object)
             {
                 Account = account,
                 Profile = profile,
@@ -115,7 +115,7 @@ namespace Vsar.TSBot.UnitTests
             toBot.Text = "reject 1 a comment";
 
             var account = "anaccount";
-            var profile = new VstsProfile();
+            var profile = this.Fixture.CreateProfile();
             var teamProject = "anteamproject";
 
             var service = new Mock<IVstsService>();
@@ -130,7 +130,7 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
                 .Returns(true);
 
-            var target = new ApprovalsDialog(service.Object)
+            var target = new ApprovalsDialog(this.Fixture.AuthenticationService.Object, service.Object)
             {
                 Account = account,
                 Profile = profile,

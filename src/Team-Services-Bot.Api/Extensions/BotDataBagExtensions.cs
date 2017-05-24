@@ -108,16 +108,36 @@ namespace Vsar.TSBot
         /// Get the current profile.
         /// </summary>
         /// <param name="dataBag">The data bag.</param>
+        /// <param name="authenticationService">The <see cref="IAuthenticationService"/>.</param>
         /// <returns>A VstsProfile.</returns>
-        public static VstsProfile GetProfile(this IBotDataBag dataBag)
+        public static VstsProfile GetProfile(this IBotDataBag dataBag, IAuthenticationService authenticationService)
         {
             VstsProfile profile;
+
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            return dataBag.TryGetValue(Profile, out profile) ? profile : null;
+            if (authenticationService == null)
+            {
+                throw new ArgumentNullException(nameof(authenticationService));
+            }
+
+            if (!dataBag.TryGetValue(Profile, out profile))
+            {
+                return null;
+            }
+
+            if (profile.Token.ExpiresOn.AddMinutes(30) > DateTime.UtcNow)
+            {
+                return profile;
+            }
+
+            profile.Token = authenticationService.GetToken(profile.Token).Result;
+            dataBag.SetCurrentProfile(profile);
+
+            return profile;
         }
 
         /// <summary>
