@@ -54,6 +54,16 @@ namespace Vsar.TSBot.Dialogs
         public string Account { get; set; }
 
         /// <summary>
+        /// Gets or sets the approvalid.
+        /// </summary>
+        public int ApprovalId { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether it is an approval.
+        /// </summary>
+        public bool IsApproval { get; set; }
+
+        /// <summary>
         /// Gets or sets the profile.
         /// </summary>
         public VstsProfile Profile { get; set; }
@@ -120,43 +130,45 @@ namespace Vsar.TSBot.Dialogs
 
             if (matchApprove.Success)
             {
-                var approvalId = Convert.ToInt32(matchApprove.Groups[1].Value);
+                this.ApprovalId = Convert.ToInt32(matchApprove.Groups[1].Value);
+                this.IsApproval = true;
                 var comment = matchApprove.Groups[2].Value;
 
                 if (string.IsNullOrWhiteSpace(comment))
                 {
                     reply.Text = Labels.MissingComment;
                     await context.PostAsync(reply);
-                    context.Wait((c, r) => this.ChangeStatus(c, r, approvalId, true));
+                    context.Wait(this.ChangeStatus);
                 }
                 else
                 {
-                    await this.ChangeStatus(context, approvalId, comment, true);
+                    await this.ChangeStatus(context, this.ApprovalId, comment, true);
                 }
             }
             else if (matchReject.Success)
             {
-                var approvalId = Convert.ToInt32(matchReject.Groups[1].Value);
+                this.ApprovalId = Convert.ToInt32(matchReject.Groups[1].Value);
+                this.IsApproval = false;
                 var comment = matchReject.Groups[2].Value;
 
                 if (string.IsNullOrWhiteSpace(comment))
                 {
                     reply.Text = Labels.MissingComment;
                     await context.PostAsync(reply);
-                    context.Wait((c, r) => this.ChangeStatus(c, r, approvalId, false));
+                    context.Wait(this.ChangeStatus);
                 }
                 else
                 {
-                    await this.ChangeStatus(context, approvalId, comment, false);
+                    await this.ChangeStatus(context, this.ApprovalId, comment, false);
                 }
             }
         }
 
-        private async Task ChangeStatus(IDialogContext context, IAwaitable<IMessageActivity> result, int approvalId, bool isApproval)
+        private async Task ChangeStatus(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
 
-            await this.ChangeStatus(context, approvalId, activity.Text, isApproval);
+            await this.ChangeStatus(context, this.ApprovalId, activity.Text, this.IsApproval);
         }
 
         private async Task ChangeStatus(IDialogContext context, int approvalId, string comment, bool isApproval)

@@ -208,7 +208,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(account));
             }
 
-            dataBag.SetValue(account, Account);
+            dataBag.SetValue(Account, account);
         }
 
         /// <summary>

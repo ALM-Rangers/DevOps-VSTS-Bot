@@ -27,6 +27,7 @@ namespace Vsar.TSBot
     /// </summary>
     public class VstsService : IVstsService
     {
+        private const string VstsUrl = "https://{0}.visualstudio.com";
         private const string VstsRmUrl = "https://{0}.vsrm.visualstudio.com";
 
         private readonly Uri vstsAppUrl = new Uri("https://app.vssps.visualstudio.com");
@@ -54,7 +55,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(comments));
             }
 
-            using (var client = this.GetConnectedClient<ReleaseHttpClient2>(this.vstsAppUrl, profile.Token))
+            using (var client = this.GetConnectedClient<ReleaseHttpClient2>(new Uri(string.Format(VstsUrl, account)), profile.Token))
             {
                 var approval = await client.GetApprovalAsync(teamProject, approvalId);
                 approval.Status = status;
