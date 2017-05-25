@@ -24,7 +24,7 @@ namespace Vsar.TSBot
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Reviewed.")]
         [DataMember]
-        public IList<string> Accounts { get; set; } = new List<string>();
+        public IList<VstsAccount> Accounts { get; set; } = new List<VstsAccount>();
 
         /// <summary>
         /// Gets or sets the id.

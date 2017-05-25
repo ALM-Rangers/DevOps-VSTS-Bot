@@ -18,6 +18,9 @@ namespace Vsar.TSBot.Dialogs
     public class DialogContextWrapper : IDialogContextWrapper
     {
         /// <inheritdoc />
+        public IVstsService VstsService => new VstsService();
+
+        /// <inheritdoc />
         public IBotDataBag GetConversationData(IDialogContext context)
         {
             if (context == null)

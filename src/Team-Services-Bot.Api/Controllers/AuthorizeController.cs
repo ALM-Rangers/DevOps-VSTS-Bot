@@ -91,13 +91,12 @@ namespace Vsar.TSBot
 
         private static VstsProfile Map(IEnumerable<Account> accounts, Microsoft.VisualStudio.Services.Profile.Profile profile, OAuthToken token)
         {
-            var result = new VstsProfile
+            return new VstsProfile
             {
-                Accounts = accounts.Select(a => a.AccountName).ToList(),
+                Accounts = accounts.Select(a => new VstsAccount { Name = a.AccountName, Url = a.AccountUri }).ToList(),
                 Id = profile.Id,
                 Token = token
             };
-            return result;
         }
     }
 }
