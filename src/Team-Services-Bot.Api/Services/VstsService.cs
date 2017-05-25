@@ -99,7 +99,7 @@ namespace Vsar.TSBot
 
             using (var client = this.GetConnectedClient<ReleaseHttpClient2>(new Uri(string.Format(VstsRmUrl, account)), profile.Token))
             {
-                return await client.GetApprovalsAsync2(teamProject, profile.Id.ToString());
+                return await client.GetApprovalsAsync2(teamProject, profile.EmailAddress);
             }
         }
 

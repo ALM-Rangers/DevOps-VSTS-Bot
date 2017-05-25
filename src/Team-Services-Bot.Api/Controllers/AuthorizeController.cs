@@ -94,6 +94,7 @@ namespace Vsar.TSBot
             var result = new VstsProfile
             {
                 Accounts = accounts.Select(a => a.AccountName).ToList(),
+                EmailAddress = profile.EmailAddress,
                 Id = profile.Id,
                 Token = token
             };
