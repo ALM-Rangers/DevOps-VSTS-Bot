@@ -162,6 +162,10 @@ namespace Vsar.TSBot.Dialogs
                     await this.ChangeStatus(context, this.ApprovalId, comment, false);
                 }
             }
+            else
+            {
+                context.Done(reply);
+            }
         }
 
         private async Task ChangeStatus(IDialogContext context, IAwaitable<IMessageActivity> result)

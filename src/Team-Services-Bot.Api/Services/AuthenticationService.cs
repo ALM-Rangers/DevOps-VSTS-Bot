@@ -13,6 +13,7 @@ namespace Vsar.TSBot
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
+    using System.Web;
 
     /// <summary>
     /// Represents an implementation of <see cref="IAuthenticationService"/>.
@@ -47,8 +48,11 @@ namespace Vsar.TSBot
         public async Task<OAuthToken> GetToken(string code)
         {
             var client = new HttpClient();
-            var postData = string.Format(FormatPostData, this.appSecret, GrantTypeBearerToken, code, this.authorizeUrl);
-            var response = await client.PostAsync(TokenUrl, new StringContent(postData, Encoding.UTF8, MediaType));
+            var postData = string.Format(FormatPostData, HttpUtility.UrlEncode(this.appSecret), GrantTypeBearerToken, HttpUtility.UrlEncode(code), this.authorizeUrl);
+            var response = await client
+                .PostAsync(TokenUrl, new StringContent(postData, Encoding.UTF8, MediaType))
+                .ConfigureAwait(false);
+
             return await response.Content.ReadAsAsync<OAuthToken>();
         }
 
@@ -56,8 +60,11 @@ namespace Vsar.TSBot
         public async Task<OAuthToken> GetToken(OAuthToken token)
         {
             var client = new HttpClient();
-            var postData = string.Format(FormatPostData, this.appSecret, GrantTypeRefreshToken, token.RefreshToken, this.authorizeUrl);
-            var response = await client.PostAsync(TokenUrl, new StringContent(postData, Encoding.UTF8, MediaType));
+            var postData = string.Format(FormatPostData, HttpUtility.UrlEncode(this.appSecret), GrantTypeRefreshToken, HttpUtility.UrlEncode(token.RefreshToken), this.authorizeUrl);
+            var response = await client
+                .PostAsync(TokenUrl, new StringContent(postData, Encoding.UTF8, MediaType))
+                .ConfigureAwait(false);
+
             return await response.Content.ReadAsAsync<OAuthToken>();
         }
     }

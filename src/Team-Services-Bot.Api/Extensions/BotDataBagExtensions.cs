@@ -129,7 +129,7 @@ namespace Vsar.TSBot
                 return null;
             }
 
-            if (profile.Token.ExpiresOn.AddMinutes(30) > DateTime.UtcNow)
+            if (profile.Token.ExpiresOn.AddMinutes(-5) > DateTime.UtcNow)
             {
                 return profile;
             }
