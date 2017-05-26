@@ -108,8 +108,7 @@ namespace Vsar.TSBot.Dialogs
             var profiles = userData.GetProfiles();
             var teamProject = userData.GetCurrentTeamProject();
 
-            if (string.IsNullOrWhiteSpace(account) || profile == null || !profiles.Any() ||
-                string.IsNullOrWhiteSpace(teamProject))
+            if (account == null || profile == null || !profiles.Any() || string.IsNullOrWhiteSpace(teamProject))
             {
                 await context.PostAsync(string.Format(Labels.WelcomeNewUser, activity.From.Name));
 

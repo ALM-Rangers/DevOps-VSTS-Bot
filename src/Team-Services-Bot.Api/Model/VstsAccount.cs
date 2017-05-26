@@ -1,43 +1,34 @@
 ﻿// ———————————————————————————————
-// <copyright file="VstsProfile.cs">
+// <copyright file="VstsAccount.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Represents a Team Services VSTSProfile.
+// Represents a Team Services Account Information.
 // </summary>
 // ———————————————————————————————
 
 namespace Vsar.TSBot
 {
     using System;
-    using System.Collections.Generic;
     using System.Runtime.Serialization;
 
     /// <summary>
-    /// Represents a Team Services VSTSProfile.
+    /// Represents information about VSTS Account
     /// </summary>
     [DataContract]
-    [Serializable]
-    public class VstsProfile
+    public class VstsAccount
     {
         /// <summary>
-        /// Gets or sets a list of account names.
+        /// Gets or sets VSTS account name.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Reviewed.")]
         [DataMember]
-        public IList<VstsAccount> Accounts { get; set; } = new List<VstsAccount>();
+        public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the email address.
+        /// Gets or sets account URL. it should be in form https://account_name.visualstudio.com.
         /// </summary>
         [DataMember]
-        public string EmailAddress { get; set; }
-
-        /// <summary>
-        /// Gets or sets the id.
-        /// </summary>
-        [DataMember]
-        public Guid Id { get; set; }
+        public Uri Url { get; set; }
 
         /// <summary>
         /// Gets or sets the Token.

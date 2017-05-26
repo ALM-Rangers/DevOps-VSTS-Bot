@@ -9,6 +9,7 @@
 
 namespace Vsar.TSBot.AcceptanceTests
 {
+    using System;
     using Microsoft.Bot.Connector;
     using Microsoft.Bot.Connector.DirectLine;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +17,11 @@ namespace Vsar.TSBot.AcceptanceTests
 
     public static class Config
     {
-        public static string Account => TestContext.Properties["Account"].ToString();
+        public static VstsAccount Account => new VstsAccount
+        {
+            Name = TestContext.Properties["Account"].ToString(),
+            Url = new Uri(TestContext.Properties["AccountUrl"].ToString())
+        };
 
         public static string BotId => TestContext.Properties["BotId"].ToString();
 

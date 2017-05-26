@@ -312,6 +312,7 @@
     <Compile Include="Cards\ApprovalCard.cs" />
     <Compile Include="Cards\LogOnCard.cs" />
     <Compile Include="Cards\MainOptionsCard.cs" />
+    <Compile Include="Cards\ProjectsCard.cs" />
     <Compile Include="Controllers\AuthorizeController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Dialogs\ApprovalsDialog.cs" />
@@ -328,6 +329,7 @@
     <Compile Include="Extensions\ActivityExtensions.cs" />
     <Compile Include="Model\Authorize.cs" />
     <Compile Include="Model\OAuthToken.cs" />
+    <Compile Include="Model\VstsAccount.cs" />
     <Compile Include="Model\VstsProfile.cs" />
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="DI\DialogInvoker.cs" />

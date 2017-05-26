@@ -29,16 +29,17 @@ namespace Vsar.TSBot
         /// Gets the current account name.
         /// </summary>
         /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
-        /// <returns>A string representing the account.</returns>
-        public static string GetCurrentAccount(this IBotDataBag dataBag)
+        /// <returns>A <see cref="VstsAccount"/> representing the account.</returns>
+        public static VstsAccount GetCurrentAccount(this IBotDataBag dataBag)
         {
-            string result;
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            return dataBag.TryGetValue(Account, out result) ? result : string.Empty;
+            VstsAccount account;
+
+            return dataBag.TryGetValue(Account, out account) ? account : null;
         }
 
         /// <summary>
@@ -48,11 +49,12 @@ namespace Vsar.TSBot
         /// <returns>A string representing the account.</returns>
         public static VstsProfile GetCurrentProfile(this IBotDataBag dataBag)
         {
-            VstsProfile profile;
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
+
+            VstsProfile profile;
 
             return dataBag.TryGetValue(Profile, out profile) ? profile : null;
         }
@@ -143,7 +145,7 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets the profiles.
         /// </summary>
-        /// <param name="data">the Botdata</param>
+        /// <param name="data">Bot data</param>
         /// <returns>The profile.</returns>
         public static IList<VstsProfile> GetProfiles(this BotData data)
         {
@@ -172,18 +174,18 @@ namespace Vsar.TSBot
         }
 
         /// <summary>
-        /// Sets the current account name.
+        /// Sets the current account.
         /// </summary>
         /// <param name="data">The bot data.</param>
         /// <param name="account">The account.</param>
-        public static void SetCurrentAccount(this BotData data, string account)
+        public static void SetCurrentAccount(this BotData data, VstsAccount account)
         {
             if (data == null)
             {
                 throw new ArgumentNullException(nameof(data));
             }
 
-            if (string.IsNullOrWhiteSpace(account))
+            if (account == null)
             {
                 throw new ArgumentNullException(nameof(account));
             }
@@ -192,18 +194,18 @@ namespace Vsar.TSBot
         }
 
         /// <summary>
-        /// Sets the current account name.
+        /// Sets the current account.
         /// </summary>
         /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
         /// <param name="account">the account.</param>
-        public static void SetCurrentAccount(this IBotDataBag dataBag, string account)
+        public static void SetCurrentAccount(this IBotDataBag dataBag, VstsAccount account)
         {
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            if (string.IsNullOrWhiteSpace(account))
+            if (account == null)
             {
                 throw new ArgumentNullException(nameof(account));
             }

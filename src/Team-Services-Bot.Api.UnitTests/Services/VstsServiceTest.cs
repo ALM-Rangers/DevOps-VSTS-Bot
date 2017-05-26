@@ -10,13 +10,14 @@ namespace Vsar.TSBot.UnitTests.Services
 {
     using System;
     using System.Threading.Tasks;
+    using Common.Tests;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
     /// Unit tests for <see cref="VstsService"/>.
     /// </summary>
     [TestClass]
-    [TestCategory("Unit")]
+    [TestCategory(TestCategories.Unit)]
     public class VstsServiceTest
     {
         private readonly OAuthToken token = new OAuthToken { AccessToken = @"x25onorum4neacdjmvzvaxjeosik7qxo7fbnn6lebefeday7fxmq" };
@@ -33,9 +34,7 @@ namespace Vsar.TSBot.UnitTests.Services
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetProfile(null));
 
-            // TODO: Implement mocking of VSTS calls
-            // var profile = await service.GetProfile(this.token);
-            // Assert.IsNotNull(profile);
+            // TODO: Implement mocking of VSTS calls and test real behavior
         }
 
         /// <summary>
@@ -54,9 +53,7 @@ namespace Vsar.TSBot.UnitTests.Services
 
             // await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetAccounts(null, memberId));
 
-            // TODO: Implement mocking of VSTS calls
-            // IList<Account> accounts = await service.GetAccounts(this.token, memberId);
-            // Assert.IsNotNull(accounts);
+            // TODO: Implement mocking of VSTS calls and test real behavior
         }
 
         /// <summary>
@@ -74,9 +71,7 @@ namespace Vsar.TSBot.UnitTests.Services
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetProjects(null, this.token));
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetProjects(accountUrl, null));
 
-            // TODO: Implement mocking of VSTS calls
-            // IEnumerable<TeamProjectReference> result = await service.GetProjects(accountUrl, this.token);
-            // Assert.IsNotNull(result);
+            // TODO: Implement mocking of VSTS calls and test real behavior
         }
     }
 }

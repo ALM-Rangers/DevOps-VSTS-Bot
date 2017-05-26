@@ -115,6 +115,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please select a project to connect to..
+        /// </summary>
+        internal static string ConnectToProject {
+            get {
+                return ResourceManager.GetString("ConnectToProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please provide a comment..
         /// </summary>
         internal static string MissingComment {

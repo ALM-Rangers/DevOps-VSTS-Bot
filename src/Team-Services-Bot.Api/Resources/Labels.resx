@@ -147,6 +147,9 @@
     <value>Welcome {0}. I see this is the first team we speak.</value>
     <comment>{0} = from name</comment>
   </data>
+  <data name="ConnectToProject" xml:space="preserve">
+    <value>Please select a project to connect to.</value>
+  </data>
   <data name="Approve" xml:space="preserve">
     <value>Approve</value>
   </data>
