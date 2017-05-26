@@ -9,6 +9,7 @@
 
 namespace Vsar.TSBot.UnitTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -49,7 +50,12 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "Hi";
 
-            var account = "anaccount";
+            var account = new VstsAccount
+            {
+                Name = "anaccount",
+                Url = new Uri("https://myaccount.visualstuio.com")
+            };
+
             var profile = new VstsProfile();
             IList<VstsProfile> profiles = new List<VstsProfile> { profile };
             var teamProject = "TeamProject1";

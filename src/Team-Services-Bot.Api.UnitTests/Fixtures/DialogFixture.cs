@@ -50,6 +50,11 @@ namespace Vsar.TSBot.UnitTests
         public Mock<IDialogContextWrapper> Wrapper { get; } = new Mock<IDialogContextWrapper>();
 
         /// <summary>
+        /// Gets mocked <see cref="IVstsService"/>
+        /// </summary>
+        public Mock<IVstsService> VstsService { get; } = new Mock<IVstsService>();
+
+        /// <summary>
         /// Creates a default <see cref="IMessageActivity"/>.
         /// </summary>
         /// <returns>A <see cref="IMessageActivity"/>.</returns>
@@ -81,50 +86,27 @@ namespace Vsar.TSBot.UnitTests
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            builder
-                .Register(c => this.Wrapper.Object)
-                .As<IDialogContextWrapper>();
-
-            builder
-                .RegisterType<TelemetryClient>();
-
-            builder
-                .Register(c => this.RootDialog);
-
-            builder
-                .RegisterModule<AttributedMetadataModule>();
-            builder
-                .RegisterType<RootDialog>();
-
-            builder
-                .RegisterModule(new DialogModule_MakeRoot());
-
-            builder
-                .Register((c, p) => new MockConnectorFactory(c.Resolve<IAddress>().BotId))
+            builder.Register(c => this.Wrapper.Object).As<IDialogContextWrapper>();
+            builder.Register(c => this.VstsService.Object).As<IVstsService>();
+            builder.RegisterType<TelemetryClient>();
+            builder.Register(c => this.RootDialog);
+            builder.RegisterModule<AttributedMetadataModule>();
+            builder.RegisterType<RootDialog>();
+            builder.RegisterModule(new DialogModule_MakeRoot());
+            builder.Register((c, p) => new MockConnectorFactory(c.Resolve<IAddress>().BotId))
                 .As<IConnectorClientFactory>()
                 .InstancePerLifetimeScope();
-
-            builder
-                .Register(c => new Queue<IMessageActivity>())
-                .AsSelf()
-                .InstancePerLifetimeScope();
-
-            builder
-                .RegisterType<BotToUserQueue>()
-                .AsSelf()
-                .InstancePerLifetimeScope();
-
-            builder
-                .Register(c => new MapToChannelData_BotToUser(c.Resolve<BotToUserQueue>(), new List<IMessageActivityMapper> { new KeyboardCardMapper() }))
-                .As<IBotToUser>()
-                .InstancePerLifetimeScope();
+            builder.Register(c => new Queue<IMessageActivity>()).AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<BotToUserQueue>().AsSelf().InstancePerLifetimeScope();
+            builder.Register(c => new MapToChannelData_BotToUser(
+                c.Resolve<BotToUserQueue>(),
+                new List<IMessageActivityMapper> { new KeyboardCardMapper() })).As<IBotToUser>().InstancePerLifetimeScope();
 
             var container = builder.Build();
+
             GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
 
-            this.Wrapper
-                .Setup(w => w.GetUserData(It.IsAny<IDialogContext>()))
-                .Returns(this.UserData.Object);
+            this.Wrapper.Setup(w => w.GetUserData(It.IsAny<IDialogContext>())).Returns(this.UserData.Object);
 
             return container;
         }

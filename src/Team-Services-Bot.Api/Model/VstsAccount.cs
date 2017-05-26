@@ -16,11 +16,8 @@ namespace Vsar.TSBot
     /// Represents information about VSTS Account
     /// </summary>
     [DataContract]
-    [Serializable]
     public class VstsAccount
     {
-        private string urlString;
-
         /// <summary>
         /// Gets or sets VSTS account name.
         /// </summary>
@@ -31,17 +28,12 @@ namespace Vsar.TSBot
         /// Gets or sets account URL. it should be in form https://account_name.visualstudio.com.
         /// </summary>
         [DataMember]
-        public Uri Url
-        {
-            get
-            {
-                return new Uri(this.urlString);
-            }
+        public Uri Url { get; set; }
 
-            set
-            {
-                this.urlString = value != null ? value.ToString() : string.Empty;
-            }
-        }
+        /// <summary>
+        /// Gets or sets the Token.
+        /// </summary>
+        [DataMember]
+        public OAuthToken Token { get; set; }
     }
 }

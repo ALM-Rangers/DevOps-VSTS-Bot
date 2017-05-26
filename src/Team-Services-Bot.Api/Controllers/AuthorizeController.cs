@@ -71,29 +71,29 @@ namespace Vsar.TSBot
             var token = await this.authenticationService.GetToken(code);
             var profile = await this.vstsService.GetProfile(token);
             var accounts = await this.vstsService.GetAccounts(token, profile.Id);
-            var result = Map(accounts, profile, token);
+            var vstsProfile = CreateVstsProfile(accounts, profile, token);
 
             var data = await this.botService.GetUserData(channelId, userId);
             var pin = data.GetPin();
             var profiles = data.GetProfiles();
 
-            if (!profiles.Any(p => p.Id.Equals(result.Id)))
+            if (!profiles.Any(p => p.Id.Equals(vstsProfile.Id)))
             {
-                profiles.Add(result);
+                profiles.Add(vstsProfile);
             }
 
-            data.SetCurrentProfile(result);
+            data.SetCurrentProfile(vstsProfile);
             data.SetProfiles(profiles);
             await this.botService.SetUserData(channelId, userId, data);
 
             return this.View(new Authorize(pin));
         }
 
-        private static VstsProfile Map(IEnumerable<Account> accounts, Microsoft.VisualStudio.Services.Profile.Profile profile, OAuthToken token)
+        private static VstsProfile CreateVstsProfile(IEnumerable<Account> accounts, Microsoft.VisualStudio.Services.Profile.Profile profile, OAuthToken token)
         {
             return new VstsProfile
             {
-                Accounts = accounts.Select(a => new VstsAccount { Name = a.AccountName, Url = a.AccountUri }).ToList(),
+                Accounts = accounts.Select(a => new VstsAccount { Name = a.AccountName, Url = a.AccountUri, Token = token }).ToList(),
                 Id = profile.Id,
                 Token = token
             };

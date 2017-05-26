@@ -17,11 +17,6 @@ namespace Vsar.TSBot.Dialogs
     public interface IDialogContextWrapper
     {
         /// <summary>
-        /// Gets instance of <see cref="VstsService"/>
-        /// </summary>
-        IVstsService VstsService { get; }
-
-        /// <summary>
         /// Gets the conversation data.
         /// </summary>
         /// <param name="context">The context.</param>

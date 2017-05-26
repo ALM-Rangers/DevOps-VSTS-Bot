@@ -21,7 +21,6 @@ namespace Vsar.TSBot.Dialogs
     using Cards;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
-    using Microsoft.TeamFoundation.Core.WebApi;
     using Resources;
 
     /// <summary>
@@ -39,7 +38,10 @@ namespace Vsar.TSBot.Dialogs
         [NonSerialized]
         private IDialogContextWrapper wrapper;
 
-        private VstsAccount account;
+        [NonSerialized]
+        private IVstsService vstsService;
+
+        private string accountName;
         private bool isPinActivated;
         private string teamProject;
 
@@ -49,7 +51,8 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="appId">The registered application id.</param>
         /// <param name="authorizeUrl">The URL to return to after authentication.</param>
         /// <param name="wrapper">The wrapper</param>
-        public ConnectDialog(string appId, Uri authorizeUrl, IDialogContextWrapper wrapper)
+        /// <param name="vstsService">VSTS accessor</param>
+        public ConnectDialog(string appId, Uri authorizeUrl, IDialogContextWrapper wrapper, IVstsService vstsService)
         {
             if (appId == null)
             {
@@ -66,9 +69,15 @@ namespace Vsar.TSBot.Dialogs
                 throw new ArgumentNullException(nameof(wrapper));
             }
 
+            if (vstsService == null)
+            {
+                throw new ArgumentNullException(nameof(vstsService));
+            }
+
             this.appId = appId;
             this.authorizeUrl = authorizeUrl.ToString();
             this.wrapper = wrapper;
+            this.vstsService = vstsService;
         }
 
         /// <inheritdoc />
@@ -110,6 +119,7 @@ namespace Vsar.TSBot.Dialogs
             var pin = userData.GetPin();
             var profile = userData.GetCurrentProfile();
             var profiles = userData.GetProfiles();
+            var account = userData.GetCurrentAccount();
             var reply = context.MakeMessage();
             var text = (activity.Text ?? string.Empty).ToLowerInvariant();
 
@@ -128,8 +138,7 @@ namespace Vsar.TSBot.Dialogs
                 var match = Regex.Match(text, CommandMatchConnect);
                 if (match.Success)
                 {
-                    string accountName = match.Groups[1].Value;
-                    this.account = profile.Accounts.First(a => string.Equals(accountName, a.Name, StringComparison.OrdinalIgnoreCase));
+                    this.accountName = match.Groups[1].Value;
                     this.teamProject = match.Groups[2].Value;
                 }
             }
@@ -142,23 +151,28 @@ namespace Vsar.TSBot.Dialogs
             }
 
             // No account, show a list available accounts.
-            if (this.account == null)
+            if (string.IsNullOrWhiteSpace(this.accountName))
             {
                 await this.SelectAccountAsync(context, profiles, reply);
                 return;
             }
 
+            if (!string.IsNullOrWhiteSpace(this.accountName) && profile.Accounts != null)
+            {
+                account = profile.Accounts.First(a => string.Equals(this.accountName, a.Name, StringComparison.OrdinalIgnoreCase));
+            }
+
             // No team project, ....
             if (string.IsNullOrWhiteSpace(this.teamProject))
             {
-                await this.SelectProjectAsync(context, profile, reply);
+                await this.SelectProjectAsync(context, account, reply);
                 return;
             }
 
-            userData.SetCurrentAccount(this.account);
+            userData.SetCurrentAccount(account);
             userData.SetCurrentTeamProject(this.teamProject);
 
-            reply.Text = string.Format(Labels.ConnectedTo, this.account, this.teamProject);
+            reply.Text = string.Format(Labels.ConnectedTo, this.accountName, this.teamProject);
             await context.PostAsync(reply);
 
             context.Done(reply);
@@ -201,6 +215,7 @@ namespace Vsar.TSBot.Dialogs
         private void OnSerializingMethod(StreamingContext context)
         {
             this.wrapper = GlobalConfiguration.Configuration.DependencyResolver.GetService<IDialogContextWrapper>();
+            this.vstsService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IVstsService>();
         }
 
         private async Task SelectAccountAsync(IDialogContext context, IList<VstsProfile> profiles, IMessageActivity reply)
@@ -210,13 +225,12 @@ namespace Vsar.TSBot.Dialogs
             await this.SelectAsync(context, reply, Labels.ConnectToAccount, new AccountsCard(accounts));
         }
 
-        private async Task SelectProjectAsync(IDialogContext context, VstsProfile profile, IMessageActivity reply)
+        private async Task SelectProjectAsync(IDialogContext context, VstsAccount account, IMessageActivity reply)
         {
-            IVstsService service = this.wrapper.VstsService;
-            IEnumerable<TeamProjectReference> teamProjects = await service.GetProjects(this.account.Url, profile.Token);
-            IEnumerable<string> projects = teamProjects.Select(project => project.Name);
+            var projects = await this.vstsService.GetProjects(account.Url, account.Token);
+            var projectNames = projects.Select(project => project.Name);
 
-            await this.SelectAsync(context, reply, Labels.ConnectToProject, new ProjectsCard(projects));
+            await this.SelectAsync(context, reply, Labels.ConnectToProject, new ProjectsCard(projectNames));
         }
 
         private async Task SelectAsync(IDialogContext context, IMessageActivity reply, string replyText, HeroCard card)
