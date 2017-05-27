@@ -22,14 +22,24 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
+    /// <summary>
+    /// Tests for <see cref="ConnectDialog"/>.
+    /// </summary>
     [TestClass]
     public class ConnectDialogTests : TestsBase<DialogFixture>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConnectDialogTests"/> class.
+        /// </summary>
         public ConnectDialogTests()
             : base(new DialogFixture())
         {
         }
 
+        /// <summary>
+        /// Tests connection to an account for the first time.
+        /// </summary>
+        /// <returns><see cref="Task"/></returns>
         [TestMethod]
         [TestCategory(TestCategories.Unit)]
         public async Task Connect_To_An_Account_For_The_First_Time()
@@ -55,7 +65,8 @@ namespace Vsar.TSBot.UnitTests
             var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
 
             var attachment = toUser.Attachments.FirstOrDefault();
-            attachment.Should().NotBeNull();
+
+            Assert.IsNotNull(attachment);
 
             var card = attachment.Content;
             card.Should().BeOfType<LogOnCard>();
@@ -63,6 +74,10 @@ namespace Vsar.TSBot.UnitTests
             this.Fixture.UserData.Verify(ud => ud.SetValue("Pin", It.IsRegex("\\d{4}")));
         }
 
+        /// <summary>
+        /// Tests an account selection.
+        /// </summary>
+        /// <returns><see cref="Task"/></returns>
         [TestMethod]
         [TestCategory(TestCategories.Unit)]
         public async Task Connect_To_An_Account_Select_An_Account()
@@ -97,12 +112,14 @@ namespace Vsar.TSBot.UnitTests
             var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
 
             var attachment = toUser.Attachments.FirstOrDefault();
-            attachment.Should().NotBeNull();
-
-            var card = attachment.Content;
-            card.Should().BeOfType<AccountsCard>();
+            Assert.IsNotNull(attachment);
+            Assert.IsInstanceOfType(attachment.Content, typeof(AccountsCard));
         }
 
+        /// <summary>
+        /// Tests connection to an account where previously connected to.
+        /// </summary>
+        /// <returns><see cref="Task"/></returns>
         [TestMethod]
         [TestCategory(TestCategories.Unit)]
         public async Task Connect_To_An_Account_Where_Previously_Connected_To()
@@ -113,8 +130,13 @@ namespace Vsar.TSBot.UnitTests
             const string appId = "AnAppId";
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
-            var account = "anaccount";
-            var profile = new VstsProfile();
+            var account = new VstsAccount
+            {
+                Name = "anaccount",
+                Url = new Uri("https://myaccount.visualstuio.com")
+            };
+
+            var profile = new VstsProfile { Accounts = new List<VstsAccount> { account } };
             IList<VstsProfile> profiles = new List<VstsProfile> { profile };
             var teamProject = "TeamProject1";
 

@@ -97,6 +97,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please select a project to connect to..
+        /// </summary>
+        internal static string ConnectToProject {
+            get {
+                return ResourceManager.GetString("ConnectToProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please login to Team Services. After login you will receive a four digit pin number, please enter the pin number..
         /// </summary>
         internal static string PleaseLogin {
