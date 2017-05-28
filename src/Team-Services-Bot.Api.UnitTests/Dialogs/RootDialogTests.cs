@@ -9,14 +9,19 @@
 
 namespace Vsar.TSBot.UnitTests
 {
-    using System.Collections.Generic;
+    using System;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
+    using System.Web.Http;
     using Autofac;
+    using Autofac.Integration.WebApi;
     using Cards;
     using Common.Tests;
-    using FluentAssertions;
+    using Dialogs;
+    using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
 
     [TestClass]
     public class RootDialogTests : TestsBase<DialogFixture>
@@ -32,15 +37,18 @@ namespace Vsar.TSBot.UnitTests
         public async Task Welcome_First_Time()
         {
             var toBot = this.Fixture.CreateMessage();
-            toBot.Text = "Hi";
+            toBot.Type = ActivityTypes.ConversationUpdate;
+            toBot.MembersAdded.Add(new ChannelAccount { Id = "testUser", Name = "testUser" });
+            toBot.MembersAdded.Add(new ChannelAccount { Id = "testBot", Name = "testBot" });
 
-            var builder = new ContainerBuilder();
-            var container = this.Fixture.Build(builder);
+            var target = new RootDialog(this.Fixture.AuthenticationService.Object, this.Fixture.TelemetryClient);
 
-            // First trigger the welcome message.
-            var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
+            await target.WelcomeAsync(this.Fixture.DialogContext.Object, toBot);
 
-            toUser.Text.Should().Be($"Welcome {toBot.From.Name}. This is the first time we talk.");
+            this.Fixture.DialogContext
+                .Verify(c => c.PostAsync(
+                    It.Is<IMessageActivity>(a => a.Text.Equals($"Welcome {toBot.From.Name}. This is the first time we talk.", StringComparison.Ordinal)),
+                    CancellationToken.None));
         }
 
         [TestMethod]
@@ -48,16 +56,14 @@ namespace Vsar.TSBot.UnitTests
         public async Task Welcome_Second_Time()
         {
             var toBot = this.Fixture.CreateMessage();
-            toBot.Text = "Hi";
+            toBot.Type = ActivityTypes.ConversationUpdate;
+            toBot.MembersAdded.Add(new ChannelAccount { Id = "testUser", Name = "testUser" });
+            toBot.MembersAdded.Add(new ChannelAccount { Id = "testBot", Name = "testBot" });
 
             var account = "anaccount";
 
             var profile = this.Fixture.CreateProfile();
-            IList<VstsProfile> profiles = new List<VstsProfile> { profile };
             var teamProject = "TeamProject1";
-
-            var builder = new ContainerBuilder();
-            var container = this.Fixture.Build(builder);
 
             this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("Account", out account))
@@ -66,15 +72,17 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(ud => ud.TryGetValue("Profile", out profile))
                 .Returns(true);
             this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Profiles", out profiles))
-                .Returns(true);
-            this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
                 .Returns(true);
 
-            var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
+            var target = new RootDialog(this.Fixture.AuthenticationService.Object, this.Fixture.TelemetryClient);
 
-            toUser.Text.Should().Be($"Welcome back {toBot.From.Name}. I have connected you to Account '{account}', Team Project '{teamProject}'.");
+            await target.WelcomeAsync(this.Fixture.DialogContext.Object, toBot);
+
+            this.Fixture.DialogContext
+                .Verify(c => c.PostAsync(
+                    It.Is<IMessageActivity>(a => a.Text.Equals($"Welcome back {toBot.From.Name}. I have connected you to Account '{account}', Team Project '{teamProject}'.", StringComparison.Ordinal)),
+                    CancellationToken.None));
         }
 
         [TestMethod]
@@ -84,18 +92,18 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "Hi";
 
-            var builder = new ContainerBuilder();
-            var container = this.Fixture.Build(builder);
+            var container = new ContainerBuilder().Build();
 
-            this.Fixture.RootDialog.Initialized = true;
+            GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
 
-            var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
+            var target = new RootDialog(this.Fixture.AuthenticationService.Object, this.Fixture.TelemetryClient);
 
-            var attachment = toUser.Attachments.FirstOrDefault();
-            attachment.Should().NotBeNull();
+            await target.HandleCommandAsync(this.Fixture.DialogContext.Object, toBot);
 
-            var card = attachment.Content;
-            card.Should().BeOfType<MainOptionsCard>();
+            this.Fixture.DialogContext
+                .Verify(c => c.PostAsync(
+                    It.Is<IMessageActivity>(a => a.Attachments.First().Content is MainOptionsCard),
+                    CancellationToken.None));
         }
 
         [TestCleanup]

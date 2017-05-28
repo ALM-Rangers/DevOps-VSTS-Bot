@@ -59,8 +59,6 @@ namespace Vsar.TSBot.UnitTests
 
             var container = this.Fixture.Build(builder);
 
-            this.Fixture.RootDialog.Initialized = true;
-
             // First trigger the welcome message.
             var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
 
@@ -106,8 +104,6 @@ namespace Vsar.TSBot.UnitTests
             this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("Profiles", out profiles))
                 .Returns(true);
-
-            this.Fixture.RootDialog.Initialized = true;
 
             var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
 
@@ -157,8 +153,6 @@ namespace Vsar.TSBot.UnitTests
             this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
                 .Returns(true);
-
-            this.Fixture.RootDialog.Initialized = true;
 
             var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
 
