@@ -15,12 +15,25 @@ namespace Vsar.TSBot
     using Microsoft.TeamFoundation.Core.WebApi;
     using Microsoft.VisualStudio.Services.Account;
     using Microsoft.VisualStudio.Services.Profile;
+    using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
 
     /// <summary>
     /// Interface for accessing VSTS.
     /// </summary>
     public interface IVstsService
     {
+        /// <summary>
+        /// Changes the status for an approval.
+        /// </summary>
+        /// <param name="account">The VSTS account.</param>
+        /// <param name="teamProject">The team project.</param>
+        /// <param name="profile">The user profile.</param>
+        /// <param name="approvalId">The id of the approval.</param>
+        /// <param name="status">The approval status.</param>
+        /// <param name="comments">A comment.</param>
+        /// <returns>A void task.</returns>
+        Task ChangeApprovalStatus(string account, string teamProject, VstsProfile profile, int approvalId, ApprovalStatus status, string comments);
+
         /// <summary>
         /// Gets the accounts for which an user is a member.
         /// </summary>
@@ -29,6 +42,15 @@ namespace Vsar.TSBot
         /// <returns>A list with <see cref="Account"/>.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Reviewed.")]
         Task<IList<Account>> GetAccounts(OAuthToken token, Guid memberId);
+
+        /// <summary>
+        /// Gets the approvals for the user.
+        /// </summary>
+        /// <param name="account">An account.</param>
+        /// <param name="teamProject">The team project.</param>
+        /// <param name="profile">The profile of the user.</param>
+        /// <returns>A list with <see cref="ReleaseApproval"/>.</returns>
+        Task<IList<ReleaseApproval>> GetApprovals(string account, string teamProject, VstsProfile profile);
 
         /// <summary>
         /// Gets the profile from vsts.
@@ -40,10 +62,10 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets team projects from VSTS account
         /// </summary>
-        /// <param name="accountUrl">The <see cref="Uri"/> that represents VSTS account URL.</param>
+        /// <param name="account">The <see cref="Uri"/> that represents VSTS account URL.</param>
         /// <param name="token">The <see cref="OAuthToken"/>.</param>
         /// <returns>Collection of <see cref="TeamProjectReference"/></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Reviewed.")]
-        Task<IEnumerable<TeamProjectReference>> GetProjects(Uri accountUrl, OAuthToken token);
+        Task<IEnumerable<TeamProjectReference>> GetProjects(string account, OAuthToken token);
     }
 }

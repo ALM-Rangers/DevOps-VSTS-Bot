@@ -17,6 +17,7 @@ namespace Vsar.TSBot
     /// Represents a Team Services VSTSProfile.
     /// </summary>
     [DataContract]
+    [Serializable]
     public class VstsProfile
     {
         /// <summary>
@@ -24,7 +25,13 @@ namespace Vsar.TSBot
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Reviewed.")]
         [DataMember]
-        public IList<VstsAccount> Accounts { get; set; } = new List<VstsAccount>();
+        public IList<string> Accounts { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Gets or sets the email address.
+        /// </summary>
+        [DataMember]
+        public string EmailAddress { get; set; }
 
         /// <summary>
         /// Gets or sets the id.

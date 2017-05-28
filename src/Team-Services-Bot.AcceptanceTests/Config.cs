@@ -17,11 +17,7 @@ namespace Vsar.TSBot.AcceptanceTests
 
     public static class Config
     {
-        public static VstsAccount Account => new VstsAccount
-        {
-            Name = TestContext.Properties["Account"].ToString(),
-            Url = new Uri(TestContext.Properties["AccountUrl"].ToString())
-        };
+        public static string Account => TestContext.Properties["Account"].ToString();
 
         public static string BotId => TestContext.Properties["BotId"].ToString();
 

@@ -70,6 +70,24 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Approve.
+        /// </summary>
+        internal static string Approve {
+            get {
+                return ResourceManager.GetString("Approve", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The deployment is approved..
+        /// </summary>
+        internal static string Approved {
+            get {
+                return ResourceManager.GetString("Approved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Authentication is required..
         /// </summary>
         internal static string AuthenticationRequired {
@@ -106,7 +124,16 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please login to Team Services. After login you will receive a four digit pin number, please enter the pin number..
+        ///   Looks up a localized string similar to Please provide a comment..
+        /// </summary>
+        internal static string MissingComment {
+            get {
+                return ResourceManager.GetString("MissingComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please login to Team Services. After login you will receive a five digit pin number, please enter the pin number..
         /// </summary>
         internal static string PleaseLogin {
             get {
@@ -133,6 +160,24 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reject.
+        /// </summary>
+        internal static string Reject {
+            get {
+                return ResourceManager.GetString("Reject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The deployment is rejected..
+        /// </summary>
+        internal static string Rejected {
+            get {
+                return ResourceManager.GetString("Rejected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Welcome back {0}. I have connected you to Account &apos;{1}&apos;, Team Project &apos;{2}&apos;..
         /// </summary>
         internal static string WelcomeExistingUser {
@@ -142,7 +187,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Welcome {0}. I see this is the first team we speak..
+        ///   Looks up a localized string similar to Welcome {0}. This is the first time we talk..
         /// </summary>
         internal static string WelcomeNewUser {
             get {

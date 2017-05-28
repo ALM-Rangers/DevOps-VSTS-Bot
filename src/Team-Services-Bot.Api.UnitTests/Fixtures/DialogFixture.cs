@@ -32,12 +32,26 @@ namespace Vsar.TSBot.UnitTests
         private const string Bot = "testBot";
         private const string User = "testUser";
 
-        private RootDialog rootDialog;
+        public DialogFixture()
+        {
+            this.AuthenticationService = new Mock<IAuthenticationService>();
+            this.RootDialog = new RootDialog(this.AuthenticationService.Object, this.Wrapper.Object);
+            this.DialogContext
+                .Setup(c => c.UserData)
+                .Returns(this.UserData.Object);
+            this.DialogContext
+                .Setup(c => c.MakeMessage())
+                .Returns(this.CreateMessage);
+        }
+
+        public Mock<IAuthenticationService> AuthenticationService { get; }
+
+        public Mock<IDialogContext> DialogContext { get; } = new Mock<IDialogContext>();
 
         /// <summary>
         /// Gets the root dialog.
         /// </summary>
-        public RootDialog RootDialog => this.rootDialog ?? (this.rootDialog = new RootDialog(this.Wrapper.Object));
+        public RootDialog RootDialog { get; }
 
         /// <summary>
         /// Gets a mocked user data.
@@ -69,8 +83,16 @@ namespace Vsar.TSBot.UnitTests
                 Recipient = new ChannelAccount { Id = Bot },
                 ServiceUrl = "InvalidServiceUrl",
                 ChannelId = "Test",
-                Attachments = Array.Empty<Attachment>(),
-                Entities = Array.Empty<Entity>(),
+                Attachments = new List<Attachment>(),
+                Entities = new List<Entity>(),
+            };
+        }
+
+        public VstsProfile CreateProfile()
+        {
+            return new VstsProfile
+            {
+                Token = new OAuthToken { ExpiresIn = 3600 }
             };
         }
 
@@ -86,6 +108,7 @@ namespace Vsar.TSBot.UnitTests
                 throw new ArgumentNullException(nameof(builder));
             }
 
+            builder.Register(c => this.AuthenticationService.Object).As<IAuthenticationService>();
             builder.Register(c => this.Wrapper.Object).As<IDialogContextWrapper>();
             builder.Register(c => this.VstsService.Object).As<IVstsService>();
             builder.RegisterType<TelemetryClient>();
@@ -130,6 +153,11 @@ namespace Vsar.TSBot.UnitTests
 
                 return scope.Resolve<Queue<IMessageActivity>>().Dequeue();
             }
+        }
+
+        public IAwaitable<T> MakeAwaitable<T>(T item)
+        {
+            return new AwaitableFromItem<T>(item);
         }
     }
 }

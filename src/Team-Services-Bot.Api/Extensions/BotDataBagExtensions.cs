@@ -29,15 +29,15 @@ namespace Vsar.TSBot
         /// Gets the current account name.
         /// </summary>
         /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
-        /// <returns>A <see cref="VstsAccount"/> representing the account.</returns>
-        public static VstsAccount GetCurrentAccount(this IBotDataBag dataBag)
+        /// <returns>An account.</returns>
+        public static string GetCurrentAccount(this IBotDataBag dataBag)
         {
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            VstsAccount account;
+            string account;
 
             return dataBag.TryGetValue(Account, out account) ? account : null;
         }
@@ -110,16 +110,36 @@ namespace Vsar.TSBot
         /// Get the current profile.
         /// </summary>
         /// <param name="dataBag">The data bag.</param>
+        /// <param name="authenticationService">The <see cref="IAuthenticationService"/>.</param>
         /// <returns>A VstsProfile.</returns>
-        public static VstsProfile GetProfile(this IBotDataBag dataBag)
+        public static VstsProfile GetProfile(this IBotDataBag dataBag, IAuthenticationService authenticationService)
         {
             VstsProfile profile;
+
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            return dataBag.TryGetValue(Profile, out profile) ? profile : null;
+            if (authenticationService == null)
+            {
+                throw new ArgumentNullException(nameof(authenticationService));
+            }
+
+            if (!dataBag.TryGetValue(Profile, out profile))
+            {
+                return null;
+            }
+
+            if (profile.Token.ExpiresOn.AddMinutes(-5) > DateTime.UtcNow)
+            {
+                return profile;
+            }
+
+            profile.Token = authenticationService.GetToken(profile.Token).Result;
+            dataBag.SetCurrentProfile(profile);
+
+            return profile;
         }
 
         /// <summary>
@@ -158,7 +178,7 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="data">The bot data.</param>
         /// <param name="account">The account.</param>
-        public static void SetCurrentAccount(this BotData data, VstsAccount account)
+        public static void SetCurrentAccount(this BotData data, string account)
         {
             if (data == null)
             {
@@ -178,7 +198,7 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
         /// <param name="account">the account.</param>
-        public static void SetCurrentAccount(this IBotDataBag dataBag, VstsAccount account)
+        public static void SetCurrentAccount(this IBotDataBag dataBag, string account)
         {
             if (dataBag == null)
             {
