@@ -13,6 +13,7 @@ namespace Vsar.TSBot.UnitTests
     using System.Threading.Tasks;
     using Common.Tests;
     using Dialogs;
+    using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Contracts;
@@ -67,6 +68,11 @@ namespace Vsar.TSBot.UnitTests
 
             this.Fixture.DialogContext
                 .Verify(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None));
+
+            this.Fixture.DialogContext
+                .Verify(
+                    c => c.Wait<IMessageActivity>(
+                        It.Is<ResumeAfter<IMessageActivity>>(a => a.Method == target.GetType().GetMethod("ApproveOrRejectAsync"))));
         }
 
         [TestMethod]
