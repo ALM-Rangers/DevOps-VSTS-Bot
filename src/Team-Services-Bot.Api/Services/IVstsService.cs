@@ -50,6 +50,7 @@ namespace Vsar.TSBot
         /// <param name="teamProject">The team project.</param>
         /// <param name="profile">The profile of the user.</param>
         /// <returns>A list with <see cref="ReleaseApproval"/>.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "We are implementing async function, so nesting is ok.")]
         Task<IList<ReleaseApproval>> GetApprovals(string account, string teamProject, VstsProfile profile);
 
         /// <summary>

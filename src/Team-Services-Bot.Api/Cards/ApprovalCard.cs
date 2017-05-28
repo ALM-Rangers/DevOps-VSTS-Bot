@@ -9,6 +9,8 @@
 namespace Vsar.TSBot.Cards
 {
     using System;
+    using System.Globalization;
+    using System.Web;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
     using Resources;
@@ -38,7 +40,7 @@ namespace Vsar.TSBot.Cards
             this.Text = approval.ReleaseEnvironmentReference.Name;
             this.Title = approval.ReleaseDefinitionReference.Name;
 
-            var url = string.Format(FormatReleaseUrl, accountName, teamProject, approval.ReleaseDefinitionReference.Id, approval.ReleaseReference.Id);
+            var url = string.Format(CultureInfo.InvariantCulture, FormatReleaseUrl, HttpUtility.UrlEncode(accountName), HttpUtility.UrlEncode(teamProject), approval.ReleaseDefinitionReference.Id, approval.ReleaseReference.Id);
 
             this.Tap = new CardAction(ActionTypes.OpenUrl, value: url);
 

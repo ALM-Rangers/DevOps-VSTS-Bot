@@ -55,7 +55,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(comments));
             }
 
-            using (var client = this.GetConnectedClient<ReleaseHttpClient2>(new Uri(string.Format(VstsUrl, account)), profile.Token))
+            using (var client = GetConnectedClient<ReleaseHttpClient2>(new Uri(string.Format(VstsUrl, account)), profile.Token))
             {
                 var approval = await client.GetApprovalAsync(teamProject, approvalId);
                 approval.Status = status;
@@ -73,7 +73,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(token));
             }
 
-            using (var client = this.GetConnectedClient<AccountHttpClient>(this.vstsAppUrl, token))
+            using (var client = GetConnectedClient<AccountHttpClient>(this.vstsAppUrl, token))
             {
                 return await client.GetAccountsByMemberAsync(memberId);
             }
@@ -97,7 +97,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(profile));
             }
 
-            using (var client = this.GetConnectedClient<ReleaseHttpClient2>(new Uri(string.Format(VstsRmUrl, account)), profile.Token))
+            using (var client = GetConnectedClient<ReleaseHttpClient2>(new Uri(string.Format(VstsRmUrl, account)), profile.Token))
             {
                 return await client.GetApprovalsAsync2(teamProject, profile.EmailAddress);
             }
@@ -111,7 +111,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(token));
             }
 
-            using (var client = this.GetConnectedClient<ProfileHttpClient>(this.vstsAppUrl, token))
+            using (var client = GetConnectedClient<ProfileHttpClient>(this.vstsAppUrl, token))
             {
                 return await client.GetProfileAsync(new ProfileQueryContext(AttributesScope.Core));
             }
@@ -130,15 +130,28 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(token));
             }
 
-            using (var client = this.GetConnectedClient<ProjectHttpClient>(new Uri(string.Format(VstsUrl, account)), token))
+            using (var client = GetConnectedClient<ProjectHttpClient>(new Uri(string.Format(VstsUrl, account)), token))
             {
                 return await client.GetProjects();
             }
         }
 
-        private T GetConnectedClient<T>(Uri accountUri, OAuthToken token)
+        /// <summary>
+        /// Gets a connected client.
+        /// </summary>
+        /// <typeparam name="T">The client type.</typeparam>
+        /// <param name="accountUri">The url to the account.</param>
+        /// <param name="token">The OAuth token.</param>
+        /// <returns>A clientt.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Cannot dispose the connection here. As it is used outside the scope.")]
+        private static T GetConnectedClient<T>(Uri accountUri, OAuthToken token)
             where T : VssHttpClientBase
         {
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
             var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
             var connection = new VssConnection(accountUri, credentials);
             var client = connection.GetClient<T>();
