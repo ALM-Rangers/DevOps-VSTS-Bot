@@ -131,7 +131,7 @@
     <value>Please select an account to connect to.</value>
   </data>
   <data name="PleaseLogin" xml:space="preserve">
-    <value>Please login to Team Services. After login you will receive a four digit pin number, please enter the pin number.</value>
+    <value>Please login to Team Services. After login you will receive a five digit pin number, please enter the pin number.</value>
   </data>
   <data name="QueueBuild" xml:space="preserve">
     <value>Queue Build</value>
@@ -144,7 +144,7 @@
     <comment>{0} = from name; {1] = account name; {2} = team project name;</comment>
   </data>
   <data name="WelcomeNewUser" xml:space="preserve">
-    <value>Welcome {0}. I see this is the first team we speak.</value>
+    <value>Welcome {0}. This is the first time we talk.</value>
     <comment>{0} = from name</comment>
   </data>
   <data name="ConnectToProject" xml:space="preserve">

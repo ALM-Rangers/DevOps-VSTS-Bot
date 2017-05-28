@@ -29,15 +29,15 @@ namespace Vsar.TSBot
         /// Gets the current account name.
         /// </summary>
         /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
-        /// <returns>A <see cref="VstsAccount"/> representing the account.</returns>
-        public static VstsAccount GetCurrentAccount(this IBotDataBag dataBag)
+        /// <returns>An account.</returns>
+        public static string GetCurrentAccount(this IBotDataBag dataBag)
         {
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            VstsAccount account;
+            string account;
 
             return dataBag.TryGetValue(Account, out account) ? account : null;
         }
@@ -178,7 +178,7 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="data">The bot data.</param>
         /// <param name="account">The account.</param>
-        public static void SetCurrentAccount(this BotData data, VstsAccount account)
+        public static void SetCurrentAccount(this BotData data, string account)
         {
             if (data == null)
             {
@@ -198,7 +198,7 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
         /// <param name="account">the account.</param>
-        public static void SetCurrentAccount(this IBotDataBag dataBag, VstsAccount account)
+        public static void SetCurrentAccount(this IBotDataBag dataBag, string account)
         {
             if (dataBag == null)
             {

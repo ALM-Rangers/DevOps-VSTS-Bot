@@ -99,7 +99,7 @@ namespace Vsar.TSBot.Dialogs
             if (activity.Text.Equals(CommandMatchApprovals, StringComparison.OrdinalIgnoreCase))
             {
                 var approvals = await this.vstsService.GetApprovals(this.Account, this.TeamProject, this.Profile);
-                var cards = approvals.Select(a => new ApprovalCard(a)).ToList();
+                var cards = approvals.Select(a => new ApprovalCard(this.Account, a, this.TeamProject)).ToList();
 
                 foreach (var card in cards)
                 {
@@ -109,7 +109,7 @@ namespace Vsar.TSBot.Dialogs
                 reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
                 await context.PostAsync(reply);
 
-                context.Wait(this.ApproveOrReject);
+                context.Wait(this.ApproveOrRejectAsync);
             }
         }
 
@@ -119,7 +119,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">The <see cref="IDialogContext"/>.</param>
         /// <param name="result">The <see cref="IAwaitable{T}"/>.</param>
         /// <returns>An async <see cref="Task"/>/.</returns>
-        public async Task ApproveOrReject(IDialogContext context, IAwaitable<IMessageActivity> result)
+        public async Task ApproveOrRejectAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
 
@@ -138,11 +138,11 @@ namespace Vsar.TSBot.Dialogs
                 {
                     reply.Text = Labels.MissingComment;
                     await context.PostAsync(reply);
-                    context.Wait(this.ChangeStatus);
+                    context.Wait(this.ChangeStatusAsync);
                 }
                 else
                 {
-                    await this.ChangeStatus(context, this.ApprovalId, comment, true);
+                    await this.ChangeStatusAsync(context, this.ApprovalId, comment, true);
                 }
             }
             else if (matchReject.Success)
@@ -155,11 +155,11 @@ namespace Vsar.TSBot.Dialogs
                 {
                     reply.Text = Labels.MissingComment;
                     await context.PostAsync(reply);
-                    context.Wait(this.ChangeStatus);
+                    context.Wait(this.ChangeStatusAsync);
                 }
                 else
                 {
-                    await this.ChangeStatus(context, this.ApprovalId, comment, false);
+                    await this.ChangeStatusAsync(context, this.ApprovalId, comment, false);
                 }
             }
             else
@@ -168,14 +168,14 @@ namespace Vsar.TSBot.Dialogs
             }
         }
 
-        private async Task ChangeStatus(IDialogContext context, IAwaitable<IMessageActivity> result)
+        private async Task ChangeStatusAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
 
-            await this.ChangeStatus(context, this.ApprovalId, activity.Text, this.IsApproval);
+            await this.ChangeStatusAsync(context, this.ApprovalId, activity.Text, this.IsApproval);
         }
 
-        private async Task ChangeStatus(IDialogContext context, int approvalId, string comment, bool isApproval)
+        private async Task ChangeStatusAsync(IDialogContext context, int approvalId, string comment, bool isApproval)
         {
             var reply = context.MakeMessage();
 

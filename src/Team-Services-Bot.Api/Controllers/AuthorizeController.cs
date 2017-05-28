@@ -93,7 +93,7 @@ namespace Vsar.TSBot
         {
             return new VstsProfile
             {
-                Accounts = accounts.Select(a => new VstsAccount { Name = a.AccountName, Url = a.AccountUri, Token = token }).ToList(),
+                Accounts = accounts.Select(a => a.AccountName).ToList(),
                 EmailAddress = profile.EmailAddress,
                 Id = profile.Id,
                 Token = token

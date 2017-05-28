@@ -99,7 +99,7 @@ namespace Vsar.TSBot.UnitTests
                 TeamProject = teamProject
             };
 
-            await target.ApproveOrReject(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+            await target.ApproveOrRejectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
             service
                 .Verify(s => s.ChangeApprovalStatus(account, teamProject, profile, 1, ApprovalStatus.Approved, "a comment"));
@@ -137,7 +137,7 @@ namespace Vsar.TSBot.UnitTests
                 TeamProject = teamProject
             };
 
-            await target.ApproveOrReject(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+            await target.ApproveOrRejectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
             service
                 .Verify(s => s.ChangeApprovalStatus(account, teamProject, profile, 1, ApprovalStatus.Rejected, "a comment"));

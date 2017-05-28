@@ -9,7 +9,6 @@
 
 namespace Vsar.TSBot.UnitTests
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -40,7 +39,7 @@ namespace Vsar.TSBot.UnitTests
             // First trigger the welcome message.
             var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
 
-            toUser.Text.Should().Be($"Welcome {toBot.From.Name}. I see this is the first team we speak.");
+            toUser.Text.Should().Be($"Welcome {toBot.From.Name}. This is the first time we talk.");
         }
 
         [TestMethod]
@@ -50,11 +49,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "Hi";
 
-            var account = new VstsAccount
-            {
-                Name = "anaccount",
-                Url = new Uri("https://myaccount.visualstuio.com")
-            };
+            var account = "anaccount";
 
             var profile = this.Fixture.CreateProfile();
             IList<VstsProfile> profiles = new List<VstsProfile> { profile };

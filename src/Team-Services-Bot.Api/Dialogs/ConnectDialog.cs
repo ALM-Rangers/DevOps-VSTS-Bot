@@ -54,7 +54,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="vstsService">VSTS accessor</param>
         public ConnectDialog(string appId, Uri authorizeUrl, IDialogContextWrapper wrapper, IVstsService vstsService)
         {
-            if (appId == null)
+            if (string.IsNullOrWhiteSpace(appId))
             {
                 throw new ArgumentNullException(nameof(appId));
             }
@@ -159,13 +159,19 @@ namespace Vsar.TSBot.Dialogs
 
             if (!string.IsNullOrWhiteSpace(this.accountName) && profile.Accounts != null)
             {
-                account = profile.Accounts.First(a => string.Equals(this.accountName, a.Name, StringComparison.OrdinalIgnoreCase));
+                account = profile.Accounts.FirstOrDefault(a => string.Equals(this.accountName, a, StringComparison.OrdinalIgnoreCase));
+
+                if (account == null)
+                {
+                    await this.Login(context, activity, reply, userData);
+                    return;
+                }
             }
 
             // No team project, ....
             if (string.IsNullOrWhiteSpace(this.teamProject))
             {
-                await this.SelectProjectAsync(context, account, reply);
+                await this.SelectProjectAsync(context, account, profile, reply);
                 return;
             }
 
@@ -220,17 +226,21 @@ namespace Vsar.TSBot.Dialogs
 
         private async Task SelectAccountAsync(IDialogContext context, IList<VstsProfile> profiles, IMessageActivity reply)
         {
-            string[] accounts = profiles.SelectMany(a => a.Accounts).Distinct().OrderBy(a => a).Select(vstsAccount => vstsAccount.Name).ToArray();
+            var accounts = profiles
+                .SelectMany(a => a.Accounts)
+                .Distinct()
+                .OrderBy(a => a)
+                .ToArray();
 
             await this.SelectAsync(context, reply, Labels.ConnectToAccount, new AccountsCard(accounts));
         }
 
-        private async Task SelectProjectAsync(IDialogContext context, VstsAccount account, IMessageActivity reply)
+        private async Task SelectProjectAsync(IDialogContext context, string account, VstsProfile profile, IMessageActivity reply)
         {
-            var projects = await this.vstsService.GetProjects(account.Url, account.Token);
+            var projects = await this.vstsService.GetProjects(account, profile.Token);
             var projectNames = projects.Select(project => project.Name);
 
-            await this.SelectAsync(context, reply, Labels.ConnectToProject, new ProjectsCard(projectNames));
+            await this.SelectAsync(context, reply, Labels.ConnectToProject, new ProjectsCard(account, projectNames));
         }
 
         private async Task SelectAsync(IDialogContext context, IMessageActivity reply, string replyText, HeroCard card)

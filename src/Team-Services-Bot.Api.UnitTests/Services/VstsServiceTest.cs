@@ -66,10 +66,10 @@ namespace Vsar.TSBot.UnitTests.Services
         {
             var service = new VstsService();
 
-            var accountUrl = new Uri("https://fakeaccount.visualstudio.com");
+            var account = "anaccount";
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetProjects(null, this.token));
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetProjects(accountUrl, null));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetProjects(account, null));
 
             // TODO: Implement mocking of VSTS calls and test real behavior
         }

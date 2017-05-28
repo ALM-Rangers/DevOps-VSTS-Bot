@@ -25,7 +25,7 @@ namespace Vsar.TSBot
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Reviewed.")]
         [DataMember]
-        public IList<VstsAccount> Accounts { get; set; } = new List<VstsAccount>();
+        public IList<string> Accounts { get; set; } = new List<string>();
 
         /// <summary>
         /// Gets or sets the email address.

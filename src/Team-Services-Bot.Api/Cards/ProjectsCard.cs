@@ -19,11 +19,12 @@ namespace Vsar.TSBot.Cards
         /// <summary>
         /// Initializes a new instance of the <see cref="ProjectsCard"/> class.
         /// </summary>
+        /// <param name="accountName">The account name.</param>
         /// <param name="projects">The account.</param>
-        public ProjectsCard(IEnumerable<string> projects)
+        public ProjectsCard(string accountName, IEnumerable<string> projects)
         {
             this.Buttons = projects
-                .Select(a => new CardAction(ActionTypes.ImBack, a, value: FormattableString.Invariant($"connect {a}")))
+                .Select(p => new CardAction(ActionTypes.ImBack, p, value: FormattableString.Invariant($"connect {accountName} {p}")))
                 .ToList();
         }
     }

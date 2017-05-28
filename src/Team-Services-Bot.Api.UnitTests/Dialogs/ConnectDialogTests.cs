@@ -130,13 +130,9 @@ namespace Vsar.TSBot.UnitTests
             const string appId = "AnAppId";
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
-            var account = new VstsAccount
-            {
-                Name = "anaccount",
-                Url = new Uri("https://myaccount.visualstuio.com")
-            };
+            var account = "anaccount";
 
-            var profile = new VstsProfile { Accounts = new List<VstsAccount> { account } };
+            var profile = new VstsProfile { Accounts = new List<string> { account } };
             IList<VstsProfile> profiles = new List<VstsProfile> { profile };
             var teamProject = "TeamProject1";
 

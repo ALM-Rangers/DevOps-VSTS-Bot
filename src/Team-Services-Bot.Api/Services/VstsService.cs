@@ -35,7 +35,7 @@ namespace Vsar.TSBot
         /// <inheritdoc />
         public async Task ChangeApprovalStatus(string account, string teamProject, VstsProfile profile, int approvalId, ApprovalStatus status, string comments)
         {
-            if (string.IsNullOrWhiteSpace(account))
+            if (account == null)
             {
                 throw new ArgumentNullException(nameof(account));
             }
@@ -82,7 +82,7 @@ namespace Vsar.TSBot
         /// <inheritdoc/>
         public async Task<IList<ReleaseApproval>> GetApprovals(string account, string teamProject, VstsProfile profile)
         {
-            if (string.IsNullOrWhiteSpace(account))
+            if (account == null)
             {
                 throw new ArgumentNullException(nameof(account));
             }
@@ -118,11 +118,11 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<TeamProjectReference>> GetProjects(Uri accountUrl, OAuthToken token)
+        public async Task<IEnumerable<TeamProjectReference>> GetProjects(string account, OAuthToken token)
         {
-            if (accountUrl == null)
+            if (string.IsNullOrWhiteSpace(account))
             {
-                throw new ArgumentNullException(nameof(accountUrl));
+                throw new ArgumentNullException(nameof(account));
             }
 
             if (token == null)
@@ -130,7 +130,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(token));
             }
 
-            using (var client = this.GetConnectedClient<ProjectHttpClient>(accountUrl, token))
+            using (var client = this.GetConnectedClient<ProjectHttpClient>(new Uri(string.Format(VstsUrl, account)), token))
             {
                 return await client.GetProjects();
             }

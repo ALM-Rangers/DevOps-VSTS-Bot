@@ -18,11 +18,16 @@ namespace Vsar.TSBot.Cards
     /// </summary>
     public class ApprovalCard : HeroCard
     {
+        private const string FormatReleaseUrl =
+            "https://{0}.visualstudio.com/{1}/_release?definitionId={2}&_a=release-summary&releaseId={3}";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ApprovalCard"/> class.
         /// </summary>
+        /// <param name="accountName">The name of the account.</param>
         /// <param name="approval">A <see cref="ReleaseApproval"/>.</param>
-        public ApprovalCard(ReleaseApproval approval)
+        /// <param name="teamProject">A team project.</param>
+        public ApprovalCard(string accountName, ReleaseApproval approval, string teamProject)
         {
             if (approval == null)
             {
@@ -33,7 +38,9 @@ namespace Vsar.TSBot.Cards
             this.Text = approval.ReleaseEnvironmentReference.Name;
             this.Title = approval.ReleaseDefinitionReference.Name;
 
-            this.Tap = new CardAction(ActionTypes.OpenUrl, value: approval.ReleaseReference.Url);
+            var url = string.Format(FormatReleaseUrl, accountName, teamProject, approval.ReleaseDefinitionReference.Id, approval.ReleaseReference.Id);
+
+            this.Tap = new CardAction(ActionTypes.OpenUrl, value: url);
 
             this.Buttons.Add(new CardAction(ActionTypes.ImBack, Labels.Approve, value: FormattableString.Invariant($"approve {approval.Id}")));
             this.Buttons.Add(new CardAction(ActionTypes.ImBack, Labels.Reject, value: FormattableString.Invariant($"reject {approval.Id}")));
