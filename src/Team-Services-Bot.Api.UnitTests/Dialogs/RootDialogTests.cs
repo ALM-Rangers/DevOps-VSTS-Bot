@@ -21,6 +21,7 @@ namespace Vsar.TSBot.UnitTests
     [TestClass]
     public class RootDialogTests : TestsBase<DialogFixture>
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Dispose is called during cleanup.")]
         public RootDialogTests()
             : base(new DialogFixture())
         {
@@ -95,6 +96,12 @@ namespace Vsar.TSBot.UnitTests
 
             var card = attachment.Content;
             card.Should().BeOfType<MainOptionsCard>();
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            this.Fixture.Dispose();
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Vsar.TSBot.UnitTests
     /// <summary>
     /// A fixture for dialogs.
     /// </summary>
-    public class DialogFixture
+    public class DialogFixture : IDisposable
     {
         private const string Bot = "testBot";
         private const string User = "testUser";
@@ -158,6 +158,20 @@ namespace Vsar.TSBot.UnitTests
         public IAwaitable<T> MakeAwaitable<T>(T item)
         {
             return new AwaitableFromItem<T>(item);
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposable)
+        {
+            if (disposable)
+            {
+                // Managed code.
+            }
         }
     }
 }
