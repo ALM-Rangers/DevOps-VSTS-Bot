@@ -159,7 +159,7 @@ namespace Vsar.TSBot.UnitTests
         {
             return new AwaitableFromItem<T>(item);
         }
-        
+
         public void Dispose()
         {
             this.Dispose(true);
