@@ -64,6 +64,7 @@ namespace Vsar.TSBot.AcceptanceTests
         {
             var profile = new VstsProfile();
             profile.Accounts.Add(Config.Account);
+            profile.Token = new OAuthToken { ExpiresIn = 3600 };
 
             var userData = Config.BotState.GetUserData(ChannelIds.Directline, Config.UserName);
 

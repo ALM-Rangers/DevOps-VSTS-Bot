@@ -109,8 +109,7 @@ this.FeatureBackground();
 #line 11
  testRunner.When("I say \'Hi\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 12
- testRunner.Then("the bot should respond with \'Welcome Test User. I see this is the first team we s" +
-                    "peak.\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the bot should respond with \'Welcome Test User. This is the first time we talk.\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

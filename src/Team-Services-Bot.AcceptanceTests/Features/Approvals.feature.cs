@@ -101,13 +101,15 @@ namespace Vsar.TSBot.AcceptanceTests.Features
         }
         
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("List approvals accross team projects")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("List approvals")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Approvals")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Acceptance")]
-        public virtual void ListApprovalsAccrossTeamProjects()
+        public virtual void ListApprovals()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("List approvals accross team projects", new string[] {
-                        "Acceptance"});
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("List approvals", new string[] {
+                        "Acceptance",
+                        "ignore"});
 #line 13
 this.ScenarioSetup(scenarioInfo);
 #line 5
@@ -140,11 +142,13 @@ this.FeatureBackground();
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Approve approval")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Approvals")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Acceptance")]
         public virtual void ApproveApproval()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Approve approval", new string[] {
-                        "Acceptance"});
+                        "Acceptance",
+                        "ignore"});
 #line 23
 this.ScenarioSetup(scenarioInfo);
 #line 5
@@ -162,11 +166,13 @@ this.FeatureBackground();
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Reject approval")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Approvals")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Acceptance")]
         public virtual void RejectApproval()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Reject approval", new string[] {
-                        "Acceptance"});
+                        "Acceptance",
+                        "ignore"});
 #line 29
 this.ScenarioSetup(scenarioInfo);
 #line 5

@@ -9,7 +9,7 @@ Background:
 Scenario: Starting a conversation for the first time with the bot.
 	Given I started a conversation
 	When I say 'Hi'
-	Then the bot should respond with 'Welcome Test User. I see this is the first team we speak.'
+	Then the bot should respond with 'Welcome Test User. This is the first time we talk.'
 
 @Acceptance
 Scenario: Starting a conversation for the second time with the bot.

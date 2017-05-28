@@ -9,8 +9,8 @@ Background:
 	And No approvals are waiting in 'config:TeamProjectOne'
 	And No approvals are waiting in 'config:TeamProjectTwo'
 
-@Acceptance
-Scenario: List approvals accross team projects
+@Acceptance @ignore
+Scenario: List approvals
 	Given I started 'Release 1' on 'config:TeamProjectOne'
 	And   I started 'Release 1' on 'config:TeamProjectTwo'
 	When I send a message 'approvals'
@@ -19,13 +19,13 @@ Scenario: List approvals accross team projects
 	| config:TeamProjectOne | Release 1 | Development |
 	| config:TeamProjectTwo | Release 1 | Development |
 
-@Acceptance
+@Acceptance @ignore
 Scenario: Approve approval
 	Given I have an approval for 'config:TeamProjectOne', Release: 'Release 1'
 	When I send a message 'approve config:ApprovalId  'A comment''
 	Then 'config:ApprovalId' is approved with comment 'A comment'
 
-@Acceptance
+@Acceptance @ignore
 Scenario: Reject approval
 	Given I have an approval for 'config:TeamProjectOne', Release: 'Release 1'
 	When I send a message 'reject config:ApprovalId 'A comment''
