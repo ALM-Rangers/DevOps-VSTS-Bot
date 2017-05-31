@@ -9,10 +9,12 @@
 namespace Vsar.TSBot.UnitTests
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Runtime.CompilerServices;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Internals.Fibers;
 
+    [ExcludeFromCodeCoverage]
     public sealed class AwaitableFromItem<T> : IAwaitable<T>, IAwaiter<T>
     {
         private readonly T item;
