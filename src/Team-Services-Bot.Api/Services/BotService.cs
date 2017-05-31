@@ -9,12 +9,14 @@
 
 namespace Vsar.TSBot
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using Microsoft.Bot.Connector;
 
     /// <summary>
     /// Represents an implementation for IBotService.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class BotService : IBotService
     {
         private readonly IBotState botState;

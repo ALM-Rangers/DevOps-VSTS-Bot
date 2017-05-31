@@ -26,21 +26,31 @@ namespace Vsar.TSBot.Cards
         /// <summary>
         /// Initializes a new instance of the <see cref="ApprovalCard"/> class.
         /// </summary>
-        /// <param name="accountName">The name of the account.</param>
+        /// <param name="account">The name of the account.</param>
         /// <param name="approval">A <see cref="ReleaseApproval"/>.</param>
         /// <param name="teamProject">A team project.</param>
-        public ApprovalCard(string accountName, ReleaseApproval approval, string teamProject)
+        public ApprovalCard(string account, ReleaseApproval approval, string teamProject)
         {
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
             if (approval == null)
             {
                 throw new ArgumentNullException(nameof(approval));
+            }
+
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
             }
 
             this.Subtitle = approval.ReleaseReference.Name;
             this.Text = approval.ReleaseEnvironmentReference.Name;
             this.Title = approval.ReleaseDefinitionReference.Name;
 
-            var url = string.Format(CultureInfo.InvariantCulture, FormatReleaseUrl, HttpUtility.UrlEncode(accountName), HttpUtility.UrlEncode(teamProject), approval.ReleaseDefinitionReference.Id, approval.ReleaseReference.Id);
+            var url = string.Format(CultureInfo.InvariantCulture, FormatReleaseUrl, HttpUtility.UrlEncode(account), HttpUtility.UrlEncode(teamProject), approval.ReleaseDefinitionReference.Id, approval.ReleaseReference.Id);
 
             this.Tap = new CardAction(ActionTypes.OpenUrl, value: url);
 

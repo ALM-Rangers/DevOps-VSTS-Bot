@@ -181,6 +181,8 @@
     <Compile Include="..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Cards\AccountsCardTests.cs" />
+    <Compile Include="Cards\ApprovalCardTests.cs" />
     <Compile Include="Controllers\AuthorizeControllerTests.cs" />
     <Compile Include="Dialogs\ApprovalsDialogTests.cs" />
     <Compile Include="Dialogs\ConnectDialogTests.cs" />

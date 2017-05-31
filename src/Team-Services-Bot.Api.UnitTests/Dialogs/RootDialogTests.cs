@@ -26,6 +26,7 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using TSBot.Cards;
 
     [TestClass]
     [ExcludeFromCodeCoverage]

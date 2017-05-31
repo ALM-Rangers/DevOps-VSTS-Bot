@@ -22,6 +22,7 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.TeamFoundation.Core.WebApi;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using TSBot.Cards;
 
     /// <summary>
     /// Tests for <see cref="ConnectDialog"/>.
