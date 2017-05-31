@@ -9,12 +9,14 @@
 
 namespace Vsar.TSBot
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Web.Mvc;
     using System.Web.Routing;
 
     /// <summary>
     /// Provides method(s) to register routes for the controllers.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class RouteConfig
     {
         /// <summary>
