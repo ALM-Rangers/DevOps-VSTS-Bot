@@ -40,6 +40,56 @@ namespace Vsar.TSBot.UnitTests
 
         [TestMethod]
         [TestCategory(TestCategories.Unit)]
+        public async Task Constructor_Empty_AppId()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(null, null, null));
+
+            await Task.CompletedTask;
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Unit)]
+        public async Task Constructor_Empty_AuthorizeUrl()
+        {
+            const string appId = "AnAppId";
+
+            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(appId, null, null));
+
+            await Task.CompletedTask;
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Unit)]
+        public async Task Constructor_Empty_VstsService()
+        {
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(appId, new Uri(authorizeUrl), null));
+
+            await Task.CompletedTask;
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Unit)]
+        public async Task Start()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = null;
+
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var target = mocked.Object;
+
+            await target.StartAsync(this.Fixture.DialogContext.Object);
+
+            this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.ConnectAsync));
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Unit)]
         public async Task Connect_Missing_Context()
         {
             const string appId = "AnAppId";
@@ -60,6 +110,29 @@ namespace Vsar.TSBot.UnitTests
             var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.ConnectAsync(this.Fixture.DialogContext.Object, null));
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Unit)]
+        public async Task Connect_No_Text()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = null;
+
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var target = mocked.Object;
+
+            mocked
+                .Setup(m => m.LogOnAsync(this.Fixture.DialogContext.Object, toBot))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
+
+            await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            mocked.Verify();
         }
 
         [TestMethod]
@@ -234,6 +307,27 @@ namespace Vsar.TSBot.UnitTests
 
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "00000";
+
+            var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { Pin = "12345" };
+
+            await target.PinReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            this.Fixture.DialogContext
+                .Verify(c => c.PostAsync(
+                    It.Is<IMessageActivity>(a => a.Text.Equals("Sorry, I do not recognize the provided pin. Please try again.", StringComparison.OrdinalIgnoreCase)),
+                    CancellationToken.None));
+            this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.PinReceivedAsync));
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Unit)]
+        public async Task Handle_Received_No_Pin()
+        {
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = null;
 
             var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { Pin = "12345" };
 

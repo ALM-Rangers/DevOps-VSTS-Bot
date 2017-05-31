@@ -11,6 +11,7 @@ namespace Vsar.TSBot.Dialogs
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
     using System.Runtime.Serialization;
@@ -318,6 +319,7 @@ namespace Vsar.TSBot.Dialogs
             }
         }
 
+        [ExcludeFromCodeCoverage]
         [OnSerializing]
         private void OnSerializingMethod(StreamingContext context)
         {
