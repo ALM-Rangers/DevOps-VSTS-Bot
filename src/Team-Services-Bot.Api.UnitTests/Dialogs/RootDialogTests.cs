@@ -10,6 +10,7 @@
 namespace Vsar.TSBot.UnitTests
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -24,6 +25,7 @@ namespace Vsar.TSBot.UnitTests
     using Moq;
 
     [TestClass]
+    [ExcludeFromCodeCoverage]
     public class RootDialogTests : TestsBase<DialogFixture>
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Dispose is called during cleanup.")]

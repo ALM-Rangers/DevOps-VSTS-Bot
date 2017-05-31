@@ -87,7 +87,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">The <see cref="IDialogContext"/>.</param>
         /// <param name="result">The <see cref="IAwaitable{T}"/>.</param>
         /// <returns>An async <see cref="Task"/>/.</returns>
-        public async Task ApprovalsAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        public virtual async Task ApprovalsAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
             var reply = context.MakeMessage();
@@ -119,7 +119,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">The <see cref="IDialogContext"/>.</param>
         /// <param name="result">The <see cref="IAwaitable{T}"/>.</param>
         /// <returns>An async <see cref="Task"/>/.</returns>
-        public async Task ApproveOrRejectAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        public virtual async Task ApproveOrRejectAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
 

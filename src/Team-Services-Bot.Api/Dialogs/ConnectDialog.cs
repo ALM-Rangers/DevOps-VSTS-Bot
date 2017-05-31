@@ -106,7 +106,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">A <see cref="IDialogContext"/>.</param>
         /// <param name="result">A <see cref="IMessageActivity"/>/</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public async Task ConnectAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        public virtual async Task ConnectAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             if (context == null)
             {
@@ -137,7 +137,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">A <see cref="IDialogContext"/></param>
         /// <param name="activity">A <see cref="IMessageActivity"/>.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public async Task LoginAsync(IDialogContext context, IMessageActivity activity)
+        public virtual async Task LogOnAsync(IDialogContext context, IMessageActivity activity)
         {
             // Set pin.
             this.Pin = GeneratePin();
@@ -158,7 +158,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">A <see cref="IDialogContext"/></param>
         /// <param name="result">A <see cref="IMessageActivity"/>.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public async Task PinReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        public virtual async Task PinReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
 
@@ -181,7 +181,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">A <see cref="IDialogContext"/></param>
         /// <param name="activity">A <see cref="IMessageActivity"/>.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public async Task SelectAccountAsync(IDialogContext context, IMessageActivity activity)
+        public virtual async Task SelectAccountAsync(IDialogContext context, IMessageActivity activity)
         {
             var reply = context.MakeMessage();
 
@@ -204,7 +204,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">A <see cref="IDialogContext"/></param>
         /// <param name="result">A <see cref="IMessageActivity"/>.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public async Task AccountReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        public virtual async Task AccountReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
 
@@ -214,10 +214,12 @@ namespace Vsar.TSBot.Dialogs
 
             if (this.Profile == null)
             {
-                await this.LoginAsync(context, activity);
+                await this.LogOnAsync(context, activity);
+                return;
             }
 
             context.UserData.SetCurrentAccount(this.Account);
+            context.UserData.SetCurrentProfile(this.Profile);
 
             await this.ContinueProcess(context, activity);
         }
@@ -228,7 +230,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">A <see cref="IDialogContext"/></param>
         /// <param name="activity">A <see cref="IMessageActivity"/>.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public async Task SelectProjectAsync(IDialogContext context, IMessageActivity activity)
+        public virtual async Task SelectProjectAsync(IDialogContext context, IMessageActivity activity)
         {
             var reply = context.MakeMessage();
 
@@ -250,34 +252,24 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">A <see cref="IDialogContext"/></param>
         /// <param name="result">A <see cref="IMessageActivity"/>.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public async Task ProjectReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        public virtual async Task ProjectReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
 
             this.TeamProject = activity.Text;
 
             context.UserData.SetCurrentTeamProject(this.TeamProject);
-            context.UserData.SetCurrentProfile(this.Profile);
 
             await this.ContinueProcess(context, activity);
         }
 
-        private static string GeneratePin()
-        {
-            using (var generator = new RNGCryptoServiceProvider())
-            {
-                var data = new byte[4];
-
-                generator.GetBytes(data);
-
-                // Get the 5 significant numbers.
-                var value = BitConverter.ToUInt32(data, 0) % 100000;
-
-                return value.ToString("00000", CultureInfo.InvariantCulture);
-            }
-        }
-
-        private async Task ContinueProcess(IDialogContext context, IMessageActivity activity)
+        /// <summary>
+        /// Continues the process.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/>.</param>
+        /// <param name="activity">An <see cref="IMessageActivity"/>.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual async Task ContinueProcess(IDialogContext context, IMessageActivity activity)
         {
             this.Profile = context.UserData.GetCurrentProfile();
             this.Profiles = context.UserData.GetProfiles();
@@ -287,7 +279,7 @@ namespace Vsar.TSBot.Dialogs
             // No Profiles, so we have to login.
             if (!this.Profiles.Any() || this.Profile == null)
             {
-                await this.LoginAsync(context, activity);
+                await this.LogOnAsync(context, activity);
                 return;
             }
 
@@ -309,6 +301,21 @@ namespace Vsar.TSBot.Dialogs
             await context.PostAsync(reply);
 
             context.Done(reply);
+        }
+
+        private static string GeneratePin()
+        {
+            using (var generator = new RNGCryptoServiceProvider())
+            {
+                var data = new byte[4];
+
+                generator.GetBytes(data);
+
+                // Get the 5 significant numbers.
+                var value = BitConverter.ToUInt32(data, 0) % 100000;
+
+                return value.ToString("00000", CultureInfo.InvariantCulture);
+            }
         }
 
         [OnSerializing]

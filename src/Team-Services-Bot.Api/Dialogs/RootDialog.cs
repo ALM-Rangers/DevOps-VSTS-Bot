@@ -56,7 +56,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">A <see cref="IDialogContext"/>.</param>
         /// <param name="result">a <see cref="IMessageActivity"/>.</param>
         /// <returns>a <see cref="Task"/>.</returns>
-        public async Task HandleActivityAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        public virtual async Task HandleActivityAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
 
@@ -77,7 +77,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">A <see cref="IDialogContext"/>.</param>
         /// <param name="activity">An <see cref="IMessageActivity"/>.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public async Task HandleCommandAsync(IDialogContext context, IMessageActivity activity)
+        public virtual async Task HandleCommandAsync(IDialogContext context, IMessageActivity activity)
         {
             var dialog = GlobalConfiguration.Configuration.DependencyResolver.Find(activity.Text);
 
@@ -104,7 +104,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">A <see cref="IDialogContext"/>.</param>
         /// <param name="activity">An <see cref="IMessageActivity"/>.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public async Task WelcomeAsync(IDialogContext context, IMessageActivity activity)
+        public virtual async Task WelcomeAsync(IDialogContext context, IMessageActivity activity)
         {
             var message = activity as IConversationUpdateActivity;
             if (message == null)
