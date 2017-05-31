@@ -10,6 +10,7 @@
 namespace Vsar.TSBot.Dialogs
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Runtime.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
@@ -38,6 +39,16 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="telemetryClient">A <see cref="telemetryClient"/>.</param>
         public RootDialog(IAuthenticationService authenticationService, TelemetryClient telemetryClient)
         {
+            if (authenticationService == null)
+            {
+                throw new ArgumentNullException(nameof(authenticationService));
+            }
+
+            if (telemetryClient == null)
+            {
+                throw new ArgumentNullException(nameof(telemetryClient));
+            }
+
             this.authenticationService = authenticationService;
             this.telemetryClient = telemetryClient;
         }
@@ -135,12 +146,19 @@ namespace Vsar.TSBot.Dialogs
             }
         }
 
-        private Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
+        /// <summary>
+        /// Resumes after a child dialog finishes.
+        /// </summary>
+        /// <param name="context">A result.</param>
+        /// <param name="result">A <see cref="IMessageActivity"/>.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
         {
             context.Wait(this.HandleActivityAsync);
             return Task.CompletedTask;
         }
 
+        [ExcludeFromCodeCoverage]
         [OnSerializing]
         private void OnSerializingMethod(StreamingContext context)
         {

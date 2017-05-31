@@ -11,6 +11,7 @@ namespace Vsar.TSBot.UnitTests
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Web.Http;
@@ -27,6 +28,7 @@ namespace Vsar.TSBot.UnitTests
     /// <summary>
     /// A fixture for dialogs.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class DialogFixture : IDisposable
     {
         private const string Bot = "testBot";
@@ -91,84 +93,6 @@ namespace Vsar.TSBot.UnitTests
             {
                 Token = new OAuthToken { ExpiresIn = 3600 }
             };
-        }
-
-        /// <summary>
-        /// Instantiates a <see cref="ContainerBuilder"/> and registers some defaults.
-        /// </summary>
-        /// <param name="builder">A container builder.</param>
-        /// <returns>A <see cref="ContainerBuilder"/>.</returns>
-        public IContainer Build(ContainerBuilder builder)
-        {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            builder
-                .Register(c => this.AuthenticationService.Object)
-                .As<IAuthenticationService>();
-
-            builder
-                .Register(c => this.VstsService.Object)
-                .As<IVstsService>();
-
-            builder
-                .Register(c => this.RootDialog);
-
-            builder
-                .RegisterModule<AttributedMetadataModule>();
-
-            builder
-                .RegisterType<RootDialog>();
-
-            builder
-                .RegisterModule(new DialogModule_MakeRoot());
-
-            builder
-                .Register((c, p) => new MockConnectorFactory(c.Resolve<IAddress>().BotId))
-                .As<IConnectorClientFactory>().InstancePerLifetimeScope();
-
-            builder.Register(c => new Queue<IMessageActivity>())
-                .AsSelf()
-                .InstancePerLifetimeScope();
-
-            builder
-                .RegisterType<BotToUserQueue>()
-                .AsSelf()
-                .InstancePerLifetimeScope();
-
-            builder
-                .Register(c => new MapToChannelData_BotToUser(c.Resolve<BotToUserQueue>(), new List<IMessageActivityMapper> { new KeyboardCardMapper() }))
-                .As<IBotToUser>()
-                .InstancePerLifetimeScope();
-
-            var container = builder.Build();
-
-            GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
-
-            return container;
-        }
-
-        /// <summary>
-        /// Gets a response.
-        /// </summary>
-        /// <param name="container">A <see cref="IContainer"/>.</param>
-        /// <param name="root">A <see cref="IDialog{TResult}"/> as root.</param>
-        /// <param name="toBot">A <see cref="IMessageActivity"/> as the to bot message.</param>
-        /// <returns>A <see cref="IMessageActivity"/> as response.</returns>
-        public async Task<IMessageActivity> GetResponse(IContainer container, IDialog<object> root, IMessageActivity toBot)
-        {
-            using (var scope = DialogModule.BeginLifetimeScope(container, toBot))
-            {
-                DialogModule_MakeRoot.Register(scope, () => root);
-
-                // act: sending the message
-                var task = scope.Resolve<IPostToBot>();
-                await task.PostAsync(toBot, default(CancellationToken));
-
-                return scope.Resolve<Queue<IMessageActivity>>().Dequeue();
-            }
         }
 
         public IAwaitable<T> MakeAwaitable<T>(T item)

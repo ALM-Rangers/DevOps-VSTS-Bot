@@ -72,7 +72,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            return dataBag.TryGetValue(TeamProject, out teamProject) ? teamProject : string.Empty;
+            return dataBag.TryGetValue(TeamProject, out teamProject) ? teamProject : null;
         }
 
         /// <summary>
