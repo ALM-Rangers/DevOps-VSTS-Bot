@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// $SUMMARY$
+// Contains the tests for the ApprovalCard.
 // </summary>
 // ———————————————————————————————
 namespace Vsar.TSBot.UnitTests.Cards
@@ -20,31 +20,28 @@ namespace Vsar.TSBot.UnitTests.Cards
 
     [ExcludeFromCodeCoverage]
     [TestClass]
+    [TestCategory(TestCategories.Unit)]
     public class ApprovalCardTests
     {
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public void Constructor_Missing_Account()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new ApprovalCard(null, null, null));
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public void Constructor_Missing_Approval()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new ApprovalCard("account1", null, null));
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public void Constructor_Missing_TeamProject()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new ApprovalCard("account1", new ReleaseApproval(), null));
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public void Constructor()
         {
             var approval = new ReleaseApproval

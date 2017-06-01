@@ -141,7 +141,7 @@ namespace Vsar.TSBot.Dialogs
                 }
                 else
                 {
-                    await context.PostAsync(string.Format(Labels.WelcomeExistingUser, activity.From.Name, account ?? "?", teamProject ?? "?"));
+                    await context.PostAsync(string.Format(Labels.WelcomeExistingUser, activity.From.Name, string.IsNullOrWhiteSpace(account) ? "?" : account, string.IsNullOrWhiteSpace(teamProject) ? "?" : teamProject));
                 }
             }
         }

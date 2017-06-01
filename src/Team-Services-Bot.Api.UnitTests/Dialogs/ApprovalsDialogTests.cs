@@ -23,6 +23,7 @@ namespace Vsar.TSBot.UnitTests
     using Moq;
 
     [TestClass]
+    [TestCategory(TestCategories.Unit)]
     [ExcludeFromCodeCoverage]
     public class ApprovalsDialogTests : TestsBase<DialogFixture>
     {
@@ -32,7 +33,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Constructor_Missing_AuthenticationService()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new ApprovalsDialog(null, null));
@@ -41,7 +41,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Constructor_Missing_VstsService()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new ApprovalsDialog(this.Fixture.AuthenticationService.Object, null));
@@ -50,7 +49,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Constructor()
         {
             var target = new ApprovalsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
@@ -59,7 +57,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Start()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -74,7 +71,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task List_Approvals()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -121,7 +117,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Approve_Approval_Without_Comment()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -158,7 +153,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Approve_Approval()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -196,7 +190,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Reject_Approval_Without_Comment()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -233,7 +226,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Reject_Approval()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -269,7 +261,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Approval_Invalid_Message()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -283,7 +274,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Change_Status()
         {
             var toBot = this.Fixture.CreateMessage();

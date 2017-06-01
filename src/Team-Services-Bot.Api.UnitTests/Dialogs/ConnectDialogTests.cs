@@ -28,6 +28,7 @@ namespace Vsar.TSBot.UnitTests
     /// Tests for <see cref="ConnectDialog"/>.
     /// </summary>
     [TestClass]
+    [TestCategory(TestCategories.Unit)]
     [ExcludeFromCodeCoverage]
     public class ConnectDialogTests : TestsBase<DialogFixture>
     {
@@ -40,7 +41,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Constructor_Empty_AppId()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(null, null, null));
@@ -49,7 +49,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Constructor_Empty_AuthorizeUrl()
         {
             const string appId = "AnAppId";
@@ -60,7 +59,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Constructor_Empty_VstsService()
         {
             const string appId = "AnAppId";
@@ -72,7 +70,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Start()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -90,7 +87,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Connect_Missing_Context()
         {
             const string appId = "AnAppId";
@@ -102,7 +98,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Connect_Missing_Awaitable()
         {
             const string appId = "AnAppId";
@@ -114,7 +109,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Connect_No_Text()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -137,7 +131,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Connect_For_The_First_Time()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -160,7 +153,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Connect_For_The_Second_Time()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -193,7 +185,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Connect_For_The_Second_Time_With_Account_Selected()
         {
             const string appId = "AnAppId";
@@ -226,7 +217,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Connect_For_The_Second_Time_With_Account_And_TeamProject_Selected()
         {
             const string appId = "AnAppId";
@@ -260,7 +250,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task LogOn()
         {
             const string appId = "AnAppId";
@@ -279,7 +268,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Handle_Received_Pin()
         {
             const string appId = "AnAppId";
@@ -300,7 +288,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Handle_Received_Pin_Which_Is_Invalid()
         {
             const string appId = "AnAppId";
@@ -321,7 +308,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Handle_Received_No_Pin()
         {
             const string appId = "AnAppId";
@@ -342,7 +328,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Select_Account()
         {
             const string appId = "AnAppId";
@@ -366,7 +351,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Handle_Unknown_Account_Received()
         {
             const string appId = "AnAppId";
@@ -391,7 +375,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Handle_Account_Received()
         {
             const string appId = "AnAppId";
@@ -419,7 +402,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Select_Project()
         {
             const string appId = "AnAppId";
@@ -446,7 +428,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Handle_Project_Received()
         {
             const string appId = "AnAppId";

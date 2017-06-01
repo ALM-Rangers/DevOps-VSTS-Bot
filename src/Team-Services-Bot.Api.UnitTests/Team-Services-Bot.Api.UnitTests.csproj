@@ -183,9 +183,12 @@
     </Compile>
     <Compile Include="Cards\AccountsCardTests.cs" />
     <Compile Include="Cards\ApprovalCardTests.cs" />
+    <Compile Include="Cards\LogOnCardTests.cs" />
     <Compile Include="Controllers\AuthorizeControllerTests.cs" />
     <Compile Include="Dialogs\ApprovalsDialogTests.cs" />
     <Compile Include="Dialogs\ConnectDialogTests.cs" />
+    <Compile Include="Extensions\AttachmentCollectionExtensionsTests.cs" />
+    <Compile Include="Extensions\BotDataBagExtensionsTests.cs" />
     <Compile Include="Fixtures\AwaitableFromItem.cs" />
     <Compile Include="Fixtures\DialogFixture.cs" />
     <Compile Include="Properties\GlobalSuppressions.cs" />

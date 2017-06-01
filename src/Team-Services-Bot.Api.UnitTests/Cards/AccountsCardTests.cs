@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// $SUMMARY$
+// Contains the tests for the AccountsCard.
 // </summary>
 // ———————————————————————————————
 namespace Vsar.TSBot.UnitTests.Cards
@@ -19,17 +19,16 @@ namespace Vsar.TSBot.UnitTests.Cards
 
     [ExcludeFromCodeCoverage]
     [TestClass]
+    [TestCategory(TestCategories.Unit)]
     public class AccountsCardTests
     {
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public void Constructor_Missing_Accounts()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new AccountsCard(null));
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public void Constructor()
         {
             var accounts = new List<string> { "Account1", "Account2" };

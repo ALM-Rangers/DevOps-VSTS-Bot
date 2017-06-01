@@ -18,7 +18,6 @@ namespace Vsar.TSBot.UnitTests
     using Autofac;
     using Autofac.Extras.AttributeMetadata;
     using Autofac.Integration.WebApi;
-    using Cards;
     using Common.Tests;
     using Dialogs;
     using Microsoft.ApplicationInsights;
@@ -29,24 +28,23 @@ namespace Vsar.TSBot.UnitTests
     using TSBot.Cards;
 
     [TestClass]
+    [TestCategory(TestCategories.Unit)]
     [ExcludeFromCodeCoverage]
     public class RootDialogTests : TestsBase<DialogFixture>
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Dispose is called during cleanup.")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Dispose is called during cleanup.")]
         public RootDialogTests()
             : base(new DialogFixture())
         {
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public void Constructor_Missing_AuthenticationService()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new RootDialog(null, null));
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public void Constructor_Missing_TelemetryClient()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new RootDialog(this.Fixture.AuthenticationService.Object, null));
@@ -54,14 +52,12 @@ namespace Vsar.TSBot.UnitTests
 
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "target", Justification = "Test for constructor only.")]
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public void Constructor()
         {
             var target = new RootDialog(this.Fixture.AuthenticationService.Object, new TelemetryClient());
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Start()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -76,7 +72,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Welcome_No_Message()
         {
             var target = new RootDialog(this.Fixture.AuthenticationService.Object, this.Fixture.TelemetryClient);
@@ -85,7 +80,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Welcome_First_Time()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -104,7 +98,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Welcome_Second_Time()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -138,7 +131,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Welcome_Second_Time_No_Account_And_No_TeamProject()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -163,7 +155,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Show_Options()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -184,7 +175,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Forward_Command()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -213,7 +203,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Resume_After_Child_Finishes()
         {
             var target = new RootDialog(this.Fixture.AuthenticationService.Object, this.Fixture.TelemetryClient);
@@ -224,7 +213,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Handle_Message_Activity()
         {
             var message = this.Fixture.CreateMessage();
@@ -240,7 +228,6 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
         public async Task Handle_Update_Activity()
         {
             var message = this.Fixture.CreateMessage();

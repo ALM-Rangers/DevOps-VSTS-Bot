@@ -39,7 +39,7 @@ namespace Vsar.TSBot
 
             string account;
 
-            return dataBag.TryGetValue(Account, out account) ? account : null;
+            return dataBag.TryGetValue(Account, out account) ? account : string.Empty;
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            return dataBag.TryGetValue(TeamProject, out teamProject) ? teamProject : null;
+            return dataBag.TryGetValue(TeamProject, out teamProject) ? teamProject : string.Empty;
         }
 
         /// <summary>

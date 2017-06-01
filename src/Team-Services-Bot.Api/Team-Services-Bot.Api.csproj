@@ -324,7 +324,6 @@
     <Compile Include="Extensions\DependencyResolverExtensions.cs" />
     <Compile Include="Extensions\AttachmentCollectionExtensions.cs" />
     <Compile Include="Extensions\BotDataBagExtensions.cs" />
-    <Compile Include="Extensions\ActivityExtensions.cs" />
     <Compile Include="Model\Authorize.cs" />
     <Compile Include="Model\OAuthToken.cs" />
     <Compile Include="Model\VstsProfile.cs" />

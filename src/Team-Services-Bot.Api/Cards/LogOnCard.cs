@@ -35,11 +35,30 @@ namespace Vsar.TSBot.Cards
         /// <param name="appId">The app id.</param>
         /// <param name="authorizeUrl">The authorizeUrl.</param>
         /// <param name="channelId">The channelId.</param>
-        /// <param name="text">The text on the card.</param>
         /// <param name="userId">The userId.</param>
-        public LogOnCard(string appId, Uri authorizeUrl, string channelId, string text, string userId)
-            : base(text)
+        public LogOnCard(string appId, Uri authorizeUrl, string channelId, string userId)
+            : base(Labels.PleaseLogin)
         {
+            if (string.IsNullOrWhiteSpace(appId))
+            {
+                throw new ArgumentNullException(nameof(appId));
+            }
+
+            if (authorizeUrl == null)
+            {
+                throw new ArgumentNullException(nameof(authorizeUrl));
+            }
+
+            if (string.IsNullOrWhiteSpace(channelId))
+            {
+                throw new ArgumentNullException(nameof(channelId));
+            }
+
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                throw new ArgumentNullException(nameof(userId));
+            }
+
             var button = new CardAction
             {
                 Value = string.Format(CultureInfo.InvariantCulture, UrlOAuth, appId, channelId, userId, Scope, authorizeUrl),

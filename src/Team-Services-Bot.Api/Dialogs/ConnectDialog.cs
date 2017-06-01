@@ -144,7 +144,7 @@ namespace Vsar.TSBot.Dialogs
             this.Pin = GeneratePin();
             context.UserData.SetPin(this.Pin);
 
-            var card = new LogOnCard(this.appId, new Uri(this.authorizeUrl), activity.ChannelId, Labels.PleaseLogin, activity.From.Id);
+            var card = new LogOnCard(this.appId, new Uri(this.authorizeUrl), activity.ChannelId, activity.From.Id);
 
             var reply = context.MakeMessage();
             reply.Attachments.Add(card);
