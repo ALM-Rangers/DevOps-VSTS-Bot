@@ -126,8 +126,7 @@ namespace Vsar.TSBot.Dialogs
             // Pin was previously created, waiting for it to return.
             if (this.isPinActivated)
             {
-                var isPinHandled = await this.HandlePin(context, activity, pin);
-                if (!isPinHandled)
+                if (!await this.HandlePin(context, activity, pin))
                 {
                     return;
                 }
@@ -135,12 +134,7 @@ namespace Vsar.TSBot.Dialogs
             else
             {
                 // Wait for the normal expected input.
-                var match = Regex.Match(text, CommandMatchConnect);
-                if (match.Success)
-                {
-                    this.accountName = match.Groups[1].Value;
-                    this.teamProject = match.Groups[2].Value;
-                }
+                this.ExtractAccountAndProject(text);
             }
 
             // No Profiles, so we have to login.
@@ -182,6 +176,16 @@ namespace Vsar.TSBot.Dialogs
             await context.PostAsync(reply);
 
             context.Done(reply);
+        }
+
+        private void ExtractAccountAndProject(string text)
+        {
+            var match = Regex.Match(text, CommandMatchConnect);
+            if (match.Success)
+            {
+                this.accountName = match.Groups[1].Value;
+                this.teamProject = match.Groups[2].Value;
+            }
         }
 
         private async Task<bool> HandlePin(IDialogContext context, IMessageActivity activity, string pin)
