@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RunSettings>
-  <ModulePaths>  
-    <Include>  
-      <ModulePath>Team-Services-Bot.Api.dll</ModulePath>
-    </Include>  
-  </ModulePaths> 
+  <CodeCoverage>
+    <ModulePaths>
+      <Include>
+        <ModulePath>Team-Services-Bot.Api.dll</ModulePath>
+      </Include>
+    </ModulePaths>
+  </CodeCoverage>
 </RunSettings>
