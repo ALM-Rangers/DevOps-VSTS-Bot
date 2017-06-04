@@ -123,10 +123,6 @@ namespace Vsar.TSBot.Dialogs
                 return;
             }
 
-            var account = context.UserData.GetCurrentAccount();
-            var profile = context.UserData.GetProfile(this.authenticationService);
-            var teamProject = context.UserData.GetCurrentTeamProject();
-
             foreach (var member in message.MembersAdded)
             {
                 // Skip if the added member is the bot itself.
@@ -135,14 +131,7 @@ namespace Vsar.TSBot.Dialogs
                     continue;
                 }
 
-                if (profile == null)
-                {
-                    await context.PostAsync(string.Format(Labels.WelcomeNewUser, member.Name));
-                }
-                else
-                {
-                    await context.PostAsync(string.Format(Labels.WelcomeExistingUser, activity.From.Name, string.IsNullOrWhiteSpace(account) ? "?" : account, string.IsNullOrWhiteSpace(teamProject) ? "?" : teamProject));
-                }
+                await context.PostAsync(string.Format(Labels.WelcomeUser, member.Name));
             }
         }
 
