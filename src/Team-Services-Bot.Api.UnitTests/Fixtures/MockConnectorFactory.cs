@@ -11,6 +11,7 @@ namespace Vsar.TSBot.UnitTests
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Net;
     using System.Net.Http;
     using System.Threading;
@@ -26,6 +27,7 @@ namespace Vsar.TSBot.UnitTests
     /// <summary>
     /// An <see cref="IConnectorClientFactory"/> implementation that mocks the Connector Client.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class MockConnectorFactory : IConnectorClientFactory, IDisposable
     {
         private readonly IBotDataStore<BotData> memoryDataStore = new InMemoryDataStore();

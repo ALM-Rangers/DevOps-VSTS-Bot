@@ -9,10 +9,13 @@
 
 namespace Vsar.TSBot.UnitTests
 {
+    using System.Diagnostics.CodeAnalysis;
+
     /// <summary>
     /// Parent class for all dialog tests.
     /// </summary>
     /// <typeparam name="T">A fixture.</typeparam>
+    [ExcludeFromCodeCoverage]
     public abstract class TestsBase<T>
         where T : class
     {

@@ -9,11 +9,13 @@
 
 namespace Vsar.TSBot
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Web.Optimization;
 
     /// <summary>
     /// Controls the way we bundle css and javascript.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class BundleConfig
     {
         /// <summary>

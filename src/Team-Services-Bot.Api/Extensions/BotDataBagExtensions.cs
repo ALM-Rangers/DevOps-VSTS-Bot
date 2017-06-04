@@ -39,7 +39,7 @@ namespace Vsar.TSBot
 
             string account;
 
-            return dataBag.TryGetValue(Account, out account) ? account : null;
+            return dataBag.TryGetValue(Account, out account) ? account : string.Empty;
         }
 
         /// <summary>

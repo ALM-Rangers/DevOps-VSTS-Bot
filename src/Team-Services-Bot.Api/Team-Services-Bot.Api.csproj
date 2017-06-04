@@ -317,8 +317,6 @@
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Dialogs\ApprovalsDialog.cs" />
     <Compile Include="Dialogs\ConnectDialog.cs" />
-    <Compile Include="Dialogs\IDialogContextWrapper.cs" />
-    <Compile Include="Dialogs\DialogContextWrapper.cs" />
     <Compile Include="DI\CommandMetadataAttribute.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />
     <Compile Include="DI\IConfigurationProvider.cs" />
@@ -326,7 +324,6 @@
     <Compile Include="Extensions\DependencyResolverExtensions.cs" />
     <Compile Include="Extensions\AttachmentCollectionExtensions.cs" />
     <Compile Include="Extensions\BotDataBagExtensions.cs" />
-    <Compile Include="Extensions\ActivityExtensions.cs" />
     <Compile Include="Model\Authorize.cs" />
     <Compile Include="Model\OAuthToken.cs" />
     <Compile Include="Model\VstsProfile.cs" />

@@ -11,21 +11,25 @@ namespace Vsar.TSBot.UnitTests
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
-    using Autofac;
     using Cards;
     using Common.Tests;
     using Dialogs;
-    using FluentAssertions;
-    using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Connector;
+    using Microsoft.TeamFoundation.Core.WebApi;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using TSBot.Cards;
 
     /// <summary>
     /// Tests for <see cref="ConnectDialog"/>.
     /// </summary>
     [TestClass]
+    [TestCategory(TestCategories.Unit)]
+    [ExcludeFromCodeCoverage]
     public class ConnectDialogTests : TestsBase<DialogFixture>
     {
         /// <summary>
@@ -36,51 +40,120 @@ namespace Vsar.TSBot.UnitTests
         {
         }
 
-        /// <summary>
-        /// Tests connection to an account for the first time.
-        /// </summary>
-        /// <returns><see cref="Task"/></returns>
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
-        public async Task Connect_To_An_Account_For_The_First_Time()
+        public async Task Constructor_Empty_AppId()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(null, null, null));
+
+            await Task.CompletedTask;
+        }
+
+        [TestMethod]
+        public async Task Constructor_Empty_AuthorizeUrl()
+        {
+            const string appId = "AnAppId";
+
+            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(appId, null, null));
+
+            await Task.CompletedTask;
+        }
+
+        [TestMethod]
+        public async Task Constructor_Empty_VstsService()
+        {
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(appId, new Uri(authorizeUrl), null));
+
+            await Task.CompletedTask;
+        }
+
+        [TestMethod]
+        public async Task Start()
         {
             var toBot = this.Fixture.CreateMessage();
-            toBot.Text = "connect anaccount";
+            toBot.Text = null;
 
             const string appId = "AnAppId";
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
-            var builder = new ContainerBuilder();
-            builder
-                .RegisterType<ConnectDialog>()
-                .WithParameter("appId", appId)
-                .WithParameter("authorizeUrl", new Uri(authorizeUrl))
-                .As<IDialog<object>>();
+            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var target = mocked.Object;
 
-            var container = this.Fixture.Build(builder);
+            await target.StartAsync(this.Fixture.DialogContext.Object);
 
-            this.Fixture.RootDialog.Initialized = true;
-
-            // First trigger the welcome message.
-            var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
-
-            var attachment = toUser.Attachments.FirstOrDefault();
-
-            Assert.IsNotNull(attachment);
-
-            var card = attachment.Content;
-            card.Should().BeOfType<LogOnCard>();
-
-            this.Fixture.UserData.Verify(ud => ud.SetValue("Pin", It.IsRegex("\\d{4}")));
+            this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.ConnectAsync));
         }
 
-        /// <summary>
-        /// Tests an account selection.
-        /// </summary>
-        /// <returns><see cref="Task"/></returns>
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
-        public async Task Connect_To_An_Account_Select_An_Account()
+        public async Task Connect_Missing_Context()
+        {
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object);
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.ConnectAsync(null, null));
+        }
+
+        [TestMethod]
+        public async Task Connect_Missing_Awaitable()
+        {
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object);
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.ConnectAsync(this.Fixture.DialogContext.Object, null));
+        }
+
+        [TestMethod]
+        public async Task Connect_No_Text()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = null;
+
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var target = mocked.Object;
+
+            mocked
+                .Setup(m => m.LogOnAsync(this.Fixture.DialogContext.Object, toBot))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
+
+            await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            mocked.Verify();
+        }
+
+        [TestMethod]
+        public async Task Connect_For_The_First_Time()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "connect";
+
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var target = mocked.Object;
+
+            mocked
+                .Setup(m => m.LogOnAsync(this.Fixture.DialogContext.Object, toBot))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
+
+            await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            mocked.Verify();
+        }
+
+        [TestMethod]
+        public async Task Connect_For_The_Second_Time()
         {
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "connect";
@@ -89,16 +162,10 @@ namespace Vsar.TSBot.UnitTests
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
             var profile = new VstsProfile();
-            IList<VstsProfile> profiles = new List<VstsProfile> { profile };
+            var profiles = new List<VstsProfile> { profile } as IList<VstsProfile>;
 
-            var builder = new ContainerBuilder();
-            builder
-                .RegisterType<ConnectDialog>()
-                .WithParameter("appId", appId)
-                .WithParameter("authorizeUrl", new Uri(authorizeUrl))
-                .As<IDialog<object>>();
-
-            var container = this.Fixture.Build(builder);
+            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var target = mocked.Object;
 
             this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("Profile", out profile))
@@ -107,62 +174,277 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(ud => ud.TryGetValue("Profiles", out profiles))
                 .Returns(true);
 
-            this.Fixture.RootDialog.Initialized = true;
+            mocked
+                .Setup(m => m.SelectAccountAsync(this.Fixture.DialogContext.Object, toBot))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
 
-            var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
+            await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
-            var attachment = toUser.Attachments.FirstOrDefault();
-            Assert.IsNotNull(attachment);
-            Assert.IsInstanceOfType(attachment.Content, typeof(AccountsCard));
+            mocked.Verify();
         }
 
-        /// <summary>
-        /// Tests connection to an account where previously connected to.
-        /// </summary>
-        /// <returns><see cref="Task"/></returns>
         [TestMethod]
-        [TestCategory(TestCategories.Unit)]
-        public async Task Connect_To_An_Account_Where_Previously_Connected_To()
+        public async Task Connect_For_The_Second_Time_With_Account_Selected()
         {
-            var toBot = this.Fixture.CreateMessage();
-            toBot.Text = "connect anaccount ateamproject";
-
             const string appId = "AnAppId";
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
-            var account = "anaccount";
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "connect account";
 
-            var profile = new VstsProfile { Accounts = new List<string> { account } };
-            IList<VstsProfile> profiles = new List<VstsProfile> { profile };
-            var teamProject = "TeamProject1";
+            var profile = new VstsProfile();
+            var profiles = new List<VstsProfile> { profile } as IList<VstsProfile>;
 
-            var builder = new ContainerBuilder();
-            builder
-                .RegisterType<ConnectDialog>()
-                .WithParameter("appId", appId)
-                .WithParameter("authorizeUrl", new Uri(authorizeUrl))
-                .As<IDialog<object>>();
+            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var target = mocked.Object;
 
-            var container = this.Fixture.Build(builder);
-
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Account", out account))
-                .Returns(true);
             this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("Profile", out profile))
                 .Returns(true);
             this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("Profiles", out profiles))
                 .Returns(true);
+
+            mocked
+                .Setup(m => m.SelectProjectAsync(this.Fixture.DialogContext.Object, toBot))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
+
+            await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            mocked.Verify();
+        }
+
+        [TestMethod]
+        public async Task Connect_For_The_Second_Time_With_Account_And_TeamProject_Selected()
+        {
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "connect account teamproject";
+
+            var profile = new VstsProfile();
+            IList<VstsProfile> profiles = new List<VstsProfile> { profile };
+
+            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var target = mocked.Object;
+
             this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
+                .Setup(ud => ud.TryGetValue("Profile", out profile))
+                .Returns(true);
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("Profiles", out profiles))
                 .Returns(true);
 
-            this.Fixture.RootDialog.Initialized = true;
+            await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
-            var toUser = await this.Fixture.GetResponse(container, this.Fixture.RootDialog, toBot);
+            this.Fixture.DialogContext
+                .Verify(c => c.PostAsync(
+                    It.Is<IMessageActivity>(a => a.Text.Equals("Connected to account / teamproject.", StringComparison.OrdinalIgnoreCase)), CancellationToken.None));
+            this.Fixture.DialogContext
+                .Verify(c => c.Done(It.IsAny<IMessageActivity>()));
 
-            toUser.Text.Should().Be("Connected to anaccount / ateamproject.");
+            mocked.Verify();
+        }
+
+        [TestMethod]
+        public async Task LogOn()
+        {
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "connect account teamproject";
+
+            var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object);
+
+            await target.LogOnAsync(this.Fixture.DialogContext.Object, toBot);
+
+            this.Fixture.UserData.Verify(ud => ud.SetValue("Pin", It.IsRegex(@"\d{5}")));
+            this.Fixture.DialogContext.Verify(c => c.PostAsync(It.Is<IMessageActivity>(a => a.Attachments.First().Content is LogOnCard), CancellationToken.None));
+            this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.PinReceivedAsync));
+        }
+
+        [TestMethod]
+        public async Task Handle_Received_Pin()
+        {
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "12345";
+
+            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var target = mocked.Object;
+            target.Pin = "12345";
+
+            mocked.Setup(m => m.ContinueProcess(this.Fixture.DialogContext.Object, toBot)).Returns(Task.CompletedTask).Verifiable();
+
+            await target.PinReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            mocked.Verify();
+        }
+
+        [TestMethod]
+        public async Task Handle_Received_Pin_Which_Is_Invalid()
+        {
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "00000";
+
+            var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { Pin = "12345" };
+
+            await target.PinReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            this.Fixture.DialogContext
+                .Verify(c => c.PostAsync(
+                    It.Is<IMessageActivity>(a => a.Text.Equals("Sorry, I do not recognize the provided pin. Please try again.", StringComparison.OrdinalIgnoreCase)),
+                    CancellationToken.None));
+            this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.PinReceivedAsync));
+        }
+
+        [TestMethod]
+        public async Task Handle_Received_No_Pin()
+        {
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = null;
+
+            var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { Pin = "12345" };
+
+            await target.PinReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            this.Fixture.DialogContext
+                .Verify(c => c.PostAsync(
+                    It.Is<IMessageActivity>(a => a.Text.Equals("Sorry, I do not recognize the provided pin. Please try again.", StringComparison.OrdinalIgnoreCase)),
+                    CancellationToken.None));
+            this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.PinReceivedAsync));
+        }
+
+        [TestMethod]
+        public async Task Select_Account()
+        {
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var profile1 = new VstsProfile { Accounts = new List<string> { "Account1", "Account2" } };
+            var profile2 = new VstsProfile { Accounts = new List<string> { "Account3", "Account4" } };
+            var profiles = new List<VstsProfile> { profile1, profile2 };
+
+            var toBot = this.Fixture.CreateMessage();
+
+            var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { Profiles = profiles };
+
+            await target.SelectAccountAsync(this.Fixture.DialogContext.Object, toBot);
+
+            this.Fixture.DialogContext
+                .Verify(c => c.PostAsync(
+                    It.Is<IMessageActivity>(a => a.Attachments.First().Content is AccountsCard),
+                    CancellationToken.None));
+            this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.AccountReceivedAsync));
+        }
+
+        [TestMethod]
+        public async Task Handle_Unknown_Account_Received()
+        {
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var profile1 = new VstsProfile { Accounts = new List<string> { "Account1", "Account2" } };
+            var profile2 = new VstsProfile { Accounts = new List<string> { "Account3", "Account4" } };
+            var profiles = new List<VstsProfile> { profile1, profile2 };
+
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "UnknownAccount";
+
+            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var target = mocked.Object;
+            target.Profiles = profiles;
+
+            mocked.Setup(m => m.LogOnAsync(this.Fixture.DialogContext.Object, toBot)).Returns(Task.CompletedTask).Verifiable();
+
+            await target.AccountReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            mocked.Verify();
+        }
+
+        [TestMethod]
+        public async Task Handle_Account_Received()
+        {
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var profile1 = new VstsProfile { Accounts = new List<string> { "Account1", "Account2" } };
+            var profile2 = new VstsProfile { Accounts = new List<string> { "Account3", "Account4" } };
+            var profiles = new List<VstsProfile> { profile1, profile2 };
+
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "Account3";
+
+            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var target = mocked.Object;
+            target.Profiles = profiles;
+
+            mocked.Setup(m => m.ContinueProcess(this.Fixture.DialogContext.Object, toBot)).Returns(Task.CompletedTask).Verifiable();
+
+            await target.AccountReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            this.Fixture.UserData.Verify(ud => ud.SetValue("Account", "Account3"));
+            this.Fixture.UserData.Verify(ud => ud.SetValue("Profile", profile2));
+
+            mocked.Verify();
+        }
+
+        [TestMethod]
+        public async Task Select_Project()
+        {
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var account = "Account1";
+            var profile = new VstsProfile { Accounts = new List<string> { account }, Token = new OAuthToken() };
+            var projects = new List<TeamProjectReference> { new TeamProjectReference() };
+
+            var toBot = this.Fixture.CreateMessage();
+
+            var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { Account = account, Profile = profile };
+
+            this.Fixture.VstsService.Setup(s => s.GetProjects(account, profile.Token)).ReturnsAsync(projects).Verifiable();
+
+            await target.SelectProjectAsync(this.Fixture.DialogContext.Object, toBot);
+
+            this.Fixture.VstsService.Verify();
+            this.Fixture.DialogContext
+                .Verify(c => c.PostAsync(
+                    It.Is<IMessageActivity>(a => a.Attachments.First().Content is ProjectsCard),
+                    CancellationToken.None));
+            this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.ProjectReceivedAsync));
+        }
+
+        [TestMethod]
+        public async Task Handle_Project_Received()
+        {
+            const string appId = "AnAppId";
+            const string authorizeUrl = "https://www.authorizationUrl.com";
+
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "Project1";
+
+            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var target = mocked.Object;
+
+            mocked.Setup(m => m.ContinueProcess(this.Fixture.DialogContext.Object, toBot)).Returns(Task.CompletedTask).Verifiable();
+
+            await target.ProjectReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            this.Fixture.UserData.Verify(ud => ud.SetValue("TeamProject", "Project1"));
+            mocked.Verify();
         }
     }
 }

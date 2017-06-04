@@ -30,6 +30,11 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(attachments));
             }
 
+            if (card == null)
+            {
+                throw new ArgumentNullException(nameof(card));
+            }
+
             attachments.Add(card.ToAttachment());
         }
 
@@ -43,6 +48,11 @@ namespace Vsar.TSBot
             if (attachments == null)
             {
                 throw new ArgumentNullException(nameof(attachments));
+            }
+
+            if (card == null)
+            {
+                throw new ArgumentNullException(nameof(card));
             }
 
             attachments.Add(card.ToAttachment());

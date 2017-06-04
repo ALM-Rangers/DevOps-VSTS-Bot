@@ -9,6 +9,7 @@
 
 namespace Vsar.TSBot
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Web.Configuration;
     using System.Web.Http;
     using System.Web.Mvc;
@@ -20,6 +21,7 @@ namespace Vsar.TSBot
     /// <summary>
     /// Represents the Start of the application.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class WebApiApplication : System.Web.HttpApplication
     {
         /// <summary>

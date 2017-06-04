@@ -11,6 +11,7 @@ namespace Vsar.TSBot.Dialogs
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
     using System.Runtime.Serialization;
@@ -35,24 +36,17 @@ namespace Vsar.TSBot.Dialogs
 
         private readonly string appId;
         private readonly string authorizeUrl;
-        [NonSerialized]
-        private IDialogContextWrapper wrapper;
 
         [NonSerialized]
         private IVstsService vstsService;
-
-        private string accountName;
-        private bool isPinActivated;
-        private string teamProject;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectDialog"/> class.
         /// </summary>
         /// <param name="appId">The registered application id.</param>
         /// <param name="authorizeUrl">The URL to return to after authentication.</param>
-        /// <param name="wrapper">The wrapper</param>
         /// <param name="vstsService">VSTS accessor</param>
-        public ConnectDialog(string appId, Uri authorizeUrl, IDialogContextWrapper wrapper, IVstsService vstsService)
+        public ConnectDialog(string appId, Uri authorizeUrl, IVstsService vstsService)
         {
             if (string.IsNullOrWhiteSpace(appId))
             {
@@ -64,11 +58,6 @@ namespace Vsar.TSBot.Dialogs
                 throw new ArgumentNullException(nameof(authorizeUrl));
             }
 
-            if (wrapper == null)
-            {
-                throw new ArgumentNullException(nameof(wrapper));
-            }
-
             if (vstsService == null)
             {
                 throw new ArgumentNullException(nameof(vstsService));
@@ -76,16 +65,243 @@ namespace Vsar.TSBot.Dialogs
 
             this.appId = appId;
             this.authorizeUrl = authorizeUrl.ToString();
-            this.wrapper = wrapper;
             this.vstsService = vstsService;
         }
+
+        /// <summary>
+        /// Gets or sets an account.
+        /// </summary>
+        public string Account { get; set; }
+
+        /// <summary>
+        /// Gets or sets a pin.
+        /// </summary>
+        public string Pin { get; set; }
+
+        /// <summary>
+        /// Gets or sets a <see cref="VstsProfile"/>.
+        /// </summary>
+        public VstsProfile Profile { get; set; }
+
+        /// <summary>
+        /// Gets or sets a collection of <see cref="VstsProfile"/>.
+        /// </summary>
+        public IEnumerable<VstsProfile> Profiles { get; set; }
+
+        /// <summary>
+        /// Gets or sets a team project.
+        /// </summary>
+        public string TeamProject { get; set; }
 
         /// <inheritdoc />
         public async Task StartAsync(IDialogContext context)
         {
-            context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
+            context.Wait(this.ConnectAsync);
 
             await Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Connects the bot to a vsts account and team project.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/>.</param>
+        /// <param name="result">A <see cref="IMessageActivity"/>/</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual async Task ConnectAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            if (result == null)
+            {
+                throw new ArgumentNullException(nameof(result));
+            }
+
+            var activity = await result;
+            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
+
+            var match = Regex.Match(text, CommandMatchConnect);
+            if (match.Success)
+            {
+                this.Account = match.Groups[1].Value;
+                this.TeamProject = match.Groups[2].Value;
+            }
+
+            await this.ContinueProcess(context, activity);
+        }
+
+        /// <summary>
+        /// Generates a login card and presents it to the user.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/></param>
+        /// <param name="activity">A <see cref="IMessageActivity"/>.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual async Task LogOnAsync(IDialogContext context, IMessageActivity activity)
+        {
+            // Set pin.
+            this.Pin = GeneratePin();
+            context.UserData.SetPin(this.Pin);
+
+            var card = new LogOnCard(this.appId, new Uri(this.authorizeUrl), activity.ChannelId, activity.From.Id);
+
+            var reply = context.MakeMessage();
+            reply.Attachments.Add(card);
+
+            await context.PostAsync(reply);
+            context.Wait(this.PinReceivedAsync);
+        }
+
+        /// <summary>
+        /// Handles a received pin.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/></param>
+        /// <param name="result">A <see cref="IMessageActivity"/>.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual async Task PinReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            var activity = await result;
+
+            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
+            var match = Regex.Match(text, CommandMatchPin);
+
+            if (match.Success && string.Equals(this.Pin, text, StringComparison.OrdinalIgnoreCase))
+            {
+                await this.ContinueProcess(context, activity);
+                return;
+            }
+
+            await context.PostAsync(Exceptions.InvalidPin);
+            context.Wait(this.PinReceivedAsync);
+        }
+
+        /// <summary>
+        /// Shows a selection list of accounts to the user.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/></param>
+        /// <param name="activity">A <see cref="IMessageActivity"/>.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual async Task SelectAccountAsync(IDialogContext context, IMessageActivity activity)
+        {
+            var reply = context.MakeMessage();
+
+            var accounts = this.Profiles
+                .SelectMany(a => a.Accounts)
+                .Distinct()
+                .OrderBy(a => a)
+                .ToArray();
+
+            reply.Text = Labels.ConnectToAccount;
+            reply.Attachments.Add(new AccountsCard(accounts));
+
+            await context.PostAsync(reply);
+            context.Wait(this.AccountReceivedAsync);
+        }
+
+        /// <summary>
+        /// Handles the account selection.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/></param>
+        /// <param name="result">A <see cref="IMessageActivity"/>.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual async Task AccountReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            var activity = await result;
+
+            this.Account = activity.Text;
+            this.Profile = this.Profiles
+                .FirstOrDefault(p => p.Accounts.Any(a => string.Equals(a, this.Account, StringComparison.OrdinalIgnoreCase)));
+
+            if (this.Profile == null)
+            {
+                await this.LogOnAsync(context, activity);
+                return;
+            }
+
+            context.UserData.SetCurrentAccount(this.Account);
+            context.UserData.SetCurrentProfile(this.Profile);
+
+            await this.ContinueProcess(context, activity);
+        }
+
+        /// <summary>
+        /// Shows a selection list of the projects to the user.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/></param>
+        /// <param name="activity">A <see cref="IMessageActivity"/>.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual async Task SelectProjectAsync(IDialogContext context, IMessageActivity activity)
+        {
+            var reply = context.MakeMessage();
+
+            var projects = await this.vstsService.GetProjects(this.Account, this.Profile.Token);
+            var projectsNames = projects
+                .Select(project => project.Name)
+                .ToList();
+
+            reply.Text = Labels.ConnectToProject;
+            reply.Attachments.Add(new ProjectsCard(projectsNames));
+
+            await context.PostAsync(reply);
+            context.Wait(this.ProjectReceivedAsync);
+        }
+
+        /// <summary>
+        /// Handles the team project selection.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/></param>
+        /// <param name="result">A <see cref="IMessageActivity"/>.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual async Task ProjectReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            var activity = await result;
+
+            this.TeamProject = activity.Text;
+
+            context.UserData.SetCurrentTeamProject(this.TeamProject);
+
+            await this.ContinueProcess(context, activity);
+        }
+
+        /// <summary>
+        /// Continues the process.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/>.</param>
+        /// <param name="activity">An <see cref="IMessageActivity"/>.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual async Task ContinueProcess(IDialogContext context, IMessageActivity activity)
+        {
+            this.Profile = context.UserData.GetCurrentProfile();
+            this.Profiles = context.UserData.GetProfiles();
+
+            var reply = context.MakeMessage();
+
+            // No Profiles, so we have to login.
+            if (!this.Profiles.Any() || this.Profile == null)
+            {
+                await this.LogOnAsync(context, activity);
+                return;
+            }
+
+            // No account, show a list available accounts.
+            if (string.IsNullOrWhiteSpace(this.Account))
+            {
+                await this.SelectAccountAsync(context, activity);
+                return;
+            }
+
+            // No team project, ....
+            if (string.IsNullOrWhiteSpace(this.TeamProject))
+            {
+                await this.SelectProjectAsync(context, activity);
+                return;
+            }
+
+            reply.Text = string.Format(Labels.ConnectedTo, this.Account, this.TeamProject);
+            await context.PostAsync(reply);
+
+            context.Done(reply);
         }
 
         private static string GeneratePin()
@@ -103,153 +319,11 @@ namespace Vsar.TSBot.Dialogs
             }
         }
 
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result, IBotDataBag userData)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            if (result == null)
-            {
-                throw new ArgumentNullException(nameof(result));
-            }
-
-            var activity = await result;
-            var pin = userData.GetPin();
-            var profile = userData.GetCurrentProfile();
-            var profiles = userData.GetProfiles();
-            var account = userData.GetCurrentAccount();
-            var reply = context.MakeMessage();
-            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
-
-            // Pin was previously created, waiting for it to return.
-            if (this.isPinActivated)
-            {
-                var isPinHandled = await this.HandlePin(context, activity, pin);
-                if (!isPinHandled)
-                {
-                    return;
-                }
-            }
-            else
-            {
-                // Wait for the normal expected input.
-                var match = Regex.Match(text, CommandMatchConnect);
-                if (match.Success)
-                {
-                    this.accountName = match.Groups[1].Value;
-                    this.teamProject = match.Groups[2].Value;
-                }
-            }
-
-            // No Profiles, so we have to login.
-            if (!profiles.Any() || profile == null)
-            {
-                await this.Login(context, activity, reply, userData);
-                return;
-            }
-
-            // No account, show a list available accounts.
-            if (string.IsNullOrWhiteSpace(this.accountName))
-            {
-                await this.SelectAccountAsync(context, profiles, reply);
-                return;
-            }
-
-            if (!string.IsNullOrWhiteSpace(this.accountName) && profile.Accounts != null)
-            {
-                account = profile.Accounts.FirstOrDefault(a => string.Equals(this.accountName, a, StringComparison.OrdinalIgnoreCase));
-
-                if (account == null)
-                {
-                    await this.Login(context, activity, reply, userData);
-                    return;
-                }
-            }
-
-            // No team project, ....
-            if (string.IsNullOrWhiteSpace(this.teamProject))
-            {
-                await this.SelectProjectAsync(context, account, profile, reply);
-                return;
-            }
-
-            userData.SetCurrentAccount(account);
-            userData.SetCurrentTeamProject(this.teamProject);
-
-            reply.Text = string.Format(Labels.ConnectedTo, this.accountName, this.teamProject);
-            await context.PostAsync(reply);
-
-            context.Done(reply);
-        }
-
-        private async Task<bool> HandlePin(IDialogContext context, IMessageActivity activity, string pin)
-        {
-            this.isPinActivated = false;
-
-            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
-            var match = Regex.Match(text, CommandMatchPin);
-
-            if (match.Success && string.Equals(pin, text, StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-
-            await context.PostAsync(Exceptions.InvalidPin);
-            context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
-
-            return false;
-        }
-
-        private async Task Login(IDialogContext context, IMessageActivity activity, IMessageActivity reply, IBotDataBag userData)
-        {
-            // Set pin.
-            var pin = GeneratePin();
-            userData.SetPin(pin);
-            this.isPinActivated = true;
-
-            var card = new LogOnCard(this.appId, new Uri(this.authorizeUrl), activity.ChannelId, Labels.PleaseLogin, activity.From.Id);
-
-            reply.Attachments.Add(card);
-
-            await context.PostAsync(reply);
-            context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
-        }
-
+        [ExcludeFromCodeCoverage]
         [OnSerializing]
         private void OnSerializingMethod(StreamingContext context)
         {
-            this.wrapper = GlobalConfiguration.Configuration.DependencyResolver.GetService<IDialogContextWrapper>();
             this.vstsService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IVstsService>();
-        }
-
-        private async Task SelectAccountAsync(IDialogContext context, IList<VstsProfile> profiles, IMessageActivity reply)
-        {
-            var accounts = profiles
-                .SelectMany(a => a.Accounts)
-                .Distinct()
-                .OrderBy(a => a)
-                .ToArray();
-
-            await this.SelectAsync(context, reply, Labels.ConnectToAccount, new AccountsCard(accounts));
-        }
-
-        private async Task SelectProjectAsync(IDialogContext context, string account, VstsProfile profile, IMessageActivity reply)
-        {
-            var projects = await this.vstsService.GetProjects(account, profile.Token);
-            var projectNames = projects.Select(project => project.Name);
-
-            await this.SelectAsync(context, reply, Labels.ConnectToProject, new ProjectsCard(account, projectNames));
-        }
-
-        private async Task SelectAsync(IDialogContext context, IMessageActivity reply, string replyText, HeroCard card)
-        {
-            reply.Text = replyText;
-            reply.Attachments.Add(card);
-
-            await context.PostAsync(reply);
-            context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
         }
     }
 }
