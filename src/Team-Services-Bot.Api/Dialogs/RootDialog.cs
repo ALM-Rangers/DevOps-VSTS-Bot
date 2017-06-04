@@ -10,7 +10,7 @@
 namespace Vsar.TSBot.Dialogs
 {
     using System;
-    using System.Linq;
+    using System.Diagnostics.CodeAnalysis;
     using System.Runtime.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
@@ -30,57 +30,65 @@ namespace Vsar.TSBot.Dialogs
         [NonSerialized]
         private IAuthenticationService authenticationService;
         [NonSerialized]
-        private IDialogContextWrapper wrapper;
+        private TelemetryClient telemetryClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RootDialog"/> class.
         /// </summary>
         /// <param name="authenticationService">A <see cref="IAuthenticationService"/>.</param>
-        /// <param name="wrapper">The wrapper.</param>
-        public RootDialog(IAuthenticationService authenticationService, IDialogContextWrapper wrapper)
+        /// <param name="telemetryClient">A <see cref="telemetryClient"/>.</param>
+        public RootDialog(IAuthenticationService authenticationService, TelemetryClient telemetryClient)
         {
-            this.authenticationService = authenticationService;
-            this.wrapper = wrapper;
-        }
+            if (authenticationService == null)
+            {
+                throw new ArgumentNullException(nameof(authenticationService));
+            }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether the dialog is initialized.
-        /// </summary>
-        public bool Initialized { get; set; }
+            if (telemetryClient == null)
+            {
+                throw new ArgumentNullException(nameof(telemetryClient));
+            }
+
+            this.authenticationService = authenticationService;
+            this.telemetryClient = telemetryClient;
+        }
 
         /// <inheritdoc />
         public async Task StartAsync(IDialogContext context)
         {
-            context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
+            context.Wait(this.HandleActivityAsync);
 
             await Task.CompletedTask;
         }
 
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result, IBotDataBag userData)
+        /// <summary>
+        /// Handles any incoming activity.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/>.</param>
+        /// <param name="result">a <see cref="IMessageActivity"/>.</param>
+        /// <returns>a <see cref="Task"/>.</returns>
+        public virtual async Task HandleActivityAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
-            var telemetryClient = GlobalConfiguration.Configuration.DependencyResolver.GetService<TelemetryClient>();
 
             // Occurs when the conversation starts.
-            if (!this.Initialized)
+            if (string.Equals(activity.Type, ActivityTypes.ConversationUpdate, StringComparison.OrdinalIgnoreCase))
             {
-                this.Initialized = true;
-                await this.Welcome(context, activity, userData);
+                await this.WelcomeAsync(context, activity);
             }
             else
             {
-                await this.ProcessCommand(context, activity, telemetryClient);
+                await this.HandleCommandAsync(context, activity);
             }
         }
 
-        [OnSerializing]
-        private void OnSerializingMethod(StreamingContext context)
-        {
-            this.authenticationService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IAuthenticationService>();
-            this.wrapper = GlobalConfiguration.Configuration.DependencyResolver.GetService<IDialogContextWrapper>();
-        }
-
-        private async Task ProcessCommand(IDialogContext context, IMessageActivity activity, TelemetryClient telemetryClient)
+        /// <summary>
+        /// Handles any incoming command and route them to the appropiate dialog.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/>.</param>
+        /// <param name="activity">An <see cref="IMessageActivity"/>.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual async Task HandleCommandAsync(IDialogContext context, IMessageActivity activity)
         {
             var dialog = GlobalConfiguration.Configuration.DependencyResolver.Find(activity.Text);
 
@@ -91,44 +99,71 @@ namespace Vsar.TSBot.Dialogs
 
                 await context.PostAsync(reply);
 
-                context.Wait((c, result) => this.MessageReceivedAsync(c, result, this.wrapper.GetUserData(c)));
+                context.Wait(this.HandleActivityAsync);
             }
             else
             {
-                telemetryClient.TrackEvent(activity.Text);
+                this.telemetryClient.TrackEvent(activity.Text);
 
                 await context.Forward(dialog, this.ResumeAfterChildDialog, activity, CancellationToken.None);
             }
         }
 
-        private async Task Welcome(IDialogContext context, IMessageActivity activity, IBotDataBag userData)
+        /// <summary>
+        /// Welcomes a user.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/>.</param>
+        /// <param name="activity">An <see cref="IMessageActivity"/>.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual async Task WelcomeAsync(IDialogContext context, IMessageActivity activity)
         {
-            var account = userData.GetCurrentAccount();
-            var profile = userData.GetProfile(this.authenticationService);
-            var profiles = userData.GetProfiles();
-            var teamProject = userData.GetCurrentTeamProject();
-
-            if (account == null || profile == null || !profiles.Any() || string.IsNullOrWhiteSpace(teamProject))
+            var message = activity as IConversationUpdateActivity;
+            if (message == null)
             {
-                await context.PostAsync(string.Format(Labels.WelcomeNewUser, activity.From.Name));
-
-                var dialog = GlobalConfiguration.Configuration.DependencyResolver.Find("connect");
-
-                if (dialog != null)
-                {
-                    await context.Forward(dialog, this.ResumeAfterChildDialog, activity, CancellationToken.None);
-                }
+                return;
             }
-            else
+
+            var account = context.UserData.GetCurrentAccount();
+            var profile = context.UserData.GetProfile(this.authenticationService);
+            var teamProject = context.UserData.GetCurrentTeamProject();
+
+            foreach (var member in message.MembersAdded)
             {
-                await context.PostAsync(string.Format(Labels.WelcomeExistingUser, activity.From.Name, account, teamProject));
+                // Skip if the added member is the bot itself.
+                if (string.Equals(member.Id, message.Recipient.Id, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                if (profile == null)
+                {
+                    await context.PostAsync(string.Format(Labels.WelcomeNewUser, member.Name));
+                }
+                else
+                {
+                    await context.PostAsync(string.Format(Labels.WelcomeExistingUser, activity.From.Name, string.IsNullOrWhiteSpace(account) ? "?" : account, string.IsNullOrWhiteSpace(teamProject) ? "?" : teamProject));
+                }
             }
         }
 
-        private Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
+        /// <summary>
+        /// Resumes after a child dialog finishes.
+        /// </summary>
+        /// <param name="context">A result.</param>
+        /// <param name="result">A <see cref="IMessageActivity"/>.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
         {
-            context.Wait((c, r) => this.MessageReceivedAsync(c, r, this.wrapper.GetUserData(c)));
+            context.Wait(this.HandleActivityAsync);
             return Task.CompletedTask;
+        }
+
+        [ExcludeFromCodeCoverage]
+        [OnSerializing]
+        private void OnSerializingMethod(StreamingContext context)
+        {
+            this.authenticationService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IAuthenticationService>();
+            this.telemetryClient = GlobalConfiguration.Configuration.DependencyResolver.GetService<TelemetryClient>();
         }
     }
 }

@@ -10,6 +10,7 @@
 namespace Vsar.TSBot
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Autofac;
     using Autofac.Extras.AttributeMetadata;
@@ -23,6 +24,7 @@ namespace Vsar.TSBot
     /// <summary>
     /// Provides method(s) to bootstrap the dependency injection framework.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class Bootstrap
     {
         /// <summary>
@@ -94,10 +96,6 @@ namespace Vsar.TSBot
 
             builder
                 .RegisterApiControllers(typeof(Bootstrap).Assembly);
-
-            builder
-                .RegisterType<DialogContextWrapper>()
-                .As<IDialogContextWrapper>();
 
             builder
                 .RegisterAssemblyTypes(typeof(Bootstrap).Assembly)

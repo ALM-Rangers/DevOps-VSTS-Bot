@@ -10,6 +10,7 @@
 namespace Vsar.TSBot
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Web.Http;
     using Autofac;
     using Autofac.Integration.WebApi;
@@ -19,6 +20,7 @@ namespace Vsar.TSBot
     /// <summary>
     /// Provides method(s) to configure web api.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class WebApiConfig
     {
         /// <summary>

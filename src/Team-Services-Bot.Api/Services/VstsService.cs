@@ -11,6 +11,7 @@ namespace Vsar.TSBot
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using Microsoft.TeamFoundation.Core.WebApi;
     using Microsoft.VisualStudio.Services.Account;
@@ -25,6 +26,7 @@ namespace Vsar.TSBot
     /// <summary>
     /// Contains method(s) for accessing VSTS.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class VstsService : IVstsService
     {
         private const string VstsUrl = "https://{0}.visualstudio.com";

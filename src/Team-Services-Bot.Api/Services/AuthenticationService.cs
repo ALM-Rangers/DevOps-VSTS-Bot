@@ -10,6 +10,7 @@
 namespace Vsar.TSBot
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace Vsar.TSBot
     /// <summary>
     /// Represents an implementation of <see cref="IAuthenticationService"/>.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class AuthenticationService : IAuthenticationService
     {
         private const string FormatPostData =

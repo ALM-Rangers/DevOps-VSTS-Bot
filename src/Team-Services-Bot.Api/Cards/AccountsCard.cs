@@ -26,7 +26,7 @@ namespace Vsar.TSBot.Cards
         public AccountsCard(IEnumerable<string> accounts)
         {
             this.Buttons = accounts
-                .Select(a => new CardAction(ActionTypes.ImBack, a, value: FormattableString.Invariant($"connect {a}")))
+                .Select(a => new CardAction(ActionTypes.ImBack, a, value: a))
                 .ToList();
         }
     }

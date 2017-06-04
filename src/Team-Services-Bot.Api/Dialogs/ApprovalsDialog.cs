@@ -10,6 +10,7 @@
 namespace Vsar.TSBot.Dialogs
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Runtime.Serialization;
     using System.Text.RegularExpressions;
@@ -44,6 +45,16 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="vstsService">The <see cref="IVstsService"/>.</param>
         public ApprovalsDialog(IAuthenticationService authenticationService, IVstsService vstsService)
         {
+            if (authenticationService == null)
+            {
+                throw new ArgumentNullException(nameof(authenticationService));
+            }
+
+            if (vstsService == null)
+            {
+                throw new ArgumentNullException(nameof(vstsService));
+            }
+
             this.authenticationService = authenticationService;
             this.vstsService = vstsService;
         }
@@ -61,7 +72,7 @@ namespace Vsar.TSBot.Dialogs
         /// <summary>
         /// Gets or sets a value indicating whether it is an approval.
         /// </summary>
-        public bool IsApproval { get; set; }
+        public bool IsApproved { get; set; }
 
         /// <summary>
         /// Gets or sets the profile.
@@ -87,7 +98,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">The <see cref="IDialogContext"/>.</param>
         /// <param name="result">The <see cref="IAwaitable{T}"/>.</param>
         /// <returns>An async <see cref="Task"/>/.</returns>
-        public async Task ApprovalsAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        public virtual async Task ApprovalsAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
             var reply = context.MakeMessage();
@@ -119,7 +130,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">The <see cref="IDialogContext"/>.</param>
         /// <param name="result">The <see cref="IAwaitable{T}"/>.</param>
         /// <returns>An async <see cref="Task"/>/.</returns>
-        public async Task ApproveOrRejectAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        public virtual async Task ApproveOrRejectAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
 
@@ -131,7 +142,7 @@ namespace Vsar.TSBot.Dialogs
             if (matchApprove.Success)
             {
                 this.ApprovalId = Convert.ToInt32(matchApprove.Groups[1].Value);
-                this.IsApproval = true;
+                this.IsApproved = true;
                 var comment = matchApprove.Groups[2].Value;
 
                 if (string.IsNullOrWhiteSpace(comment))
@@ -148,7 +159,7 @@ namespace Vsar.TSBot.Dialogs
             else if (matchReject.Success)
             {
                 this.ApprovalId = Convert.ToInt32(matchReject.Groups[1].Value);
-                this.IsApproval = false;
+                this.IsApproved = false;
                 var comment = matchReject.Groups[2].Value;
 
                 if (string.IsNullOrWhiteSpace(comment))
@@ -168,32 +179,41 @@ namespace Vsar.TSBot.Dialogs
             }
         }
 
-        private async Task ChangeStatusAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        /// <summary>
+        /// Changes the status of an Approval.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/>.</param>
+        /// <param name="result">A <see cref="IMessageActivity"/>.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual async Task ChangeStatusAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result;
 
-            await this.ChangeStatusAsync(context, this.ApprovalId, activity.Text, this.IsApproval);
+            await this.ChangeStatusAsync(context, this.ApprovalId, activity.Text, this.IsApproved);
         }
 
-        private async Task ChangeStatusAsync(IDialogContext context, int approvalId, string comment, bool isApproval)
+        /// <summary>
+        /// Changes the status of an Approval.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/>.</param>
+        /// <param name="approvalId">The approval id.</param>
+        /// <param name="comment">A comment.</param>
+        /// <param name="isApproved">Indication if it is approved.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual async Task ChangeStatusAsync(IDialogContext context, int approvalId, string comment, bool isApproved)
         {
             var reply = context.MakeMessage();
 
-            if (string.IsNullOrWhiteSpace(comment))
-            {
-                reply.Text = Labels.MissingComment;
-                await context.PostAsync(reply);
-            }
-
-            var status = isApproval ? ApprovalStatus.Approved : ApprovalStatus.Rejected;
+            var status = isApproved ? ApprovalStatus.Approved : ApprovalStatus.Rejected;
             await this.vstsService.ChangeApprovalStatus(this.Account, this.TeamProject, this.Profile, approvalId, status, comment);
 
-            reply.Text = isApproval ? Labels.Approved : Labels.Rejected;
+            reply.Text = isApproved ? Labels.Approved : Labels.Rejected;
             await context.PostAsync(reply);
 
             context.Done(reply);
         }
 
+        [ExcludeFromCodeCoverage]
         [OnSerializing]
         private void OnSerializingMethod(StreamingContext context)
         {

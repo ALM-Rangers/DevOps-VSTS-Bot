@@ -10,11 +10,13 @@
 namespace Vsar.TSBot
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Web.Mvc;
 
     /// <summary>
     /// Provides method(s) to register global filters.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class FilterConfig
     {
         /// <summary>

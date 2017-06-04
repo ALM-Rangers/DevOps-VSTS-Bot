@@ -11,6 +11,7 @@ namespace Vsar.TSBot.UnitTests
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using System.Web.Mvc;
     using Common.Tests;
@@ -24,10 +25,33 @@ namespace Vsar.TSBot.UnitTests
     /// <summary>
     /// Tests for <see cref="AuthorizeController"/> class
     /// </summary>
+    [ExcludeFromCodeCoverage]
     [TestClass]
     [TestCategory(TestCategories.Unit)]
     public class AuthorizeControllerTests
     {
+        [TestMethod]
+        public async Task Authorize_No_Code()
+        {
+            var authenticationService = new Mock<IAuthenticationService>();
+            var botService = new Mock<IBotService>();
+            var vstsService = new Mock<IVstsService>();
+
+            var target = new AuthorizeController(botService.Object, authenticationService.Object, vstsService.Object);
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.Index(null, null, null));
+        }
+
+        [TestMethod]
+        public async Task Authorize_No_State()
+        {
+            var authenticationService = new Mock<IAuthenticationService>();
+            var botService = new Mock<IBotService>();
+            var vstsService = new Mock<IVstsService>();
+
+            var target = new AuthorizeController(botService.Object, authenticationService.Object, vstsService.Object);
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await target.Index("123567890", null, null));
+        }
+
         /// <summary>
         /// Test of valid authorization
         /// </summary>
@@ -37,28 +61,32 @@ namespace Vsar.TSBot.UnitTests
         {
             var authenticationService = new Mock<IAuthenticationService>();
             var botService = new Mock<IBotService>();
-            var profileService = new Mock<IVstsService>();
+            var vstsService = new Mock<IVstsService>();
 
             var token = new OAuthToken();
             var profile = new Profile();
-            var accounts = new List<Account>();
+            var accounts = new List<Account> { new Account(Guid.NewGuid()) { AccountName = "Account1" } };
             var botData = new BotData();
 
-            var controller = new AuthorizeController(
+            var target = new AuthorizeController(
                 botService.Object,
                 authenticationService.Object,
-                profileService.Object);
+                vstsService.Object);
 
             const string code = "1234567890";
+            const string pin = "12345";
             const string state = "channel1;user1";
+
+            botData.SetProperty("Pin", pin);
+            botData.SetProperty("Profiles", new List<VstsProfile> { new VstsProfile { Id = Guid.NewGuid() } });
 
             authenticationService
                 .Setup(a => a.GetToken(code))
                 .ReturnsAsync(() => token);
-            profileService
+            vstsService
                 .Setup(p => p.GetProfile(token))
                 .ReturnsAsync(profile);
-            profileService
+            vstsService
                 .Setup(p => p.GetAccounts(token, It.IsAny<Guid>()))
                 .ReturnsAsync(accounts);
             botService
@@ -68,11 +96,12 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(b => b.SetUserData("channel1", "user1", botData))
                 .Returns(Task.CompletedTask);
 
-            var result = await controller.Index(code, string.Empty, state) as ViewResult;
+            var result = await target.Index(code, string.Empty, state) as ViewResult;
             var profiles = botData.GetProfiles();
 
             result.Should().NotBeNull();
-            profiles.Should().NotBeNull().And.HaveCount(1);
+            profiles.Should().NotBeNull().And.HaveCount(2);
+            ((Authorize)result.Model).Pin.Should().Be(pin);
         }
     }
 }
