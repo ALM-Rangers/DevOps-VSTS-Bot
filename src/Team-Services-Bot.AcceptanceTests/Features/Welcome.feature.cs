@@ -107,8 +107,6 @@ this.FeatureBackground();
 #line 10
  testRunner.Given("I started a conversation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 11
- testRunner.When("I say \'Hi\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 12
  testRunner.Then("the bot should respond with \'Welcome Test User. This is the first time we talk.\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -122,18 +120,16 @@ this.FeatureBackground();
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Starting a conversation for the second time with the bot.", new string[] {
                         "Acceptance"});
-#line 15
+#line 14
 this.ScenarioSetup(scenarioInfo);
 #line 4
 this.FeatureBackground();
+#line 15
+ testRunner.Given("The user has previously logged in into the account and team project \'config:TeamP" +
+                    "rojectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 16
- testRunner.Given("I started a conversation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.And("I started a conversation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 17
- testRunner.And("The user has previously logged in into the account and team project \'config:TeamP" +
-                    "rojectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 18
- testRunner.When("I say \'Hi\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 19
  testRunner.Then("the bot should respond with \'Welcome back Test User. I have connected you to Acco" +
                     "unt \'config:Account\', Team Project \'config:TeamProjectOne\'.\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
