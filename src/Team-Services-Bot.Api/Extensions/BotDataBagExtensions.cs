@@ -21,6 +21,7 @@ namespace Vsar.TSBot
     public static class BotDataBagExtensions
     {
         private const string Account = "Account";
+        private const string NotValidatedByPinProfile = "NotValidatedByPinProfile";
         private const string Pin = "Pin";
         private const string Profile = "Profile";
         private const string Profiles = "Profiles";
@@ -50,13 +51,31 @@ namespace Vsar.TSBot
         /// <returns>the name of the current team project.</returns>
         public static string GetTeamProject(this IBotDataBag dataBag)
         {
-            string teamProject;
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
+            string teamProject;
+
             return dataBag.TryGetValue(TeamProject, out teamProject) ? teamProject : string.Empty;
+        }
+
+        /// <summary>
+        /// Gets the Not Validate By Pin Profile.
+        /// </summary>
+        /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
+        /// <returns>The <see cref="VstsProfile"/>.</returns>
+        public static VstsProfile GetNotValidatedByPinProfile(this IBotDataBag dataBag)
+        {
+            if (dataBag == null)
+            {
+                throw new ArgumentNullException(nameof(dataBag));
+            }
+
+            VstsProfile profile;
+
+            return dataBag.TryGetValue(NotValidatedByPinProfile, out profile) ? profile : null;
         }
 
         /// <summary>
@@ -190,6 +209,26 @@ namespace Vsar.TSBot
             }
 
             dataBag.SetValue(Account, account);
+        }
+
+        /// <summary>
+        /// Sets the not validated by pin profile.
+        /// </summary>
+        /// <param name="data">The bot data.</param>
+        /// <param name="profile">The profile.</param>
+        public static void SetNotValidatedByPinProfile(this BotData data, VstsProfile profile)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            if (profile == null)
+            {
+                throw new ArgumentNullException(nameof(profile));
+            }
+
+            data.SetProperty(NotValidatedByPinProfile, profile);
         }
 
         /// <summary>

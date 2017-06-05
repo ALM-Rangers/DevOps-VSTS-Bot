@@ -163,11 +163,18 @@ namespace Vsar.TSBot.Dialogs
         {
             var activity = await result;
 
-            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
+            var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
             var match = Regex.Match(text, CommandMatchPin);
 
             if (match.Success && string.Equals(this.Pin, text, StringComparison.OrdinalIgnoreCase))
             {
+                var profile = context.UserData.GetNotValidatedByPinProfile();
+                var profiles = context.UserData.GetProfiles();
+
+                profiles.Add(profile);
+                this.Profile = profile;
+                context.UserData.SetProfile(profile);
+
                 await this.ContinueProcess(context, activity);
                 return;
             }
@@ -209,7 +216,7 @@ namespace Vsar.TSBot.Dialogs
         {
             var activity = await result;
 
-            this.Account = activity.Text;
+            this.Account = activity.Text.Trim();
             this.Profile = this.Profiles
                 .FirstOrDefault(p => p.Accounts.Any(a => string.Equals(a, this.Account, StringComparison.OrdinalIgnoreCase)));
 
@@ -257,7 +264,7 @@ namespace Vsar.TSBot.Dialogs
         {
             var activity = await result;
 
-            this.TeamProject = activity.Text;
+            this.TeamProject = activity.Text.Trim();
 
             context.UserData.SetTeamProject(this.TeamProject);
 

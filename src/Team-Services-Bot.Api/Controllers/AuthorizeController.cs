@@ -75,15 +75,9 @@ namespace Vsar.TSBot
 
             var data = await this.botService.GetUserData(channelId, userId);
             var pin = data.GetPin();
-            var profiles = data.GetProfiles();
 
-            if (!profiles.Any(p => p.Id.Equals(vstsProfile.Id)))
-            {
-                profiles.Add(vstsProfile);
-            }
+            data.SetNotValidatedByPinProfile(vstsProfile);
 
-            data.SetProfile(vstsProfile);
-            data.SetProfiles(profiles);
             await this.botService.SetUserData(channelId, userId, data);
 
             return this.View(new Authorize(pin));

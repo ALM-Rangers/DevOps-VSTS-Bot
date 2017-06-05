@@ -125,6 +125,42 @@ namespace Vsar.TSBot.UnitTests.Extensions
         }
 
         [TestMethod]
+        public void GetNotValidatedByPinProfile_Missing_BotDataBag()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).GetNotValidatedByPinProfile());
+        }
+
+        [TestMethod]
+        public void GetNotValidatedByPinProfile_BotDataBag_No_Profile()
+        {
+            VstsProfile profile;
+
+            var mocked = new Mock<IBotDataBag>();
+            mocked.Setup(m => m.TryGetValue("NotValidatedByPinProfile", out profile)).Returns(false).Verifiable();
+
+            var result = mocked.Object.GetNotValidatedByPinProfile();
+
+            mocked.Verify();
+
+            result.Should().BeNull();
+        }
+
+        [TestMethod]
+        public void GetNotValidatedByPinProfile_BotDataBag()
+        {
+            VstsProfile profile = new VstsProfile();
+
+            var mocked = new Mock<IBotDataBag>();
+            mocked.Setup(m => m.TryGetValue("NotValidatedByPinProfile", out profile)).Returns(true).Verifiable();
+
+            var result = mocked.Object.GetNotValidatedByPinProfile();
+
+            mocked.Verify();
+
+            result.Should().Be(profile);
+        }
+
+        [TestMethod]
         public void GetPin_Missing_BotDataBag()
         {
             Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).GetPin());
@@ -274,20 +310,20 @@ namespace Vsar.TSBot.UnitTests.Extensions
         }
 
         [TestMethod]
-        public void SetCurrentAccount_Missing_BotData()
+        public void SetAccount_Missing_BotData()
         {
             Assert.ThrowsException<ArgumentNullException>(() => ((BotData)null).SetAccount(null));
         }
 
         [TestMethod]
-        public void SetCurrentAccount_BotData_Missing_Account()
+        public void SetAccount_BotData_Missing_Account()
         {
             var data = new BotData();
             Assert.ThrowsException<ArgumentNullException>(() => data.SetAccount(null));
         }
 
         [TestMethod]
-        public void SetCurrentAccount_BotData()
+        public void SetAccount_BotData()
         {
             var account = "Account1";
             var data = new BotData();
@@ -300,20 +336,20 @@ namespace Vsar.TSBot.UnitTests.Extensions
         }
 
         [TestMethod]
-        public void SetCurrentAccount_Missing_BotDataBag()
+        public void SetAccount_Missing_BotDataBag()
         {
             Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).SetAccount(null));
         }
 
         [TestMethod]
-        public void SetCurrentAccount_BotDataBag_Missing_Account()
+        public void SetAccount_BotDataBag_Missing_Account()
         {
             var mocked = new Mock<IBotDataBag>();
             Assert.ThrowsException<ArgumentNullException>(() => mocked.Object.SetAccount(null));
         }
 
         [TestMethod]
-        public void SetCurrentAccount_BotDataBag()
+        public void SetAccount_BotDataBag()
         {
             var account = "Account1";
             var mocked = new Mock<IBotDataBag>();
@@ -324,20 +360,46 @@ namespace Vsar.TSBot.UnitTests.Extensions
         }
 
         [TestMethod]
-        public void SetCurrentProfile_Missing_BotData()
+        public void SetNotValidatedByPinProfile_Missing_BotData()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => ((BotData)null).SetNotValidatedByPinProfile(null));
+        }
+
+        [TestMethod]
+        public void SetNotValidatedByPinProfile_BotData_Missing_Profile()
+        {
+            var data = new BotData();
+            Assert.ThrowsException<ArgumentNullException>(() => data.SetNotValidatedByPinProfile(null));
+        }
+
+        [TestMethod]
+        public void SetNotValidatedByPinProfile_BotData()
+        {
+            var profile = new VstsProfile();
+            var data = new BotData();
+
+            data.SetNotValidatedByPinProfile(profile);
+
+            var result = data.GetProperty<VstsProfile>("NotValidatedByPinProfile");
+
+            result.Should().BeOfType<VstsProfile>();
+        }
+
+        [TestMethod]
+        public void SetProfile_Missing_BotData()
         {
             Assert.ThrowsException<ArgumentNullException>(() => ((BotData)null).SetProfile(null));
         }
 
         [TestMethod]
-        public void SetCurrentProfile_BotData_Missing_Account()
+        public void SetProfile_BotData_Missing_Profile()
         {
             var data = new BotData();
             Assert.ThrowsException<ArgumentNullException>(() => data.SetProfile(null));
         }
 
         [TestMethod]
-        public void SetCurrentProfile_BotData()
+        public void SetProfile_BotData()
         {
             var profile = new VstsProfile();
             var data = new BotData();
@@ -350,20 +412,20 @@ namespace Vsar.TSBot.UnitTests.Extensions
         }
 
         [TestMethod]
-        public void SetCurrentProfile_Missing_BotDataBag()
+        public void SetProfile_Missing_BotDataBag()
         {
             Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).SetProfile(null));
         }
 
         [TestMethod]
-        public void SetCurrentProfile_BotDataBag_Missing_Account()
+        public void SetProfile_BotDataBag_Missing_Account()
         {
             var mocked = new Mock<IBotDataBag>();
             Assert.ThrowsException<ArgumentNullException>(() => mocked.Object.SetProfile(null));
         }
 
         [TestMethod]
-        public void SetCurrentProfile_BotDataBag()
+        public void SetProfile_BotDataBag()
         {
             var profile = new VstsProfile();
             var mocked = new Mock<IBotDataBag>();

@@ -78,7 +78,6 @@ namespace Vsar.TSBot.UnitTests
             const string state = "channel1;user1";
 
             botData.SetProperty("Pin", pin);
-            botData.SetProperty("Profiles", new List<VstsProfile> { new VstsProfile { Id = Guid.NewGuid() } });
 
             authenticationService
                 .Setup(a => a.GetToken(code))
@@ -97,10 +96,10 @@ namespace Vsar.TSBot.UnitTests
                 .Returns(Task.CompletedTask);
 
             var result = await target.Index(code, string.Empty, state) as ViewResult;
-            var profiles = botData.GetProfiles();
+            var vstsProfile = botData.GetProperty<VstsProfile>("NotValidatedByPinProfile");
 
             result.Should().NotBeNull();
-            profiles.Should().NotBeNull().And.HaveCount(2);
+            vstsProfile.Should().NotBeNull();
             ((Authorize)result.Model).Pin.Should().Be(pin);
         }
     }
