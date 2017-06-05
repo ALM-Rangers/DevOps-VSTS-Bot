@@ -30,22 +30,22 @@ namespace Vsar.TSBot
         /// <summary>
         /// Builds a <see cref="IContainer"/> that has all the necessary types registered to run the application.
         /// </summary>
-        /// <param name="builder">A container builder to be used.</param>
         /// <param name="configurationProvider">The provider used to access configuration information.</param>
         /// <param name="isDebugging">Flag that indicates if the application is in debugging modus.</param>
         /// <returns>A <see cref="IContainer"/>.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Bootstrapper for Autofac. So it is intented to hit all needed dependencies in one place.")]
-        public static IContainer Build(ContainerBuilder builder, IConfigurationProvider configurationProvider, bool isDebugging)
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Bootstrapper for Autofac. So it is intented to hit all needed dependencies in one place.")]
+        public static IContainer Build(IConfigurationProvider configurationProvider, bool isDebugging)
         {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
             if (configurationProvider == null)
             {
                 throw new ArgumentNullException(nameof(configurationProvider));
             }
+
+            var builder = new ContainerBuilder();
+
+            builder
+                .RegisterType<DialogInvoker>()
+                .As<IDialogInvoker>();
 
             builder
                 .RegisterInstance(configurationProvider);
