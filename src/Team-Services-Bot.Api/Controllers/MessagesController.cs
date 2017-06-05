@@ -26,16 +26,19 @@ namespace Vsar.TSBot
     public class MessagesController : ApiController
     {
         private readonly IComponentContext container;
+        private readonly IDialogInvoker dialogInvoker;
         private readonly TelemetryClient telemetryClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagesController"/> class.
         /// </summary>
         /// <param name="container">A <see cref="IComponentContext"/>.</param>
+        /// <param name="dialogInvoker">A <see cref="IDialogInvoker"/>.</param>
         /// <param name="telemetryClient">A <see cref="TelemetryClient"/>.</param>
-        public MessagesController(IComponentContext container, TelemetryClient telemetryClient)
+        public MessagesController(IComponentContext container, IDialogInvoker dialogInvoker, TelemetryClient telemetryClient)
         {
             this.container = container;
+            this.dialogInvoker = dialogInvoker;
             this.telemetryClient = telemetryClient;
         }
 
@@ -53,9 +56,8 @@ namespace Vsar.TSBot
                 if (string.Equals(activity.Type, ActivityTypes.Message, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(activity.Type, ActivityTypes.ConversationUpdate, StringComparison.OrdinalIgnoreCase))
                 {
-                    var invoker = this.container.Resolve<IDialogInvoker>();
                     var dialog = this.container.Resolve<RootDialog>();
-                    await invoker.SendAsync(activity, () => dialog);
+                    await this.dialogInvoker.SendAsync(activity, () => dialog);
                 }
                 else
                 {

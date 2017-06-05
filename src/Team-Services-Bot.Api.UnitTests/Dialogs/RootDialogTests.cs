@@ -39,22 +39,16 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        public void Constructor_Missing_AuthenticationService()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => new RootDialog(null, null));
-        }
-
-        [TestMethod]
         public void Constructor_Missing_TelemetryClient()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new RootDialog(this.Fixture.AuthenticationService.Object, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new RootDialog(null));
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "target", Justification = "Test for constructor only.")]
         [TestMethod]
         public void Constructor()
         {
-            var target = new RootDialog(this.Fixture.AuthenticationService.Object, new TelemetryClient());
+            var target = new RootDialog(new TelemetryClient());
         }
 
         [TestMethod]
@@ -63,7 +57,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var mocked = new Mock<RootDialog>(this.Fixture.AuthenticationService.Object, this.Fixture.TelemetryClient) { CallBase = true };
+            var mocked = new Mock<RootDialog>(this.Fixture.TelemetryClient) { CallBase = true };
             var target = mocked.Object;
 
             await target.StartAsync(this.Fixture.DialogContext.Object);
@@ -74,7 +68,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Welcome_No_Message()
         {
-            var target = new RootDialog(this.Fixture.AuthenticationService.Object, this.Fixture.TelemetryClient);
+            var target = new RootDialog(this.Fixture.TelemetryClient);
 
             await target.WelcomeAsync(this.Fixture.DialogContext.Object, null);
         }
@@ -87,7 +81,7 @@ namespace Vsar.TSBot.UnitTests
             toBot.MembersAdded.Add(new ChannelAccount { Id = "testUser", Name = "testUser" });
             toBot.MembersAdded.Add(new ChannelAccount { Id = "testBot", Name = "testBot" });
 
-            var target = new RootDialog(this.Fixture.AuthenticationService.Object, this.Fixture.TelemetryClient);
+            var target = new RootDialog(this.Fixture.TelemetryClient);
 
             await target.WelcomeAsync(this.Fixture.DialogContext.Object, toBot);
 
@@ -107,7 +101,7 @@ namespace Vsar.TSBot.UnitTests
 
             GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
 
-            var target = new RootDialog(this.Fixture.AuthenticationService.Object, this.Fixture.TelemetryClient);
+            var target = new RootDialog(this.Fixture.TelemetryClient);
 
             await target.HandleCommandAsync(this.Fixture.DialogContext.Object, toBot);
 
@@ -136,7 +130,7 @@ namespace Vsar.TSBot.UnitTests
 
             GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(build));
 
-            var target = new RootDialog(this.Fixture.AuthenticationService.Object, this.Fixture.TelemetryClient);
+            var target = new RootDialog(this.Fixture.TelemetryClient);
 
             await target.HandleCommandAsync(this.Fixture.DialogContext.Object, toBot);
 
@@ -148,7 +142,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Resume_After_Child_Finishes()
         {
-            var target = new RootDialog(this.Fixture.AuthenticationService.Object, this.Fixture.TelemetryClient);
+            var target = new RootDialog(this.Fixture.TelemetryClient);
 
             await target.ResumeAfterChildDialog(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(string.Empty));
 
@@ -160,7 +154,7 @@ namespace Vsar.TSBot.UnitTests
         {
             var message = this.Fixture.CreateMessage();
 
-            var mocked = new Mock<RootDialog>(this.Fixture.AuthenticationService.Object, this.Fixture.TelemetryClient) { CallBase = true };
+            var mocked = new Mock<RootDialog>(this.Fixture.TelemetryClient) { CallBase = true };
             var target = mocked.Object;
 
             mocked.Setup(m => m.HandleCommandAsync(this.Fixture.DialogContext.Object, message)).Returns(Task.CompletedTask).Verifiable();
@@ -176,7 +170,7 @@ namespace Vsar.TSBot.UnitTests
             var message = this.Fixture.CreateMessage();
             message.Type = ActivityTypes.ConversationUpdate;
 
-            var mocked = new Mock<RootDialog>(this.Fixture.AuthenticationService.Object, this.Fixture.TelemetryClient) { CallBase = true };
+            var mocked = new Mock<RootDialog>(this.Fixture.TelemetryClient) { CallBase = true };
             var target = mocked.Object;
 
             mocked.Setup(m => m.WelcomeAsync(this.Fixture.DialogContext.Object, message)).Returns(Task.CompletedTask).Verifiable();
