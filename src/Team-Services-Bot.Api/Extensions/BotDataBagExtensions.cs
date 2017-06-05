@@ -11,6 +11,7 @@ namespace Vsar.TSBot
 {
     using System;
     using System.Collections.Generic;
+    using System.Web.Http;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
 
@@ -30,7 +31,7 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
         /// <returns>An account.</returns>
-        public static string GetCurrentAccount(this IBotDataBag dataBag)
+        public static string GetAccount(this IBotDataBag dataBag)
         {
             if (dataBag == null)
             {
@@ -43,28 +44,11 @@ namespace Vsar.TSBot
         }
 
         /// <summary>
-        /// Gets the current profile.
-        /// </summary>
-        /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
-        /// <returns>A string representing the account.</returns>
-        public static VstsProfile GetCurrentProfile(this IBotDataBag dataBag)
-        {
-            if (dataBag == null)
-            {
-                throw new ArgumentNullException(nameof(dataBag));
-            }
-
-            VstsProfile profile;
-
-            return dataBag.TryGetValue(Profile, out profile) ? profile : null;
-        }
-
-        /// <summary>
         /// Gets the current team project for the user.
         /// </summary>
         /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
         /// <returns>the name of the current team project.</returns>
-        public static string GetCurrentTeamProject(this IBotDataBag dataBag)
+        public static string GetTeamProject(this IBotDataBag dataBag)
         {
             string teamProject;
             if (dataBag == null)
@@ -110,20 +94,15 @@ namespace Vsar.TSBot
         /// Get the current profile.
         /// </summary>
         /// <param name="dataBag">The data bag.</param>
-        /// <param name="authenticationService">The <see cref="IAuthenticationService"/>.</param>
         /// <returns>A VstsProfile.</returns>
-        public static VstsProfile GetProfile(this IBotDataBag dataBag, IAuthenticationService authenticationService)
+        public static VstsProfile GetProfile(this IBotDataBag dataBag)
         {
+            var authenticationService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IAuthenticationService>();
             VstsProfile profile;
 
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
-            }
-
-            if (authenticationService == null)
-            {
-                throw new ArgumentNullException(nameof(authenticationService));
             }
 
             if (!dataBag.TryGetValue(Profile, out profile))
@@ -137,7 +116,7 @@ namespace Vsar.TSBot
             }
 
             profile.Token = authenticationService.GetToken(profile.Token).Result;
-            dataBag.SetCurrentProfile(profile);
+            dataBag.SetProfile(profile);
 
             return profile;
         }
@@ -178,7 +157,7 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="data">The bot data.</param>
         /// <param name="account">The account.</param>
-        public static void SetCurrentAccount(this BotData data, string account)
+        public static void SetAccount(this BotData data, string account)
         {
             if (data == null)
             {
@@ -198,7 +177,7 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
         /// <param name="account">the account.</param>
-        public static void SetCurrentAccount(this IBotDataBag dataBag, string account)
+        public static void SetAccount(this IBotDataBag dataBag, string account)
         {
             if (dataBag == null)
             {
@@ -218,7 +197,7 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="data">The bot data.</param>
         /// <param name="profile">The profile.</param>
-        public static void SetCurrentProfile(this BotData data, VstsProfile profile)
+        public static void SetProfile(this BotData data, VstsProfile profile)
         {
             if (data == null)
             {
@@ -238,7 +217,7 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="dataBag">The data bag.</param>
         /// <param name="profile">The profile.</param>
-        public static void SetCurrentProfile(this IBotDataBag dataBag, VstsProfile profile)
+        public static void SetProfile(this IBotDataBag dataBag, VstsProfile profile)
         {
             if (dataBag == null)
             {
@@ -258,7 +237,7 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="data">The bot data.</param>
         /// <param name="teamProject">The team project.</param>
-        public static void SetCurrentTeamProject(this BotData data, string teamProject)
+        public static void SetTeamProject(this BotData data, string teamProject)
         {
             if (data == null)
             {
@@ -278,7 +257,7 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="dataBag">The data bag.</param>
         /// <param name="teamProject">The team project.</param>
-        public static void SetCurrentTeamProject(this IBotDataBag dataBag, string teamProject)
+        public static void SetTeamProject(this IBotDataBag dataBag, string teamProject)
         {
             if (dataBag == null)
             {

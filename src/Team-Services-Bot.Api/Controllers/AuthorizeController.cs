@@ -82,7 +82,7 @@ namespace Vsar.TSBot
                 profiles.Add(vstsProfile);
             }
 
-            data.SetCurrentProfile(vstsProfile);
+            data.SetProfile(vstsProfile);
             data.SetProfiles(profiles);
             await this.botService.SetUserData(channelId, userId, data);
 

@@ -68,10 +68,10 @@ namespace Vsar.TSBot.AcceptanceTests
 
             var userData = Config.BotState.GetUserData(ChannelIds.Directline, Config.UserName);
 
-            userData.SetCurrentAccount(Config.Account);
-            userData.SetCurrentProfile(profile);
+            userData.SetAccount(Config.Account);
+            userData.SetProfile(profile);
             userData.SetProfiles(new List<VstsProfile> { profile });
-            userData.SetCurrentTeamProject(pair.Value);
+            userData.SetTeamProject(pair.Value);
 
             Config.BotState.SetUserData(ChannelIds.Directline, Config.UserName, userData);
         }

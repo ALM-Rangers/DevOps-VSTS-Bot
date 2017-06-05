@@ -219,8 +219,8 @@ namespace Vsar.TSBot.Dialogs
                 return;
             }
 
-            context.UserData.SetCurrentAccount(this.Account);
-            context.UserData.SetCurrentProfile(this.Profile);
+            context.UserData.SetAccount(this.Account);
+            context.UserData.SetProfile(this.Profile);
 
             await this.ContinueProcess(context, activity);
         }
@@ -259,7 +259,7 @@ namespace Vsar.TSBot.Dialogs
 
             this.TeamProject = activity.Text;
 
-            context.UserData.SetCurrentTeamProject(this.TeamProject);
+            context.UserData.SetTeamProject(this.TeamProject);
 
             await this.ContinueProcess(context, activity);
         }
@@ -272,7 +272,7 @@ namespace Vsar.TSBot.Dialogs
         /// <returns>A <see cref="Task"/>.</returns>
         public virtual async Task ContinueProcess(IDialogContext context, IMessageActivity activity)
         {
-            this.Profile = context.UserData.GetCurrentProfile();
+            this.Profile = context.UserData.GetProfile();
             this.Profiles = context.UserData.GetProfiles();
 
             var reply = context.MakeMessage();
