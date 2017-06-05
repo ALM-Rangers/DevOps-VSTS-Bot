@@ -296,7 +296,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "12345";
 
-            VstsProfile profile = new VstsProfile();
+            var profile = new VstsProfile();
             var profiles = new List<VstsProfile>() as IList<VstsProfile>;
 
             var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
