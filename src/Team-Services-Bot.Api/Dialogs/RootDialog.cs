@@ -28,28 +28,19 @@ namespace Vsar.TSBot.Dialogs
     public class RootDialog : IDialog<object>
     {
         [NonSerialized]
-        private IAuthenticationService authenticationService;
-        [NonSerialized]
         private TelemetryClient telemetryClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RootDialog"/> class.
         /// </summary>
-        /// <param name="authenticationService">A <see cref="IAuthenticationService"/>.</param>
         /// <param name="telemetryClient">A <see cref="telemetryClient"/>.</param>
-        public RootDialog(IAuthenticationService authenticationService, TelemetryClient telemetryClient)
+        public RootDialog(TelemetryClient telemetryClient)
         {
-            if (authenticationService == null)
-            {
-                throw new ArgumentNullException(nameof(authenticationService));
-            }
-
             if (telemetryClient == null)
             {
                 throw new ArgumentNullException(nameof(telemetryClient));
             }
 
-            this.authenticationService = authenticationService;
             this.telemetryClient = telemetryClient;
         }
 
@@ -151,7 +142,6 @@ namespace Vsar.TSBot.Dialogs
         [OnSerializing]
         private void OnSerializingMethod(StreamingContext context)
         {
-            this.authenticationService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IAuthenticationService>();
             this.telemetryClient = GlobalConfiguration.Configuration.DependencyResolver.GetService<TelemetryClient>();
         }
     }

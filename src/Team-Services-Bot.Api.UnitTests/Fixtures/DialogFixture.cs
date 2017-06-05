@@ -12,16 +12,9 @@ namespace Vsar.TSBot.UnitTests
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Web.Http;
-    using Autofac;
-    using Autofac.Extras.AttributeMetadata;
-    using Autofac.Integration.WebApi;
     using Dialogs;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
-    using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Connector;
     using Moq;
 
@@ -37,7 +30,7 @@ namespace Vsar.TSBot.UnitTests
         public DialogFixture()
         {
             this.AuthenticationService = new Mock<IAuthenticationService>();
-            this.RootDialog = new RootDialog(this.AuthenticationService.Object, this.TelemetryClient);
+            this.RootDialog = new RootDialog(this.TelemetryClient);
             this.DialogContext
                 .Setup(c => c.UserData)
                 .Returns(this.UserData.Object);

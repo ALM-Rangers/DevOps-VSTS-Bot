@@ -160,18 +160,11 @@
     </Compile>
     <Compile Include="CommonSteps.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="ControllerData.cs" />
-    <Compile Include="ControllerSteps.cs" />
     <Compile Include="EchoSteps.cs" />
     <Compile Include="Features\Approvals.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Approvals.feature</DependentUpon>
-    </Compile>
-    <Compile Include="Features\Controller.feature.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Controller.feature</DependentUpon>
     </Compile>
     <Compile Include="Features\Welcome.feature.cs">
       <AutoGen>True</AutoGen>
@@ -186,10 +179,6 @@
     <None Include="Features\Approvals.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>Approvals.feature.cs</LastGenOutput>
-    </None>
-    <None Include="Features\Controller.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>Controller.feature.cs</LastGenOutput>
     </None>
     <None Include="Features\Welcome.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
