@@ -163,11 +163,18 @@ namespace Vsar.TSBot.Dialogs
         {
             var activity = await result;
 
-            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
+            var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
             var match = Regex.Match(text, CommandMatchPin);
 
             if (match.Success && string.Equals(this.Pin, text, StringComparison.OrdinalIgnoreCase))
             {
+                var profile = context.UserData.GetNotValidatedByPinProfile();
+                var profiles = context.UserData.GetProfiles();
+
+                profiles.Add(profile);
+                this.Profile = profile;
+                context.UserData.SetProfile(profile);
+
                 await this.ContinueProcess(context, activity);
                 return;
             }
@@ -209,7 +216,7 @@ namespace Vsar.TSBot.Dialogs
         {
             var activity = await result;
 
-            this.Account = activity.Text;
+            this.Account = activity.Text.Trim();
             this.Profile = this.Profiles
                 .FirstOrDefault(p => p.Accounts.Any(a => string.Equals(a, this.Account, StringComparison.OrdinalIgnoreCase)));
 
@@ -219,8 +226,8 @@ namespace Vsar.TSBot.Dialogs
                 return;
             }
 
-            context.UserData.SetCurrentAccount(this.Account);
-            context.UserData.SetCurrentProfile(this.Profile);
+            context.UserData.SetAccount(this.Account);
+            context.UserData.SetProfile(this.Profile);
 
             await this.ContinueProcess(context, activity);
         }
@@ -257,9 +264,9 @@ namespace Vsar.TSBot.Dialogs
         {
             var activity = await result;
 
-            this.TeamProject = activity.Text;
+            this.TeamProject = activity.Text.Trim();
 
-            context.UserData.SetCurrentTeamProject(this.TeamProject);
+            context.UserData.SetTeamProject(this.TeamProject);
 
             await this.ContinueProcess(context, activity);
         }
@@ -272,7 +279,7 @@ namespace Vsar.TSBot.Dialogs
         /// <returns>A <see cref="Task"/>.</returns>
         public virtual async Task ContinueProcess(IDialogContext context, IMessageActivity activity)
         {
-            this.Profile = context.UserData.GetCurrentProfile();
+            this.Profile = context.UserData.GetProfile();
             this.Profiles = context.UserData.GetProfiles();
 
             var reply = context.MakeMessage();

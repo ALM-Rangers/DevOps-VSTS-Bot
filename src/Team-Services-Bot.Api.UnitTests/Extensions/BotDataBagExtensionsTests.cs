@@ -11,6 +11,9 @@ namespace Vsar.TSBot.UnitTests.Extensions
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Web.Http;
+    using Autofac;
+    using Autofac.Integration.WebApi;
     using Common.Tests;
     using FluentAssertions;
     using Microsoft.Bot.Builder.Dialogs;
@@ -24,20 +27,20 @@ namespace Vsar.TSBot.UnitTests.Extensions
     public class BotDataBagExtensionsTests
     {
         [TestMethod]
-        public void GetCurrentAccount_Missing_IBotDataBag()
+        public void GetAccount_Missing_IBotDataBag()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).GetCurrentAccount());
+            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).GetAccount());
         }
 
         [TestMethod]
-        public void GetCurrentAccount_No_Account()
+        public void GetAccount_No_Account()
         {
             string account;
             var dataBag = new Mock<IBotDataBag>();
 
             dataBag.Setup(d => d.TryGetValue("Account", out account)).Returns(false).Verifiable();
 
-            var result = dataBag.Object.GetCurrentAccount();
+            var result = dataBag.Object.GetAccount();
 
             dataBag.Verify();
 
@@ -45,14 +48,14 @@ namespace Vsar.TSBot.UnitTests.Extensions
         }
 
         [TestMethod]
-        public void GetCurrentAccount()
+        public void GetAccount()
         {
             var account = "account1";
             var dataBag = new Mock<IBotDataBag>();
 
             dataBag.Setup(d => d.TryGetValue("Account", out account)).Returns(true).Verifiable();
 
-            var result = dataBag.Object.GetCurrentAccount();
+            var result = dataBag.Object.GetAccount();
 
             dataBag.Verify();
 
@@ -60,56 +63,20 @@ namespace Vsar.TSBot.UnitTests.Extensions
         }
 
         [TestMethod]
-        public void GetCurrentProfile_Missing_IBotDataBag()
+        public void GetTeamProject_Missing_IBotDataBag()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).GetCurrentProfile());
+            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).GetTeamProject());
         }
 
         [TestMethod]
-        public void GetCurrentProfile_No_Profile()
-        {
-            VstsProfile profile;
-            var dataBag = new Mock<IBotDataBag>();
-
-            dataBag.Setup(d => d.TryGetValue("Profile", out profile)).Returns(false).Verifiable();
-
-            var result = dataBag.Object.GetCurrentProfile();
-
-            dataBag.Verify();
-
-            result.Should().BeNull();
-        }
-
-        [TestMethod]
-        public void GetCurrentProfile()
-        {
-            var profile = new VstsProfile();
-            var dataBag = new Mock<IBotDataBag>();
-
-            dataBag.Setup(d => d.TryGetValue("Profile", out profile)).Returns(true).Verifiable();
-
-            var result = dataBag.Object.GetCurrentProfile();
-
-            dataBag.Verify();
-
-            result.Should().Be(profile);
-        }
-
-        [TestMethod]
-        public void GetCurrentTeamProject_Missing_IBotDataBag()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).GetCurrentTeamProject());
-        }
-
-        [TestMethod]
-        public void GetCurrentTeamProject_No_TeamProject()
+        public void GetTeamProject_No_TeamProject()
         {
             string teamProject;
             var dataBag = new Mock<IBotDataBag>();
 
             dataBag.Setup(d => d.TryGetValue("TeamProject", out teamProject)).Returns(false).Verifiable();
 
-            var result = dataBag.Object.GetCurrentTeamProject();
+            var result = dataBag.Object.GetTeamProject();
 
             dataBag.Verify();
 
@@ -117,14 +84,14 @@ namespace Vsar.TSBot.UnitTests.Extensions
         }
 
         [TestMethod]
-        public void GetCurrentTeamProject()
+        public void GetTeamProject()
         {
             var teamProject = "TeamProject1";
             var dataBag = new Mock<IBotDataBag>();
 
             dataBag.Setup(d => d.TryGetValue("TeamProject", out teamProject)).Returns(true).Verifiable();
 
-            var result = dataBag.Object.GetCurrentTeamProject();
+            var result = dataBag.Object.GetTeamProject();
 
             dataBag.Verify();
 
@@ -155,6 +122,42 @@ namespace Vsar.TSBot.UnitTests.Extensions
             var result = target.GetPin();
 
             result.Should().Be("12345");
+        }
+
+        [TestMethod]
+        public void GetNotValidatedByPinProfile_Missing_BotDataBag()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).GetNotValidatedByPinProfile());
+        }
+
+        [TestMethod]
+        public void GetNotValidatedByPinProfile_BotDataBag_No_Profile()
+        {
+            VstsProfile profile;
+
+            var mocked = new Mock<IBotDataBag>();
+            mocked.Setup(m => m.TryGetValue("NotValidatedByPinProfile", out profile)).Returns(false).Verifiable();
+
+            var result = mocked.Object.GetNotValidatedByPinProfile();
+
+            mocked.Verify();
+
+            result.Should().BeNull();
+        }
+
+        [TestMethod]
+        public void GetNotValidatedByPinProfile_BotDataBag()
+        {
+            VstsProfile profile = new VstsProfile();
+
+            var mocked = new Mock<IBotDataBag>();
+            mocked.Setup(m => m.TryGetValue("NotValidatedByPinProfile", out profile)).Returns(true).Verifiable();
+
+            var result = mocked.Object.GetNotValidatedByPinProfile();
+
+            mocked.Verify();
+
+            result.Should().Be(profile);
         }
 
         [TestMethod]
@@ -196,15 +199,7 @@ namespace Vsar.TSBot.UnitTests.Extensions
         [TestMethod]
         public void GetProfile_Missing_BotDataBag()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).GetProfile(null));
-        }
-
-        [TestMethod]
-        public void GetProfile_Missing_AuthenticationService()
-        {
-            var mocked = new Mock<IBotDataBag>();
-
-            Assert.ThrowsException<ArgumentNullException>(() => mocked.Object.GetProfile(null));
+            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).GetProfile());
         }
 
         [TestMethod]
@@ -215,9 +210,17 @@ namespace Vsar.TSBot.UnitTests.Extensions
             var authenticationService = new Mock<IAuthenticationService>();
             var mocked = new Mock<IBotDataBag>();
 
+            var builder = new ContainerBuilder();
+            builder
+                .Register((c, x) => authenticationService.Object)
+                .As<IAuthenticationService>();
+
+            var container = builder.Build();
+            GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+
             mocked.Setup(m => m.TryGetValue("Profile", out profile)).Returns(false).Verifiable();
 
-            var result = mocked.Object.GetProfile(authenticationService.Object);
+            var result = mocked.Object.GetProfile();
 
             mocked.Verify();
 
@@ -233,10 +236,18 @@ namespace Vsar.TSBot.UnitTests.Extensions
             var authenticationService = new Mock<IAuthenticationService>();
             var mocked = new Mock<IBotDataBag>();
 
+            var builder = new ContainerBuilder();
+            builder
+                .Register((c, x) => authenticationService.Object)
+                .As<IAuthenticationService>();
+
+            var container = builder.Build();
+            GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+
             mocked.Setup(m => m.TryGetValue("Profile", out profile)).Returns(true).Verifiable();
             authenticationService.Setup(a => a.GetToken(profile.Token)).ReturnsAsync(newToken).Verifiable();
 
-            var result = mocked.Object.GetProfile(authenticationService.Object);
+            var result = mocked.Object.GetProfile();
 
             mocked.Verify();
             authenticationService.Verify();
@@ -252,9 +263,17 @@ namespace Vsar.TSBot.UnitTests.Extensions
             var authenticationService = new Mock<IAuthenticationService>();
             var mocked = new Mock<IBotDataBag>();
 
+            var builder = new ContainerBuilder();
+            builder
+                .Register((c, x) => authenticationService.Object)
+                .As<IAuthenticationService>();
+
+            var container = builder.Build();
+            GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+
             mocked.Setup(m => m.TryGetValue("Profile", out profile)).Returns(true).Verifiable();
 
-            var result = mocked.Object.GetProfile(authenticationService.Object);
+            var result = mocked.Object.GetProfile();
 
             mocked.Verify();
             result.Should().Be(profile);
@@ -291,25 +310,25 @@ namespace Vsar.TSBot.UnitTests.Extensions
         }
 
         [TestMethod]
-        public void SetCurrentAccount_Missing_BotData()
+        public void SetAccount_Missing_BotData()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => ((BotData)null).SetCurrentAccount(null));
+            Assert.ThrowsException<ArgumentNullException>(() => ((BotData)null).SetAccount(null));
         }
 
         [TestMethod]
-        public void SetCurrentAccount_BotData_Missing_Account()
+        public void SetAccount_BotData_Missing_Account()
         {
             var data = new BotData();
-            Assert.ThrowsException<ArgumentNullException>(() => data.SetCurrentAccount(null));
+            Assert.ThrowsException<ArgumentNullException>(() => data.SetAccount(null));
         }
 
         [TestMethod]
-        public void SetCurrentAccount_BotData()
+        public void SetAccount_BotData()
         {
             var account = "Account1";
             var data = new BotData();
 
-            data.SetCurrentAccount(account);
+            data.SetAccount(account);
 
             var result = data.GetProperty<string>("Account");
 
@@ -317,49 +336,75 @@ namespace Vsar.TSBot.UnitTests.Extensions
         }
 
         [TestMethod]
-        public void SetCurrentAccount_Missing_BotDataBag()
+        public void SetAccount_Missing_BotDataBag()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).SetCurrentAccount(null));
+            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).SetAccount(null));
         }
 
         [TestMethod]
-        public void SetCurrentAccount_BotDataBag_Missing_Account()
+        public void SetAccount_BotDataBag_Missing_Account()
         {
             var mocked = new Mock<IBotDataBag>();
-            Assert.ThrowsException<ArgumentNullException>(() => mocked.Object.SetCurrentAccount(null));
+            Assert.ThrowsException<ArgumentNullException>(() => mocked.Object.SetAccount(null));
         }
 
         [TestMethod]
-        public void SetCurrentAccount_BotDataBag()
+        public void SetAccount_BotDataBag()
         {
             var account = "Account1";
             var mocked = new Mock<IBotDataBag>();
 
-            mocked.Object.SetCurrentAccount(account);
+            mocked.Object.SetAccount(account);
 
             mocked.Verify(m => m.SetValue("Account", account));
         }
 
         [TestMethod]
-        public void SetCurrentProfile_Missing_BotData()
+        public void SetNotValidatedByPinProfile_Missing_BotData()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => ((BotData)null).SetCurrentProfile(null));
+            Assert.ThrowsException<ArgumentNullException>(() => ((BotData)null).SetNotValidatedByPinProfile(null));
         }
 
         [TestMethod]
-        public void SetCurrentProfile_BotData_Missing_Account()
+        public void SetNotValidatedByPinProfile_BotData_Missing_Profile()
         {
             var data = new BotData();
-            Assert.ThrowsException<ArgumentNullException>(() => data.SetCurrentProfile(null));
+            Assert.ThrowsException<ArgumentNullException>(() => data.SetNotValidatedByPinProfile(null));
         }
 
         [TestMethod]
-        public void SetCurrentProfile_BotData()
+        public void SetNotValidatedByPinProfile_BotData()
         {
             var profile = new VstsProfile();
             var data = new BotData();
 
-            data.SetCurrentProfile(profile);
+            data.SetNotValidatedByPinProfile(profile);
+
+            var result = data.GetProperty<VstsProfile>("NotValidatedByPinProfile");
+
+            result.Should().BeOfType<VstsProfile>();
+        }
+
+        [TestMethod]
+        public void SetProfile_Missing_BotData()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => ((BotData)null).SetProfile(null));
+        }
+
+        [TestMethod]
+        public void SetProfile_BotData_Missing_Profile()
+        {
+            var data = new BotData();
+            Assert.ThrowsException<ArgumentNullException>(() => data.SetProfile(null));
+        }
+
+        [TestMethod]
+        public void SetProfile_BotData()
+        {
+            var profile = new VstsProfile();
+            var data = new BotData();
+
+            data.SetProfile(profile);
 
             var result = data.GetProperty<VstsProfile>("Profile");
 
@@ -367,25 +412,25 @@ namespace Vsar.TSBot.UnitTests.Extensions
         }
 
         [TestMethod]
-        public void SetCurrentProfile_Missing_BotDataBag()
+        public void SetProfile_Missing_BotDataBag()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).SetCurrentProfile(null));
+            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).SetProfile(null));
         }
 
         [TestMethod]
-        public void SetCurrentProfile_BotDataBag_Missing_Account()
+        public void SetProfile_BotDataBag_Missing_Account()
         {
             var mocked = new Mock<IBotDataBag>();
-            Assert.ThrowsException<ArgumentNullException>(() => mocked.Object.SetCurrentProfile(null));
+            Assert.ThrowsException<ArgumentNullException>(() => mocked.Object.SetProfile(null));
         }
 
         [TestMethod]
-        public void SetCurrentProfile_BotDataBag()
+        public void SetProfile_BotDataBag()
         {
             var profile = new VstsProfile();
             var mocked = new Mock<IBotDataBag>();
 
-            mocked.Object.SetCurrentProfile(profile);
+            mocked.Object.SetProfile(profile);
 
             mocked.Verify(m => m.SetValue("Profile", profile));
         }

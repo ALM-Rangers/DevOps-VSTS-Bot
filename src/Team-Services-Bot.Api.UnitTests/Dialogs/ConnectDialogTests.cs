@@ -15,9 +15,13 @@ namespace Vsar.TSBot.UnitTests
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Web.Http;
+    using Autofac;
+    using Autofac.Integration.WebApi;
     using Cards;
     using Common.Tests;
     using Dialogs;
+    using FluentAssertions;
     using Microsoft.Bot.Connector;
     using Microsoft.TeamFoundation.Core.WebApi;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -161,8 +165,16 @@ namespace Vsar.TSBot.UnitTests
             const string appId = "AnAppId";
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
-            var profile = new VstsProfile();
+            var profile = new VstsProfile { Token = new OAuthToken { ExpiresIn = 3600 } };
             var profiles = new List<VstsProfile> { profile } as IList<VstsProfile>;
+
+            var builder = new ContainerBuilder();
+            builder
+                .Register((c, x) => this.Fixture.AuthenticationService.Object)
+                .As<IAuthenticationService>();
+
+            var container = builder.Build();
+            GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
             var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
@@ -193,8 +205,16 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "connect account";
 
-            var profile = new VstsProfile();
+            var profile = new VstsProfile { Token = new OAuthToken { ExpiresIn = 3600 } };
             var profiles = new List<VstsProfile> { profile } as IList<VstsProfile>;
+
+            var builder = new ContainerBuilder();
+            builder
+                .Register((c, x) => this.Fixture.AuthenticationService.Object)
+                .As<IAuthenticationService>();
+
+            var container = builder.Build();
+            GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
             var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
@@ -225,7 +245,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "connect account teamproject";
 
-            var profile = new VstsProfile();
+            var profile = new VstsProfile { Token = new OAuthToken { ExpiresIn = 3600 } };
             IList<VstsProfile> profiles = new List<VstsProfile> { profile };
 
             var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
@@ -276,14 +296,23 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "12345";
 
+            var profile = new VstsProfile();
+            var profiles = new List<VstsProfile>() as IList<VstsProfile>;
+
             var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
             target.Pin = "12345";
+
+            this.Fixture.UserData.Setup(ud => ud.TryGetValue("NotValidatedByPinProfile", out profile)).Returns(true);
+            this.Fixture.UserData.Setup(ud => ud.TryGetValue("Profiles", out profiles)).Returns(true);
 
             mocked.Setup(m => m.ContinueProcess(this.Fixture.DialogContext.Object, toBot)).Returns(Task.CompletedTask).Verifiable();
 
             await target.PinReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
+            target.Profile.Should().Be(profile);
+            profiles.Should().Contain(profile);
+            this.Fixture.UserData.Verify(ud => ud.SetValue("Profile", profile));
             mocked.Verify();
         }
 
