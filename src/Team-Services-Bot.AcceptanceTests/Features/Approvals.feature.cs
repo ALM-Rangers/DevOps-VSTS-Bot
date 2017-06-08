@@ -115,22 +115,16 @@ this.ScenarioSetup(scenarioInfo);
 #line 5
 this.FeatureBackground();
 #line 14
- testRunner.Given("I started \'Release 1\' on \'config:TeamProjectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I started \'1\' on \'config:TeamProjectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 15
- testRunner.And("I started \'Release 1\' on \'config:TeamProjectTwo\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I started \'1\' on \'config:TeamProjectTwo\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 16
  testRunner.When("I send a message \'approvals\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
-                        "Team Project",
-                        "Release",
+                        "Release Definition",
                         "Environment"});
             table1.AddRow(new string[] {
-                        "config:TeamProjectOne",
-                        "Release 1",
-                        "Development"});
-            table1.AddRow(new string[] {
-                        "config:TeamProjectTwo",
                         "Release 1",
                         "Development"});
 #line 17
@@ -149,15 +143,15 @@ this.FeatureBackground();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Approve approval", new string[] {
                         "Acceptance",
                         "ignore"});
-#line 23
+#line 22
 this.ScenarioSetup(scenarioInfo);
 #line 5
 this.FeatureBackground();
-#line 24
+#line 23
  testRunner.Given("I have an approval for \'config:TeamProjectOne\', Release: \'Release 1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 25
+#line 24
  testRunner.When("I send a message \'approve config:ApprovalId  \'A comment\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 26
+#line 25
  testRunner.Then("\'config:ApprovalId\' is approved with comment \'A comment\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -173,15 +167,15 @@ this.FeatureBackground();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Reject approval", new string[] {
                         "Acceptance",
                         "ignore"});
-#line 29
+#line 28
 this.ScenarioSetup(scenarioInfo);
 #line 5
 this.FeatureBackground();
-#line 30
+#line 29
  testRunner.Given("I have an approval for \'config:TeamProjectOne\', Release: \'Release 1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 31
+#line 30
  testRunner.When("I send a message \'reject config:ApprovalId \'A comment\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 32
+#line 31
  testRunner.Then("\'config:ApprovalId\' is rejected with comment \'A comment\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

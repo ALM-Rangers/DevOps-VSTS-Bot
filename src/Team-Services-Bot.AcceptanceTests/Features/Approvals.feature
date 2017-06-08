@@ -11,13 +11,12 @@ Background:
 
 @Acceptance @ignore
 Scenario: List approvals
-	Given I started 'Release 1' on 'config:TeamProjectOne'
-	And   I started 'Release 1' on 'config:TeamProjectTwo'
+	Given I started '1' on 'config:TeamProjectOne'
+	And   I started '1' on 'config:TeamProjectTwo'
 	When I send a message 'approvals'
 	Then I get a list of approvals
-	| Team Project          | Release   | Environment |
-	| config:TeamProjectOne | Release 1 | Development |
-	| config:TeamProjectTwo | Release 1 | Development |
+	| Release Definition | Environment |
+	| Release 1          | Development |
 
 @Acceptance @ignore
 Scenario: Approve approval

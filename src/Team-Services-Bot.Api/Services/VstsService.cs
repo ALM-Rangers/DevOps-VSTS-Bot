@@ -138,6 +138,31 @@ namespace Vsar.TSBot
             }
         }
 
+        /// <inheritdoc />
+        public async Task ReleaseQueue(string account, string teamProject, OAuthToken token, int definitionId)
+        {
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
+            }
+
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            using (var client = GetConnectedClient<ReleaseHttpClient2>(new Uri(string.Format(VstsRmUrl, account)), token))
+            {
+                var metaData = new ReleaseStartMetadata { DefinitionId = definitionId };
+                await client.CreateReleaseAsync(metaData, teamProject);
+            }
+        }
+
         /// <summary>
         /// Gets a connected client.
         /// </summary>
@@ -145,7 +170,7 @@ namespace Vsar.TSBot
         /// <param name="accountUri">The url to the account.</param>
         /// <param name="token">The OAuth token.</param>
         /// <returns>A clientt.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Cannot dispose the connection here. As it is used outside the scope.")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Cannot dispose the connection here. As it is used outside the scope.")]
         private static T GetConnectedClient<T>(Uri accountUri, OAuthToken token)
             where T : VssHttpClientBase
         {

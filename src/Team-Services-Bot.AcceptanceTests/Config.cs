@@ -19,6 +19,8 @@ namespace Vsar.TSBot.AcceptanceTests
     {
         public static string Account => TestContext.Properties["Account"].ToString();
 
+        public static string AppSecret => TestContext.Properties["AppSecret"].ToString();
+
         public static string BotId => TestContext.Properties["BotId"].ToString();
 
         public static string BotSecret => TestContext.Properties["BotSecret"].ToString();
@@ -58,11 +60,23 @@ namespace Vsar.TSBot.AcceptanceTests
 
         public static string MicrosoftApplicationPassword => TestContext.Properties["MicrosoftApplicationPassword"].ToString();
 
+        public static VstsProfile Profile
+        {
+            get { return (VstsProfile)ScenarioContext.Current["Profile"]; }
+            set { ScenarioContext.Current["Profile"] = value; }
+        }
+
         public static string RefreshToken => TestContext.Properties["RefreshToken"].ToString();
 
         public static string TeamProjectOne => TestContext.Properties["TeamProjectOne"].ToString();
 
         public static string TeamProjectTwo => TestContext.Properties["TeamProjectTwo"].ToString();
+
+        public static OAuthToken Token
+        {
+            get { return (OAuthToken)ScenarioContext.Current["Token"]; }
+            set { ScenarioContext.Current["Token"] = value; }
+        }
 
         public static string UserName
         {

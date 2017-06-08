@@ -68,5 +68,15 @@ namespace Vsar.TSBot
         /// <returns>Collection of <see cref="TeamProjectReference"/></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Reviewed.")]
         Task<IEnumerable<TeamProjectReference>> GetProjects(string account, OAuthToken token);
+
+        /// <summary>
+        /// Queues a release.
+        /// </summary>
+        /// <param name="account">The <see cref="Uri"/> that represents VSTS account URL.</param>
+        /// <param name="teamProject">The team project.</param>
+        /// <param name="token">The <see cref="OAuthToken"/>.</param>
+        /// <param name="definitionId">The name of a release definition.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        Task ReleaseQueue(string account, string teamProject, OAuthToken token, int definitionId);
     }
 }

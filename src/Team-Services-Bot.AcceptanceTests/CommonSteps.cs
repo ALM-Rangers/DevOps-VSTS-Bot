@@ -13,6 +13,7 @@ namespace Vsar.TSBot.AcceptanceTests
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
     using FluentAssertions;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
@@ -59,23 +60,6 @@ namespace Vsar.TSBot.AcceptanceTests
             Config.ConversationId = conversation.ConversationId;
         }
 
-        [Given(@"The user has previously logged in into the account and team project '(.*)'")]
-        public void GivenTheUserHasPreviouslyLoggedInIntoTheAccountAndTeamProject(KeyValuePair<string, string> pair)
-        {
-            var profile = new VstsProfile();
-            profile.Accounts.Add(Config.Account);
-            profile.Token = new OAuthToken { ExpiresIn = 3600 };
-
-            var userData = Config.BotState.GetUserData(ChannelIds.Directline, Config.UserName);
-
-            userData.SetAccount(Config.Account);
-            userData.SetProfile(profile);
-            userData.SetProfiles(new List<VstsProfile> { profile });
-            userData.SetTeamProject(pair.Value);
-
-            Config.BotState.SetUserData(ChannelIds.Directline, Config.UserName, userData);
-        }
-
         [When(@"I say '(.*)'")]
         public void WhenISay(string message)
         {
@@ -103,6 +87,34 @@ namespace Vsar.TSBot.AcceptanceTests
             var activity = activities.Activities.FirstOrDefault(a => string.Equals(a.From.Id, Config.BotId, StringComparison.OrdinalIgnoreCase));
 
             activity.Text.ShouldBeEquivalentTo(message);
+        }
+
+        [Given(@"Is authorized")]
+        public async Task GivenIsAuthorized()
+        {
+            var authService = new AuthenticationService(Config.AppSecret, new Uri("https://authorize.url"));
+            var vstsService = new VstsService();
+
+            var token = await authService.GetToken(new OAuthToken { RefreshToken = Config.RefreshToken });
+            var p = await vstsService.GetProfile(token);
+            var accounts = await vstsService.GetAccounts(token, p.Id);
+            var profile = new VstsProfile
+            {
+                Accounts = accounts.Select(a => a.AccountName).ToList(),
+                Id = p.Id,
+                EmailAddress = p.EmailAddress,
+                Token = token
+            };
+
+            var data = await Config.BotState.GetUserDataAsync(ChannelIds.Directline, Config.UserName);
+
+            data.SetProfile(profile);
+            data.SetProfiles(new List<VstsProfile> { profile });
+
+            await Config.BotState.SetUserDataAsync(ChannelIds.Directline, Config.UserName, data);
+
+            Config.Profile = profile;
+            Config.Token = token;
         }
     }
 }
