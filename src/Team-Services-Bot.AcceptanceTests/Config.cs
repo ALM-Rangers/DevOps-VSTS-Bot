@@ -12,12 +12,19 @@ namespace Vsar.TSBot.AcceptanceTests
     using System;
     using Microsoft.Bot.Connector;
     using Microsoft.Bot.Connector.DirectLine;
+    using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TechTalk.SpecFlow;
 
     public static class Config
     {
         public static string Account => TestContext.Properties["Account"].ToString();
+
+        public static ReleaseApproval Approval
+        {
+            get { return ScenarioContext.Current["Approval"] as ReleaseApproval; }
+            set { ScenarioContext.Current["Approval"] = value; }
+        }
 
         public static string AppSecret => TestContext.Properties["AppSecret"].ToString();
 

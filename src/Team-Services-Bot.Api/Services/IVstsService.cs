@@ -44,6 +44,16 @@ namespace Vsar.TSBot
         Task<IList<Account>> GetAccounts(OAuthToken token, Guid memberId);
 
         /// <summary>
+        /// Gets an <see cref="ReleaseApproval"/> by its id.
+        /// </summary>
+        /// <param name="token">A <see cref="OAuthToken"/></param>
+        /// <param name="account">The VSTS account.</param>
+        /// <param name="teamProject">The team project.</param>
+        /// <param name="approvalId">The approval id.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        Task<ReleaseApproval> GetApproval(OAuthToken token, string account, string teamProject, int approvalId);
+
+        /// <summary>
         /// Gets the approvals for the user.
         /// </summary>
         /// <param name="account">An account.</param>

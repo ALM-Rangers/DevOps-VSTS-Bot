@@ -82,6 +82,30 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc/>
+        public async Task<ReleaseApproval> GetApproval(OAuthToken token, string account, string teamProject, int approvalId)
+        {
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
+            }
+
+            if (approvalId <= 0)
+            {
+                throw new ArgumentNullException(nameof(approvalId));
+            }
+
+            using (var client = GetConnectedClient<ReleaseHttpClient2>(this.vstsAppUrl, token))
+            {
+                return await client.GetApprovalAsync(teamProject, approvalId);
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<IList<ReleaseApproval>> GetApprovals(string account, string teamProject, VstsProfile profile)
         {
             if (account == null)
