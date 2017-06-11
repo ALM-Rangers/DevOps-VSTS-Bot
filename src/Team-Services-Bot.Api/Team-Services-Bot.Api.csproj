@@ -314,6 +314,7 @@
     <Compile Include="Cards\MainOptionsCard.cs" />
     <Compile Include="Cards\ProjectsCard.cs" />
     <Compile Include="Controllers\AuthorizeController.cs" />
+    <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Dialogs\ApprovalsDialog.cs" />
     <Compile Include="Dialogs\ConnectDialog.cs" />
@@ -364,6 +365,8 @@
     <Content Include="AppSettings.config" />
     <None Include="Views\Authorize\Index.cshtml" />
     <Content Include="Views\Web.config" />
+    <Content Include="Views\Default\Index.cshtml" />
+    <Content Include="Views\Default\EULA.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
