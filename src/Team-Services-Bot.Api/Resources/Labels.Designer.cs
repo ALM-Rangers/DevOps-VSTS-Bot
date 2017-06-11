@@ -178,20 +178,11 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Welcome back {0}. I have connected you to Account &apos;{1}&apos;, Team Project &apos;{2}&apos;..
+        ///   Looks up a localized string similar to Hi {0}. Good to see you. I will help you with your Team Services tasks..
         /// </summary>
-        internal static string WelcomeExistingUser {
+        internal static string WelcomeUser {
             get {
-                return ResourceManager.GetString("WelcomeExistingUser", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Welcome {0}. This is the first time we talk..
-        /// </summary>
-        internal static string WelcomeNewUser {
-            get {
-                return ResourceManager.GetString("WelcomeNewUser", resourceCulture);
+                return ResourceManager.GetString("WelcomeUser", resourceCulture);
             }
         }
     }

@@ -28,28 +28,19 @@ namespace Vsar.TSBot.Dialogs
     public class RootDialog : IDialog<object>
     {
         [NonSerialized]
-        private IAuthenticationService authenticationService;
-        [NonSerialized]
         private TelemetryClient telemetryClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RootDialog"/> class.
         /// </summary>
-        /// <param name="authenticationService">A <see cref="IAuthenticationService"/>.</param>
         /// <param name="telemetryClient">A <see cref="telemetryClient"/>.</param>
-        public RootDialog(IAuthenticationService authenticationService, TelemetryClient telemetryClient)
+        public RootDialog(TelemetryClient telemetryClient)
         {
-            if (authenticationService == null)
-            {
-                throw new ArgumentNullException(nameof(authenticationService));
-            }
-
             if (telemetryClient == null)
             {
                 throw new ArgumentNullException(nameof(telemetryClient));
             }
 
-            this.authenticationService = authenticationService;
             this.telemetryClient = telemetryClient;
         }
 
@@ -123,10 +114,6 @@ namespace Vsar.TSBot.Dialogs
                 return;
             }
 
-            var account = context.UserData.GetCurrentAccount();
-            var profile = context.UserData.GetProfile(this.authenticationService);
-            var teamProject = context.UserData.GetCurrentTeamProject();
-
             foreach (var member in message.MembersAdded)
             {
                 // Skip if the added member is the bot itself.
@@ -135,14 +122,7 @@ namespace Vsar.TSBot.Dialogs
                     continue;
                 }
 
-                if (profile == null)
-                {
-                    await context.PostAsync(string.Format(Labels.WelcomeNewUser, member.Name));
-                }
-                else
-                {
-                    await context.PostAsync(string.Format(Labels.WelcomeExistingUser, activity.From.Name, string.IsNullOrWhiteSpace(account) ? "?" : account, string.IsNullOrWhiteSpace(teamProject) ? "?" : teamProject));
-                }
+                await context.PostAsync(string.Format(Labels.WelcomeUser, member.Name));
             }
         }
 
@@ -162,7 +142,6 @@ namespace Vsar.TSBot.Dialogs
         [OnSerializing]
         private void OnSerializingMethod(StreamingContext context)
         {
-            this.authenticationService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IAuthenticationService>();
             this.telemetryClient = GlobalConfiguration.Configuration.DependencyResolver.GetService<TelemetryClient>();
         }
     }

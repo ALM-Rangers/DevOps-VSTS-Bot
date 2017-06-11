@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Team-Services-Bot.Api", "Team-Services-Bot.Api\Team-Services-Bot.Api.csproj", "{A8BA1066-5695-4D71-ABB4-65E5A5E0C3D4}"
 EndProject
@@ -12,6 +12,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "General", "General", "{CA3F633B-4AE8-40EA-AD4D-02F12D3B0342}"
 	ProjectSection(SolutionItems) = preProject
 		Team-Services-Bot.runsettings = Team-Services-Bot.runsettings
+		Team-Services-Bot.Unittests.runsettings = Team-Services-Bot.Unittests.runsettings
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common Files", "Common Files", "{8D6039D5-30BF-4802-9E85-756354114B31}"

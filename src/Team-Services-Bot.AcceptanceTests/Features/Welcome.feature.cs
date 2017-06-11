@@ -109,33 +109,8 @@ this.FeatureBackground();
 #line 11
  testRunner.When("I say \'Hi\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 12
- testRunner.Then("the bot should respond with \'Welcome Test User. This is the first time we talk.\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Starting a conversation for the second time with the bot.")]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Welcome")]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Acceptance")]
-        public virtual void StartingAConversationForTheSecondTimeWithTheBot_()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Starting a conversation for the second time with the bot.", new string[] {
-                        "Acceptance"});
-#line 15
-this.ScenarioSetup(scenarioInfo);
-#line 4
-this.FeatureBackground();
-#line 16
- testRunner.Given("I started a conversation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 17
- testRunner.And("The user has previously logged in into the account and team project \'config:TeamP" +
-                    "rojectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 18
- testRunner.When("I say \'Hi\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 19
- testRunner.Then("the bot should respond with \'Welcome back Test User. I have connected you to Acco" +
-                    "unt \'config:Account\', Team Project \'config:TeamProjectOne\'.\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the bot should respond with \'Hi Test User. Good to see you. I will help you with " +
+                    "your Team Services tasks.\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

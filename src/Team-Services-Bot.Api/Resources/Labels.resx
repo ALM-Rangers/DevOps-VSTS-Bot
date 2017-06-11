@@ -139,12 +139,8 @@
   <data name="QueueRelease" xml:space="preserve">
     <value>QueueRelease</value>
   </data>
-  <data name="WelcomeExistingUser" xml:space="preserve">
-    <value>Welcome back {0}. I have connected you to Account '{1}', Team Project '{2}'.</value>
-    <comment>{0} = from name; {1] = account name; {2} = team project name;</comment>
-  </data>
-  <data name="WelcomeNewUser" xml:space="preserve">
-    <value>Welcome {0}. This is the first time we talk.</value>
+  <data name="WelcomeUser" xml:space="preserve">
+    <value>Hi {0}. Good to see you. I will help you with your Team Services tasks.</value>
     <comment>{0} = from name</comment>
   </data>
   <data name="ConnectToProject" xml:space="preserve">
