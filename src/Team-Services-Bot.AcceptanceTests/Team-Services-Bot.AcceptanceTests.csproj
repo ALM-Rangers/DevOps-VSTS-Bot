@@ -186,11 +186,17 @@
     <Compile Include="ApprovalSteps.cs" />
     <Compile Include="CommonSteps.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="ConnectSteps.cs" />
     <Compile Include="EchoSteps.cs" />
     <Compile Include="Features\Approvals.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Approvals.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\Connect.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Connect.feature</DependentUpon>
     </Compile>
     <Compile Include="Features\Welcome.feature.cs">
       <AutoGen>True</AutoGen>
@@ -206,6 +212,10 @@
     <None Include="Features\Approvals.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>Approvals.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\Connect.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Connect.feature.cs</LastGenOutput>
     </None>
     <None Include="Features\Welcome.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
