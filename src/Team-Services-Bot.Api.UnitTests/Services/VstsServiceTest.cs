@@ -9,8 +9,10 @@
 namespace Vsar.TSBot.UnitTests.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Common.Tests;
+    using Microsoft.VisualStudio.Services.Account;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
@@ -49,9 +51,7 @@ namespace Vsar.TSBot.UnitTests.Services
 
             var memberId = Guid.NewGuid();
 
-            await Task.CompletedTask;
-
-            // await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetAccounts(null, memberId));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => service.GetAccounts(null, memberId));
 
             // TODO: Implement mocking of VSTS calls and test real behavior
         }
