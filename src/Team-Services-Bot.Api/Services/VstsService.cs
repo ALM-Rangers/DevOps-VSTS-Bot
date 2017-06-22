@@ -29,10 +29,8 @@ namespace Vsar.TSBot
     /// <summary>
     /// Contains method(s) for accessing VSTS.
     /// </summary>
-    [ExcludeFromCodeCoverage]
     public class VstsService : IVstsService
     {
-        private const string VstsUrl = "https://{0}.visualstudio.com";
         private const string VstsRmUrl = "https://{0}.vsrm.visualstudio.com";
 
         private readonly Uri vstsAppUrl = new Uri("https://app.vssps.visualstudio.com");
@@ -40,7 +38,7 @@ namespace Vsar.TSBot
         /// <inheritdoc />
         public async Task ChangeApprovalStatus(string account, string teamProject, VstsProfile profile, int approvalId, ApprovalStatus status, string comments)
         {
-            if (account == null)
+            if (string.IsNullOrWhiteSpace(account))
             {
                 throw new ArgumentNullException(nameof(account));
             }
@@ -60,7 +58,9 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(comments));
             }
 
-            using (var client = await GetConnectedClientAsync<ReleaseHttpClient2>(new Uri(string.Format(VstsUrl, account)), profile.Token))
+            var accountInfo = await this.GetAccountAsync(account, profile.Token);
+
+            using (var client = await GetConnectedClientAsync<ReleaseHttpClient2>(accountInfo.AccountUri, profile.Token))
             {
                 var approval = await client.GetApprovalAsync(teamProject, approvalId);
                 approval.Status = status;
@@ -135,14 +135,16 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(token));
             }
 
-            using (var client = await GetConnectedClientAsync<ProjectHttpClient>(new Uri(string.Format(VstsUrl, account)), token))
+            var accountInfo = await this.GetAccountAsync(account, token);
+
+            using (var client = await GetConnectedClientAsync<ProjectHttpClient>(accountInfo.AccountUri, token))
             {
                 return await client.GetProjects();
             }
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitionsAsync(string project, string account, OAuthToken token)
+        public async Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitions(string project, string account, OAuthToken token)
         {
             if (string.IsNullOrWhiteSpace(project))
             {
@@ -160,8 +162,9 @@ namespace Vsar.TSBot
             }
 
             var teamProject = await this.GetProjectAsync(project, account, token);
+            var accountInfo = await this.GetAccountAsync(account, token);
 
-            using (var client = await GetConnectedClientAsync<BuildHttpClient>(new Uri(string.Format(VstsUrl, account)), token))
+            using (var client = await GetConnectedClientAsync<BuildHttpClient>(accountInfo.AccountUri, token))
             {
                 return await client.GetDefinitionsAsync(teamProject.Id);
             }
@@ -212,11 +215,11 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="accountName">The VSTS Account name.</param>
         /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
-        /// <param name="memberId">VSTS member ID.</param>
         /// <returns><see cref="TeamProjectReference"/></returns>
-        private async Task<Account> GetAccountAsync(string accountName, OAuthToken token, Guid memberId)
+        private async Task<Account> GetAccountAsync(string accountName, OAuthToken token)
         {
-            var accounts = await this.GetAccounts(token, memberId);
+            var profile = await this.GetProfile(token);
+            var accounts = await this.GetAccounts(token, profile.Id);
             var account = accounts.FirstOrDefault(a => string.Equals(a.AccountName, accountName, StringComparison.OrdinalIgnoreCase));
 
             if (account == default(Account))

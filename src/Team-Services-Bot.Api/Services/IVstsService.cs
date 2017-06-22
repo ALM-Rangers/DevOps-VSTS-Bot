@@ -78,6 +78,6 @@ namespace Vsar.TSBot
         /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
         /// <returns>Collection of <see cref="BuildDefinitionReference"/>.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Reviewed.")]
-        Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitionsAsync(string project, string account, OAuthToken token);
+        Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitions(string project, string account, OAuthToken token);
     }
 }
