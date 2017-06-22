@@ -184,14 +184,7 @@ namespace Vsar.TSBot
 
             var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
 
-            T client;
-
-            using (var connection = new VssConnection(accountUri, credentials))
-            {
-                client = await connection.GetClientAsync<T>();
-            }
-
-            return client;
+            return await new VssConnection(accountUri, credentials).GetClientAsync<T>();
         }
 
         /// <summary>

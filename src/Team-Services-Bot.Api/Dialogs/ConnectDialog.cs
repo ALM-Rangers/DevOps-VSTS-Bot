@@ -174,6 +174,7 @@ namespace Vsar.TSBot.Dialogs
                 profiles.Add(profile);
                 this.Profile = profile;
                 context.UserData.SetProfile(profile);
+                context.UserData.SetProfiles(profiles);
 
                 await this.ContinueProcess(context, activity);
                 return;
