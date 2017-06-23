@@ -11,7 +11,6 @@ namespace Vsar.TSBot
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.TeamFoundation.Build.WebApi;
@@ -24,7 +23,7 @@ namespace Vsar.TSBot
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
     using Microsoft.VisualStudio.Services.WebApi;
-    using Vsar.TSBot.Resources;
+    using Resources;
 
     /// <summary>
     /// Contains method(s) for accessing VSTS.

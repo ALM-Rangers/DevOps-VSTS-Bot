@@ -94,11 +94,17 @@
     <Reference Include="Microsoft.IdentityModel.Protocol.Extensions, Version=1.0.40306.1554, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IdentityModel.Protocol.Extensions.1.0.4.403061554\lib\net45\Microsoft.IdentityModel.Protocol.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="Microsoft.Rest.ClientRuntime, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Rest.ClientRuntime.2.3.7\lib\net452\Microsoft.Rest.ClientRuntime.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.Build2.WebApi, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.15.117.0-preview\lib\net45\Microsoft.TeamFoundation.Build2.WebApi.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.Build2.WebApi.15.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\Microsoft.TeamFoundation.Build2.WebApi.15.0.0.0.Fakes.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.Chat.WebApi, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.15.117.0-preview\lib\net45\Microsoft.TeamFoundation.Chat.WebApi.dll</HintPath>
@@ -108,6 +114,9 @@
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.Core.WebApi, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.15.117.0-preview\lib\net45\Microsoft.TeamFoundation.Core.WebApi.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.Core.WebApi.15.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\Microsoft.TeamFoundation.Core.WebApi.15.0.0.0.Fakes.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.Dashboards.WebApi, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.TeamFoundationServer.Client.15.117.0-preview\lib\net45\Microsoft.TeamFoundation.Dashboards.WebApi.dll</HintPath>
@@ -141,6 +150,9 @@
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Services.WebApi, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.VisualStudio.Services.Client.15.117.0-preview\lib\net45\Microsoft.VisualStudio.Services.WebApi.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Services.WebApi.15.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\Microsoft.VisualStudio.Services.WebApi.15.0.0.0.Fakes.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\MSTest.TestFramework.1.1.17\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
@@ -247,6 +259,9 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <Fakes Include="Fakes\Microsoft.VisualStudio.Services.WebApi.fakes" />
+    <Fakes Include="Fakes\Microsoft.TeamFoundation.Core.WebApi.fakes" />
+    <Fakes Include="Fakes\Microsoft.TeamFoundation.Build2.WebApi.fakes" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
