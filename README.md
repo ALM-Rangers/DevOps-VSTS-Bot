@@ -52,3 +52,6 @@ Contributions to this project are welcome. Here is how you can contribute:
 - Submit pull requests for bug fixes and features and discuss existing proposals   
 
 Please refer to [Contribution guidelines](.github/CONTRIBUTING.md) and the [Code of Conduct](.github/COC.md) for more details.
+
+## Notices
+Notices for certain third party software included in this solution are provided here: [Third Party Notice](ThirdPartyNotices.txt).
