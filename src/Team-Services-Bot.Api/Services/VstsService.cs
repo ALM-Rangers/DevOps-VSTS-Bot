@@ -12,7 +12,9 @@ namespace Vsar.TSBot
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.TeamFoundation.Build.WebApi;
     using Microsoft.TeamFoundation.Core.WebApi;
     using Microsoft.VisualStudio.Services.Account;
     using Microsoft.VisualStudio.Services.Account.Client;
@@ -21,6 +23,7 @@ namespace Vsar.TSBot
     using Microsoft.VisualStudio.Services.Profile.Client;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
+    using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Contracts;
     using Microsoft.VisualStudio.Services.WebApi;
 
     /// <summary>
@@ -50,11 +53,6 @@ namespace Vsar.TSBot
             if (profile == null)
             {
                 throw new ArgumentNullException(nameof(profile));
-            }
-
-            if (string.IsNullOrWhiteSpace(comments))
-            {
-                throw new ArgumentNullException(nameof(comments));
             }
 
             using (var client = GetConnectedClient<ReleaseHttpClient2>(new Uri(string.Format(VstsUrl, account)), profile.Token))
@@ -99,7 +97,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(approvalId));
             }
 
-            using (var client = GetConnectedClient<ReleaseHttpClient2>(this.vstsAppUrl, token))
+            using (var client = GetConnectedClient<ReleaseHttpClient2>(new Uri(string.Format(VstsRmUrl, account)), token))
             {
                 return await client.GetApprovalAsync(teamProject, approvalId);
             }
@@ -165,6 +163,10 @@ namespace Vsar.TSBot
         /// <inheritdoc />
         public async Task ReleaseQueue(string account, string teamProject, OAuthToken token, int definitionId)
         {
+            Artifact artifact;
+            Build build;
+            ReleaseDefinition definition;
+
             if (string.IsNullOrWhiteSpace(account))
             {
                 throw new ArgumentNullException(nameof(account));
@@ -182,7 +184,26 @@ namespace Vsar.TSBot
 
             using (var client = GetConnectedClient<ReleaseHttpClient2>(new Uri(string.Format(VstsRmUrl, account)), token))
             {
-                var metaData = new ReleaseStartMetadata { DefinitionId = definitionId };
+                definition = await client.GetReleaseDefinitionAsync(teamProject, definitionId);
+            }
+
+            using (var client = GetConnectedClient<BuildHttpClient>(new Uri(string.Format(VstsUrl, account)), token))
+            {
+                artifact = definition.Artifacts.FirstOrDefault(a => a.IsPrimary);
+
+                var builds = await client.GetBuildsAsync2(teamProject, new List<int> { Convert.ToInt32(artifact.DefinitionReference["definition"].Id) });
+                build = builds.FirstOrDefault();
+            }
+
+            using (var client = GetConnectedClient<ReleaseHttpClient2>(new Uri(string.Format(VstsRmUrl, account)), token))
+            {
+                var artifactMetaData = new ArtifactMetadata
+                {
+                    Alias = artifact.Alias,
+                    InstanceReference = new BuildVersion { Id = build.Id.ToString() }
+                };
+
+                var metaData = new ReleaseStartMetadata { DefinitionId = definitionId, Artifacts = new List<ArtifactMetadata> { artifactMetaData } };
                 await client.CreateReleaseAsync(metaData, teamProject);
             }
         }

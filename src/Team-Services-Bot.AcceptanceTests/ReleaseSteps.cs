@@ -8,18 +8,21 @@
 // ———————————————————————————————
 namespace Vsar.TSBot.AcceptanceTests
 {
-    using System.Threading.Tasks;
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
     using TechTalk.SpecFlow;
 
     [Binding]
     public class ReleaseSteps
     {
         [Given(@"I started release '(\d*)' on '(.*)'")]
-        public async Task GivenIStartedOn(int definitionId, string teamProject)
+        public void GivenIStartedOn(int definitionId, KeyValuePair<string, string> teamProject)
         {
             var service = new VstsService();
+            service.ReleaseQueue(Config.Account, teamProject.Value, Config.Token, definitionId).Wait();
 
-            await service.ReleaseQueue(Config.Account, teamProject, Config.Token, definitionId);
+            Thread.Sleep(TimeSpan.FromSeconds(2));
         }
     }
 }

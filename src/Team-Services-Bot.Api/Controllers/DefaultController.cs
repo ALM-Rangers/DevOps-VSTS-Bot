@@ -28,8 +28,8 @@ namespace Vsar.TSBot
         /// <summary>
         /// Returns the EULA page.
         /// </summary>
-        /// <returns></returns>
-        public ActionResult EULA()
+        /// <returns>A view.</returns>
+        public ActionResult Eula()
         {
             return this.View();
         }

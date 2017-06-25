@@ -28,6 +28,8 @@ namespace Vsar.TSBot.AcceptanceTests
 
         public static string AppSecret => TestContext.Properties["AppSecret"].ToString();
 
+        public static Uri AuthorizeUrl => new Uri(TestContext.Properties["AuthorizeUrl"].ToString());
+
         public static string BotId => TestContext.Properties["BotId"].ToString();
 
         public static string BotSecret => TestContext.Properties["BotSecret"].ToString();

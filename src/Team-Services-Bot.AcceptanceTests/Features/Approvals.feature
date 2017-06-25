@@ -6,14 +6,15 @@ Background:
 	Given A user 'Test User'
 	And A clean state
 	And Is authorized
+	And I am connected to 'config:TeamProjectOne'
+	And I started a conversation
+	And I say 'Hi'
 	And No approvals are waiting in 'config:TeamProjectOne'
-	And No approvals are waiting in 'config:TeamProjectTwo'
 
 @Acceptance
 Scenario: List approvals
 	Given I started release '1' on 'config:TeamProjectOne'
-	And   I started release '1' on 'config:TeamProjectTwo'
-	When I send a message 'approvals'
+	When I say 'approvals'
 	Then I get a list of approvals
 	| Release Definition | Environment |
 	| Release 1          | Development |
@@ -22,6 +23,7 @@ Scenario: List approvals
 Scenario: Approve approval
 	Given I started release '1' on 'config:TeamProjectOne'
 	And I have an approval for 'config:TeamProjectOne', Release: '1'
+	And I say 'approvals'
 	When I approve the approval with comment 'A comment'
 	Then the approval is approved for 'config:TeamProjectOne'
 
@@ -29,5 +31,6 @@ Scenario: Approve approval
 Scenario: Reject approval
 	Given I started release '1' on 'config:TeamProjectOne'
 	And I have an approval for 'config:TeamProjectOne', Release: '1'
+	And I say 'approvals'
 	When I reject the approval with comment 'A comment'
 	Then the approval is rejected for 'config:TeamProjectOne'

@@ -31,7 +31,7 @@ namespace Vsar.TSBot.Dialogs
     [Serializable]
     public class ConnectDialog : IDialog<object>
     {
-        private const string CommandMatchConnect = @"connect *(\w*) *(\w*)";
+        private const string CommandMatchConnect = @"connect *(\S*) *(\S*)";
         private const string CommandMatchPin = @"(\d{4})";
 
         private readonly string appId;
@@ -298,12 +298,16 @@ namespace Vsar.TSBot.Dialogs
                 return;
             }
 
+            context.UserData.SetAccount(this.Account);
+
             // No team project, ....
             if (string.IsNullOrWhiteSpace(this.TeamProject))
             {
                 await this.SelectProjectAsync(context, activity);
                 return;
             }
+
+            context.UserData.SetTeamProject(this.TeamProject);
 
             reply.Text = string.Format(Labels.ConnectedTo, this.Account, this.TeamProject);
             await context.PostAsync(reply);

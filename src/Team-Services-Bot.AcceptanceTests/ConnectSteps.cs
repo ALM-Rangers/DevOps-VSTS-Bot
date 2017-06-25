@@ -37,15 +37,15 @@ namespace Vsar.TSBot.AcceptanceTests
         }
 
         [Then(@"I am connected to the account and '(.*)'")]
-        public async Task ThenIAmConnectedToTheAccountAnd(KeyValuePair<string, string> teamProject)
+        public void ThenIAmConnectedToTheAccountAnd(KeyValuePair<string, string> teamProject)
         {
-            var data = await Config.BotState.GetUserDataAsync(ChannelIds.Directline, Config.UserName);
+            var data = Config.BotState.GetUserDataAsync(ChannelIds.Directline, Config.UserName).Result;
 
             var account = data.GetProperty<string>("Account");
             var project = data.GetProperty<string>("TeamProject");
 
-            account.Should().Be(Config.Account);
-            project.Should().Be(teamProject.Value);
+            account.Should().Be(Config.Account.ToLowerInvariant());
+            project.Should().Be(teamProject.Value.ToLowerInvariant());
         }
     }
 }

@@ -187,7 +187,6 @@
     <Compile Include="CommonSteps.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ConnectSteps.cs" />
-    <Compile Include="EchoSteps.cs" />
     <Compile Include="Features\Approvals.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

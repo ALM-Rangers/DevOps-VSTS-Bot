@@ -11,25 +11,25 @@ namespace Vsar.TSBot.AcceptanceTests
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
-    using Cards;
+    using System.Threading;
     using FluentAssertions;
     using Microsoft.Bot.Connector.DirectLine;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
+    using Newtonsoft.Json.Linq;
     using TechTalk.SpecFlow;
 
     [Binding]
     public class ApprovalSteps
     {
         [Given(@"No approvals are waiting in '(.*)'")]
-        public async Task GivenNoApprovalsAreWaitingIn(KeyValuePair<string, string> teamProject)
+        public void GivenNoApprovalsAreWaitingIn(KeyValuePair<string, string> teamProject)
         {
             var service = new VstsService();
-            var approvals = await service.GetApprovals(Config.Account, teamProject.Value, Config.Profile);
+            var approvals = service.GetApprovals(Config.Account, teamProject.Value, Config.Profile).Result;
 
             foreach (var approval in approvals)
             {
-                await service.ChangeApprovalStatus(Config.Account, teamProject.Value, Config.Profile, approval.Id, ApprovalStatus.Canceled, string.Empty);
+                service.ChangeApprovalStatus(Config.Account, teamProject.Value, Config.Profile, approval.Id, ApprovalStatus.Rejected, string.Empty).Wait();
             }
         }
 
@@ -37,24 +37,27 @@ namespace Vsar.TSBot.AcceptanceTests
         public void ThenIGetAListOfApprovalsOn(Table table)
         {
             var activities = Config.Client.Conversations.GetActivities(Config.ConversationId);
-            var activity = activities.Activities.FirstOrDefault(a => string.Equals(a.From.Id, Config.BotId, StringComparison.OrdinalIgnoreCase));
-            var cards = activity.Attachments.Select(a => a.Content).Cast<ApprovalCard>().ToList();
+            var activity = activities.Activities.LastOrDefault(a => string.Equals(a.From.Id, Config.BotId, StringComparison.OrdinalIgnoreCase));
+            var cards = activity.Attachments.Select(a => a.Content).Cast<JObject>().ToList();
+
+            cards.Should().HaveCount(table.RowCount);
 
             for (var index = 0; index < cards.Count; index++)
             {
                 var row = table.Rows[index];
 
                 var card = cards[index];
-                card.Text.Should().Be(row["Environment"]);
-                card.Title.Should().Be(row["Release Definition"]);
+
+                card["text"].Value<string>().Should().Be(row["Environment"]);
+                card["title"].Value<string>().Should().Be(row["Release Definition"]);
             }
         }
 
         [Given(@"I have an approval for '(.*)', Release: '(.*)'")]
-        public async Task GivenIHaveAnApprovalForRelease(KeyValuePair<string, string> teamProject, int releaseDefinitionId)
+        public void GivenIHaveAnApprovalForRelease(KeyValuePair<string, string> teamProject, int releaseDefinitionId)
         {
             var service = new VstsService();
-            var approvals = await service.GetApprovals(Config.Account, teamProject.Value, Config.Profile);
+            var approvals = service.GetApprovals(Config.Account, teamProject.Value, Config.Profile).Result;
             Config.Approval = approvals.FirstOrDefault(a => a.ReleaseDefinitionReference.Id.Equals(releaseDefinitionId));
         }
 
@@ -85,19 +88,19 @@ namespace Vsar.TSBot.AcceptanceTests
         }
 
         [Then(@"the approval is approved for '(.*)'")]
-        public async Task ThenIsApprovedWithComment(KeyValuePair<string, string> teamProject)
+        public void ThenIsApprovedWithComment(KeyValuePair<string, string> teamProject)
         {
             var service = new VstsService();
-            var approval = await service.GetApproval(Config.Profile.Token, Config.Account, teamProject.Value, Config.Approval.Id);
+            var approval = service.GetApproval(Config.Profile.Token, Config.Account, teamProject.Value, Config.Approval.Id).Result;
 
             approval.Status.Should().Be(ApprovalStatus.Approved);
         }
 
         [Then(@"the approval is rejected for '(.*)'")]
-        public async Task ThenIsRejectedWithComment(KeyValuePair<string, string> teamProject)
+        public void ThenIsRejectedWithComment(KeyValuePair<string, string> teamProject)
         {
             var service = new VstsService();
-            var approval = await service.GetApproval(Config.Profile.Token, Config.Account, teamProject.Value, Config.Approval.Id);
+            var approval = service.GetApproval(Config.Profile.Token, Config.Account, teamProject.Value, Config.Approval.Id).Result;
 
             approval.Status.Should().Be(ApprovalStatus.Rejected);
         }
