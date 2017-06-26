@@ -185,6 +185,7 @@
     <Compile Include="Cards\ApprovalCardTests.cs" />
     <Compile Include="Cards\LogOnCardTests.cs" />
     <Compile Include="Controllers\AuthorizeControllerTests.cs" />
+    <Compile Include="Controllers\DefaultControllerTests.cs" />
     <Compile Include="Controllers\MessagesControllerTests.cs" />
     <Compile Include="Dialogs\ApprovalsDialogTests.cs" />
     <Compile Include="Dialogs\ConnectDialogTests.cs" />

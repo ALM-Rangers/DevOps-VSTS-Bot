@@ -44,8 +44,8 @@ namespace Vsar.TSBot.AcceptanceTests
             var account = data.GetProperty<string>("Account");
             var project = data.GetProperty<string>("TeamProject");
 
-            account.Should().Be(Config.Account.ToLowerInvariant());
-            project.Should().Be(teamProject.Value.ToLowerInvariant());
+            account.ToUpperInvariant().Should().Be(Config.Account.ToUpperInvariant());
+            project.ToUpperInvariant().Should().Be(teamProject.Value.ToUpperInvariant());
         }
     }
 }
