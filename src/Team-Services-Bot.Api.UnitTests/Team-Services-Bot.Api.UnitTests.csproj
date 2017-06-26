@@ -148,6 +148,9 @@
     <Reference Include="Microsoft.VisualStudio.Services.ReleaseManagement.WebApi, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.VisualStudio.Services.Release.Client.15.117.0-preview\lib\net45\Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.15.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.15.0.0.0.Fakes.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.Services.WebApi, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.VisualStudio.Services.Client.15.117.0-preview\lib\net45\Microsoft.VisualStudio.Services.WebApi.dll</HintPath>
     </Reference>
@@ -262,6 +265,7 @@
     <Fakes Include="Fakes\Microsoft.VisualStudio.Services.WebApi.fakes" />
     <Fakes Include="Fakes\Microsoft.TeamFoundation.Core.WebApi.fakes" />
     <Fakes Include="Fakes\Microsoft.TeamFoundation.Build2.WebApi.fakes" />
+    <Fakes Include="Fakes\Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.fakes" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

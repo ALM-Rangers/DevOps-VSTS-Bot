@@ -179,11 +179,6 @@ namespace Vsar.TSBot
         private static async Task<T> GetConnectedClientAsync<T>(Uri accountUri, OAuthToken token)
             where T : VssHttpClientBase
         {
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
-
             var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
 
             return await new VssConnection(accountUri, credentials).GetClientAsync<T>();
