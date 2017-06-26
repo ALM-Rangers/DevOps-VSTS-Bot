@@ -126,4 +126,10 @@
   <data name="UnknownException" xml:space="preserve">
     <value>An unknown exception occurred. We registered the exception and will fix it as soon as possible.</value>
   </data>
+  <data name="TeamProjectNotFound" xml:space="preserve">
+    <value>The specified project couldn't be found</value>
+  </data>
+  <data name="AccountNotFound" xml:space="preserve">
+    <value>The specified account couldn't be found.</value>
+  </data>
 </root>
