@@ -1,5 +1,5 @@
 ﻿// ———————————————————————————————
-// <copyright file="TestCategories.cs">
+// <copyright file="TestCategories.cs"  >
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
@@ -8,6 +8,7 @@
 // ———————————————————————————————
 
 namespace Vsar.TSBot.Common.Tests
+#pragma warning restore SA1640 // File header must have valid company text
 {
     /// <summary>
     /// Defines the test categories
