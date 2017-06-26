@@ -131,6 +131,10 @@ namespace Vsar.TSBot.UnitTests.Services
             }
         }
 
+        /// <summary>
+        /// Tests <see cref="VstsService.GetBuildDefinitions"/>.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestMethod]
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Test method shouldn't be a property. Test method name corresponds to method under test.")]
         public async Task GetBuildDefinitionsTest()
