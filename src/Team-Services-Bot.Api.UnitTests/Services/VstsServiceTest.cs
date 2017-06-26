@@ -1,4 +1,4 @@
-﻿// <copyright file="VstsServiceTest.cs" company="PlaceholderCompany">
+﻿// <copyright file="VstsServiceTest.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
