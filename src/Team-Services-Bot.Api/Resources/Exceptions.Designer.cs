@@ -61,6 +61,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified account couldn&apos;t be found..
+        /// </summary>
+        internal static string AccountNotFound {
+            get {
+                return ResourceManager.GetString("AccountNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorry, I do not recognize the provided pin. Please try again..
         /// </summary>
         internal static string InvalidPin {
@@ -75,6 +84,15 @@ namespace Vsar.TSBot.Resources {
         internal static string InvalidState {
             get {
                 return ResourceManager.GetString("InvalidState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified project couldn&apos;t be found.
+        /// </summary>
+        internal static string TeamProjectNotFound {
+            get {
+                return ResourceManager.GetString("TeamProjectNotFound", resourceCulture);
             }
         }
         

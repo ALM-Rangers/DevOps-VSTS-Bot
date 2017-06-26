@@ -12,6 +12,7 @@ namespace Vsar.TSBot
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Microsoft.TeamFoundation.Build.WebApi;
     using Microsoft.TeamFoundation.Core.WebApi;
     using Microsoft.VisualStudio.Services.Account;
     using Microsoft.VisualStudio.Services.Profile;
@@ -63,10 +64,20 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets team projects from VSTS account
         /// </summary>
-        /// <param name="account">The <see cref="Uri"/> that represents VSTS account URL.</param>
-        /// <param name="token">The <see cref="OAuthToken"/>.</param>
+        /// <param name="account">The VSTS account name</param>
+        /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
         /// <returns>Collection of <see cref="TeamProjectReference"/></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Reviewed.")]
         Task<IEnumerable<TeamProjectReference>> GetProjects(string account, OAuthToken token);
+
+        /// <summary>
+        /// Gets build definitions from VSTS account for specified project
+        /// </summary>
+        /// <param name="project">The Team Project name</param>
+        /// <param name="account">The VSTS account name</param>
+        /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
+        /// <returns>Collection of <see cref="BuildDefinitionReference"/>.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Reviewed.")]
+        Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitions(string project, string account, OAuthToken token);
     }
 }
