@@ -47,6 +47,7 @@ namespace Vsar.TSBot.UnitTests.Services
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Test method shouldn't be a property. Test method name corresponds to method under test.")]
         [TestMethod]
+        [Ignore] 
         public async Task ChangeApprovalStatusTest()
         {
             var service = new VstsService();
