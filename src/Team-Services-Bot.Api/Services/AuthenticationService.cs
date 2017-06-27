@@ -11,6 +11,7 @@ namespace Vsar.TSBot
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.Net;
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
@@ -68,7 +69,14 @@ namespace Vsar.TSBot
                 .PostAsync(TokenUrl, new StringContent(postData, Encoding.UTF8, MediaType))
                 .ConfigureAwait(false);
 
-            return await response.Content.ReadAsAsync<OAuthToken>();
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return await response.Content.ReadAsAsync<OAuthToken>();
+            }
+
+            var error = await response.Content.ReadAsStringAsync();
+
+            throw new Exception(error);
         }
     }
 }
