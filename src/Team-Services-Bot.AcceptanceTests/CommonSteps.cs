@@ -112,11 +112,10 @@ namespace Vsar.TSBot.AcceptanceTests
 
             if (profile != null && !Config.RefreshTokenReinitialize)
             {
-                Config.RefreshTokenReinitialize = false;
                 refreshToken = profile.Token.RefreshToken;
             }
 
-            Console.WriteLine($"Refreshtoken = {refreshToken}");
+            Config.RefreshTokenReinitialize = false;
 
             var token = authService.GetToken(new OAuthToken { RefreshToken = refreshToken }).Result;
             var p = vstsService.GetProfile(token).Result;

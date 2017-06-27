@@ -64,8 +64,6 @@ namespace Vsar.TSBot
             var client = new HttpClient();
             var postData = string.Format(FormatPostData, HttpUtility.UrlEncode(this.appSecret), GrantTypeRefreshToken, HttpUtility.UrlEncode(token.RefreshToken), this.authorizeUrl);
 
-            Console.WriteLine(postData);
-
             var response = await client
                 .PostAsync(TokenUrl, new StringContent(postData, Encoding.UTF8, MediaType))
                 .ConfigureAwait(false);
