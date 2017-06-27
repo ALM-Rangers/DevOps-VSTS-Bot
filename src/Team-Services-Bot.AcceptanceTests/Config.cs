@@ -18,6 +18,11 @@ namespace Vsar.TSBot.AcceptanceTests
 
     public static class Config
     {
+        static Config()
+        {
+            RefreshTokenReinitialize = Convert.ToBoolean(TestContext.Properties["RefreshTokenReinitialize"]);
+        }
+
         public static string Account => TestContext.Properties["Account"].ToString();
 
         public static ReleaseApproval Approval
@@ -76,6 +81,8 @@ namespace Vsar.TSBot.AcceptanceTests
         }
 
         public static string RefreshToken => TestContext.Properties["RefreshToken"].ToString();
+
+        public static bool RefreshTokenReinitialize { get; set; }
 
         public static string TeamProjectOne => TestContext.Properties["TeamProjectOne"].ToString();
 
