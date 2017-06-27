@@ -116,6 +116,8 @@ namespace Vsar.TSBot.AcceptanceTests
                 refreshToken = profile.Token.RefreshToken;
             }
 
+            Console.WriteLine($"Refreshtoken = {refreshToken}");
+
             var token = authService.GetToken(new OAuthToken { RefreshToken = refreshToken }).Result;
             var p = vstsService.GetProfile(token).Result;
             var accounts = vstsService.GetAccounts(token, p.Id).Result;
