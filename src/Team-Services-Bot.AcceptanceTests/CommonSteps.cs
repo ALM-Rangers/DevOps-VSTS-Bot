@@ -34,7 +34,18 @@ namespace Vsar.TSBot.AcceptanceTests
         [Given(@"A clean state")]
         public void GivenACleanState()
         {
-            Config.BotState.SetUserData(ChannelIds.Directline, Config.UserName, new BotData());
+            var initial = Config.BotState.GetUserData(ChannelIds.Directline, Config.UserName) ?? new BotData();
+
+            // Keep the profile for the refresh token.
+            var profile = initial.GetProperty<VstsProfile>("Profile");
+            var target = new BotData { ETag = initial.ETag };
+
+            if (profile != null)
+            {
+                target.SetProfile(profile);
+            }
+
+            Config.BotState.SetUserData(ChannelIds.Directline, Config.UserName, target);
         }
 
         [StepArgumentTransformation("config:(.+)")]
@@ -59,23 +70,7 @@ namespace Vsar.TSBot.AcceptanceTests
             Config.ConversationId = conversation.ConversationId;
         }
 
-        [Given(@"The user has previously logged in into the account and team project '(.*)'")]
-        public void GivenTheUserHasPreviouslyLoggedInIntoTheAccountAndTeamProject(KeyValuePair<string, string> pair)
-        {
-            var profile = new VstsProfile();
-            profile.Accounts.Add(Config.Account);
-            profile.Token = new OAuthToken { ExpiresIn = 3600 };
-
-            var userData = Config.BotState.GetUserData(ChannelIds.Directline, Config.UserName);
-
-            userData.SetAccount(Config.Account);
-            userData.SetProfile(profile);
-            userData.SetProfiles(new List<VstsProfile> { profile });
-            userData.SetTeamProject(pair.Value);
-
-            Config.BotState.SetUserData(ChannelIds.Directline, Config.UserName, userData);
-        }
-
+        [Given(@"I say '(.*)'")]
         [When(@"I say '(.*)'")]
         public void WhenISay(string message)
         {
@@ -103,6 +98,52 @@ namespace Vsar.TSBot.AcceptanceTests
             var activity = activities.Activities.FirstOrDefault(a => string.Equals(a.From.Id, Config.BotId, StringComparison.OrdinalIgnoreCase));
 
             activity.Text.ShouldBeEquivalentTo(message);
+        }
+
+        [Given(@"Is authorized")]
+        public void GivenIsAuthorized()
+        {
+            var authService = new AuthenticationService(Config.AppSecret, Config.AuthorizeUrl);
+            var vstsService = new VstsService();
+
+            var data = Config.BotState.GetUserData(ChannelIds.Directline, Config.UserName);
+            var profile = data.GetProperty<VstsProfile>("Profile");
+            var refreshToken = Config.RefreshToken;
+
+            if (profile != null)
+            {
+                refreshToken = profile.Token.RefreshToken;
+            }
+
+            var token = authService.GetToken(new OAuthToken { RefreshToken = refreshToken }).Result;
+            var p = vstsService.GetProfile(token).Result;
+            var accounts = vstsService.GetAccounts(token, p.Id).Result;
+            profile = new VstsProfile
+            {
+                Accounts = accounts.Select(a => a.AccountName).ToList(),
+                Id = p.Id,
+                EmailAddress = p.EmailAddress,
+                Token = token
+            };
+
+            data.SetProfile(profile);
+            data.SetProfiles(new List<VstsProfile> { profile });
+
+            Config.BotState.SetUserDataAsync(ChannelIds.Directline, Config.UserName, data).Wait();
+
+            Config.Profile = profile;
+            Config.Token = token;
+        }
+
+        [Given(@"I am connected to '(.*)'")]
+        public void GivenIAmConnectedTo(KeyValuePair<string, string> teamProject)
+        {
+            var data = Config.BotState.GetUserData(ChannelIds.Directline, Config.UserName);
+
+            data.SetAccount(Config.Account);
+            data.SetTeamProject(teamProject.Value);
+
+            Config.BotState.SetUserData(ChannelIds.Directline, Config.UserName, data);
         }
     }
 }

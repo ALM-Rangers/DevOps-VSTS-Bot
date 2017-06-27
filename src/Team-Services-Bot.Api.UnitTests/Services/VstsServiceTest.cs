@@ -265,7 +265,7 @@ namespace Vsar.TSBot.UnitTests.Services
         }
 
         /// <summary>
-        /// Tests <see cref="VstsService.GetBuildDefinitions"/>.
+        /// Tests <see cref="VstsService.GetBuildDefinitionsAsync"/>.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestMethod]
@@ -274,9 +274,9 @@ namespace Vsar.TSBot.UnitTests.Services
         {
             var service = new VstsService();
 
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitions(null, "myaccount", this.token));
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitions("myproject", null, this.token));
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitions("myproject", "myaccount", null));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync(null, "myaccount", this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync("myproject", null, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync("myproject", "myaccount", null));
 
             using (ShimsContext.Create())
             {
@@ -304,11 +304,11 @@ namespace Vsar.TSBot.UnitTests.Services
                 InitializeConnectionShim(clients);
 
                 await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(
-                    async () => await service.GetBuildDefinitions("hisproject", "myaccount", this.token));
+                    async () => await service.GetBuildDefinitionsAsync("hisproject", "myaccount", this.token));
                 await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(
-                    async () => await service.GetBuildDefinitions("myproject", "hisaccount", this.token));
+                    async () => await service.GetBuildDefinitionsAsync("myproject", "hisaccount", this.token));
 
-                var actual = await service.GetBuildDefinitions("myproject", "myaccount", this.token);
+                var actual = await service.GetBuildDefinitionsAsync("myproject", "myaccount", this.token);
                 Assert.AreEqual(expected, actual);
             }
         }

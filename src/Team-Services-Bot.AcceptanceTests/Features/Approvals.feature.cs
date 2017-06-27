@@ -94,46 +94,40 @@ namespace Vsar.TSBot.AcceptanceTests.Features
 #line 8
  testRunner.And("Is authorized", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 9
- testRunner.And("No approvals are waiting in \'config:TeamProjectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I am connected to \'config:TeamProjectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 10
- testRunner.And("No approvals are waiting in \'config:TeamProjectTwo\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I started a conversation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 11
+ testRunner.And("I say \'Hi\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 12
+ testRunner.And("No approvals are waiting in \'config:TeamProjectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
         }
         
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("List approvals")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Approvals")]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Acceptance")]
         public virtual void ListApprovals()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("List approvals", new string[] {
-                        "Acceptance",
-                        "ignore"});
-#line 13
+                        "Acceptance"});
+#line 15
 this.ScenarioSetup(scenarioInfo);
 #line 5
 this.FeatureBackground();
-#line 14
- testRunner.Given("I started \'Release 1\' on \'config:TeamProjectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 15
- testRunner.And("I started \'Release 1\' on \'config:TeamProjectTwo\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 16
- testRunner.When("I send a message \'approvals\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Given("I started release \'1\' on \'config:TeamProjectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 17
+ testRunner.When("I say \'approvals\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
-                        "Team Project",
-                        "Release",
+                        "Release Definition",
                         "Environment"});
             table1.AddRow(new string[] {
-                        "config:TeamProjectOne",
                         "Release 1",
                         "Development"});
-            table1.AddRow(new string[] {
-                        "config:TeamProjectTwo",
-                        "Release 1",
-                        "Development"});
-#line 17
+#line 18
  testRunner.Then("I get a list of approvals", ((string)(null)), table1, "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -142,23 +136,25 @@ this.FeatureBackground();
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Approve approval")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Approvals")]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Acceptance")]
         public virtual void ApproveApproval()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Approve approval", new string[] {
-                        "Acceptance",
-                        "ignore"});
+                        "Acceptance"});
 #line 23
 this.ScenarioSetup(scenarioInfo);
 #line 5
 this.FeatureBackground();
 #line 24
- testRunner.Given("I have an approval for \'config:TeamProjectOne\', Release: \'Release 1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I started release \'1\' on \'config:TeamProjectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 25
- testRunner.When("I send a message \'approve config:ApprovalId  \'A comment\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.And("I have an approval for \'config:TeamProjectOne\', Release: \'1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 26
- testRunner.Then("\'config:ApprovalId\' is approved with comment \'A comment\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.And("I say \'approvals\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 27
+ testRunner.When("I approve the approval with comment \'A comment\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 28
+ testRunner.Then("the approval is approved for \'config:TeamProjectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -166,23 +162,25 @@ this.FeatureBackground();
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Reject approval")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Approvals")]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Acceptance")]
         public virtual void RejectApproval()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Reject approval", new string[] {
-                        "Acceptance",
-                        "ignore"});
-#line 29
+                        "Acceptance"});
+#line 31
 this.ScenarioSetup(scenarioInfo);
 #line 5
 this.FeatureBackground();
-#line 30
- testRunner.Given("I have an approval for \'config:TeamProjectOne\', Release: \'Release 1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 31
- testRunner.When("I send a message \'reject config:ApprovalId \'A comment\'\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 32
- testRunner.Then("\'config:ApprovalId\' is rejected with comment \'A comment\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Given("I started release \'1\' on \'config:TeamProjectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 33
+ testRunner.And("I have an approval for \'config:TeamProjectOne\', Release: \'1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 34
+ testRunner.And("I say \'approvals\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 35
+ testRunner.When("I reject the approval with comment \'A comment\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 36
+ testRunner.Then("the approval is rejected for \'config:TeamProjectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

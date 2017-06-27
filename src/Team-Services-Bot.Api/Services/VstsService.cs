@@ -11,6 +11,7 @@ namespace Vsar.TSBot
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.TeamFoundation.Build.WebApi;
@@ -22,6 +23,7 @@ namespace Vsar.TSBot
     using Microsoft.VisualStudio.Services.Profile.Client;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
+    using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Contracts;
     using Microsoft.VisualStudio.Services.WebApi;
     using Resources;
 
@@ -30,6 +32,7 @@ namespace Vsar.TSBot
     /// </summary>
     public class VstsService : IVstsService
     {
+        private const string VstsUrl = "https://{0}.visualstudio.com";
         private const string VstsRmUrl = "https://{0}.vsrm.visualstudio.com";
 
         private readonly Uri vstsAppUrl = new Uri("https://app.vssps.visualstudio.com");
@@ -52,14 +55,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(profile));
             }
 
-            if (string.IsNullOrWhiteSpace(comments))
-            {
-                throw new ArgumentNullException(nameof(comments));
-            }
-
-            var accountInfo = await this.GetAccountAsync(account, profile.Token);
-
-            using (var client = await GetConnectedClientAsync<ReleaseHttpClient2>(accountInfo.AccountUri, profile.Token))
+            using (var client = await GetConnectedClientAsync<ReleaseHttpClient2>(new Uri(string.Format(VstsUrl, account)), profile.Token))
             {
                 var approval = await client.GetApprovalAsync(teamProject, approvalId);
                 approval.Status = status;
@@ -80,6 +76,30 @@ namespace Vsar.TSBot
             using (var client = await GetConnectedClientAsync<AccountHttpClient>(this.vstsAppUrl, token))
             {
                 return await client.GetAccountsByMemberAsync(memberId);
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<ReleaseApproval> GetApproval(OAuthToken token, string account, string teamProject, int approvalId)
+        {
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
+            }
+
+            if (approvalId <= 0)
+            {
+                throw new ArgumentNullException(nameof(approvalId));
+            }
+
+            using (var client = await GetConnectedClientAsync<ReleaseHttpClient2>(new Uri(string.Format(VstsRmUrl, account)), token))
+            {
+                return await client.GetApprovalAsync(teamProject, approvalId);
             }
         }
 
@@ -142,8 +162,56 @@ namespace Vsar.TSBot
             }
         }
 
+        /// <inheritdoc />
+        public async Task ReleaseQueueAsync(string account, string teamProject, OAuthToken token, int definitionId)
+        {
+            Artifact artifact;
+            Build build;
+            ReleaseDefinition definition;
+
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
+            }
+
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            using (var client = await GetConnectedClientAsync<ReleaseHttpClient2>(new Uri(string.Format(VstsRmUrl, account)), token))
+            {
+                definition = await client.GetReleaseDefinitionAsync(teamProject, definitionId);
+            }
+
+            using (var client = await GetConnectedClientAsync<BuildHttpClient>(new Uri(string.Format(VstsUrl, account)), token))
+            {
+                artifact = definition.Artifacts.FirstOrDefault(a => a.IsPrimary);
+
+                var builds = await client.GetBuildsAsync2(teamProject, new List<int> { Convert.ToInt32(artifact.DefinitionReference["definition"].Id) });
+                build = builds.FirstOrDefault();
+            }
+
+            using (var client = await GetConnectedClientAsync<ReleaseHttpClient2>(new Uri(string.Format(VstsRmUrl, account)), token))
+            {
+                var artifactMetaData = new ArtifactMetadata
+                {
+                    Alias = artifact.Alias,
+                    InstanceReference = new BuildVersion { Id = build.Id.ToString() }
+                };
+
+                var metaData = new ReleaseStartMetadata { DefinitionId = definitionId, Artifacts = new List<ArtifactMetadata> { artifactMetaData } };
+                await client.CreateReleaseAsync(metaData, teamProject);
+            }
+        }
+
         /// <inheritdoc/>
-        public async Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitions(string project, string account, OAuthToken token)
+        public async Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitionsAsync(string project, string account, OAuthToken token)
         {
             if (string.IsNullOrWhiteSpace(project))
             {
