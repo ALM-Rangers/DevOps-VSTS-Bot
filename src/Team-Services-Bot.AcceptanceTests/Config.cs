@@ -18,13 +18,7 @@ namespace Vsar.TSBot.AcceptanceTests
 
     public static class Config
     {
-        static Config()
-        {
-            var x = TestContext.Properties["RefreshTokenReinitialize"];
-            Console.WriteLine($"Config static constructor: {x}");
-
-            RefreshTokenReinitialize = Convert.ToBoolean(x);
-        }
+        private static bool? refreshTokenReinitialize = true;
 
         public static string Account => TestContext.Properties["Account"].ToString();
 
@@ -85,7 +79,18 @@ namespace Vsar.TSBot.AcceptanceTests
 
         public static string RefreshToken => TestContext.Properties["RefreshToken"].ToString();
 
-        public static bool RefreshTokenReinitialize { get; set; }
+        public static bool RefreshTokenReinitialize
+        {
+            get
+            {
+                return refreshTokenReinitialize.GetValueOrDefault(Convert.ToBoolean(TestContext.Properties["RefreshTokenReinitialize"]));
+            }
+
+            set
+            {
+                refreshTokenReinitialize = value;
+            }
+        }
 
         public static string TeamProjectOne => TestContext.Properties["TeamProjectOne"].ToString();
 
