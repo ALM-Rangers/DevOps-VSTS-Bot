@@ -247,7 +247,15 @@ namespace Vsar.TSBot.UnitTests.Services
                     }
                 };
 
-                var expected = new List<TeamProjectReference>();
+                var expected = new List<TeamProjectReference>
+                {
+                    new TeamProjectReference
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "My Project",
+                        Url = "https://myaccount.visualstudio.com/my%20project"
+                    }
+                };
 
                 var clients = new VssHttpClientBase[]
                 {
