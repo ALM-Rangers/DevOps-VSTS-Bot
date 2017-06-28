@@ -20,9 +20,10 @@ namespace Vsar.TSBot.AcceptanceTests
     {
         static Config()
         {
-            Console.WriteLine(TestContext.Properties["RefreshTokenReinitialize"]);
+            var x = TestContext.Properties["RefreshTokenReinitialize"];
+            Console.WriteLine($"Config static constructor: {x}");
 
-            RefreshTokenReinitialize = Convert.ToBoolean(TestContext.Properties["RefreshTokenReinitialize"]);
+            RefreshTokenReinitialize = Convert.ToBoolean(x);
         }
 
         public static string Account => TestContext.Properties["Account"].ToString();
