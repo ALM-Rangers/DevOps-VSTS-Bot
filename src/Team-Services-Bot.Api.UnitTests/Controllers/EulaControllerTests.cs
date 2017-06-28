@@ -1,9 +1,9 @@
 ﻿// ———————————————————————————————
-// <copyright file="DefaultControllerTests.cs">
+// <copyright file="EulaControllerTests.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the tests for the DefaultController.
+// Contains the tests for the EulaController.
 // </summary>
 // ———————————————————————————————
 namespace Vsar.TSBot.UnitTests
@@ -17,12 +17,12 @@ namespace Vsar.TSBot.UnitTests
     [ExcludeFromCodeCoverage]
     [TestClass]
     [TestCategory(TestCategories.Unit)]
-    public class DefaultControllerTests
+    public class EulaControllerTests
     {
         [TestMethod]
         public void Index()
         {
-            using (var target = new DefaultController())
+            using (var target = new EulaController())
             {
                 var result = target.Index() as ViewResult;
 

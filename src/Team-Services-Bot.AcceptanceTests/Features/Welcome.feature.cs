@@ -109,8 +109,7 @@ this.FeatureBackground();
 #line 11
  testRunner.When("I say \'Hi\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 12
- testRunner.Then("the bot should respond with \'Hi Test User. Good to see you. I will help you with " +
-                    "your Team Services tasks.\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the bot should respond with the welcome message.", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
