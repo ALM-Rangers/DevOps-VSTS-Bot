@@ -18,7 +18,7 @@ namespace Vsar.TSBot.AcceptanceTests
 
     public static class Config
     {
-        private static bool? refreshTokenReinitialize = true;
+        private static bool? refreshTokenReinitialize;
 
         public static string Account => TestContext.Properties["Account"].ToString();
 
