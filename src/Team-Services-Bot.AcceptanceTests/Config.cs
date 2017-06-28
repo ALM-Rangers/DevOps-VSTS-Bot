@@ -20,6 +20,8 @@ namespace Vsar.TSBot.AcceptanceTests
     {
         static Config()
         {
+            Console.WriteLine(TestContext.Properties["RefreshTokenReinitialize"]);
+
             RefreshTokenReinitialize = Convert.ToBoolean(TestContext.Properties["RefreshTokenReinitialize"]);
         }
 
