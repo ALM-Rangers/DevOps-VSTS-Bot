@@ -17,6 +17,7 @@ namespace Vsar.TSBot.AcceptanceTests
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
     using Microsoft.Bot.Connector.DirectLine;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TechTalk.SpecFlow;
     using Activity = Microsoft.Bot.Connector.DirectLine.Activity;
     using ActivityTypes = Microsoft.Bot.Connector.DirectLine.ActivityTypes;
@@ -110,6 +111,7 @@ namespace Vsar.TSBot.AcceptanceTests
             var profile = data.GetProperty<VstsProfile>("Profile");
             var refreshToken = Config.RefreshToken;
 
+            Console.WriteLine($"From TestContext: {((TestContext) ScenarioContext.Current["TestContext"]).Properties["RefreshTokenReinitialize"]}");
             Console.WriteLine($"Initial from config {refreshToken}; {Config.RefreshTokenReinitialize}");
 
             if (profile != null && !Config.RefreshTokenReinitialize)
