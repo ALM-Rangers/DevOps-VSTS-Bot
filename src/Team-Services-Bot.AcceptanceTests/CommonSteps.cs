@@ -110,6 +110,8 @@ namespace Vsar.TSBot.AcceptanceTests
             var profile = data.GetProperty<VstsProfile>("Profile");
             var refreshToken = Config.RefreshToken;
 
+            Console.WriteLine($"Initial from config {refreshToken}; {Config.RefreshTokenReinitialize}");
+
             if (profile != null && !Config.RefreshTokenReinitialize)
             {
                 refreshToken = profile.Token.RefreshToken;
