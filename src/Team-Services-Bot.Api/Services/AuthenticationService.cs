@@ -75,8 +75,7 @@ namespace Vsar.TSBot
             }
 
             var error = await response.Content.ReadAsStringAsync();
-
-            throw new Exception(error);
+            throw new Exception($"{error}; {this.authorizeUrl}");
         }
     }
 }
