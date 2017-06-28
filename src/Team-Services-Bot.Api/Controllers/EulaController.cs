@@ -1,9 +1,9 @@
 ﻿// ———————————————————————————————
-// <copyright file="DefaultController.cs">
+// <copyright file="EulaController.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Provides the controller logic for the default pages.
+// Provides the controller logic for the eula pages.
 // </summary>
 // ———————————————————————————————
 
@@ -12,12 +12,12 @@ namespace Vsar.TSBot
     using System.Web.Mvc;
 
     /// <summary>
-    /// Provides the controller logic for the default pages.
+    /// Provides the controller logic for the eula pages.
     /// </summary>
-    public class DefaultController : Controller
+    public class EulaController : Controller
     {
         /// <summary>
-        /// Returns the default home page.
+        /// Gets the EULA page.
         /// </summary>
         /// <returns>A view.</returns>
         public ActionResult Index()

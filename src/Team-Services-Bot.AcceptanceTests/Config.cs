@@ -10,6 +10,7 @@
 namespace Vsar.TSBot.AcceptanceTests
 {
     using System;
+    using System.Globalization;
     using Microsoft.Bot.Connector;
     using Microsoft.Bot.Connector.DirectLine;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
@@ -83,7 +84,7 @@ namespace Vsar.TSBot.AcceptanceTests
         {
             get
             {
-                return refreshTokenReinitialize.GetValueOrDefault(Convert.ToBoolean(TestContext.Properties["RefreshTokenReinitialize"]));
+                return refreshTokenReinitialize.GetValueOrDefault(Convert.ToBoolean(TestContext.Properties["RefreshTokenReinitialize"], CultureInfo.InvariantCulture));
             }
 
             set

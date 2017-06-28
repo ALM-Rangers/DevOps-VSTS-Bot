@@ -140,8 +140,8 @@
     <value>QueueRelease</value>
   </data>
   <data name="WelcomeUser" xml:space="preserve">
-    <value>Hi {0}. Good to see you. I will help you with your Team Services tasks.</value>
-    <comment>{0} = from name</comment>
+    <value>Hi {0}. Good to see you. I will help you with your Team Services tasks. Please read the [EULA]({1}) if you have not done so.</value>
+    <comment>{0} = from name; {1} = link to EULA;</comment>
   </data>
   <data name="ConnectToProject" xml:space="preserve">
     <value>Please select a project to connect to.</value>

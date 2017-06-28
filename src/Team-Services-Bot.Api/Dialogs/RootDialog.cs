@@ -27,20 +27,28 @@ namespace Vsar.TSBot.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
+        private Uri eulaUri;
         [NonSerialized]
         private TelemetryClient telemetryClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RootDialog"/> class.
         /// </summary>
+        /// <param name="eulaUri">Uri to the EULA.</param>
         /// <param name="telemetryClient">A <see cref="telemetryClient"/>.</param>
-        public RootDialog(TelemetryClient telemetryClient)
+        public RootDialog(Uri eulaUri, TelemetryClient telemetryClient)
         {
+            if (eulaUri == null)
+            {
+                throw new ArgumentNullException(nameof(eulaUri));
+            }
+
             if (telemetryClient == null)
             {
                 throw new ArgumentNullException(nameof(telemetryClient));
             }
 
+            this.eulaUri = eulaUri;
             this.telemetryClient = telemetryClient;
         }
 
@@ -122,7 +130,7 @@ namespace Vsar.TSBot.Dialogs
                     continue;
                 }
 
-                await context.PostAsync(string.Format(Labels.WelcomeUser, member.Name));
+                await context.PostAsync(string.Format(Labels.WelcomeUser, member.Name, this.eulaUri));
             }
         }
 

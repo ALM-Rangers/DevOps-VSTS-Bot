@@ -178,7 +178,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hi {0}. Good to see you. I will help you with your Team Services tasks..
+        ///   Looks up a localized string similar to Hi {0}. Good to see you. I will help you with your Team Services tasks. Please read the [EULA]({1}) if you have not done so..
         /// </summary>
         internal static string WelcomeUser {
             get {

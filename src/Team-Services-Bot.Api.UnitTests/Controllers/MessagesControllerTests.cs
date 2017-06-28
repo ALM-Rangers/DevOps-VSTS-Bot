@@ -49,7 +49,7 @@ namespace Vsar.TSBot.UnitTests
             var target =
                 new MessagesController(container, dialogInvoker.Object, telemetryClient)
                 {
-                    Request = new HttpRequestMessage()
+                    Request = new HttpRequestMessage { RequestUri = new Uri("https://somekindofurl/api/messages") }
                 };
 
             var result = await target.Post(activity);
@@ -80,7 +80,7 @@ namespace Vsar.TSBot.UnitTests
             var target =
                 new MessagesController(container, dialogInvoker.Object, telemetryClient)
                 {
-                    Request = new HttpRequestMessage()
+                    Request = new HttpRequestMessage { RequestUri = new Uri("https://somekindofurl/api/messages") }
                 };
 
             var result = await target.Post(activity);

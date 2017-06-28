@@ -12,6 +12,7 @@ namespace Vsar.TSBot
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Web;
     using Autofac;
     using Autofac.Extras.AttributeMetadata;
     using Autofac.Integration.Mvc;
