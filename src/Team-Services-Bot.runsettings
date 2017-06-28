@@ -10,6 +10,7 @@
     <Parameter name="MicrosoftApplicationId" value="" />
     <Parameter name="MicrosoftApplicationPassword" value="" />
     <Parameter name="RefreshToken" value="" />
+    <Parameter name="RefreshTokenReinitialize" value="false" />
     <Parameter name="TeamProjectOne" value="" />
     <Parameter name="TeamProjectTwo" value="" />
   </TestRunParameters>
