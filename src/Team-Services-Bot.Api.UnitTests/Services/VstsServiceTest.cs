@@ -86,10 +86,7 @@ namespace Vsar.TSBot.UnitTests.Services
                     new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2())
                     {
                         GetApprovalAsyncStringInt32NullableOfBooleanObjectCancellationToken = (p, i, includeHistory, userState, cancellationToken) => Task.Run(
-                            () =>
-                            {
-                                return new ReleaseApproval { Id = i };
-                            },
+                            () => new ReleaseApproval { Id = i },
                             cancellationToken),
                         UpdateReleaseApprovalAsyncReleaseApprovalStringInt32ObjectCancellationToken = (releaseApproval, p, i, userState, cancellationToken) => Task.Run(
                             delegate
