@@ -11,6 +11,7 @@ namespace Vsar.TSBot
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.Net;
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
@@ -49,25 +50,31 @@ namespace Vsar.TSBot
         /// <inheritdoc />
         public async Task<OAuthToken> GetToken(string code)
         {
-            var client = new HttpClient();
             var postData = string.Format(FormatPostData, HttpUtility.UrlEncode(this.appSecret), GrantTypeBearerToken, HttpUtility.UrlEncode(code), this.authorizeUrl);
-            var response = await client
-                .PostAsync(TokenUrl, new StringContent(postData, Encoding.UTF8, MediaType))
-                .ConfigureAwait(false);
 
-            return await response.Content.ReadAsAsync<OAuthToken>();
+            using (var client = new HttpClient())
+            {
+                var response = await client
+                    .PostAsync(TokenUrl, new StringContent(postData, Encoding.UTF8, MediaType))
+                    .ConfigureAwait(false);
+
+                return await response.Content.ReadAsAsync<OAuthToken>();
+            }
         }
 
         /// <inheritdoc />
         public async Task<OAuthToken> GetToken(OAuthToken token)
         {
-            var client = new HttpClient();
             var postData = string.Format(FormatPostData, HttpUtility.UrlEncode(this.appSecret), GrantTypeRefreshToken, HttpUtility.UrlEncode(token.RefreshToken), this.authorizeUrl);
-            var response = await client
-                .PostAsync(TokenUrl, new StringContent(postData, Encoding.UTF8, MediaType))
-                .ConfigureAwait(false);
 
-            return await response.Content.ReadAsAsync<OAuthToken>();
+            using (var client = new HttpClient())
+            {
+                var response = await client
+                    .PostAsync(TokenUrl, new StringContent(postData, Encoding.UTF8, MediaType))
+                    .ConfigureAwait(false);
+
+                return await response.Content.ReadAsAsync<OAuthToken>();
+            }
         }
     }
 }

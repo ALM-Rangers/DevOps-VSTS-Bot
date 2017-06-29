@@ -10,14 +10,28 @@
 namespace Vsar.TSBot.AcceptanceTests
 {
     using System;
+    using System.Globalization;
     using Microsoft.Bot.Connector;
     using Microsoft.Bot.Connector.DirectLine;
+    using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TechTalk.SpecFlow;
 
     public static class Config
     {
+        private static bool? refreshTokenReinitialize;
+
         public static string Account => TestContext.Properties["Account"].ToString();
+
+        public static ReleaseApproval Approval
+        {
+            get { return ScenarioContext.Current["Approval"] as ReleaseApproval; }
+            set { ScenarioContext.Current["Approval"] = value; }
+        }
+
+        public static string AppSecret => TestContext.Properties["AppSecret"].ToString();
+
+        public static Uri AuthorizeUrl => new Uri(TestContext.Properties["AuthorizeUrl"].ToString());
 
         public static string BotId => TestContext.Properties["BotId"].ToString();
 
@@ -58,11 +72,36 @@ namespace Vsar.TSBot.AcceptanceTests
 
         public static string MicrosoftApplicationPassword => TestContext.Properties["MicrosoftApplicationPassword"].ToString();
 
+        public static VstsProfile Profile
+        {
+            get { return (VstsProfile)ScenarioContext.Current["Profile"]; }
+            set { ScenarioContext.Current["Profile"] = value; }
+        }
+
         public static string RefreshToken => TestContext.Properties["RefreshToken"].ToString();
+
+        public static bool RefreshTokenReinitialize
+        {
+            get
+            {
+                return refreshTokenReinitialize.GetValueOrDefault(Convert.ToBoolean(TestContext.Properties["RefreshTokenReinitialize"], CultureInfo.InvariantCulture));
+            }
+
+            set
+            {
+                refreshTokenReinitialize = value;
+            }
+        }
 
         public static string TeamProjectOne => TestContext.Properties["TeamProjectOne"].ToString();
 
         public static string TeamProjectTwo => TestContext.Properties["TeamProjectTwo"].ToString();
+
+        public static OAuthToken Token
+        {
+            get { return (OAuthToken)ScenarioContext.Current["Token"]; }
+            set { ScenarioContext.Current["Token"] = value; }
+        }
 
         public static string UserName
         {

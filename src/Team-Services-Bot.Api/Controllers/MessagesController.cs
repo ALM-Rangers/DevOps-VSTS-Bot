@@ -15,6 +15,7 @@ namespace Vsar.TSBot
     using System.Threading.Tasks;
     using System.Web.Http;
     using Autofac;
+    using Autofac.Core;
     using Dialogs;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Connector;
@@ -56,7 +57,7 @@ namespace Vsar.TSBot
                 if (string.Equals(activity.Type, ActivityTypes.Message, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(activity.Type, ActivityTypes.ConversationUpdate, StringComparison.OrdinalIgnoreCase))
                 {
-                    var dialog = this.container.Resolve<RootDialog>();
+                    var dialog = this.container.Resolve<RootDialog>(new NamedParameter("eulaUri", new Uri($"{this.Request.RequestUri.GetLeftPart(UriPartial.Authority)}/Eula")));
                     await this.dialogInvoker.SendAsync(activity, () => dialog);
                 }
                 else

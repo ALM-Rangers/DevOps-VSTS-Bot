@@ -45,6 +45,16 @@ namespace Vsar.TSBot
         Task<IList<Account>> GetAccounts(OAuthToken token, Guid memberId);
 
         /// <summary>
+        /// Gets an <see cref="ReleaseApproval"/> by its id.
+        /// </summary>
+        /// <param name="token">A <see cref="OAuthToken"/></param>
+        /// <param name="account">The VSTS account.</param>
+        /// <param name="teamProject">The team project.</param>
+        /// <param name="approvalId">The approval id.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        Task<ReleaseApproval> GetApproval(OAuthToken token, string account, string teamProject, int approvalId);
+
+        /// <summary>
         /// Gets the approvals for the user.
         /// </summary>
         /// <param name="account">An account.</param>
@@ -78,6 +88,16 @@ namespace Vsar.TSBot
         /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
         /// <returns>Collection of <see cref="BuildDefinitionReference"/>.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Reviewed.")]
-        Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitions(string project, string account, OAuthToken token);
+        Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitionsAsync(string project, string account, OAuthToken token);
+
+        /// <summary>
+        /// Queues a release.
+        /// </summary>
+        /// <param name="account">The <see cref="Uri"/> that represents VSTS account URL.</param>
+        /// <param name="teamProject">The team project.</param>
+        /// <param name="token">The <see cref="OAuthToken"/>.</param>
+        /// <param name="definitionId">The name of a release definition.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        Task ReleaseQueueAsync(string account, string teamProject, OAuthToken token, int definitionId);
     }
 }
