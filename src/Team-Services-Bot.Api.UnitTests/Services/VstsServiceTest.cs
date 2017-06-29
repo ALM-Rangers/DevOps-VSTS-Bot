@@ -168,15 +168,15 @@ namespace Vsar.TSBot.UnitTests.Services
         [TestMethod]
         public async Task GetApprovalsTest()
         {
-            var service = new VstsService();
-            string accountName = "MyAccount";
-            string projectName = "MyProject";
-            VstsProfile profile = new VstsProfile
+            var accountName = "MyAccount";
+            var projectName = "MyProject";
+            var profile = new VstsProfile
             {
                 Id = Guid.NewGuid(),
                 Token = this.token,
                 EmailAddress = "me@email.com"
             };
+            var service = new VstsService();
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetApprovals(null, projectName, profile));
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetApprovals(accountName, null, profile));
@@ -227,9 +227,8 @@ namespace Vsar.TSBot.UnitTests.Services
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Test method shouldn't be a property. Test method name corresponds to method under test.")]
         public async Task GetProjectsTest()
         {
-            var service = new VstsService();
-
             var account = "anaccount";
+            var service = new VstsService();
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetProjects(null, this.token));
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetProjects(account, null));
@@ -309,10 +308,8 @@ namespace Vsar.TSBot.UnitTests.Services
 
                 InitializeConnectionShim(clients);
 
-                await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(
-                    async () => await service.GetBuildDefinitionsAsync("hisproject", "myaccount", this.token));
-                await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(
-                    async () => await service.GetBuildDefinitionsAsync("myproject", "hisaccount", this.token));
+                await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.GetBuildDefinitionsAsync("hisproject", "myaccount", this.token));
+                await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.GetBuildDefinitionsAsync("myproject", "hisaccount", this.token));
 
                 var actual = await service.GetBuildDefinitionsAsync("myproject", "myaccount", this.token);
                 Assert.AreEqual(expected, actual);
