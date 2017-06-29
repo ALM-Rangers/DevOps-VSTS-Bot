@@ -91,7 +91,7 @@ namespace Vsar.TSBot.AcceptanceTests
         public void ThenIsApprovedWithComment(KeyValuePair<string, string> teamProject)
         {
             var service = new VstsService();
-            var approval = service.GetApproval(Config.Profile.Token, Config.Account, teamProject.Value, Config.Approval.Id).Result;
+            var approval = service.GetApproval(Config.Account, teamProject.Value, Config.Approval.Id, Config.Profile.Token).Result;
 
             approval.Status.Should().Be(ApprovalStatus.Approved);
         }
@@ -100,7 +100,7 @@ namespace Vsar.TSBot.AcceptanceTests
         public void ThenIsRejectedWithComment(KeyValuePair<string, string> teamProject)
         {
             var service = new VstsService();
-            var approval = service.GetApproval(Config.Profile.Token, Config.Account, teamProject.Value, Config.Approval.Id).Result;
+            var approval = service.GetApproval(Config.Account, teamProject.Value, Config.Approval.Id, Config.Profile.Token).Result;
 
             approval.Status.Should().Be(ApprovalStatus.Rejected);
         }

@@ -20,7 +20,7 @@ namespace Vsar.TSBot.AcceptanceTests
         public void GivenIStartedOn(int definitionId, KeyValuePair<string, string> teamProject)
         {
             var service = new VstsService();
-            service.ReleaseQueueAsync(Config.Account, teamProject.Value, Config.Token, definitionId).Wait();
+            service.CreateReleaseAsync(Config.Account, teamProject.Value, definitionId, Config.Token).Wait();
 
             Thread.Sleep(TimeSpan.FromSeconds(2));
         }
