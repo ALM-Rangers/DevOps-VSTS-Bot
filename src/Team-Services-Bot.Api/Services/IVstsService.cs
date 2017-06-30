@@ -47,12 +47,12 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets an <see cref="ReleaseApproval"/> by its id.
         /// </summary>
-        /// <param name="token">A <see cref="OAuthToken"/></param>
         /// <param name="account">The VSTS account.</param>
         /// <param name="teamProject">The team project.</param>
         /// <param name="approvalId">The approval id.</param>
+        /// <param name="token">A <see cref="OAuthToken"/></param>
         /// <returns>A <see cref="Task"/>.</returns>
-        Task<ReleaseApproval> GetApproval(OAuthToken token, string account, string teamProject, int approvalId);
+        Task<ReleaseApproval> GetApproval(string account, string teamProject, int approvalId, OAuthToken token);
 
         /// <summary>
         /// Gets the approvals for the user.
@@ -91,13 +91,13 @@ namespace Vsar.TSBot
         Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitionsAsync(string project, string account, OAuthToken token);
 
         /// <summary>
-        /// Queues a release.
+        /// Creates a release.
         /// </summary>
-        /// <param name="account">The <see cref="Uri"/> that represents VSTS account URL.</param>
+        /// <param name="account">The VSTS account name</param>
         /// <param name="teamProject">The team project.</param>
-        /// <param name="token">The <see cref="OAuthToken"/>.</param>
-        /// <param name="definitionId">The name of a release definition.</param>
+        /// <param name="definitionId">Release definition ID.</param>
+        /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        Task ReleaseQueueAsync(string account, string teamProject, OAuthToken token, int definitionId);
+        Task CreateReleaseAsync(string account, string teamProject, int definitionId, OAuthToken token);
     }
 }
