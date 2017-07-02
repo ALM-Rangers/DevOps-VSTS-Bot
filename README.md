@@ -59,7 +59,7 @@
 Open the **Team-Services-Bot.sln** in the [src](https://github.com/ALM-Rangers/Team-Services-Bot/tree/Master/src) folder. It contains the projects and tests, which you can run with the Test Explorer in Visual Studio.
 
 ## Contributors
-We thank the following contributors for this extension: Robert Jarrett and Jeffrey Opdam.
+We thank the following contributors for this extension: Vladimir Gusarov and Jeffrey Opdam.
 
 ## Contribute
 Contributions to this project are welcome. Here is how you can contribute:  
