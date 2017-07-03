@@ -11,7 +11,6 @@ namespace Vsar.TSBot
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
@@ -170,11 +169,11 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitionsAsync(string project, string account, OAuthToken token)
+        public async Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitionsAsync(string teamProject, string account, OAuthToken token)
         {
-            if (string.IsNullOrWhiteSpace(project))
+            if (string.IsNullOrWhiteSpace(teamProject))
             {
-                throw new ArgumentNullException(nameof(project));
+                throw new ArgumentNullException(nameof(teamProject));
             }
 
             if (string.IsNullOrWhiteSpace(account))
@@ -187,11 +186,9 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(token));
             }
 
-            var teamProject = await this.GetProjectAsync(project, account, token);
-
             using (var client = await this.ConnectAsync<BuildHttpClient>(token, account))
             {
-                return await client.GetDefinitionsAsync(teamProject.Id);
+                return await client.GetDefinitionsAsync(teamProject, name: null);
             }
         }
 

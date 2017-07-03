@@ -440,28 +440,15 @@ namespace Vsar.TSBot.UnitTests.Services
 
                 var clients = new VssHttpClientBase[]
                 {
-                    GetAccountHttpClient(new List<Account>
-                    {
-                        new Account(Guid.Empty)
-                        {
-                            AccountName = "myaccount",
-                            AccountUri = new Uri("https://myaccount.visualstudio.com")
-                        }
-                    }),
-                    GetProjectHttpClient(new List<TeamProjectReference> { new TeamProjectReference { Name = "myproject" } }),
-                    GetProfileHttpClient(new Profile()),
                     new ShimBuildHttpClient
                     {
-                        GetDefinitionsAsyncGuidStringStringStringNullableOfDefinitionQueryOrderNullableOfInt32StringNullableOfDateTimeIEnumerableOfInt32StringNullableOfDateTimeNullableOfDateTimeObjectCancellationToken =
-                            (guid, s, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, cancellationToken) => Task.Run(() => expected, cancellationToken)
+                        GetDefinitionsAsyncStringStringStringStringNullableOfDefinitionQueryOrderNullableOfInt32StringNullableOfDateTimeIEnumerableOfInt32StringNullableOfDateTimeNullableOfDateTimeObjectCancellationToken =
+                        (s, s1, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, cancellationToken) => Task.Run(() => expected, cancellationToken)
                     }.Instance
                 };
 
                 InitializeConnectionShim(clients);
 
-                await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.GetBuildDefinitionsAsync("hisproject", "myaccount", this.token));
-
-                // await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.GetBuildDefinitionsAsync("myproject", "hisaccount", this.token));
                 IEnumerable<BuildDefinitionReference> actual = await service.GetBuildDefinitionsAsync("myproject", "myaccount", this.token);
                 Assert.AreEqual(expected, actual);
             }
