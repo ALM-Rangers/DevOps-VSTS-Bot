@@ -83,12 +83,12 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets build definitions from VSTS account for specified project
         /// </summary>
-        /// <param name="project">The Team Project name</param>
+        /// <param name="teamProject">The Team Project name</param>
         /// <param name="account">The VSTS account name</param>
         /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
         /// <returns>Collection of <see cref="BuildDefinitionReference"/>.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Reviewed.")]
-        Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitionsAsync(string project, string account, OAuthToken token);
+        Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitionsAsync(string teamProject, string account, OAuthToken token);
 
         /// <summary>
         /// Creates a release.
