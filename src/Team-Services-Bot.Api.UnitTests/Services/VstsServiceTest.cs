@@ -26,7 +26,6 @@ namespace Vsar.TSBot.UnitTests.Services
     using Microsoft.VisualStudio.Services.Profile.Client;
     using Microsoft.VisualStudio.Services.Profile.Client.Fakes;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
-    using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.Fakes;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Contracts;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Fakes;
