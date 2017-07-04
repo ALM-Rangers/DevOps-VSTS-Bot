@@ -181,6 +181,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ApprovalSteps.cs" />
+    <Compile Include="BuildSteps.cs" />
     <Compile Include="CommonSteps.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ConnectSteps.cs" />
@@ -188,6 +189,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Approvals.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\Builds.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Builds.feature</DependentUpon>
     </Compile>
     <Compile Include="Features\Connect.feature.cs">
       <AutoGen>True</AutoGen>
@@ -210,6 +216,10 @@
     <None Include="Features\Approvals.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>Approvals.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\Builds.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Builds.feature.cs</LastGenOutput>
     </None>
     <None Include="Features\Connect.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
