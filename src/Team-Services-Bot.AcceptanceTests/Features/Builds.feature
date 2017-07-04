@@ -11,7 +11,7 @@ Background:
 
 @Acceptance
 Scenario: List Builds
-	When I say 'approvals'
+	When I say 'builds'
 	Then I get a list of build definitions
 	| Name    |
 	| Build 1 |
