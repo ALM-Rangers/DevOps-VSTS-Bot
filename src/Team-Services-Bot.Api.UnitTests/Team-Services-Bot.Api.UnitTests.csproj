@@ -242,12 +242,14 @@
     </Compile>
     <Compile Include="Cards\AccountsCardTests.cs" />
     <Compile Include="Cards\ApprovalCardTests.cs" />
+    <Compile Include="Cards\BuildDefinitionCardTests.cs" />
     <Compile Include="Cards\LogOnCardTests.cs" />
     <Compile Include="Controllers\AuthorizeControllerTests.cs" />
     <Compile Include="Controllers\DefaultControllerTests.cs" />
     <Compile Include="Controllers\EulaControllerTests.cs" />
     <Compile Include="Controllers\MessagesControllerTests.cs" />
     <Compile Include="Dialogs\ApprovalsDialogTests.cs" />
+    <Compile Include="Dialogs\BuildsDialogTests.cs" />
     <Compile Include="Dialogs\ConnectDialogTests.cs" />
     <Compile Include="Extensions\AttachmentCollectionExtensionsTests.cs" />
     <Compile Include="Extensions\BotDataBagExtensionsTests.cs" />

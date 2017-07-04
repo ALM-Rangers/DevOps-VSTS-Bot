@@ -104,7 +104,7 @@ namespace Vsar.TSBot.UnitTests
 
             this.Fixture.DialogContext
                 .Verify(
-                    c => c.Wait<IMessageActivity>(
+                    c => c.Wait(
                         It.Is<ResumeAfter<IMessageActivity>>(a => a.Method == target.GetType().GetMethod("ApproveOrRejectAsync"))));
         }
 

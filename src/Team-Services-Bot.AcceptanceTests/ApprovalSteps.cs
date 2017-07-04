@@ -45,7 +45,6 @@ namespace Vsar.TSBot.AcceptanceTests
             for (var index = 0; index < cards.Count; index++)
             {
                 var row = table.Rows[index];
-
                 var card = cards[index];
 
                 card["text"].Value<string>().Should().Be(row["Environment"]);

@@ -150,7 +150,7 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<TeamProjectReference>> GetProjects(string account, OAuthToken token)
+        public async Task<IList<TeamProjectReference>> GetProjects(string account, OAuthToken token)
         {
             if (string.IsNullOrWhiteSpace(account))
             {
@@ -164,16 +164,17 @@ namespace Vsar.TSBot
 
             using (var client = await this.ConnectAsync<ProjectHttpClient>(token, account))
             {
-                return await client.GetProjects();
+                var results = await client.GetProjects();
+                return results.ToList();
             }
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitionsAsync(string project, string account, OAuthToken token)
+        public async Task<IList<BuildDefinitionReference>> GetBuildDefinitionsAsync(string teamProject, string account, OAuthToken token)
         {
-            if (string.IsNullOrWhiteSpace(project))
+            if (string.IsNullOrWhiteSpace(teamProject))
             {
-                throw new ArgumentNullException(nameof(project));
+                throw new ArgumentNullException(nameof(teamProject));
             }
 
             if (string.IsNullOrWhiteSpace(account))
@@ -186,11 +187,9 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(token));
             }
 
-            var teamProject = await this.GetProjectAsync(project, account, token);
-
             using (var client = await this.ConnectAsync<BuildHttpClient>(token, account))
             {
-                return await client.GetDefinitionsAsync(teamProject.Id);
+                return await client.GetDefinitionsAsync(teamProject, name: null);
             }
         }
 
@@ -263,6 +262,12 @@ namespace Vsar.TSBot
             var uri = !string.IsNullOrWhiteSpace(account) ? new Uri(string.Format(CultureInfo.InvariantCulture, VstsUrl, account)) : this.vstsAppUrl;
 
             return await new VssConnection(uri, credentials).GetClientAsync<T>();
+        }
+
+        private Task<Uri> GetAccountUriAsync(string account, OAuthToken token)
+        {
+            // Uri accountUri = (await this.GetAccountAsync(account, token)).AccountUri;
+            return Task.Run(() => new Uri(string.Format(CultureInfo.InvariantCulture, VstsUrl, account)));
         }
 
         /// <summary>
