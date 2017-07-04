@@ -9,11 +9,14 @@
 namespace Vsar.TSBot.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Threading;
     using System.Threading.Tasks;
     using Common.Tests;
     using Dialogs;
     using Microsoft.Bot.Connector;
+    using Microsoft.TeamFoundation.Build.WebApi;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
@@ -71,10 +74,46 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var mocked = new Mock<BuildsDialog>(this.Fixture.VstsService.Object) { CallBase = true };
-            var target = mocked.Object;
+            var target = new BuildsDialog(this.Fixture.VstsService.Object);
+            await target.BuildsAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
-            await Task.CompletedTask;
+            this.Fixture.DialogContext.Verify(c => c.Done(It.IsAny<IMessageActivity>()));
+        }
+
+        [TestMethod]
+        public async Task Builds()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "builds";
+
+            var account = "anaccount";
+            var profile = this.Fixture.CreateProfile();
+            var teamProject = "anteamproject";
+
+            var buildDefinitions = new List<BuildDefinitionReference> { new BuildDefinitionReference { Name = "Build 1" } };
+
+            var target = new BuildsDialog(this.Fixture.VstsService.Object);
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("Account", out account))
+                .Returns(true);
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("Profile", out profile))
+                .Returns(true);
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
+                .Returns(true);
+
+            this.Fixture.VstsService
+                .Setup(s => s.GetBuildDefinitionsAsync(teamProject, account, profile.Token))
+                .ReturnsAsync(buildDefinitions);
+
+            await target.BuildsAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            this.Fixture.VstsService.VerifyAll();
+
+            this.Fixture.DialogContext.Verify(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None));
+            this.Fixture.DialogContext.Verify(c => c.Done(It.IsAny<IMessageActivity>()));
         }
     }
 }

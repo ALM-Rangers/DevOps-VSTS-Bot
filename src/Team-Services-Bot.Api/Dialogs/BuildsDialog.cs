@@ -9,7 +9,12 @@
 namespace Vsar.TSBot.Dialogs
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+    using System.Runtime.Serialization;
     using System.Threading.Tasks;
+    using System.Web.Http;
+    using Cards;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
 
@@ -20,6 +25,8 @@ namespace Vsar.TSBot.Dialogs
     [Serializable]
     public class BuildsDialog : IDialog<object>
     {
+        private const string CommandMatchBuilds = "builds";
+
         [NonSerialized]
         private IVstsService vstsService;
 
@@ -37,6 +44,21 @@ namespace Vsar.TSBot.Dialogs
 
             this.vstsService = vstsService;
         }
+
+        /// <summary>
+        /// Gets or sets the account.
+        /// </summary>
+        public string Account { get; set; }
+
+        /// <summary>
+        /// Gets or sets the profile.
+        /// </summary>
+        public VstsProfile Profile { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Team Project.
+        /// </summary>
+        public string TeamProject { get; set; }
 
         /// <inheritdoc />
         public async Task StartAsync(IDialogContext context)
@@ -64,8 +86,36 @@ namespace Vsar.TSBot.Dialogs
                 throw new ArgumentNullException(nameof(result));
             }
 
+            this.Account = context.UserData.GetAccount();
+            this.Profile = context.UserData.GetProfile();
+            this.TeamProject = context.UserData.GetTeamProject();
+
             var activity = await result;
             var text = (activity.Text ?? string.Empty).ToLowerInvariant();
+            var reply = context.MakeMessage();
+
+            if (text.Equals(CommandMatchBuilds, StringComparison.OrdinalIgnoreCase))
+            {
+                var buildDefinitions = await this.vstsService.GetBuildDefinitionsAsync(this.TeamProject, this.Account, this.Profile.Token);
+                var cards = buildDefinitions.Select(bd => new BuildDefinitionCard(bd)).ToList();
+
+                foreach (var card in cards)
+                {
+                    reply.Attachments.Add(card);
+                }
+
+                reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+                await context.PostAsync(reply);
+            }
+
+            context.Done(reply);
+        }
+
+        [ExcludeFromCodeCoverage]
+        [OnSerializing]
+        private void OnSerializingMethod(StreamingContext context)
+        {
+            this.vstsService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IVstsService>();
         }
     }
 }

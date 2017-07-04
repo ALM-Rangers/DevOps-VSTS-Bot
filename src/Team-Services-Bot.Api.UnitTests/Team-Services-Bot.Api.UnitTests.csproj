@@ -242,6 +242,7 @@
     </Compile>
     <Compile Include="Cards\AccountsCardTests.cs" />
     <Compile Include="Cards\ApprovalCardTests.cs" />
+    <Compile Include="Cards\BuildDefinitionCardTests.cs" />
     <Compile Include="Cards\LogOnCardTests.cs" />
     <Compile Include="Controllers\AuthorizeControllerTests.cs" />
     <Compile Include="Controllers\DefaultControllerTests.cs" />

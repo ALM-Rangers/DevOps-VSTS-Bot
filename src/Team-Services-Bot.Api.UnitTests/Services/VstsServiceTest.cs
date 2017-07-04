@@ -14,6 +14,7 @@ namespace Vsar.TSBot.UnitTests.Services
     using System.Linq;
     using System.Threading.Tasks;
     using Common.Tests;
+    using FluentAssertions;
     using Microsoft.QualityTools.Testing.Fakes;
     using Microsoft.TeamFoundation.Build.WebApi;
     using Microsoft.TeamFoundation.Build.WebApi.Fakes;
@@ -416,7 +417,8 @@ namespace Vsar.TSBot.UnitTests.Services
 
                 // await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.GetProjects("someaccount", this.token));
                 IEnumerable<TeamProjectReference> actual = await service.GetProjects(accounts[0].AccountName, this.token);
-                Assert.AreEqual(expected, actual);
+
+                expected.ShouldAllBeEquivalentTo(actual);
             }
         }
 
@@ -450,7 +452,8 @@ namespace Vsar.TSBot.UnitTests.Services
                 InitializeConnectionShim(clients);
 
                 IEnumerable<BuildDefinitionReference> actual = await service.GetBuildDefinitionsAsync("myproject", "myaccount", this.token);
-                Assert.AreEqual(expected, actual);
+
+                expected.ShouldAllBeEquivalentTo(actual);
             }
         }
 

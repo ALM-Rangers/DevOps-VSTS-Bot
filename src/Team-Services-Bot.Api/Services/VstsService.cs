@@ -150,7 +150,7 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<TeamProjectReference>> GetProjects(string account, OAuthToken token)
+        public async Task<IList<TeamProjectReference>> GetProjects(string account, OAuthToken token)
         {
             if (string.IsNullOrWhiteSpace(account))
             {
@@ -164,12 +164,13 @@ namespace Vsar.TSBot
 
             using (var client = await this.ConnectAsync<ProjectHttpClient>(token, account))
             {
-                return await client.GetProjects();
+                var results = await client.GetProjects();
+                return results.ToList();
             }
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<BuildDefinitionReference>> GetBuildDefinitionsAsync(string teamProject, string account, OAuthToken token)
+        public async Task<IList<BuildDefinitionReference>> GetBuildDefinitionsAsync(string teamProject, string account, OAuthToken token)
         {
             if (string.IsNullOrWhiteSpace(teamProject))
             {
