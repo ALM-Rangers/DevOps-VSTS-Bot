@@ -44,10 +44,10 @@ namespace Vsar.TSBot.UnitTests
                 .AsSelf();
 
             var container = builder.Build();
+            var botService = new Mock<IBotService>();
             var dialogInvoker = new Mock<IDialogInvoker>();
 
-            var target =
-                new MessagesController(container, dialogInvoker.Object, telemetryClient)
+            var target = new MessagesController(botService.Object, container, dialogInvoker.Object, telemetryClient)
                 {
                     Request = new HttpRequestMessage { RequestUri = new Uri("https://somekindofurl/api/messages") }
                 };
@@ -75,10 +75,11 @@ namespace Vsar.TSBot.UnitTests
                 .AsSelf();
 
             var container = builder.Build();
+            var botService = new Mock<IBotService>();
             var dialogInvoker = new Mock<IDialogInvoker>();
 
             var target =
-                new MessagesController(container, dialogInvoker.Object, telemetryClient)
+                new MessagesController(botService.Object, container, dialogInvoker.Object, telemetryClient)
                 {
                     Request = new HttpRequestMessage { RequestUri = new Uri("https://somekindofurl/api/messages") }
                 };
@@ -106,10 +107,11 @@ namespace Vsar.TSBot.UnitTests
                 .AsSelf();
 
             var container = builder.Build();
+            var botService = new Mock<IBotService>();
             var dialogInvoker = new Mock<IDialogInvoker>();
 
             var target =
-                new MessagesController(container, dialogInvoker.Object, telemetryClient)
+                new MessagesController(botService.Object, container, dialogInvoker.Object, telemetryClient)
                 {
                     Request = new HttpRequestMessage()
                 };

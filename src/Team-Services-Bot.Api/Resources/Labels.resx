@@ -161,4 +161,7 @@
   <data name="MissingComment" xml:space="preserve">
     <value>Please provide a comment.</value>
   </data>
+  <data name="UserDataDeleted" xml:space="preserve">
+    <value>Your personal user data has been deleted.</value>
+  </data>
 </root>

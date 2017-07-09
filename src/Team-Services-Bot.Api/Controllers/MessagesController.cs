@@ -18,7 +18,10 @@ namespace Vsar.TSBot
     using Autofac.Core;
     using Dialogs;
     using Microsoft.ApplicationInsights;
+    using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
+    using Microsoft.VisualStudio.Services.Common;
+    using Resources;
 
     /// <summary>
     /// Represents the <see cref="ApiController"/> that handles incoming messages from the bot connector.
@@ -27,17 +30,20 @@ namespace Vsar.TSBot
     public class MessagesController : ApiController
     {
         private readonly IComponentContext container;
+        private readonly IBotService botService;
         private readonly IDialogInvoker dialogInvoker;
         private readonly TelemetryClient telemetryClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagesController"/> class.
         /// </summary>
+        /// <param name="botService">The botService.</param>
         /// <param name="container">A <see cref="IComponentContext"/>.</param>
         /// <param name="dialogInvoker">A <see cref="IDialogInvoker"/>.</param>
         /// <param name="telemetryClient">A <see cref="TelemetryClient"/>.</param>
-        public MessagesController(IComponentContext container, IDialogInvoker dialogInvoker, TelemetryClient telemetryClient)
+        public MessagesController(IBotService botService, IComponentContext container, IDialogInvoker dialogInvoker, TelemetryClient telemetryClient)
         {
+            this.botService = botService;
             this.container = container;
             this.dialogInvoker = dialogInvoker;
             this.telemetryClient = telemetryClient;
@@ -75,12 +81,16 @@ namespace Vsar.TSBot
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Reviewed.")]
-        private void HandleSystemMessage(Activity message)
+        private async void HandleSystemMessage(Activity message)
         {
             if (string.Compare(message.Type, ActivityTypes.DeleteUserData, StringComparison.OrdinalIgnoreCase) == 0)
             {
-                // Implement user deletion here
-                // If we handle user deletion, return a real message
+                var data = await this.botService.GetUserData(message.ChannelId, message.From.Id);
+                await this.botService.SetUserData(message.ChannelId, message.From.Id, new BotData(data.ETag));
+
+                var reply = message.CreateReply(Labels.UserDataDeleted);
+                var connector = new ConnectorClient(new Uri(message.ServiceUrl));
+                connector.Conversations.ReplyToActivity(reply);
             }
             else if (string.Compare(message.Type, ActivityTypes.ConversationUpdate, StringComparison.OrdinalIgnoreCase) == 0)
             {
