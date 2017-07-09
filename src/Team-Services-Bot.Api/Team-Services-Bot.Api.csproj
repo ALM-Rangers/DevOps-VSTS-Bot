@@ -367,7 +367,7 @@
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
     <Content Include="..\Common\StrongNameKey.snk" />
     <Content Include="AppSettings.config" />
-    <None Include="Views\Authorize\Index.cshtml" />
+    <Content Include="Views\Authorize\Index.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Default\Index.cshtml" />
     <Content Include="Views\Eula\Index.cshtml" />
