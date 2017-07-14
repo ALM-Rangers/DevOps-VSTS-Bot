@@ -66,6 +66,60 @@ namespace Vsar.TSBot
             }
         }
 
+        /// <inheritdoc />
+        public async Task CreateReleaseAsync(string account, string teamProject, int definitionId, OAuthToken token)
+        {
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
+            }
+
+            if (definitionId <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(definitionId));
+            }
+
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            ReleaseDefinition definition;
+
+            using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
+            {
+                definition = await client.GetReleaseDefinitionAsync(teamProject, definitionId);
+            }
+
+            Artifact artifact;
+            Build build;
+
+            using (var client = await this.ConnectAsync<BuildHttpClient>(token, account))
+            {
+                artifact = definition.Artifacts.FirstOrDefault(a => a.IsPrimary);
+
+                var builds = await client.GetBuildsAsync2(teamProject, new List<int> { Convert.ToInt32(artifact.DefinitionReference["definition"].Id) });
+                build = builds.FirstOrDefault();
+            }
+
+            using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
+            {
+                var artifactMetaData = new ArtifactMetadata
+                {
+                    Alias = artifact.Alias,
+                    InstanceReference = new BuildVersion { Id = build.Id.ToString() }
+                };
+
+                var metaData = new ReleaseStartMetadata { DefinitionId = definitionId, Artifacts = new List<ArtifactMetadata> { artifactMetaData } };
+                await client.CreateReleaseAsync(metaData, teamProject);
+            }
+        }
+
         /// <inheritdoc/>
         public async Task<IList<Account>> GetAccounts(OAuthToken token, Guid memberId)
         {
@@ -194,7 +248,7 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc />
-        public async Task CreateReleaseAsync(string account, string teamProject, int definitionId, OAuthToken token)
+        public async Task QueueBuildAsync(string account, string teamProject, int definitionId, OAuthToken token)
         {
             if (string.IsNullOrWhiteSpace(account))
             {
@@ -216,34 +270,11 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(token));
             }
 
-            ReleaseDefinition definition;
-
-            using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
-            {
-                definition = await client.GetReleaseDefinitionAsync(teamProject, definitionId);
-            }
-
-            Artifact artifact;
-            Build build;
-
             using (var client = await this.ConnectAsync<BuildHttpClient>(token, account))
             {
-                artifact = definition.Artifacts.FirstOrDefault(a => a.IsPrimary);
+                var build = new Build { Definition = new BuildDefinitionReference { Id = definitionId } };
 
-                var builds = await client.GetBuildsAsync2(teamProject, new List<int> { Convert.ToInt32(artifact.DefinitionReference["definition"].Id) });
-                build = builds.FirstOrDefault();
-            }
-
-            using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
-            {
-                var artifactMetaData = new ArtifactMetadata
-                {
-                    Alias = artifact.Alias,
-                    InstanceReference = new BuildVersion { Id = build.Id.ToString() }
-                };
-
-                var metaData = new ReleaseStartMetadata { DefinitionId = definitionId, Artifacts = new List<ArtifactMetadata> { artifactMetaData } };
-                await client.CreateReleaseAsync(metaData, teamProject);
+                await client.QueueBuildAsync(build, teamProject);
             }
         }
 
@@ -262,32 +293,6 @@ namespace Vsar.TSBot
             var uri = !string.IsNullOrWhiteSpace(account) ? new Uri(string.Format(CultureInfo.InvariantCulture, VstsUrl, account)) : this.vstsAppUrl;
 
             return await new VssConnection(uri, credentials).GetClientAsync<T>();
-        }
-
-        private Task<Uri> GetAccountUriAsync(string account, OAuthToken token)
-        {
-            // Uri accountUri = (await this.GetAccountAsync(account, token)).AccountUri;
-            return Task.Run(() => new Uri(string.Format(CultureInfo.InvariantCulture, VstsUrl, account)));
-        }
-
-        /// <summary>
-        /// Gets team project from VSTS account by name
-        /// </summary>
-        /// <param name="projectName">The team project name.</param>
-        /// <param name="account">The VSTS Account name.</param>
-        /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
-        /// <returns><see cref="TeamProjectReference"/></returns>
-        private async Task<TeamProjectReference> GetProjectAsync(string projectName, string account, OAuthToken token)
-        {
-            var projects = await this.GetProjects(account, token);
-            var project = projects.FirstOrDefault(p => string.Equals(p.Name, projectName, StringComparison.OrdinalIgnoreCase));
-
-            if (project == default(TeamProjectReference))
-            {
-                throw new ArgumentOutOfRangeException(nameof(projectName), projectName, Exceptions.TeamProjectNotFound);
-            }
-
-            return project;
         }
     }
 }

@@ -113,6 +113,88 @@ namespace Vsar.TSBot.UnitTests.Services
         }
 
         /// <summary>
+        /// Tests <see cref="VstsService.CreateReleaseAsync"/> method.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing asynchronous unit test.</returns>
+        [TestMethod]
+        public async Task CreateReleaseAsyncTest()
+        {
+            var accountName = "myaccount";
+            var projectName = "myproject";
+            var service = new VstsService();
+            int id = 1;
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.CreateReleaseAsync(null, projectName, id, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.CreateReleaseAsync(accountName, null, id, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.CreateReleaseAsync(accountName, projectName, 0, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.CreateReleaseAsync(accountName, projectName, id, null));
+
+            using (ShimsContext.Create())
+            {
+                var shimBuildHttpClient = new ShimBuildHttpClient();
+
+                shimBuildHttpClient.SendAsyncOf1HttpMethodGuidObjectApiResourceVersionHttpContentIEnumerableOfKeyValuePairOfStringStringObjectCancellationTokenFuncOfHttpResponseMessageCancellationTokenTaskOfM0<IPagedList<Build>>((method, guid, arg3, apiResourceVersion, content, queryParams, arg7, cancellationToken, arg9) => Task.Run(
+                    () =>
+                    {
+                        var list = new StubIPagedList<Build>
+                        {
+                            CountGet = () => 1,
+                            ItemGetInt32 = i => new Build { Id = 12345 }
+                        };
+
+                        return (IPagedList<Build>)list;
+                    },
+                    cancellationToken));
+
+                InitializeConnectionShim(new VssHttpClientBase[]
+                {
+                    GetAccountHttpClient(new List<Account>
+                    {
+                        new Account(Guid.Empty)
+                        {
+                            AccountName = "myaccount",
+                            AccountUri = new Uri("https://myaccount.visualstudio.com")
+                        }
+                    }),
+                    GetProfileHttpClient(new Profile()),
+                    new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2())
+                    {
+                        GetReleaseDefinitionAsyncStringInt32IEnumerableOfStringObjectCancellationToken = (project, definitionId, filters, userState, cancellationToken) => Task.Run(
+                            () =>
+                            {
+                                return new ReleaseDefinition()
+                                {
+                                    Artifacts = new List<Artifact>
+                                    {
+                                        new Artifact
+                                        {
+                                            IsPrimary = true,
+                                            Alias = "mybuildartifcat",
+                                            DefinitionReference = new Dictionary<string, ArtifactSourceReference>
+                                            {
+                                                { "definition", new ArtifactSourceReference { Id = "1234" } }
+                                            }
+                                        }
+                                    }
+                                };
+                            }),
+                        CreateReleaseAsyncReleaseStartMetadataStringObjectCancellationToken = (startMetadata, project, userState, cancellationToken) => Task.Run(
+                            () =>
+                            {
+                                Assert.AreEqual(projectName, project);
+                                return new Release();
+                            },
+                            cancellationToken)
+                    },
+                    shimBuildHttpClient.Instance
+                });
+
+                // await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.CreateReleaseAsync("someaccount", projectName, id, this.token));
+                await service.CreateReleaseAsync(accountName, projectName, id, this.token);
+            }
+        }
+
+        /// <summary>
         /// Tests <see cref="VstsService.GetApprovals"/>
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -238,88 +320,6 @@ namespace Vsar.TSBot.UnitTests.Services
                 Assert.IsNotNull(actual);
                 Assert.AreEqual(expected, actual);
                 Assert.AreEqual(id, actual.Id);
-            }
-        }
-
-        /// <summary>
-        /// Tests <see cref="VstsService.CreateReleaseAsync"/> method.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing asynchronous unit test.</returns>
-        [TestMethod]
-        public async Task CreateReleaseAsyncTest()
-        {
-            var accountName = "myaccount";
-            var projectName = "myproject";
-            var service = new VstsService();
-            int id = 1;
-
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.CreateReleaseAsync(null, projectName, id, this.token));
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.CreateReleaseAsync(accountName, null, id, this.token));
-            await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.CreateReleaseAsync(accountName, projectName, 0, this.token));
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.CreateReleaseAsync(accountName, projectName, id, null));
-
-            using (ShimsContext.Create())
-            {
-                var shimBuildHttpClient = new ShimBuildHttpClient();
-
-                shimBuildHttpClient.SendAsyncOf1HttpMethodGuidObjectApiResourceVersionHttpContentIEnumerableOfKeyValuePairOfStringStringObjectCancellationTokenFuncOfHttpResponseMessageCancellationTokenTaskOfM0<IPagedList<Build>>((method, guid, arg3, apiResourceVersion, content, queryParams, arg7, cancellationToken, arg9) => Task.Run(
-                    () =>
-                    {
-                        var list = new StubIPagedList<Build>
-                        {
-                            CountGet = () => 1,
-                            ItemGetInt32 = i => new Build { Id = 12345 }
-                        };
-
-                        return (IPagedList<Build>)list;
-                    },
-                    cancellationToken));
-
-                InitializeConnectionShim(new VssHttpClientBase[]
-                {
-                    GetAccountHttpClient(new List<Account>
-                    {
-                        new Account(Guid.Empty)
-                        {
-                            AccountName = "myaccount",
-                            AccountUri = new Uri("https://myaccount.visualstudio.com")
-                        }
-                    }),
-                    GetProfileHttpClient(new Profile()),
-                    new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2())
-                    {
-                        GetReleaseDefinitionAsyncStringInt32IEnumerableOfStringObjectCancellationToken = (project, definitionId, filters, userState, cancellationToken) => Task.Run(
-                            () =>
-                            {
-                                return new ReleaseDefinition()
-                                {
-                                    Artifacts = new List<Artifact>
-                                    {
-                                        new Artifact
-                                        {
-                                            IsPrimary = true,
-                                            Alias = "mybuildartifcat",
-                                            DefinitionReference = new Dictionary<string, ArtifactSourceReference>
-                                            {
-                                                { "definition", new ArtifactSourceReference { Id = "1234" } }
-                                            }
-                                        }
-                                    }
-                                };
-                            }),
-                        CreateReleaseAsyncReleaseStartMetadataStringObjectCancellationToken = (startMetadata, project, userState, cancellationToken) => Task.Run(
-                            () =>
-                            {
-                                Assert.AreEqual(projectName, project);
-                                return new Release();
-                            },
-                            cancellationToken)
-                    },
-                    shimBuildHttpClient.Instance
-                });
-
-                // await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.CreateReleaseAsync("someaccount", projectName, id, this.token));
-                await service.CreateReleaseAsync(accountName, projectName, id, this.token);
             }
         }
 
@@ -454,6 +454,41 @@ namespace Vsar.TSBot.UnitTests.Services
                 IEnumerable<BuildDefinitionReference> actual = await service.GetBuildDefinitionsAsync("myproject", "myaccount", this.token);
 
                 expected.ShouldAllBeEquivalentTo(actual);
+            }
+        }
+
+        [TestMethod]
+        public async Task QueueBuildAsyncTest()
+        {
+            var accountName = "myaccount";
+            var teamProjectName = "myproject";
+            var service = new VstsService();
+            var id = 1;
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.QueueBuildAsync(null, teamProjectName, id, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.QueueBuildAsync(accountName, null, id, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.QueueBuildAsync(accountName, teamProjectName, 0, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.QueueBuildAsync(accountName, teamProjectName, id, null));
+
+            using (ShimsContext.Create())
+            {
+                var client = new ShimBuildHttpClientBase(new ShimBuildHttpClient());
+
+                InitializeConnectionShim(client.Instance);
+
+                client.QueueBuildAsyncBuildStringNullableOfBooleanStringObjectCancellationToken =
+                    (build, teamProject, arg3, arg4, arg5, cancellationToken) =>
+                        Task.Run(
+                            () =>
+                            {
+                                build.Definition.Id.Should().Be(id);
+                                teamProject.Should().Be(teamProjectName);
+
+                                return new Build();
+                            },
+                            cancellationToken);
+
+                await service.QueueBuildAsync(accountName, teamProjectName, id, this.token);
             }
         }
 

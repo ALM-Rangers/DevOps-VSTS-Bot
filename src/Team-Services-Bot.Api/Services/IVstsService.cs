@@ -36,6 +36,16 @@ namespace Vsar.TSBot
         Task ChangeApprovalStatus(string account, string teamProject, VstsProfile profile, int approvalId, ApprovalStatus status, string comments);
 
         /// <summary>
+        /// Creates a release.
+        /// </summary>
+        /// <param name="account">The VSTS account name</param>
+        /// <param name="teamProject">The team project.</param>
+        /// <param name="definitionId">Release definition Id.</param>
+        /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        Task CreateReleaseAsync(string account, string teamProject, int definitionId, OAuthToken token);
+
+        /// <summary>
         /// Gets the accounts for which an user is a member.
         /// </summary>
         /// <param name="token">A <see cref="OAuthToken"/>.</param>
@@ -91,13 +101,13 @@ namespace Vsar.TSBot
         Task<IList<BuildDefinitionReference>> GetBuildDefinitionsAsync(string teamProject, string account, OAuthToken token);
 
         /// <summary>
-        /// Creates a release.
+        /// Queues a build.
         /// </summary>
         /// <param name="account">The VSTS account name</param>
         /// <param name="teamProject">The team project.</param>
-        /// <param name="definitionId">Release definition ID.</param>
+        /// <param name="definitionId">Build definition Id.</param>
         /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        Task CreateReleaseAsync(string account, string teamProject, int definitionId, OAuthToken token);
+        Task QueueBuildAsync(string account, string teamProject, int definitionId, OAuthToken token);
     }
 }
