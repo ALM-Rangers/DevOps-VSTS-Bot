@@ -105,7 +105,7 @@ namespace Vsar.TSBot.UnitTests
                 .Returns(true);
 
             this.Fixture.VstsService
-                .Setup(s => s.GetBuildDefinitionsAsync(teamProject, account, profile.Token))
+                .Setup(s => s.GetBuildDefinitionsAsync(account, teamProject, profile.Token))
                 .ReturnsAsync(buildDefinitions);
 
             await target.BuildsAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));

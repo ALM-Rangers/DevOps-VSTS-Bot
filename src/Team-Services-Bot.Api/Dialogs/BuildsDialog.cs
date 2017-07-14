@@ -98,7 +98,7 @@ namespace Vsar.TSBot.Dialogs
 
             if (text.Equals(CommandMatchBuilds, StringComparison.OrdinalIgnoreCase))
             {
-                var buildDefinitions = await this.vstsService.GetBuildDefinitionsAsync(this.TeamProject, this.Account, this.Profile.Token);
+                var buildDefinitions = await this.vstsService.GetBuildDefinitionsAsync(this.Account, this.TeamProject, this.Profile.Token);
                 var cards = buildDefinitions.Select(bd => new BuildDefinitionCard(bd)).ToList();
 
                 foreach (var card in cards)

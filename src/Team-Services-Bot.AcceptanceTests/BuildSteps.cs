@@ -10,6 +10,7 @@
 namespace Vsar.TSBot.AcceptanceTests
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using FluentAssertions;
     using Microsoft.Bot.Connector.DirectLine;
@@ -19,6 +20,7 @@ namespace Vsar.TSBot.AcceptanceTests
     [Binding]
     public class BuildSteps
     {
+        [Given(@"I get a list of build definitions")]
         [Then(@"I get a list of build definitions")]
         public void ThenIGetAListOfBuildDefinitions(Table table)
         {
@@ -35,6 +37,16 @@ namespace Vsar.TSBot.AcceptanceTests
 
                 card["title"].Value<string>().Should().Be(row["Name"]);
             }
+        }
+
+        [Then(@"A build with id '(.*)' should exist on '(.*)'")]
+        public void ThenABuildWithIdShouldExist(int buildId, KeyValuePair<string, string> teamProject)
+        {
+            var service = new VstsService();
+
+            var build = service.GetBuildAsync(Config.Account, teamProject.Value, buildId, Config.Token).Result;
+
+            build.Should().NotBeNull();
         }
     }
 }

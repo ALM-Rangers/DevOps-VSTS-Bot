@@ -323,6 +323,75 @@ namespace Vsar.TSBot.UnitTests.Services
             }
         }
 
+        [TestMethod]
+        public async Task GetBuildTest()
+        {
+            var accountName = "myaccount";
+            var teamProjectName = "myproject";
+            var service = new VstsService();
+            var id = 1;
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildAsync(null, teamProjectName, id, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildAsync(accountName, null, id, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.GetBuildAsync(accountName, teamProjectName, 0, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildAsync(accountName, teamProjectName, 1, null));
+
+            using (ShimsContext.Create())
+            {
+                var client = new ShimBuildHttpClientBase(new ShimBuildHttpClient());
+
+                InitializeConnectionShim(client.Instance);
+
+                client.GetBuildAsyncStringInt32StringObjectCancellationToken = (teamProject, buildId, arg3, arg4, cancellationToken) =>
+                    Task.Run(
+                        () =>
+                        {
+                            teamProject.Should().Be(teamProjectName);
+                            buildId.Should().Be(id);
+
+                            return new Build();
+                        },
+                        cancellationToken);
+
+                await service.GetBuildAsync(accountName, teamProjectName, id, this.token);
+            }
+        }
+
+        /// <summary>
+        /// Tests <see cref="VstsService.GetBuildDefinitionsAsync"/>.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [TestMethod]
+        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Test method shouldn't be a property. Test method name corresponds to method under test.")]
+        public async Task GetBuildDefinitionsTest()
+        {
+            var service = new VstsService();
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync(null, "myproject", this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync("myaccount", null, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync("myaccount", "myproject", null));
+
+            using (ShimsContext.Create())
+            {
+                var expected = new List<BuildDefinitionReference>();
+
+                var clients = new VssHttpClientBase[]
+                {
+                    new ShimBuildHttpClient
+                    {
+                        GetDefinitionsAsyncStringStringStringStringNullableOfDefinitionQueryOrderNullableOfInt32StringNullableOfDateTimeIEnumerableOfInt32StringNullableOfDateTimeNullableOfDateTimeObjectCancellationToken =
+                            (s, s1, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, cancellationToken) => Task.Run(() => expected, cancellationToken)
+                    }.Instance
+                };
+
+                InitializeConnectionShim(clients);
+
+                IEnumerable<BuildDefinitionReference> actual = await service.GetBuildDefinitionsAsync("myaccount", "myproject", this.token);
+
+                expected.ShouldAllBeEquivalentTo(actual);
+            }
+        }
+
         /// <summary>
         /// Tests <see cref="VstsService.GetProfile"/>
         /// </summary>
@@ -417,41 +486,6 @@ namespace Vsar.TSBot.UnitTests.Services
 
                 // await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.GetProjects("someaccount", this.token));
                 IEnumerable<TeamProjectReference> actual = await service.GetProjects(accounts[0].AccountName, this.token);
-
-                expected.ShouldAllBeEquivalentTo(actual);
-            }
-        }
-
-        /// <summary>
-        /// Tests <see cref="VstsService.GetBuildDefinitionsAsync"/>.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [TestMethod]
-        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Test method shouldn't be a property. Test method name corresponds to method under test.")]
-        public async Task GetBuildDefinitionsTest()
-        {
-            var service = new VstsService();
-
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync(null, "myaccount", this.token));
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync("myproject", null, this.token));
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync("myproject", "myaccount", null));
-
-            using (ShimsContext.Create())
-            {
-                var expected = new List<BuildDefinitionReference>();
-
-                var clients = new VssHttpClientBase[]
-                {
-                    new ShimBuildHttpClient
-                    {
-                        GetDefinitionsAsyncStringStringStringStringNullableOfDefinitionQueryOrderNullableOfInt32StringNullableOfDateTimeIEnumerableOfInt32StringNullableOfDateTimeNullableOfDateTimeObjectCancellationToken =
-                        (s, s1, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, cancellationToken) => Task.Run(() => expected, cancellationToken)
-                    }.Instance
-                };
-
-                InitializeConnectionShim(clients);
-
-                IEnumerable<BuildDefinitionReference> actual = await service.GetBuildDefinitionsAsync("myproject", "myaccount", this.token);
 
                 expected.ShouldAllBeEquivalentTo(actual);
             }

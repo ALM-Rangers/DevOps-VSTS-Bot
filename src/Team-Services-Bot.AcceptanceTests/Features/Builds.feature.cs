@@ -125,6 +125,33 @@ this.FeatureBackground();
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("List & Queue Build")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Builds")]
+        public virtual void ListQueueBuild()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("List & Queue Build", ((string[])(null)));
+#line 19
+this.ScenarioSetup(scenarioInfo);
+#line 4
+this.FeatureBackground();
+#line 20
+ testRunner.Given("I say \'builds\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Name"});
+            table2.AddRow(new string[] {
+                        "Build 1"});
+#line 21
+ testRunner.And("I get a list of build definitions", ((string)(null)), table2, "And ");
+#line 24
+ testRunner.When("I say \'queue 1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 25
+ testRunner.Then("A build with id \'1\' should exist on \'config:TeamProjectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

@@ -190,6 +190,58 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc/>
+        public async Task<Build> GetBuildAsync(string account, string teamProject, int id, OAuthToken token)
+        {
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
+            }
+
+            if (id <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(id));
+            }
+
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            await Task.CompletedTask;
+
+            return new Build();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IList<BuildDefinitionReference>> GetBuildDefinitionsAsync(string account, string teamProject, OAuthToken token)
+        {
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
+            }
+
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            using (var client = await this.ConnectAsync<BuildHttpClient>(token, account))
+            {
+                return await client.GetDefinitionsAsync(teamProject, name: null);
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<Profile> GetProfile(OAuthToken token)
         {
             if (token == null)
@@ -220,30 +272,6 @@ namespace Vsar.TSBot
             {
                 var results = await client.GetProjects();
                 return results.ToList();
-            }
-        }
-
-        /// <inheritdoc/>
-        public async Task<IList<BuildDefinitionReference>> GetBuildDefinitionsAsync(string teamProject, string account, OAuthToken token)
-        {
-            if (string.IsNullOrWhiteSpace(teamProject))
-            {
-                throw new ArgumentNullException(nameof(teamProject));
-            }
-
-            if (string.IsNullOrWhiteSpace(account))
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
-
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
-
-            using (var client = await this.ConnectAsync<BuildHttpClient>(token, account))
-            {
-                return await client.GetDefinitionsAsync(teamProject, name: null);
             }
         }
 
