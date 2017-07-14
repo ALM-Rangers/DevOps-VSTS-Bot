@@ -164,4 +164,7 @@
   <data name="UserDataDeleted" xml:space="preserve">
     <value>Your personal user data has been deleted.</value>
   </data>
+  <data name="Queue" xml:space="preserve">
+    <value>Queue</value>
+  </data>
 </root>

@@ -12,6 +12,7 @@ namespace Vsar.TSBot.Dialogs
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Runtime.Serialization;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Web.Http;
     using Cards;
@@ -26,6 +27,7 @@ namespace Vsar.TSBot.Dialogs
     public class BuildsDialog : IDialog<object>
     {
         private const string CommandMatchBuilds = "builds";
+        private const string CommandMatchQueue = @"queue (\d)";
 
         [NonSerialized]
         private IVstsService vstsService;
@@ -106,6 +108,31 @@ namespace Vsar.TSBot.Dialogs
 
                 reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
                 await context.PostAsync(reply);
+
+                context.Wait(this.QueueAsync);
+            }
+
+            context.Done(reply);
+        }
+
+        /// <summary>
+        /// Queues a build.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/>.</param>
+        /// <param name="result">A <see cref="IMessageActivity"/>/</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public async Task QueueAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            var activity = await result;
+            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
+            var reply = context.MakeMessage();
+
+            var match = Regex.Match(text, CommandMatchQueue);
+            if (match.Success)
+            {
+                var buildDefinitionId = Convert.ToInt32(match.Groups[1].Value);
+
+                await this.vstsService.QueueBuildAsync(this.Account, this.TeamProject, buildDefinitionId, this.Profile.Token);
             }
 
             context.Done(reply);

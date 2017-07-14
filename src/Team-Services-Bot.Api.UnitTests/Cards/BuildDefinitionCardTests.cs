@@ -9,6 +9,7 @@
 namespace Vsar.TSBot.UnitTests.Cards
 {
     using System;
+    using System.Linq;
     using Common.Tests;
     using FluentAssertions;
     using Microsoft.TeamFoundation.Build.WebApi;
@@ -28,10 +29,12 @@ namespace Vsar.TSBot.UnitTests.Cards
         [TestMethod]
         public void Constructor()
         {
-            var buildDefinition = new BuildDefinitionReference { Name = "Build 1" };
+            var buildDefinition = new BuildDefinitionReference { Id = 1, Name = "Build 1" };
 
             var target = new BuildDefinitionCard(buildDefinition);
             target.Title.Should().Be(buildDefinition.Name);
+
+            target.Buttons.First().Value.Should().Be("queue 1");
         }
     }
 }

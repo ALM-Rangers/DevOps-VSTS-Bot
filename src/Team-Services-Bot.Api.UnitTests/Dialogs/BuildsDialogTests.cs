@@ -113,6 +113,46 @@ namespace Vsar.TSBot.UnitTests
             this.Fixture.VstsService.VerifyAll();
 
             this.Fixture.DialogContext.Verify(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None));
+            this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.QueueAsync));
+        }
+
+        [TestMethod]
+        public async Task Queue_No_Text()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = null;
+
+            var target = new BuildsDialog(this.Fixture.VstsService.Object);
+            await target.QueueAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            this.Fixture.DialogContext.Verify(c => c.Done(It.IsAny<IMessageActivity>()));
+        }
+
+        [TestMethod]
+        public async Task Queue()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "queue 1";
+
+            var account = "anaccount";
+            var profile = this.Fixture.CreateProfile();
+            var teamProject = "anteamproject";
+
+            var target = new BuildsDialog(this.Fixture.VstsService.Object)
+            {
+                Account = account,
+                Profile = profile,
+                TeamProject = teamProject
+            };
+
+            this.Fixture.VstsService
+                .Setup(s => s.QueueBuildAsync(account, teamProject, 1, profile.Token))
+                .Returns(Task.CompletedTask);
+
+            await target.QueueAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            this.Fixture.VstsService.VerifyAll();
+
             this.Fixture.DialogContext.Verify(c => c.Done(It.IsAny<IMessageActivity>()));
         }
     }
