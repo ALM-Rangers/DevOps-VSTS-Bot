@@ -18,6 +18,7 @@ namespace Vsar.TSBot.Dialogs
     using Cards;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
+    using Resources;
 
     /// <summary>
     /// Represents the dialog to list/queue builds.
@@ -27,7 +28,7 @@ namespace Vsar.TSBot.Dialogs
     public class BuildsDialog : IDialog<object>
     {
         private const string CommandMatchBuilds = "builds";
-        private const string CommandMatchQueue = @"queue (\d)";
+        private const string CommandMatchQueue = @"queue (\d+)";
 
         [NonSerialized]
         private IVstsService vstsService;
@@ -98,7 +99,8 @@ namespace Vsar.TSBot.Dialogs
 
             if (text.Equals(CommandMatchBuilds, StringComparison.OrdinalIgnoreCase))
             {
-                var buildDefinitions = await this.vstsService.GetBuildDefinitionsAsync(this.Account, this.TeamProject, this.Profile.Token);
+                var buildDefinitions =
+                    await this.vstsService.GetBuildDefinitionsAsync(this.Account, this.TeamProject, this.Profile.Token);
                 var cards = buildDefinitions.Select(bd => new BuildDefinitionCard(bd)).ToList();
 
                 foreach (var card in cards)
@@ -111,8 +113,10 @@ namespace Vsar.TSBot.Dialogs
 
                 context.Wait(this.QueueAsync);
             }
-
-            context.Done(reply);
+            else
+            {
+                context.Done(reply);
+            }
         }
 
         /// <summary>
@@ -132,7 +136,10 @@ namespace Vsar.TSBot.Dialogs
             {
                 var buildDefinitionId = Convert.ToInt32(match.Groups[1].Value);
 
-                await this.vstsService.QueueBuildAsync(this.Account, this.TeamProject, buildDefinitionId, this.Profile.Token);
+                var build = await this.vstsService.QueueBuildAsync(this.Account, this.TeamProject, buildDefinitionId, this.Profile.Token);
+                reply.Text = string.Format(Labels.BuildQueued, build.Id);
+
+                await context.PostAsync(reply);
             }
 
             context.Done(reply);

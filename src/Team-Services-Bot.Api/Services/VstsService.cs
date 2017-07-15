@@ -276,7 +276,7 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc />
-        public async Task QueueBuildAsync(string account, string teamProject, int definitionId, OAuthToken token)
+        public async Task<Build> QueueBuildAsync(string account, string teamProject, int definitionId, OAuthToken token)
         {
             if (string.IsNullOrWhiteSpace(account))
             {
@@ -302,7 +302,7 @@ namespace Vsar.TSBot
             {
                 var build = new Build { Definition = new BuildDefinitionReference { Id = definitionId } };
 
-                await client.QueueBuildAsync(build, teamProject);
+                return await client.QueueBuildAsync(build, teamProject);
             }
         }
 

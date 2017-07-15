@@ -16,10 +16,12 @@ Scenario: List Builds
 	| Name    |
 	| Build 1 |
 
+@Acceptance
 Scenario: List & Queue Build
 	Given I say 'builds'
 	And I get a list of build definitions
 	| Name    |
 	| Build 1 |
-	When I say 'queue 1'
-	Then A build with id '1' should exist on 'config:TeamProjectOne'
+	When I say 'queue 4'
+	Then I get a queued build response
+	And A queued build should exist on 'config:TeamProjectOne'

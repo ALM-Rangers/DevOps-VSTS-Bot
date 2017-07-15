@@ -167,4 +167,8 @@
   <data name="Queue" xml:space="preserve">
     <value>Queue</value>
   </data>
+  <data name="BuildQueued" xml:space="preserve">
+    <value>Build with id {0} is queued.</value>
+    <comment>{0} = id.</comment>
+  </data>
 </root>

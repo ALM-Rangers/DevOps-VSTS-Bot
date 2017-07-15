@@ -129,26 +129,30 @@ this.FeatureBackground();
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("List & Queue Build")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Builds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Acceptance")]
         public virtual void ListQueueBuild()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("List & Queue Build", ((string[])(null)));
-#line 19
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("List & Queue Build", new string[] {
+                        "Acceptance"});
+#line 20
 this.ScenarioSetup(scenarioInfo);
 #line 4
 this.FeatureBackground();
-#line 20
+#line 21
  testRunner.Given("I say \'builds\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
                         "Name"});
             table2.AddRow(new string[] {
                         "Build 1"});
-#line 21
+#line 22
  testRunner.And("I get a list of build definitions", ((string)(null)), table2, "And ");
-#line 24
- testRunner.When("I say \'queue 1\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 25
- testRunner.Then("A build with id \'1\' should exist on \'config:TeamProjectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.When("I say \'queue 4\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 26
+ testRunner.Then("I get a queued build response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 27
+ testRunner.And("A queued build should exist on \'config:TeamProjectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }

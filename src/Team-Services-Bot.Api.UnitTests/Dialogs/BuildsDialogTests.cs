@@ -15,6 +15,7 @@ namespace Vsar.TSBot.UnitTests
     using System.Threading.Tasks;
     using Common.Tests;
     using Dialogs;
+    using FluentAssertions;
     using Microsoft.Bot.Connector;
     using Microsoft.TeamFoundation.Build.WebApi;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -147,11 +148,15 @@ namespace Vsar.TSBot.UnitTests
 
             this.Fixture.VstsService
                 .Setup(s => s.QueueBuildAsync(account, teamProject, 1, profile.Token))
-                .Returns(Task.CompletedTask);
+                .ReturnsAsync(new Build { Id = 99 });
 
             await target.QueueAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
             this.Fixture.VstsService.VerifyAll();
+            this.Fixture.DialogContext
+                .Verify(dc => dc.PostAsync(
+                    It.Is<IMessageActivity>(a => a.Text.Equals("Build with id 99 is queued.", StringComparison.OrdinalIgnoreCase)),
+                    CancellationToken.None));
 
             this.Fixture.DialogContext.Verify(c => c.Done(It.IsAny<IMessageActivity>()));
         }

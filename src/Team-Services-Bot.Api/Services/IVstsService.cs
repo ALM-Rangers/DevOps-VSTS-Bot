@@ -118,6 +118,6 @@ namespace Vsar.TSBot
         /// <param name="definitionId">Build definition Id.</param>
         /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        Task QueueBuildAsync(string account, string teamProject, int definitionId, OAuthToken token);
+        Task<Build> QueueBuildAsync(string account, string teamProject, int definitionId, OAuthToken token);
     }
 }
