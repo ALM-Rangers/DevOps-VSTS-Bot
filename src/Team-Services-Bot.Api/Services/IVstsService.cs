@@ -111,6 +111,16 @@ namespace Vsar.TSBot
         Task<IList<TeamProjectReference>> GetProjects(string account, OAuthToken token);
 
         /// <summary>
+        /// Gets the release definitions from the VSTS account for the specified team project.
+        /// </summary>
+        /// <param name="account">The VSTS account name</param>
+        /// <param name="teamProject">The Team Project name</param>
+        /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
+        /// <returns>Collection of <see cref="ReleaseDefinition"/>.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Reviewed.")]
+        Task<IList<ReleaseDefinition>> GetReleaseDefinitionsAsync(string account, string teamProject, OAuthToken token);
+
+        /// <summary>
         /// Queues a build.
         /// </summary>
         /// <param name="account">The VSTS account name</param>

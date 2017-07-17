@@ -242,7 +242,7 @@ namespace Vsar.TSBot.UnitTests.Services
                     {
                         GetApprovalsAsync2StringStringNullableOfApprovalStatusIEnumerableOfInt32NullableOfApprovalTypeNullableOfInt32NullableOfInt32NullableOfReleaseQueryOrderNullableOfBooleanObjectCancellationToken
                             = (project, assignedToFilter, statusFilter, releaseIdsFilter, typeFilter, top, continuationToken, queryOrder, includeMyGroupApprovals, userState, cancellationToken) =>
-                                    Task.Run(
+                                Task.Run(
                                     () => (IPagedCollection<ReleaseApproval>)new StubIPagedCollection<ReleaseApproval>
                                     {
                                         CountGet = () => expected.Count,
@@ -489,6 +489,41 @@ namespace Vsar.TSBot.UnitTests.Services
                 IEnumerable<TeamProjectReference> actual = await service.GetProjects(accounts[0].AccountName, this.token);
 
                 expected.ShouldAllBeEquivalentTo(actual);
+            }
+        }
+
+        [TestMethod]
+        public async Task GetReleasesTest()
+        {
+            var accountName = "myaccount";
+            var projectName = "myproject";
+            var service = new VstsService();
+
+            var expected = new StubIPagedCollection<ReleaseDefinition>() as IPagedCollection<ReleaseDefinition>;
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync(null, projectName, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync(accountName, null, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync(accountName, projectName, null));
+
+            using (ShimsContext.Create())
+            {
+                var client = new ShimReleaseHttpClient2();
+                client.GetReleaseDefinitionsAsync2StringStringNullableOfReleaseDefinitionExpandsStringStringNullableOfInt32StringNullableOfReleaseDefinitionQueryOrderStringNullableOfBooleanIEnumerableOfStringIEnumerableOfStringObjectCancellationToken =
+                    (teamProject, s1, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, cancellationToken) =>
+                        Task.Run(
+                            () =>
+                            {
+                                teamProject.Should().Be(projectName);
+
+                                return expected;
+                            },
+                            cancellationToken);
+
+                InitializeConnectionShim(client);
+
+                var actual = await service.GetReleaseDefinitionsAsync(accountName, projectName, this.token);
+
+                actual.ShouldBeEquivalentTo(expected);
             }
         }
 

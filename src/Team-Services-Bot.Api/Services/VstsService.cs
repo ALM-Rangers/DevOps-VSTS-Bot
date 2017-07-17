@@ -25,7 +25,6 @@ namespace Vsar.TSBot
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Contracts;
     using Microsoft.VisualStudio.Services.WebApi;
-    using Resources;
 
     /// <summary>
     /// Contains method(s) for accessing VSTS.
@@ -101,10 +100,10 @@ namespace Vsar.TSBot
 
             using (var client = await this.ConnectAsync<BuildHttpClient>(token, account))
             {
-                artifact = definition.Artifacts.FirstOrDefault(a => a.IsPrimary);
+                artifact = definition.Artifacts.First(a => a.IsPrimary);
 
                 var builds = await client.GetBuildsAsync2(teamProject, new List<int> { Convert.ToInt32(artifact.DefinitionReference["definition"].Id) });
-                build = builds.FirstOrDefault();
+                build = builds.First();
             }
 
             using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
@@ -272,6 +271,30 @@ namespace Vsar.TSBot
             {
                 var results = await client.GetProjects();
                 return results.ToList();
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task<IList<ReleaseDefinition>> GetReleaseDefinitionsAsync(string account, string teamProject, OAuthToken token)
+        {
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
+            }
+
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
+            {
+                return await client.GetReleaseDefinitionsAsync2(teamProject);
             }
         }
 
