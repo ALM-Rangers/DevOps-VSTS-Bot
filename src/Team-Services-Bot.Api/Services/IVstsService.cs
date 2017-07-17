@@ -36,6 +36,16 @@ namespace Vsar.TSBot
         Task ChangeApprovalStatus(string account, string teamProject, VstsProfile profile, int approvalId, ApprovalStatus status, string comments);
 
         /// <summary>
+        /// Creates a release.
+        /// </summary>
+        /// <param name="account">The VSTS account name</param>
+        /// <param name="teamProject">The team project.</param>
+        /// <param name="definitionId">Release definition Id.</param>
+        /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        Task CreateReleaseAsync(string account, string teamProject, int definitionId, OAuthToken token);
+
+        /// <summary>
         /// Gets the accounts for which an user is a member.
         /// </summary>
         /// <param name="token">A <see cref="OAuthToken"/>.</param>
@@ -65,6 +75,26 @@ namespace Vsar.TSBot
         Task<IList<ReleaseApproval>> GetApprovals(string account, string teamProject, VstsProfile profile);
 
         /// <summary>
+        /// Gets the build based on the id.
+        /// </summary>
+        /// <param name="account">The VSTS account.</param>
+        /// <param name="teamProject">The team project.</param>
+        /// <param name="id">The id of the build.</param>
+        /// <param name="token">A <see cref="OAuthToken"/></param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        Task<Build> GetBuildAsync(string account, string teamProject, int id, OAuthToken token);
+
+        /// <summary>
+        /// Gets build definitions from VSTS account for specified project
+        /// </summary>
+        /// <param name="account">The VSTS account name</param>
+        /// <param name="teamProject">The Team Project name</param>
+        /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
+        /// <returns>Collection of <see cref="BuildDefinitionReference"/>.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Reviewed.")]
+        Task<IList<BuildDefinitionReference>> GetBuildDefinitionsAsync(string account, string teamProject, OAuthToken token);
+
+        /// <summary>
         /// Gets the profile from vsts.
         /// </summary>
         /// <param name="token">A <see cref="OAuthToken"/>.s</param>
@@ -81,23 +111,13 @@ namespace Vsar.TSBot
         Task<IList<TeamProjectReference>> GetProjects(string account, OAuthToken token);
 
         /// <summary>
-        /// Gets build definitions from VSTS account for specified project
-        /// </summary>
-        /// <param name="teamProject">The Team Project name</param>
-        /// <param name="account">The VSTS account name</param>
-        /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
-        /// <returns>Collection of <see cref="BuildDefinitionReference"/>.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Reviewed.")]
-        Task<IList<BuildDefinitionReference>> GetBuildDefinitionsAsync(string teamProject, string account, OAuthToken token);
-
-        /// <summary>
-        /// Creates a release.
+        /// Queues a build.
         /// </summary>
         /// <param name="account">The VSTS account name</param>
         /// <param name="teamProject">The team project.</param>
-        /// <param name="definitionId">Release definition ID.</param>
+        /// <param name="definitionId">Build definition Id.</param>
         /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        Task CreateReleaseAsync(string account, string teamProject, int definitionId, OAuthToken token);
+        Task<Build> QueueBuildAsync(string account, string teamProject, int definitionId, OAuthToken token);
     }
 }

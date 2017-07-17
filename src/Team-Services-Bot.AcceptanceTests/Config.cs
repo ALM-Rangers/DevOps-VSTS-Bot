@@ -56,6 +56,12 @@ namespace Vsar.TSBot.AcceptanceTests
             }
         }
 
+        public static int BuildId
+        {
+            get { return Convert.ToInt32(ScenarioContext.Current["BuildId"], CultureInfo.InvariantCulture); }
+            set { ScenarioContext.Current["BuildId"] = value; }
+        }
+
         public static DirectLineClient Client
         {
             get { return ScenarioContext.Current["Client"] as DirectLineClient; }

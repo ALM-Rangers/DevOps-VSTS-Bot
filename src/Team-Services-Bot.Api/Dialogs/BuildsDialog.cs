@@ -12,11 +12,13 @@ namespace Vsar.TSBot.Dialogs
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Runtime.Serialization;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Web.Http;
     using Cards;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
+    using Resources;
 
     /// <summary>
     /// Represents the dialog to list/queue builds.
@@ -26,6 +28,7 @@ namespace Vsar.TSBot.Dialogs
     public class BuildsDialog : IDialog<object>
     {
         private const string CommandMatchBuilds = "builds";
+        private const string CommandMatchQueue = @"queue (\d+)";
 
         [NonSerialized]
         private IVstsService vstsService;
@@ -96,7 +99,8 @@ namespace Vsar.TSBot.Dialogs
 
             if (text.Equals(CommandMatchBuilds, StringComparison.OrdinalIgnoreCase))
             {
-                var buildDefinitions = await this.vstsService.GetBuildDefinitionsAsync(this.TeamProject, this.Account, this.Profile.Token);
+                var buildDefinitions =
+                    await this.vstsService.GetBuildDefinitionsAsync(this.Account, this.TeamProject, this.Profile.Token);
                 var cards = buildDefinitions.Select(bd => new BuildDefinitionCard(bd)).ToList();
 
                 foreach (var card in cards)
@@ -105,6 +109,36 @@ namespace Vsar.TSBot.Dialogs
                 }
 
                 reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+                await context.PostAsync(reply);
+
+                context.Wait(this.QueueAsync);
+            }
+            else
+            {
+                context.Done(reply);
+            }
+        }
+
+        /// <summary>
+        /// Queues a build.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/>.</param>
+        /// <param name="result">A <see cref="IMessageActivity"/>/</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public async Task QueueAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            var activity = await result;
+            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
+            var reply = context.MakeMessage();
+
+            var match = Regex.Match(text, CommandMatchQueue);
+            if (match.Success)
+            {
+                var buildDefinitionId = Convert.ToInt32(match.Groups[1].Value);
+
+                var build = await this.vstsService.QueueBuildAsync(this.Account, this.TeamProject, buildDefinitionId, this.Profile.Token);
+                reply.Text = string.Format(Labels.BuildQueued, build.Id);
+
                 await context.PostAsync(reply);
             }
 

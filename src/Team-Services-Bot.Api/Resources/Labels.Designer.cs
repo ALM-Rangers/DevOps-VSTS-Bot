@@ -97,6 +97,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Build with id {0} is queued..
+        /// </summary>
+        internal static string BuildQueued {
+            get {
+                return ResourceManager.GetString("BuildQueued", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connected to {0} / {1}..
         /// </summary>
         internal static string ConnectedTo {
@@ -138,6 +147,15 @@ namespace Vsar.TSBot.Resources {
         internal static string PleaseLogin {
             get {
                 return ResourceManager.GetString("PleaseLogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Queue.
+        /// </summary>
+        internal static string Queue {
+            get {
+                return ResourceManager.GetString("Queue", resourceCulture);
             }
         }
         

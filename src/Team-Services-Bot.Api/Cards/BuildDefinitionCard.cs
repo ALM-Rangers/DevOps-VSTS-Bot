@@ -11,6 +11,7 @@ namespace Vsar.TSBot.Cards
     using System;
     using Microsoft.Bot.Connector;
     using Microsoft.TeamFoundation.Build.WebApi;
+    using Resources;
 
     /// <summary>
     /// Represents a card for a build definition.
@@ -29,6 +30,8 @@ namespace Vsar.TSBot.Cards
             }
 
             this.Title = buildDefinition.Name;
+
+            this.Buttons.Add(new CardAction(ActionTypes.ImBack, Labels.Queue, value: FormattableString.Invariant($"queue {buildDefinition.Id}")));
         }
     }
 }
