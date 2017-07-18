@@ -493,6 +493,7 @@ namespace Vsar.TSBot.UnitTests.Services
         }
 
         [TestMethod]
+        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Test method shouldn't be a property. Test method name corresponds to method under test.")]
         public async Task GetReleasesTest()
         {
             var accountName = "myaccount";

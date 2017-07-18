@@ -15,7 +15,6 @@ namespace Vsar.TSBot.UnitTests
     using System.Threading.Tasks;
     using Common.Tests;
     using Dialogs;
-    using FluentAssertions;
     using Microsoft.Bot.Connector;
     using Microsoft.TeamFoundation.Build.WebApi;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
