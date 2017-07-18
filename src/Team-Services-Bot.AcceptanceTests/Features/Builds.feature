@@ -1,5 +1,5 @@
 ﻿Feature: Builds
-	In order to get artifacts that we can deploy, we first need to build and validate it.
+	In order to get artifacts that we can deploy, we first need to build and validate them.
 
 Background: 
 	Given A user 'Test User'

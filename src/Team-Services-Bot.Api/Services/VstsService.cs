@@ -294,7 +294,7 @@ namespace Vsar.TSBot
 
             using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
             {
-                return await client.GetReleaseDefinitionsAsync2(teamProject);
+                return await client.GetReleaseDefinitionsAsync(teamProject);
             }
         }
 

@@ -500,7 +500,7 @@ namespace Vsar.TSBot.UnitTests.Services
             var projectName = "myproject";
             var service = new VstsService();
 
-            var expected = new StubIPagedCollection<ReleaseDefinition>() as IPagedCollection<ReleaseDefinition>;
+            var expected = new List<ReleaseDefinition>();
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync(null, projectName, this.token));
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync(accountName, null, this.token));
@@ -508,9 +508,9 @@ namespace Vsar.TSBot.UnitTests.Services
 
             using (ShimsContext.Create())
             {
-                var client = new ShimReleaseHttpClient2();
-                client.GetReleaseDefinitionsAsync2StringStringNullableOfReleaseDefinitionExpandsStringStringNullableOfInt32StringNullableOfReleaseDefinitionQueryOrderStringNullableOfBooleanIEnumerableOfStringIEnumerableOfStringObjectCancellationToken =
-                    (teamProject, s1, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, cancellationToken) =>
+                var client = new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2());
+                client.GetReleaseDefinitionsAsyncStringStringNullableOfReleaseDefinitionExpandsStringStringNullableOfInt32StringNullableOfReleaseDefinitionQueryOrderStringNullableOfBooleanIEnumerableOfStringIEnumerableOfStringIEnumerableOfStringObjectCancellationToken =
+                    (teamProject, s1, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, cancellationToken) =>
                         Task.Run(
                             () =>
                             {
@@ -602,7 +602,7 @@ namespace Vsar.TSBot.UnitTests.Services
         {
             var shimClient = new ShimProjectHttpClient
             {
-                GetProjectsNullableOfProjectStateNullableOfInt32NullableOfInt32Object = (stateFilter, top, skip, userState) => Task.Run(() => projects)
+                GetProjectsNullableOfProjectStateNullableOfInt32NullableOfInt32ObjectString = (stateFilter, top, skip, userState, continuationToken) => Task.Run(() => new PagedList<TeamProjectReference>(projects, continuationToken) as IPagedList<TeamProjectReference>)
             };
 
             return shimClient.Instance;

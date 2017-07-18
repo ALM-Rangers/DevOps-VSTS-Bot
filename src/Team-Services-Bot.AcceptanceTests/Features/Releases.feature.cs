@@ -18,14 +18,14 @@ namespace Vsar.TSBot.AcceptanceTests.Features
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "2.1.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute()]
-    public partial class BuildsFeature
+    public partial class ReleasesFeature
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
         private Microsoft.VisualStudio.TestTools.UnitTesting.TestContext _testContext;
         
-#line 1 "Builds.feature"
+#line 1 "Releases.feature"
 #line hidden
         
         public Microsoft.VisualStudio.TestTools.UnitTesting.TestContext TestContext
@@ -44,8 +44,8 @@ namespace Vsar.TSBot.AcceptanceTests.Features
         public static void FeatureSetup(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext testContext)
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner(null, 0);
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Builds", "\tIn order to get artifacts that we can deploy, we first need to build and validat" +
-                    "e them.", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Releases", "\tIn order get new versions of our application to our environments we need to crea" +
+                    "te a release.", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -60,9 +60,9 @@ namespace Vsar.TSBot.AcceptanceTests.Features
         public virtual void TestInitialize()
         {
             if (((testRunner.FeatureContext != null) 
-                        && (testRunner.FeatureContext.FeatureInfo.Title != "Builds")))
+                        && (testRunner.FeatureContext.FeatureInfo.Title != "Releases")))
             {
-                Vsar.TSBot.AcceptanceTests.Features.BuildsFeature.FeatureSetup(null);
+                Vsar.TSBot.AcceptanceTests.Features.ReleasesFeature.FeatureSetup(null);
             }
         }
         
@@ -102,57 +102,26 @@ namespace Vsar.TSBot.AcceptanceTests.Features
         }
         
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("List Builds")]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Builds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("List Releases")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Releases")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Acceptance")]
-        public virtual void ListBuilds()
+        public virtual void ListReleases()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("List Builds", new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("List Releases", new string[] {
                         "Acceptance"});
 #line 13
 this.ScenarioSetup(scenarioInfo);
 #line 4
 this.FeatureBackground();
 #line 14
- testRunner.When("I say \'builds\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I say \'releases\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
                         "Name"});
             table1.AddRow(new string[] {
-                        "Build 1"});
+                        "Release 1"});
 #line 15
- testRunner.Then("I get a list of build definitions", ((string)(null)), table1, "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("List & Queue Build")]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "Builds")]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("Acceptance")]
-        public virtual void ListQueueBuild()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("List & Queue Build", new string[] {
-                        "Acceptance"});
-#line 20
-this.ScenarioSetup(scenarioInfo);
-#line 4
-this.FeatureBackground();
-#line 21
- testRunner.Given("I say \'builds\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line hidden
-            TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
-                        "Name"});
-            table2.AddRow(new string[] {
-                        "Build 1"});
-#line 22
- testRunner.And("I get a list of build definitions", ((string)(null)), table2, "And ");
-#line 25
- testRunner.When("I say \'queue 4\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 26
- testRunner.Then("I get a queued build response", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 27
- testRunner.And("A queued build should exist on \'config:TeamProjectOne\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Then("I get a list of release definitions", ((string)(null)), table1, "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
