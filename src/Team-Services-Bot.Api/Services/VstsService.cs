@@ -95,26 +95,34 @@ namespace Vsar.TSBot
                 definition = await client.GetReleaseDefinitionAsync(teamProject, definitionId);
             }
 
-            Artifact artifact;
-            Build build;
+            var metadatas = new List<ArtifactMetadata>();
 
             using (var client = await this.ConnectAsync<BuildHttpClient>(token, account))
             {
-                artifact = definition.Artifacts.First(a => a.IsPrimary);
+                foreach (var artifact in definition.Artifacts.Where(a => string.Equals(a.Type, ArtifactTypes.BuildArtifactType, StringComparison.OrdinalIgnoreCase)))
+                {
+                    var definitions = new List<int> { Convert.ToInt32(artifact.DefinitionReference["definition"].Id) };
+                    var builds = await client.GetBuildsAsync2(teamProject, definitions);
+                    var build = builds.OrderByDescending(b => b.LastChangedDate).FirstOrDefault();
 
-                var builds = await client.GetBuildsAsync2(teamProject, new List<int> { Convert.ToInt32(artifact.DefinitionReference["definition"].Id) });
-                build = builds.First();
+                    if (build == null)
+                    {
+                        continue;
+                    }
+
+                    var metadata = new ArtifactMetadata
+                    {
+                        Alias = artifact.Alias,
+                        InstanceReference = new BuildVersion { Id = build.Id.ToString() }
+                    };
+
+                    metadatas.Add(metadata);
+                }
             }
 
             using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
             {
-                var artifactMetaData = new ArtifactMetadata
-                {
-                    Alias = artifact.Alias,
-                    InstanceReference = new BuildVersion { Id = build.Id.ToString() }
-                };
-
-                var metaData = new ReleaseStartMetadata { DefinitionId = definitionId, Artifacts = new List<ArtifactMetadata> { artifactMetaData } };
+                var metaData = new ReleaseStartMetadata { DefinitionId = definitionId, Artifacts = metadatas };
                 await client.CreateReleaseAsync(metaData, teamProject);
             }
         }

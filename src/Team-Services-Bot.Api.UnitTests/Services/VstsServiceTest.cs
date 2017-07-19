@@ -124,6 +124,8 @@ namespace Vsar.TSBot.UnitTests.Services
             var service = new VstsService();
             int id = 1;
 
+            var builds = new List<Build> { new Build { Id = 12345, LastChangedDate = DateTime.Now } };
+
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.CreateReleaseAsync(null, projectName, id, this.token));
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.CreateReleaseAsync(accountName, null, id, this.token));
             await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.CreateReleaseAsync(accountName, projectName, 0, this.token));
@@ -133,18 +135,10 @@ namespace Vsar.TSBot.UnitTests.Services
             {
                 var shimBuildHttpClient = new ShimBuildHttpClient();
 
-                shimBuildHttpClient.SendAsyncOf1HttpMethodGuidObjectApiResourceVersionHttpContentIEnumerableOfKeyValuePairOfStringStringObjectCancellationTokenFuncOfHttpResponseMessageCancellationTokenTaskOfM0<IPagedList<Build>>((method, guid, arg3, apiResourceVersion, content, queryParams, arg7, cancellationToken, arg9) => Task.Run(
-                    () =>
-                    {
-                        var list = new StubIPagedList<Build>
-                        {
-                            CountGet = () => 1,
-                            ItemGetInt32 = i => new Build { Id = 12345 }
-                        };
-
-                        return (IPagedList<Build>)list;
-                    },
-                    cancellationToken));
+                shimBuildHttpClient.SendAsyncOf1HttpMethodGuidObjectApiResourceVersionHttpContentIEnumerableOfKeyValuePairOfStringStringObjectCancellationTokenFuncOfHttpResponseMessageCancellationTokenTaskOfM0<IPagedList<Build>>((method, guid, arg3, apiResourceVersion, content, queryParams, arg7, cancellationToken, arg9) =>
+                    Task.Run(
+                        () => new PagedList<Build>(builds, string.Empty) as IPagedList<Build>,
+                        cancellationToken));
 
                 InitializeConnectionShim(new VssHttpClientBase[]
                 {
@@ -173,7 +167,8 @@ namespace Vsar.TSBot.UnitTests.Services
                                             DefinitionReference = new Dictionary<string, ArtifactSourceReference>
                                             {
                                                 { "definition", new ArtifactSourceReference { Id = "1234" } }
-                                            }
+                                            },
+                                            Type = ArtifactTypes.BuildArtifactType
                                         }
                                     }
                                 };
