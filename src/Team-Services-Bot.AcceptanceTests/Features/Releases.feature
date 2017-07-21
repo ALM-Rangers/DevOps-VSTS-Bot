@@ -15,3 +15,13 @@ Scenario: List Releases
 	Then I get a list of release definitions
 	| Name    |
 	| Release 1 |
+
+@Acceptance
+Scenario: Create Release
+	When I say 'releases'
+	Then I get a list of release definitions
+	| Name    |
+	| Release 1 |
+	When I say 'create 1'
+	Then I get a created release response
+	And A created release should exist on 'config:TeamProjectOne'

@@ -11,6 +11,7 @@ namespace Vsar.TSBot.Cards
     using System;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
+    using Resources;
 
     /// <summary>
     /// Represents a card for a release definition.
@@ -30,7 +31,7 @@ namespace Vsar.TSBot.Cards
 
             this.Title = releaseDefinition.Name;
 
-            // this.Buttons.Add(new CardAction(ActionTypes.ImBack, Labels.Create, value: FormattableString.Invariant($"create {releaseDefinition.Id}")));
+            this.Buttons.Add(new CardAction(ActionTypes.ImBack, Labels.Create, value: FormattableString.Invariant($"create {releaseDefinition.Id}")));
         }
     }
 }

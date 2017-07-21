@@ -9,6 +9,7 @@
 namespace Vsar.TSBot.UnitTests.Cards
 {
     using System;
+    using System.Linq;
     using Common.Tests;
     using FluentAssertions;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
@@ -20,7 +21,7 @@ namespace Vsar.TSBot.UnitTests.Cards
     public class ReleaseDefinitionCardTests
     {
         [TestMethod]
-        public void Constructor_Missing_BuildDefinition()
+        public void Constructor_Missing_ReleaseDefinition()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new ReleaseDefinitionCard(null));
         }
@@ -33,7 +34,7 @@ namespace Vsar.TSBot.UnitTests.Cards
             var target = new ReleaseDefinitionCard(releaseDefinition);
             target.Title.Should().Be(releaseDefinition.Name);
 
-            // target.Buttons.First().Value.Should().Be("create 1");
+            target.Buttons.First().Value.Should().Be("create 1");
         }
     }
 }

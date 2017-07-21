@@ -12,11 +12,13 @@ namespace Vsar.TSBot.Dialogs
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Runtime.Serialization;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Web.Http;
     using Cards;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
+    using Resources;
 
     /// <summary>
     /// Represents the dialog to list/create releases.
@@ -109,12 +111,47 @@ namespace Vsar.TSBot.Dialogs
                 reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
                 await context.PostAsync(reply);
 
-                context.Done(reply);
+                context.Wait(this.CreateAsync);
             }
             else
             {
                 context.Done(reply);
             }
+        }
+
+        /// <summary>
+        /// Creates a new release for a release definition.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/>.</param>
+        /// <param name="result">A <see cref="IMessageActivity"/>/</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public async Task CreateAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            if (result == null)
+            {
+                throw new ArgumentNullException(nameof(result));
+            }
+
+            var activity = await result;
+            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
+            var reply = context.MakeMessage();
+
+            var match = Regex.Match(text, CommandMatchCreate);
+            if (match.Success)
+            {
+                var definitionId = Convert.ToInt32(match.Groups[1].Value);
+                var release = await this.vstsService.CreateReleaseAsync(this.Account, this.TeamProject, definitionId, this.Profile.Token);
+                reply.Text = string.Format(Labels.ReleaseCreated, release.Id);
+
+                await context.PostAsync(reply);
+            }
+
+            context.Done(reply);
         }
 
         [ExcludeFromCodeCoverage]

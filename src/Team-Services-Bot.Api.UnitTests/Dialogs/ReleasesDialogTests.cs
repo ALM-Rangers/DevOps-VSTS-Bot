@@ -111,7 +111,66 @@ namespace Vsar.TSBot.UnitTests
 
             this.Fixture.DialogContext.Verify(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None));
 
-            // this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.CreateAsync));
+            this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.CreateAsync));
+        }
+
+        [TestMethod]
+        public async Task Create_Missing_Context()
+        {
+            var target = new ReleasesDialog(this.Fixture.VstsService.Object);
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.CreateAsync(null, null));
+        }
+
+        [TestMethod]
+        public async Task Create_Missing_Awaitable()
+        {
+            var target = new ReleasesDialog(this.Fixture.VstsService.Object);
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.CreateAsync(this.Fixture.DialogContext.Object, null));
+        }
+
+        [TestMethod]
+        public async Task Create_No_Text()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = null;
+
+            var target = new ReleasesDialog(this.Fixture.VstsService.Object);
+            await target.CreateAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            this.Fixture.DialogContext.Verify(c => c.Done(It.IsAny<IMessageActivity>()));
+        }
+
+        [TestMethod]
+        public async Task Create()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "create 1";
+
+            var account = "anaccount";
+            var profile = this.Fixture.CreateProfile();
+            var teamProject = "anteamproject";
+
+            var release = new Release();
+
+            var target = new ReleasesDialog(this.Fixture.VstsService.Object)
+            {
+                Account = account,
+                Profile = profile,
+                TeamProject = teamProject
+            };
+
+            this.Fixture.VstsService
+                .Setup(s => s.CreateReleaseAsync(account, teamProject, 1, profile.Token))
+                .ReturnsAsync(release);
+
+            await target.CreateAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            this.Fixture.VstsService.VerifyAll();
+
+            this.Fixture.DialogContext.Verify(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None));
+            this.Fixture.DialogContext.Verify(c => c.Done(It.IsAny<IMessageActivity>()));
         }
     }
 }

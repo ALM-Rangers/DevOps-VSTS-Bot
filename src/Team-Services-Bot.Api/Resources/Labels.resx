@@ -171,4 +171,11 @@
     <value>Build with id {0} is queued.</value>
     <comment>{0} = id.</comment>
   </data>
+  <data name="Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="ReleaseCreated" xml:space="preserve">
+    <value>Release with id {0} is created.</value>
+    <comment>{0} = id.</comment>
+  </data>
 </root>

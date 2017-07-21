@@ -13,6 +13,7 @@ namespace Vsar.TSBot
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Security.Authentication.ExtendedProtection;
     using System.Threading.Tasks;
     using Microsoft.TeamFoundation.Build.WebApi;
     using Microsoft.TeamFoundation.Core.WebApi;
@@ -66,7 +67,7 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc />
-        public async Task CreateReleaseAsync(string account, string teamProject, int definitionId, OAuthToken token)
+        public async Task<Release> CreateReleaseAsync(string account, string teamProject, int definitionId, OAuthToken token)
         {
             if (string.IsNullOrWhiteSpace(account))
             {
@@ -123,7 +124,7 @@ namespace Vsar.TSBot
             using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
             {
                 var metaData = new ReleaseStartMetadata { DefinitionId = definitionId, Artifacts = metadatas };
-                await client.CreateReleaseAsync(metaData, teamProject);
+                return await client.CreateReleaseAsync(metaData, teamProject);
             }
         }
 
@@ -219,9 +220,10 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(token));
             }
 
-            await Task.CompletedTask;
-
-            return new Build();
+            using (var client = await this.ConnectAsync<BuildHttpClient>(token, account))
+            {
+                return await client.GetBuildAsync(teamProject, id);
+            }
         }
 
         /// <inheritdoc/>
@@ -334,6 +336,35 @@ namespace Vsar.TSBot
                 var build = new Build { Definition = new BuildDefinitionReference { Id = definitionId } };
 
                 return await client.QueueBuildAsync(build, teamProject);
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task<Release> GetReleaseAsync(string account, string teamProject, int id, OAuthToken token)
+        {
+            if (string.IsNullOrWhiteSpace(account))
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
+            if (string.IsNullOrWhiteSpace(teamProject))
+            {
+                throw new ArgumentNullException(nameof(teamProject));
+            }
+
+            if (id <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(id));
+            }
+
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
+            {
+                return await client.GetReleaseAsync(teamProject, id);
             }
         }
 
