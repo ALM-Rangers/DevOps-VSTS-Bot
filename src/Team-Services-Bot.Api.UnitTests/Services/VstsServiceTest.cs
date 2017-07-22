@@ -489,7 +489,40 @@ namespace Vsar.TSBot.UnitTests.Services
 
         [TestMethod]
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Test method shouldn't be a property. Test method name corresponds to method under test.")]
-        public async Task GetReleaseDefinitionsTest()
+        public async Task GetReleaseAsyncTest()
+        {
+            var accountName = "myaccount";
+            var projectName = "myproject";
+            var release = new Release();
+            var releaseId = 99;
+            var service = new VstsService();
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetReleaseAsync(null, projectName, releaseId, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetReleaseAsync(accountName, null, releaseId, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.GetReleaseAsync(accountName, projectName, -10, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetReleaseAsync(accountName, projectName, releaseId, null));
+
+            using (ShimsContext.Create())
+            {
+                var client = new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2());
+
+                client.GetReleaseAsyncStringInt32NullableOfBooleanIEnumerableOfStringObjectCancellationToken =
+                    (teamProject, id, arg3, arg4, arg5, cancellationToken) =>
+                    Task.Run(
+                        () =>
+                        {
+                            teamProject.Should().Be(projectName);
+                            id.Should().Be(releaseId);
+
+                            return release;
+                        },
+                        cancellationToken);
+            }
+        }
+
+        [TestMethod]
+        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Test method shouldn't be a property. Test method name corresponds to method under test.")]
+        public async Task GetReleaseDefinitionsAsyncTest()
         {
             var accountName = "myaccount";
             var projectName = "myproject";
