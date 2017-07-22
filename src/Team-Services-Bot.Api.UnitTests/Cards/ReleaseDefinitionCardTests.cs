@@ -1,9 +1,9 @@
 ﻿// ———————————————————————————————
-// <copyright file="BuildDefinitionCardTests.cs">
+// <copyright file="ReleaseDefinitionCardTests.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Contains the tests for the BuildDefinitionCard.
+// Contains the tests for the ReleaseDefinitionCard.
 // </summary>
 // ———————————————————————————————
 namespace Vsar.TSBot.UnitTests.Cards
@@ -12,29 +12,29 @@ namespace Vsar.TSBot.UnitTests.Cards
     using System.Linq;
     using Common.Tests;
     using FluentAssertions;
-    using Microsoft.TeamFoundation.Build.WebApi;
+    using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TSBot.Cards;
 
     [TestClass]
     [TestCategory(TestCategories.Unit)]
-    public class BuildDefinitionCardTests
+    public class ReleaseDefinitionCardTests
     {
         [TestMethod]
-        public void Constructor_Missing_BuildDefinition()
+        public void Constructor_Missing_ReleaseDefinition()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new BuildDefinitionCard(null));
+            Assert.ThrowsException<ArgumentNullException>(() => new ReleaseDefinitionCard(null));
         }
 
         [TestMethod]
         public void Constructor()
         {
-            var buildDefinition = new BuildDefinitionReference { Id = 1, Name = "Build 1" };
+            var releaseDefinition = new ReleaseDefinition { Id = 1, Name = "Release 1" };
 
-            var target = new BuildDefinitionCard(buildDefinition);
-            target.Title.Should().Be(buildDefinition.Name);
+            var target = new ReleaseDefinitionCard(releaseDefinition);
+            target.Title.Should().Be(releaseDefinition.Name);
 
-            target.Buttons.First().Value.Should().Be("queue 1");
+            target.Buttons.First().Value.Should().Be("create 1");
         }
     }
 }

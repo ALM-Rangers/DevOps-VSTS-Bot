@@ -124,6 +124,8 @@ namespace Vsar.TSBot.UnitTests.Services
             var service = new VstsService();
             int id = 1;
 
+            var builds = new List<Build> { new Build { Id = 12345, LastChangedDate = DateTime.Now } };
+
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.CreateReleaseAsync(null, projectName, id, this.token));
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.CreateReleaseAsync(accountName, null, id, this.token));
             await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.CreateReleaseAsync(accountName, projectName, 0, this.token));
@@ -133,18 +135,10 @@ namespace Vsar.TSBot.UnitTests.Services
             {
                 var shimBuildHttpClient = new ShimBuildHttpClient();
 
-                shimBuildHttpClient.SendAsyncOf1HttpMethodGuidObjectApiResourceVersionHttpContentIEnumerableOfKeyValuePairOfStringStringObjectCancellationTokenFuncOfHttpResponseMessageCancellationTokenTaskOfM0<IPagedList<Build>>((method, guid, arg3, apiResourceVersion, content, queryParams, arg7, cancellationToken, arg9) => Task.Run(
-                    () =>
-                    {
-                        var list = new StubIPagedList<Build>
-                        {
-                            CountGet = () => 1,
-                            ItemGetInt32 = i => new Build { Id = 12345 }
-                        };
-
-                        return (IPagedList<Build>)list;
-                    },
-                    cancellationToken));
+                shimBuildHttpClient.SendAsyncOf1HttpMethodGuidObjectApiResourceVersionHttpContentIEnumerableOfKeyValuePairOfStringStringObjectCancellationTokenFuncOfHttpResponseMessageCancellationTokenTaskOfM0<IPagedList<Build>>((method, guid, arg3, apiResourceVersion, content, queryParams, arg7, cancellationToken, arg9) =>
+                    Task.Run(
+                        () => new PagedList<Build>(builds, string.Empty) as IPagedList<Build>,
+                        cancellationToken));
 
                 InitializeConnectionShim(new VssHttpClientBase[]
                 {
@@ -173,7 +167,8 @@ namespace Vsar.TSBot.UnitTests.Services
                                             DefinitionReference = new Dictionary<string, ArtifactSourceReference>
                                             {
                                                 { "definition", new ArtifactSourceReference { Id = "1234" } }
-                                            }
+                                            },
+                                            Type = ArtifactTypes.BuildArtifactType
                                         }
                                     }
                                 };
@@ -242,7 +237,7 @@ namespace Vsar.TSBot.UnitTests.Services
                     {
                         GetApprovalsAsync2StringStringNullableOfApprovalStatusIEnumerableOfInt32NullableOfApprovalTypeNullableOfInt32NullableOfInt32NullableOfReleaseQueryOrderNullableOfBooleanObjectCancellationToken
                             = (project, assignedToFilter, statusFilter, releaseIdsFilter, typeFilter, top, continuationToken, queryOrder, includeMyGroupApprovals, userState, cancellationToken) =>
-                                    Task.Run(
+                                Task.Run(
                                     () => (IPagedCollection<ReleaseApproval>)new StubIPagedCollection<ReleaseApproval>
                                     {
                                         CountGet = () => expected.Count,
@@ -493,6 +488,75 @@ namespace Vsar.TSBot.UnitTests.Services
         }
 
         [TestMethod]
+        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Test method shouldn't be a property. Test method name corresponds to method under test.")]
+        public async Task GetReleaseAsyncTest()
+        {
+            var accountName = "myaccount";
+            var projectName = "myproject";
+            var release = new Release();
+            var releaseId = 99;
+            var service = new VstsService();
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetReleaseAsync(null, projectName, releaseId, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetReleaseAsync(accountName, null, releaseId, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.GetReleaseAsync(accountName, projectName, -10, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetReleaseAsync(accountName, projectName, releaseId, null));
+
+            using (ShimsContext.Create())
+            {
+                var client = new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2());
+
+                client.GetReleaseAsyncStringInt32NullableOfBooleanIEnumerableOfStringObjectCancellationToken =
+                    (teamProject, id, arg3, arg4, arg5, cancellationToken) =>
+                    Task.Run(
+                        () =>
+                        {
+                            teamProject.Should().Be(projectName);
+                            id.Should().Be(releaseId);
+
+                            return release;
+                        },
+                        cancellationToken);
+            }
+        }
+
+        [TestMethod]
+        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Test method shouldn't be a property. Test method name corresponds to method under test.")]
+        public async Task GetReleaseDefinitionsAsyncTest()
+        {
+            var accountName = "myaccount";
+            var projectName = "myproject";
+            var service = new VstsService();
+
+            var expected = new List<ReleaseDefinition>();
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync(null, projectName, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync(accountName, null, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetBuildDefinitionsAsync(accountName, projectName, null));
+
+            using (ShimsContext.Create())
+            {
+                var client = new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2());
+                client.GetReleaseDefinitionsAsyncStringStringNullableOfReleaseDefinitionExpandsStringStringNullableOfInt32StringNullableOfReleaseDefinitionQueryOrderStringNullableOfBooleanIEnumerableOfStringIEnumerableOfStringIEnumerableOfStringObjectCancellationToken =
+                    (teamProject, s1, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, cancellationToken) =>
+                        Task.Run(
+                            () =>
+                            {
+                                teamProject.Should().Be(projectName);
+
+                                return expected;
+                            },
+                            cancellationToken);
+
+                InitializeConnectionShim(client);
+
+                var actual = await service.GetReleaseDefinitionsAsync(accountName, projectName, this.token);
+
+                actual.ShouldBeEquivalentTo(expected);
+            }
+        }
+
+        [TestMethod]
         public async Task QueueBuildAsyncTest()
         {
             var accountName = "myaccount";
@@ -566,7 +630,7 @@ namespace Vsar.TSBot.UnitTests.Services
         {
             var shimClient = new ShimProjectHttpClient
             {
-                GetProjectsNullableOfProjectStateNullableOfInt32NullableOfInt32Object = (stateFilter, top, skip, userState) => Task.Run(() => projects)
+                GetProjectsNullableOfProjectStateNullableOfInt32NullableOfInt32ObjectString = (stateFilter, top, skip, userState, continuationToken) => Task.Run(() => new PagedList<TeamProjectReference>(projects, continuationToken) as IPagedList<TeamProjectReference>)
             };
 
             return shimClient.Instance;

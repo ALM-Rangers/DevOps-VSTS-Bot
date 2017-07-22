@@ -84,6 +84,12 @@ namespace Vsar.TSBot.AcceptanceTests
             set { ScenarioContext.Current["Profile"] = value; }
         }
 
+        public static int ReleaseId
+        {
+            get { return Convert.ToInt32(ScenarioContext.Current["ReleaseId"], CultureInfo.InvariantCulture); }
+            set { ScenarioContext.Current["ReleaseId"] = value; }
+        }
+
         public static string RefreshToken => TestContext.Properties["RefreshToken"].ToString();
 
         public static bool RefreshTokenReinitialize

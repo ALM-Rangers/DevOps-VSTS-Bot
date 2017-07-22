@@ -43,7 +43,7 @@ namespace Vsar.TSBot
         /// <param name="definitionId">Release definition Id.</param>
         /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        Task CreateReleaseAsync(string account, string teamProject, int definitionId, OAuthToken token);
+        Task<Release> CreateReleaseAsync(string account, string teamProject, int definitionId, OAuthToken token);
 
         /// <summary>
         /// Gets the accounts for which an user is a member.
@@ -109,6 +109,26 @@ namespace Vsar.TSBot
         /// <returns>Collection of <see cref="TeamProjectReference"/></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Reviewed.")]
         Task<IList<TeamProjectReference>> GetProjects(string account, OAuthToken token);
+
+        /// <summary>
+        /// Gets the release based on the id.
+        /// </summary>
+        /// <param name="account">The VSTS account.</param>
+        /// <param name="teamProject">The team project.</param>
+        /// <param name="id">The id of the build.</param>
+        /// <param name="token">A <see cref="OAuthToken"/></param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        Task<Release> GetReleaseAsync(string account, string teamProject, int id, OAuthToken token);
+
+        /// <summary>
+        /// Gets the release definitions from the VSTS account for the specified team project.
+        /// </summary>
+        /// <param name="account">The VSTS account name</param>
+        /// <param name="teamProject">The Team Project name</param>
+        /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
+        /// <returns>Collection of <see cref="ReleaseDefinition"/>.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Reviewed.")]
+        Task<IList<ReleaseDefinition>> GetReleaseDefinitionsAsync(string account, string teamProject, OAuthToken token);
 
         /// <summary>
         /// Queues a build.

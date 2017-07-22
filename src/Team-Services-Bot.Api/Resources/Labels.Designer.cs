@@ -133,6 +133,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create.
+        /// </summary>
+        internal static string Create {
+            get {
+                return ResourceManager.GetString("Create", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please provide a comment..
         /// </summary>
         internal static string MissingComment {
@@ -192,6 +201,15 @@ namespace Vsar.TSBot.Resources {
         internal static string Rejected {
             get {
                 return ResourceManager.GetString("Rejected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Release with id {0} is created..
+        /// </summary>
+        internal static string ReleaseCreated {
+            get {
+                return ResourceManager.GetString("ReleaseCreated", resourceCulture);
             }
         }
         
