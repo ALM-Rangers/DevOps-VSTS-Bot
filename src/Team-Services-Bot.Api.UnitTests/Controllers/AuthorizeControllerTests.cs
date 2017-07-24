@@ -12,6 +12,7 @@ namespace Vsar.TSBot.UnitTests
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Threading.Tasks;
     using System.Web.Mvc;
     using Common.Tests;
@@ -38,7 +39,9 @@ namespace Vsar.TSBot.UnitTests
             var vstsService = new Mock<IVstsService>();
 
             var target = new AuthorizeController(botService.Object, authenticationService.Object, vstsService.Object);
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.Index(null, null, null));
+            var result = await target.Index(null, null, null) as ViewResult;
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.ViewData.ModelState.First(pair => pair.Value.Errors.Any()));
         }
 
         [TestMethod]
@@ -49,7 +52,9 @@ namespace Vsar.TSBot.UnitTests
             var vstsService = new Mock<IVstsService>();
 
             var target = new AuthorizeController(botService.Object, authenticationService.Object, vstsService.Object);
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await target.Index("123567890", null, null));
+            var result = await target.Index("123567890", null, null) as ViewResult;
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.ViewData.ModelState.First(pair => pair.Value.Errors.Any()));
         }
 
         /// <summary>

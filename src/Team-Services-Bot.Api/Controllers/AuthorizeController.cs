@@ -53,32 +53,40 @@ namespace Vsar.TSBot
         public async Task<ActionResult> Index(string code, string error, string state)
         {
             var stateArray = (state ?? string.Empty).Split(';');
+            string pin = string.Empty;
 
-            if (string.IsNullOrWhiteSpace(code) && string.IsNullOrWhiteSpace(error))
+            try
             {
-                throw new ArgumentNullException(nameof(code));
-            }
+                if (string.IsNullOrWhiteSpace(code) && string.IsNullOrWhiteSpace(error))
+                {
+                    throw new ArgumentNullException(nameof(code));
+                }
 
-            if (stateArray.Length != 2)
+                if (stateArray.Length != 2)
+                {
+                    throw new ArgumentException(Exceptions.InvalidState, nameof(state));
+                }
+
+                var channelId = stateArray[0];
+                var userId = stateArray[1];
+
+                // Get the security token.
+                var token = await this.authenticationService.GetToken(code);
+                var profile = await this.vstsService.GetProfile(token);
+                var accounts = await this.vstsService.GetAccounts(token, profile.Id);
+                var vstsProfile = CreateVstsProfile(accounts, profile, token);
+
+                var data = await this.botService.GetUserData(channelId, userId);
+                pin = data.GetPin();
+
+                data.SetNotValidatedByPinProfile(vstsProfile);
+
+                await this.botService.SetUserData(channelId, userId, data);
+            }
+            catch (Exception e)
             {
-                throw new ArgumentException(Exceptions.InvalidState, nameof(state));
+                this.ModelState.AddModelError(string.Empty, e.Message);
             }
-
-            var channelId = stateArray[0];
-            var userId = stateArray[1];
-
-            // Get the security token.
-            var token = await this.authenticationService.GetToken(code);
-            var profile = await this.vstsService.GetProfile(token);
-            var accounts = await this.vstsService.GetAccounts(token, profile.Id);
-            var vstsProfile = CreateVstsProfile(accounts, profile, token);
-
-            var data = await this.botService.GetUserData(channelId, userId);
-            var pin = data.GetPin();
-
-            data.SetNotValidatedByPinProfile(vstsProfile);
-
-            await this.botService.SetUserData(channelId, userId, data);
 
             return this.View(new Authorize(pin));
         }

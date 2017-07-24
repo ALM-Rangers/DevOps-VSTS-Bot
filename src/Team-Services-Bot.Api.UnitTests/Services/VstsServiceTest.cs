@@ -101,8 +101,6 @@ namespace Vsar.TSBot.UnitTests.Services
                     }.Instance
                 });
 
-                // await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(
-                //    async () => await service.ChangeApprovalStatus("someaccount", project, profile, id, ApprovalStatus.Undefined, comment));
                 await service.ChangeApprovalStatus(account, project, profile, 4, ApprovalStatus.Canceled, comment);
 
                 Assert.IsNotNull(updatedApproval);
@@ -184,7 +182,6 @@ namespace Vsar.TSBot.UnitTests.Services
                     shimBuildHttpClient.Instance
                 });
 
-                // await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.CreateReleaseAsync("someaccount", projectName, id, this.token));
                 await service.CreateReleaseAsync(accountName, projectName, id, this.token);
             }
         }
@@ -247,7 +244,6 @@ namespace Vsar.TSBot.UnitTests.Services
                     }.Instance
                 });
 
-                // await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.GetApprovals("someaccount", projectName, profile));
                 IList<ReleaseApproval> actual = await service.GetApprovals(accountName, projectName, profile);
 
                 Assert.AreEqual(expected.Count, actual.Count);
@@ -309,7 +305,6 @@ namespace Vsar.TSBot.UnitTests.Services
                     }.Instance
                 });
 
-                // await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.GetApproval("someaccount", projectName, id, this.token));
                 ReleaseApproval actual = await service.GetApproval(accountName, projectName, id, this.token);
 
                 Assert.IsNotNull(actual);
