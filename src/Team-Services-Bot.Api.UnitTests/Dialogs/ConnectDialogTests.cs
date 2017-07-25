@@ -117,9 +117,10 @@ namespace Vsar.TSBot.UnitTests
             toBot.Text = null;
 
             const string appId = "AnAppId";
+            const string appScope = "vso.scopes";
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
-            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>(appId, appScope, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             mocked
@@ -139,9 +140,10 @@ namespace Vsar.TSBot.UnitTests
             toBot.Text = "connect";
 
             const string appId = "AnAppId";
+            const string appScope = "vso.scopes";
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
-            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>(appId, appScope, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             mocked
@@ -161,6 +163,7 @@ namespace Vsar.TSBot.UnitTests
             toBot.Text = "connect";
 
             const string appId = "AnAppId";
+            const string appScope = "vso.scopes";
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
             var profile = new VstsProfile { Token = new OAuthToken { ExpiresIn = 3600 } };
@@ -174,7 +177,7 @@ namespace Vsar.TSBot.UnitTests
             var container = builder.Build();
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
-            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>(appId, appScope, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             this.Fixture.UserData
@@ -198,6 +201,7 @@ namespace Vsar.TSBot.UnitTests
         public async Task Connect_For_The_Second_Time_With_Account_Selected()
         {
             const string appId = "AnAppId";
+            const string appScope = "vso.scopes";
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
             var toBot = this.Fixture.CreateMessage();
@@ -214,7 +218,7 @@ namespace Vsar.TSBot.UnitTests
             var container = builder.Build();
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
-            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>(appId, appScope, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             this.Fixture.UserData
@@ -238,6 +242,7 @@ namespace Vsar.TSBot.UnitTests
         public async Task Connect_For_The_Second_Time_With_Account_And_TeamProject_Selected()
         {
             const string appId = "AnAppId";
+            const string appScope = "vso.scopes";
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
             var toBot = this.Fixture.CreateMessage();
@@ -246,7 +251,7 @@ namespace Vsar.TSBot.UnitTests
             var profile = new VstsProfile { Token = new OAuthToken { ExpiresIn = 3600 } };
             IList<VstsProfile> profiles = new List<VstsProfile> { profile };
 
-            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>(appId, appScope, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             this.Fixture.UserData
@@ -286,6 +291,7 @@ namespace Vsar.TSBot.UnitTests
         public async Task Handle_Received_Pin()
         {
             const string appId = "AnAppId";
+            const string appScope = "vso.scopes";
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
             var toBot = this.Fixture.CreateMessage();
@@ -294,7 +300,7 @@ namespace Vsar.TSBot.UnitTests
             var profile = new VstsProfile();
             var profiles = new List<VstsProfile>() as IList<VstsProfile>;
 
-            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>(appId, appScope, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
             target.Pin = "12345";
 
@@ -369,6 +375,7 @@ namespace Vsar.TSBot.UnitTests
         public async Task Handle_Unknown_Account_Received()
         {
             const string appId = "AnAppId";
+            const string appScope = "vso.scopes";
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
             var profile1 = new VstsProfile { Accounts = new List<string> { "Account1", "Account2" } };
@@ -378,7 +385,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "UnknownAccount";
 
-            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>(appId, appScope, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
             target.Profiles = profiles;
 
@@ -393,6 +400,7 @@ namespace Vsar.TSBot.UnitTests
         public async Task Handle_Account_Received()
         {
             const string appId = "AnAppId";
+            const string appScope = "vso.scopes";
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
             var profile1 = new VstsProfile { Accounts = new List<string> { "Account1", "Account2" } };
@@ -402,7 +410,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "Account3";
 
-            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>(appId, appScope, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
             target.Profiles = profiles;
 
@@ -443,12 +451,13 @@ namespace Vsar.TSBot.UnitTests
         public async Task Handle_Project_Received()
         {
             const string appId = "AnAppId";
+            const string appScope = "vso.scopes";
             const string authorizeUrl = "https://www.authorizationUrl.com";
 
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "Project1";
 
-            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>(appId, appScope, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             mocked.Setup(m => m.ContinueProcess(this.Fixture.DialogContext.Object, toBot)).Returns(Task.CompletedTask).Verifiable();
