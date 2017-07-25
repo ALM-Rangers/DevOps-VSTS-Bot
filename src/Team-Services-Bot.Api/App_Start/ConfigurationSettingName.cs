@@ -40,6 +40,11 @@ namespace Vsar.TSBot
         public const string ApplicationSecret = "AppSecret";
 
         /// <summary>
+        /// The app scope setting name.
+        /// </summary>
+        public const string ApplicationScope = "AppScope";
+
+        /// <summary>
         /// The authorize URL setting name.
         /// </summary>
         public const string AuthorizeUrl = "AuthorizeUrl";

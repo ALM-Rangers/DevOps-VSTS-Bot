@@ -36,6 +36,10 @@ namespace Vsar.TSBot.UnitTests
     [ExcludeFromCodeCoverage]
     public class ConnectDialogTests : TestsBase<DialogFixture>
     {
+        private const string AppId = "AnAppId";
+        private const string AppScope = "AnAppScope";
+        private const string AuthorizeUrl = "https://www.authorizationUrl.com";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectDialogTests"/> class.
         /// </summary>
@@ -47,7 +51,15 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Constructor_Empty_AppId()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(null, null, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(null, null, null, null));
+
+            await Task.CompletedTask;
+        }
+
+        [TestMethod]
+        public async Task Constructor_Empty_AppScope()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(AppId, null, null, null));
 
             await Task.CompletedTask;
         }
@@ -55,9 +67,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Constructor_Empty_AuthorizeUrl()
         {
-            const string appId = "AnAppId";
-
-            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(appId, null, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(AppId, AppScope, null, null));
 
             await Task.CompletedTask;
         }
@@ -65,10 +75,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Constructor_Empty_VstsService()
         {
-            const string appId = "AnAppId";
-            const string authorizeUrl = "https://www.authorizationUrl.com";
-
-            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(appId, new Uri(authorizeUrl), null));
+            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(AppId, AppScope, new Uri(AuthorizeUrl), null));
 
             await Task.CompletedTask;
         }
@@ -79,10 +86,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            const string appId = "AnAppId";
-            const string authorizeUrl = "https://www.authorizationUrl.com";
-
-            var mocked = new Mock<ConnectDialog>(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>(AppId, AppScope, new Uri(AuthorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             await target.StartAsync(this.Fixture.DialogContext.Object);
@@ -93,10 +97,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Connect_Missing_Context()
         {
-            const string appId = "AnAppId";
-            const string authorizeUrl = "https://www.authorizationUrl.com";
-
-            var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object);
+            var target = new ConnectDialog(AppId, AppScope, new Uri(AuthorizeUrl), this.Fixture.VstsService.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.ConnectAsync(null, null));
         }
@@ -104,10 +105,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Connect_Missing_Awaitable()
         {
-            const string appId = "AnAppId";
-            const string authorizeUrl = "https://www.authorizationUrl.com";
-
-            var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object);
+            var target = new ConnectDialog(AppId, AppScope, new Uri(AuthorizeUrl), this.Fixture.VstsService.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.ConnectAsync(this.Fixture.DialogContext.Object, null));
         }
@@ -272,13 +270,10 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task LogOn()
         {
-            const string appId = "AnAppId";
-            const string authorizeUrl = "https://www.authorizationUrl.com";
-
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "connect account teamproject";
 
-            var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object);
+            var target = new ConnectDialog(AppId, AppScope, new Uri(AuthorizeUrl), this.Fixture.VstsService.Object);
 
             await target.LogOnAsync(this.Fixture.DialogContext.Object, toBot);
 
@@ -319,13 +314,10 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Handle_Received_Pin_Which_Is_Invalid()
         {
-            const string appId = "AnAppId";
-            const string authorizeUrl = "https://www.authorizationUrl.com";
-
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "00000";
 
-            var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { Pin = "12345" };
+            var target = new ConnectDialog(AppId, AppScope, new Uri(AuthorizeUrl), this.Fixture.VstsService.Object) { Pin = "12345" };
 
             await target.PinReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -339,13 +331,10 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Handle_Received_No_Pin()
         {
-            const string appId = "AnAppId";
-            const string authorizeUrl = "https://www.authorizationUrl.com";
-
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { Pin = "12345" };
+            var target = new ConnectDialog(AppId, AppScope, new Uri(AuthorizeUrl), this.Fixture.VstsService.Object) { Pin = "12345" };
 
             await target.PinReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -359,16 +348,13 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Select_Account()
         {
-            const string appId = "AnAppId";
-            const string authorizeUrl = "https://www.authorizationUrl.com";
-
             var profile1 = new VstsProfile { Accounts = new List<string> { "Account1", "Account2" } };
             var profile2 = new VstsProfile { Accounts = new List<string> { "Account3", "Account4" } };
             var profiles = new List<VstsProfile> { profile1, profile2 };
 
             var toBot = this.Fixture.CreateMessage();
 
-            var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { Profiles = profiles };
+            var target = new ConnectDialog(AppId, AppScope, new Uri(AuthorizeUrl), this.Fixture.VstsService.Object) { Profiles = profiles };
 
             await target.SelectAccountAsync(this.Fixture.DialogContext.Object, toBot);
 
@@ -433,16 +419,13 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Select_Project()
         {
-            const string appId = "AnAppId";
-            const string authorizeUrl = "https://www.authorizationUrl.com";
-
             var account = "Account1";
             var profile = new VstsProfile { Accounts = new List<string> { account }, Token = new OAuthToken() };
             var projects = new List<TeamProjectReference> { new TeamProjectReference() };
 
             var toBot = this.Fixture.CreateMessage();
 
-            var target = new ConnectDialog(appId, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { Account = account, Profile = profile };
+            var target = new ConnectDialog(AppId, AppScope, new Uri(AuthorizeUrl), this.Fixture.VstsService.Object) { Account = account, Profile = profile };
 
             this.Fixture.VstsService.Setup(s => s.GetProjects(account, profile.Token)).ReturnsAsync(projects).Verifiable();
 

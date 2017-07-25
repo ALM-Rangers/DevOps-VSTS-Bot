@@ -125,7 +125,7 @@ namespace Vsar.TSBot.UnitTests
             toBot.Text = "connect";
 
             var vstsService = new Mock<IVstsService>();
-            var dialog = new ConnectDialog("appid", new Uri("https://someurl.com"), vstsService.Object);
+            var dialog = new ConnectDialog("appid", "appscope", new Uri("https://someurl.com"), vstsService.Object);
 
             var container = new ContainerBuilder();
             container

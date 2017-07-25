@@ -21,27 +21,27 @@ namespace Vsar.TSBot.Cards
     /// </summary>
     public class LogOnCard : SigninCard
     {
-        private const string Scope = "vso.agentpools_manage%20vso.build_execute%20vso.chat_manage%20vso.code_manage%20vso.code_status%20vso.connected_server%20" +
-                                     "vso.dashboards%20vso.dashboards_manage%20vso.entitlements%20vso.extension.data_write%20vso.extension_manage%20vso.gallery_acquire%20" +
-                                     "vso.gallery_manage%20vso.identity%20vso.loadtest_write%20vso.notification_manage%20vso.packaging_manage%20vso.profile_write%20" +
-                                     "vso.project_manage%20vso.release_manage%20vso.security_manage%20vso.serviceendpoint_manage%20vso.taskgroups_manage%20vso.test_write%20" +
-                                     "vso.work_write";
-
         private const string UrlOAuth = "https://app.vssps.visualstudio.com/oauth2/authorize?client_id={0}&response_type=Assertion&state={1};{2}&scope={3}&redirect_uri={4}";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LogOnCard"/> class.
         /// </summary>
         /// <param name="appId">The app id.</param>
+        /// <param name="appScope">The app scope.</param>
         /// <param name="authorizeUrl">The authorizeUrl.</param>
         /// <param name="channelId">The channelId.</param>
         /// <param name="userId">The userId.</param>
-        public LogOnCard(string appId, Uri authorizeUrl, string channelId, string userId)
+        public LogOnCard(string appId, string appScope, Uri authorizeUrl, string channelId, string userId)
             : base(Labels.PleaseLogin)
         {
             if (string.IsNullOrWhiteSpace(appId))
             {
                 throw new ArgumentNullException(nameof(appId));
+            }
+
+            if (string.IsNullOrWhiteSpace(appScope))
+            {
+                throw new ArgumentNullException(nameof(appScope));
             }
 
             if (authorizeUrl == null)
@@ -61,7 +61,7 @@ namespace Vsar.TSBot.Cards
 
             var button = new CardAction
             {
-                Value = string.Format(CultureInfo.InvariantCulture, UrlOAuth, appId, channelId, userId, Scope, authorizeUrl),
+                Value = string.Format(CultureInfo.InvariantCulture, UrlOAuth, appId, channelId, userId, appScope, authorizeUrl),
                 Type = string.Equals(channelId, ChannelIds.Msteams, StringComparison.Ordinal) ? ActionTypes.OpenUrl : ActionTypes.Signin,
                 Title = Labels.AuthenticationRequired
             };
