@@ -35,6 +35,7 @@ namespace Vsar.TSBot.Dialogs
         private const string CommandMatchPin = @"(\d{4})";
 
         private readonly string appId;
+        private readonly string appScope;
         private readonly string authorizeUrl;
 
         [NonSerialized]
@@ -44,13 +45,19 @@ namespace Vsar.TSBot.Dialogs
         /// Initializes a new instance of the <see cref="ConnectDialog"/> class.
         /// </summary>
         /// <param name="appId">The registered application id.</param>
+        /// <param name="appScope">The registered application scope.</param>
         /// <param name="authorizeUrl">The URL to return to after authentication.</param>
         /// <param name="vstsService">VSTS accessor</param>
-        public ConnectDialog(string appId, Uri authorizeUrl, IVstsService vstsService)
+        public ConnectDialog(string appId, string appScope, Uri authorizeUrl, IVstsService vstsService)
         {
             if (string.IsNullOrWhiteSpace(appId))
             {
                 throw new ArgumentNullException(nameof(appId));
+            }
+
+            if (string.IsNullOrWhiteSpace(appScope))
+            {
+                throw new ArgumentNullException(nameof(appScope));
             }
 
             if (authorizeUrl == null)
@@ -64,6 +71,7 @@ namespace Vsar.TSBot.Dialogs
             }
 
             this.appId = appId;
+            this.appScope = appScope;
             this.authorizeUrl = authorizeUrl.ToString();
             this.vstsService = vstsService;
         }
@@ -144,7 +152,7 @@ namespace Vsar.TSBot.Dialogs
             this.Pin = GeneratePin();
             context.UserData.SetPin(this.Pin);
 
-            var card = new LogOnCard(this.appId, new Uri(this.authorizeUrl), activity.ChannelId, activity.From.Id);
+            var card = new LogOnCard(this.appId, this.appScope, new Uri(this.authorizeUrl), activity.ChannelId, activity.From.Id);
 
             var reply = context.MakeMessage();
             reply.Attachments.Add(card);

@@ -108,6 +108,7 @@ namespace Vsar.TSBot
             builder
                 .RegisterType<ConnectDialog>()
                 .WithParameter("appId", configurationProvider.GetValue(ConfigurationSettingName.ApplicationId))
+                .WithParameter("appScope", configurationProvider.GetValue(ConfigurationSettingName.ApplicationScope))
                 .WithParameter("authorizeUrl", new Uri(configurationProvider.GetValue(ConfigurationSettingName.AuthorizeUrl)))
                 .AsImplementedInterfaces();
 

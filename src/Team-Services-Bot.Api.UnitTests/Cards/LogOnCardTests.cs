@@ -23,33 +23,39 @@ namespace Vsar.TSBot.UnitTests.Cards
         [TestMethod]
         public void Constructor_Missing_AppId()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard(null, null, null, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard(null, null, null, null, null));
+        }
+
+        [TestMethod]
+        public void Constructor_Missing_AppScope()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard("appId", null, null, null, null));
         }
 
         [TestMethod]
         public void Constructor_Missing_AuthorizeUrl()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard("appId", null, null, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard("appId", "appScope", null, null, null));
         }
 
         [TestMethod]
         public void Constructor_Missing_ChannelId()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard("appId", new Uri("https://someurl.com"), null, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard("appId", "appScope", new Uri("https://someurl.com"), null, null));
         }
 
         [TestMethod]
         public void Constructor_Missing_UserId()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard("appId", new Uri("https://someurl.com"), ChannelIds.Skype, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard("appId", "appScope", new Uri("https://someurl.com"), ChannelIds.Skype, null));
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "target", Justification = "Need to test the constructor.")]
         [TestMethod]
         public void Constructor()
         {
-            var target = new LogOnCard("appId", new Uri("https://someurl.com"), ChannelIds.Skype, "userId");
-            target = new LogOnCard("appId", new Uri("https://someurl.com"), ChannelIds.Msteams, "userId");
+            var target = new LogOnCard("appId", "appScope", new Uri("https://someurl.com"), ChannelIds.Skype, "userId");
+            target = new LogOnCard("appId", "appScope", new Uri("https://someurl.com"), ChannelIds.Msteams, "userId");
         }
     }
 }
