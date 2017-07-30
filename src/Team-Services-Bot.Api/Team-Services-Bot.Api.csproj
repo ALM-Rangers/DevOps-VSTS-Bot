@@ -368,7 +368,9 @@
     </Content>
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
     <Content Include="..\Common\StrongNameKey.snk" />
-    <Content Include="AppSettings.config" />
+    <Content Include="AppSettings.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Authorize\Index.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Default\Index.cshtml" />
@@ -432,7 +434,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>3979</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost:44377/</IISUrl>
+          <IISUrl>https://127.0.0.1:44377/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
