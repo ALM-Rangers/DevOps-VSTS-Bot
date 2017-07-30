@@ -292,6 +292,7 @@
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\Common\CustomDictionary.xml">
       <Link>Properties\CustomDictionary.xml</Link>
+      <SubType>Designer</SubType>
     </CodeAnalysisDictionary>
     <Content Include="default.htm" />
     <Content Include="Global.asax" />
@@ -331,6 +332,7 @@
     <Compile Include="Extensions\DependencyResolverExtensions.cs" />
     <Compile Include="Extensions\AttachmentCollectionExtensions.cs" />
     <Compile Include="Extensions\BotDataBagExtensions.cs" />
+    <Compile Include="Extensions\GuardExtensions.cs" />
     <Compile Include="Model\Authorize.cs" />
     <Compile Include="Model\OAuthToken.cs" />
     <Compile Include="Model\VstsProfile.cs" />

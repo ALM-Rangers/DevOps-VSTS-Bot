@@ -18,6 +18,7 @@
       <Word>Vsts</Word>
       <Word>Auth</Word>
       <Word>Awaitable</Word>
+      <Word>param</Word>
     </Recognized>
     <Compound>
       <Term CompoundAlternate="ANon">anon</Term>

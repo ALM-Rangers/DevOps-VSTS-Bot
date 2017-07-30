@@ -13,7 +13,6 @@ namespace Vsar.TSBot
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using System.Security.Authentication.ExtendedProtection;
     using System.Threading.Tasks;
     using Microsoft.TeamFoundation.Build.WebApi;
     using Microsoft.TeamFoundation.Core.WebApi;
@@ -39,22 +38,11 @@ namespace Vsar.TSBot
         /// <inheritdoc />
         public async Task ChangeApprovalStatus(string account, string teamProject, VstsProfile profile, int approvalId, ApprovalStatus status, string comments)
         {
-            if (string.IsNullOrWhiteSpace(account))
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
+            teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
+            profile.ThrowIfNull(nameof(profile));
 
-            if (string.IsNullOrWhiteSpace(teamProject))
-            {
-                throw new ArgumentNullException(nameof(teamProject));
-            }
-
-            if (profile == null)
-            {
-                throw new ArgumentNullException(nameof(profile));
-            }
-
-            OAuthToken token = profile.Token;
+            var token = profile.Token;
 
             using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
             {
@@ -69,25 +57,10 @@ namespace Vsar.TSBot
         /// <inheritdoc />
         public async Task<Release> CreateReleaseAsync(string account, string teamProject, int definitionId, OAuthToken token)
         {
-            if (string.IsNullOrWhiteSpace(account))
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
-
-            if (string.IsNullOrWhiteSpace(teamProject))
-            {
-                throw new ArgumentNullException(nameof(teamProject));
-            }
-
-            if (definitionId <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(definitionId));
-            }
-
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
+            teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
+            definitionId.ThrowIfSmallerOrEqual(nameof(definitionId));
+            token.ThrowIfNull(nameof(token));
 
             ReleaseDefinition definition;
 
@@ -131,10 +104,7 @@ namespace Vsar.TSBot
         /// <inheritdoc/>
         public async Task<IList<Account>> GetAccounts(OAuthToken token, Guid memberId)
         {
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
+            token.ThrowIfNull(nameof(token));
 
             using (var client = await this.ConnectAsync<AccountHttpClient>(token))
             {
@@ -145,25 +115,10 @@ namespace Vsar.TSBot
         /// <inheritdoc/>
         public async Task<ReleaseApproval> GetApproval(string account, string teamProject, int approvalId, OAuthToken token)
         {
-            if (string.IsNullOrWhiteSpace(account))
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
-
-            if (string.IsNullOrWhiteSpace(teamProject))
-            {
-                throw new ArgumentNullException(nameof(teamProject));
-            }
-
-            if (approvalId <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(approvalId));
-            }
-
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
+            teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
+            approvalId.ThrowIfSmallerOrEqual(nameof(approvalId));
+            token.ThrowIfNull(nameof(token));
 
             using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
             {
@@ -174,24 +129,11 @@ namespace Vsar.TSBot
         /// <inheritdoc/>
         public async Task<IList<ReleaseApproval>> GetApprovals(string account, string teamProject, VstsProfile profile)
         {
-            if (account == null)
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
+            teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
+            profile.ThrowIfNull(nameof(profile));
 
-            if (string.IsNullOrWhiteSpace(teamProject))
-            {
-                throw new ArgumentNullException(nameof(teamProject));
-            }
-
-            if (profile == null)
-            {
-                throw new ArgumentNullException(nameof(profile));
-            }
-
-            OAuthToken token = profile.Token;
-
-            using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
+            using (var client = await this.ConnectAsync<ReleaseHttpClient2>(profile.Token, account))
             {
                 return await client.GetApprovalsAsync2(teamProject, profile.Id.ToString());
             }
@@ -200,25 +142,10 @@ namespace Vsar.TSBot
         /// <inheritdoc/>
         public async Task<Build> GetBuildAsync(string account, string teamProject, int id, OAuthToken token)
         {
-            if (string.IsNullOrWhiteSpace(account))
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
-
-            if (string.IsNullOrWhiteSpace(teamProject))
-            {
-                throw new ArgumentNullException(nameof(teamProject));
-            }
-
-            if (id <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(id));
-            }
-
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
+            teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
+            id.ThrowIfSmallerOrEqual(nameof(id));
+            token.ThrowIfNull(nameof(token));
 
             using (var client = await this.ConnectAsync<BuildHttpClient>(token, account))
             {
@@ -229,20 +156,9 @@ namespace Vsar.TSBot
         /// <inheritdoc/>
         public async Task<IList<BuildDefinitionReference>> GetBuildDefinitionsAsync(string account, string teamProject, OAuthToken token)
         {
-            if (string.IsNullOrWhiteSpace(teamProject))
-            {
-                throw new ArgumentNullException(nameof(teamProject));
-            }
-
-            if (string.IsNullOrWhiteSpace(account))
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
-
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
+            teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
+            token.ThrowIfNull(nameof(token));
 
             using (var client = await this.ConnectAsync<BuildHttpClient>(token, account))
             {
@@ -253,10 +169,7 @@ namespace Vsar.TSBot
         /// <inheritdoc/>
         public async Task<Profile> GetProfile(OAuthToken token)
         {
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
+            token.ThrowIfNull(nameof(token));
 
             using (var client = await this.ConnectAsync<ProfileHttpClient>(token))
             {
@@ -267,15 +180,8 @@ namespace Vsar.TSBot
         /// <inheritdoc />
         public async Task<IList<TeamProjectReference>> GetProjects(string account, OAuthToken token)
         {
-            if (string.IsNullOrWhiteSpace(account))
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
-
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
+            token.ThrowIfNull(nameof(token));
 
             using (var client = await this.ConnectAsync<ProjectHttpClient>(token, account))
             {
@@ -287,20 +193,9 @@ namespace Vsar.TSBot
         /// <inheritdoc />
         public async Task<IList<ReleaseDefinition>> GetReleaseDefinitionsAsync(string account, string teamProject, OAuthToken token)
         {
-            if (string.IsNullOrWhiteSpace(teamProject))
-            {
-                throw new ArgumentNullException(nameof(teamProject));
-            }
-
-            if (string.IsNullOrWhiteSpace(account))
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
-
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
+            teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
+            token.ThrowIfNull(nameof(token));
 
             using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
             {
@@ -311,25 +206,10 @@ namespace Vsar.TSBot
         /// <inheritdoc />
         public async Task<Build> QueueBuildAsync(string account, string teamProject, int definitionId, OAuthToken token)
         {
-            if (string.IsNullOrWhiteSpace(account))
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
-
-            if (string.IsNullOrWhiteSpace(teamProject))
-            {
-                throw new ArgumentNullException(nameof(teamProject));
-            }
-
-            if (definitionId <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(definitionId));
-            }
-
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
+            teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
+            definitionId.ThrowIfSmallerOrEqual(nameof(definitionId));
+            token.ThrowIfNull(nameof(token));
 
             using (var client = await this.ConnectAsync<BuildHttpClient>(token, account))
             {
@@ -342,25 +222,10 @@ namespace Vsar.TSBot
         /// <inheritdoc />
         public async Task<Release> GetReleaseAsync(string account, string teamProject, int id, OAuthToken token)
         {
-            if (string.IsNullOrWhiteSpace(account))
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
-
-            if (string.IsNullOrWhiteSpace(teamProject))
-            {
-                throw new ArgumentNullException(nameof(teamProject));
-            }
-
-            if (id <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(id));
-            }
-
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
+            teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
+            id.ThrowIfSmallerOrEqual(nameof(id));
+            token.ThrowIfNull(nameof(token));
 
             using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
             {
