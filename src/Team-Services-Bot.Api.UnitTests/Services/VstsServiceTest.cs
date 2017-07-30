@@ -499,19 +499,20 @@ namespace Vsar.TSBot.UnitTests.Services
 
             using (ShimsContext.Create())
             {
-                var client = new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2());
+                var client = new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2())
+                {
+                    GetReleaseAsyncStringInt32NullableOfBooleanIEnumerableOfStringObjectCancellationToken =
+                        (teamProject, id, arg3, arg4, arg5, cancellationToken) =>
+                            Task.Run(
+                                () =>
+                                {
+                                    teamProject.Should().Be(projectName);
+                                    id.Should().Be(releaseId);
 
-                client.GetReleaseAsyncStringInt32NullableOfBooleanIEnumerableOfStringObjectCancellationToken =
-                    (teamProject, id, arg3, arg4, arg5, cancellationToken) =>
-                    Task.Run(
-                        () =>
-                        {
-                            teamProject.Should().Be(projectName);
-                            id.Should().Be(releaseId);
-
-                            return release;
-                        },
-                        cancellationToken);
+                                    return release;
+                                },
+                                cancellationToken)
+                };
             }
         }
 
@@ -531,17 +532,19 @@ namespace Vsar.TSBot.UnitTests.Services
 
             using (ShimsContext.Create())
             {
-                var client = new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2());
-                client.GetReleaseDefinitionsAsyncStringStringNullableOfReleaseDefinitionExpandsStringStringNullableOfInt32StringNullableOfReleaseDefinitionQueryOrderStringNullableOfBooleanIEnumerableOfStringIEnumerableOfStringIEnumerableOfStringObjectCancellationToken =
-                    (teamProject, s1, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, cancellationToken) =>
-                        Task.Run(
-                            () =>
-                            {
-                                teamProject.Should().Be(projectName);
+                var client = new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2())
+                {
+                    GetReleaseDefinitionsAsyncStringStringNullableOfReleaseDefinitionExpandsStringStringNullableOfInt32StringNullableOfReleaseDefinitionQueryOrderStringNullableOfBooleanIEnumerableOfStringIEnumerableOfStringIEnumerableOfStringObjectCancellationToken
+                        = (teamProject, s1, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, cancellationToken) =>
+                                Task.Run(
+                                    () =>
+                                    {
+                                        teamProject.Should().Be(projectName);
 
-                                return expected;
-                            },
-                            cancellationToken);
+                                        return expected;
+                                    },
+                                    cancellationToken)
+                };
 
                 InitializeConnectionShim(client);
 

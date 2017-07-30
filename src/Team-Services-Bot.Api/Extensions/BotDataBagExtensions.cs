@@ -39,9 +39,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            string account;
-
-            return dataBag.TryGetValue(Account, out account) ? account : string.Empty;
+            return dataBag.TryGetValue(Account, out string account) ? account : string.Empty;
         }
 
         /// <summary>
@@ -56,9 +54,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            string teamProject;
-
-            return dataBag.TryGetValue(TeamProject, out teamProject) ? teamProject : string.Empty;
+            return dataBag.TryGetValue(TeamProject, out string teamProject) ? teamProject : string.Empty;
         }
 
         /// <summary>
@@ -73,9 +69,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            VstsProfile profile;
-
-            return dataBag.TryGetValue(NotValidatedByPinProfile, out profile) ? profile : null;
+            return dataBag.TryGetValue(NotValidatedByPinProfile, out VstsProfile profile) ? profile : null;
         }
 
         /// <summary>
@@ -100,13 +94,12 @@ namespace Vsar.TSBot
         /// <returns>A pin.</returns>
         public static string GetPin(this IBotDataBag dataBag)
         {
-            string result;
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            return dataBag.TryGetValue(Pin, out result) ? result : string.Empty;
+            return dataBag.TryGetValue(Pin, out string result) ? result : string.Empty;
         }
 
         /// <summary>
@@ -117,14 +110,13 @@ namespace Vsar.TSBot
         public static VstsProfile GetProfile(this IBotDataBag dataBag)
         {
             var authenticationService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IAuthenticationService>();
-            VstsProfile profile;
 
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            if (!dataBag.TryGetValue(Profile, out profile))
+            if (!dataBag.TryGetValue(Profile, out VstsProfile profile))
             {
                 return null;
             }
@@ -162,13 +154,12 @@ namespace Vsar.TSBot
         /// <returns>A list of profiles.</returns>
         public static IList<VstsProfile> GetProfiles(this IBotDataBag dataBag)
         {
-            IList<VstsProfile> results;
             if (dataBag == null)
             {
                 throw new ArgumentNullException(nameof(dataBag));
             }
 
-            return dataBag.TryGetValue(Profiles, out results) ? results : new List<VstsProfile>();
+            return dataBag.TryGetValue(Profiles, out IList<VstsProfile> results) ? results : new List<VstsProfile>();
         }
 
         /// <summary>

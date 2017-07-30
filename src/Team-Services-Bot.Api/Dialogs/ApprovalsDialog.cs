@@ -42,12 +42,7 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="vstsService">The <see cref="IVstsService"/>.</param>
         public ApprovalsDialog(IVstsService vstsService)
         {
-            if (vstsService == null)
-            {
-                throw new ArgumentNullException(nameof(vstsService));
-            }
-
-            this.vstsService = vstsService;
+            this.vstsService = vstsService ?? throw new ArgumentNullException(nameof(vstsService));
         }
 
         /// <summary>

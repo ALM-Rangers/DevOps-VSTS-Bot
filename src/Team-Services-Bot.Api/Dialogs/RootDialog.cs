@@ -38,18 +38,8 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="telemetryClient">A <see cref="telemetryClient"/>.</param>
         public RootDialog(Uri eulaUri, TelemetryClient telemetryClient)
         {
-            if (eulaUri == null)
-            {
-                throw new ArgumentNullException(nameof(eulaUri));
-            }
-
-            if (telemetryClient == null)
-            {
-                throw new ArgumentNullException(nameof(telemetryClient));
-            }
-
-            this.eulaUri = eulaUri;
-            this.telemetryClient = telemetryClient;
+            this.eulaUri = eulaUri ?? throw new ArgumentNullException(nameof(eulaUri));
+            this.telemetryClient = telemetryClient ?? throw new ArgumentNullException(nameof(telemetryClient));
         }
 
         /// <inheritdoc />

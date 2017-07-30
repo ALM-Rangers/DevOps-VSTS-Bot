@@ -40,12 +40,7 @@ namespace Vsar.TSBot.Dialogs
         /// <exception cref="ArgumentNullException">Occurs when the vstsService is missing.</exception>
         public ReleasesDialog(IVstsService vstsService)
         {
-            if (vstsService == null)
-            {
-                throw new ArgumentNullException(nameof(vstsService));
-            }
-
-            this.vstsService = vstsService;
+            this.vstsService = vstsService ?? throw new ArgumentNullException(nameof(vstsService));
         }
 
         /// <summary>

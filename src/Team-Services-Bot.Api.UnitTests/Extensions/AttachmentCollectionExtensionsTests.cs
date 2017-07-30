@@ -50,8 +50,7 @@ namespace Vsar.TSBot.UnitTests.Extensions
         [TestMethod]
         public void Add_HeroCard()
         {
-            var attachments = new List<Attachment>();
-            attachments.Add(new HeroCard());
+            var attachments = new List<Attachment> { new HeroCard() };
 
             attachments.Should().HaveCount(1);
         }
@@ -59,8 +58,7 @@ namespace Vsar.TSBot.UnitTests.Extensions
         [TestMethod]
         public void Add_SignInCard()
         {
-            var attachments = new List<Attachment>();
-            attachments.Add(new SigninCard());
+            var attachments = new List<Attachment> { new SigninCard() };
 
             attachments.Should().HaveCount(1);
         }

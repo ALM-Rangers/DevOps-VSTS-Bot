@@ -65,15 +65,10 @@ namespace Vsar.TSBot.Dialogs
                 throw new ArgumentNullException(nameof(authorizeUrl));
             }
 
-            if (vstsService == null)
-            {
-                throw new ArgumentNullException(nameof(vstsService));
-            }
-
             this.appId = appId;
             this.appScope = appScope;
             this.authorizeUrl = authorizeUrl.ToString();
-            this.vstsService = vstsService;
+            this.vstsService = vstsService ?? throw new ArgumentNullException(nameof(vstsService));
         }
 
         /// <summary>
