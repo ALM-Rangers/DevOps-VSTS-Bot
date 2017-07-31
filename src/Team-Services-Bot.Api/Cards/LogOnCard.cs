@@ -34,30 +34,11 @@ namespace Vsar.TSBot.Cards
         public LogOnCard(string appId, string appScope, Uri authorizeUrl, string channelId, string userId)
             : base(Labels.PleaseLogin)
         {
-            if (string.IsNullOrWhiteSpace(appId))
-            {
-                throw new ArgumentNullException(nameof(appId));
-            }
-
-            if (string.IsNullOrWhiteSpace(appScope))
-            {
-                throw new ArgumentNullException(nameof(appScope));
-            }
-
-            if (authorizeUrl == null)
-            {
-                throw new ArgumentNullException(nameof(authorizeUrl));
-            }
-
-            if (string.IsNullOrWhiteSpace(channelId))
-            {
-                throw new ArgumentNullException(nameof(channelId));
-            }
-
-            if (string.IsNullOrWhiteSpace(userId))
-            {
-                throw new ArgumentNullException(nameof(userId));
-            }
+            appId.ThrowIfNullOrWhiteSpace(nameof(appId));
+            appScope.ThrowIfNullOrWhiteSpace(nameof(appScope));
+            authorizeUrl.ThrowIfNull(nameof(authorizeUrl));
+            channelId.ThrowIfNullOrWhiteSpace(nameof(channelId));
+            userId.ThrowIfNullOrWhiteSpace(nameof(userId));
 
             var button = new CardAction
             {

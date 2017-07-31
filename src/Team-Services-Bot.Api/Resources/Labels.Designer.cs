@@ -106,6 +106,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Builds.
+        /// </summary>
+        internal static string Builds {
+            get {
+                return ResourceManager.GetString("Builds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connected to {0} / {1}..
         /// </summary>
         internal static string ConnectedTo {
@@ -210,6 +219,15 @@ namespace Vsar.TSBot.Resources {
         internal static string ReleaseCreated {
             get {
                 return ResourceManager.GetString("ReleaseCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Releases.
+        /// </summary>
+        internal static string Releases {
+            get {
+                return ResourceManager.GetString("Releases", resourceCulture);
             }
         }
         

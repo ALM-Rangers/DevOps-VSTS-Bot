@@ -178,4 +178,10 @@
     <value>Release with id {0} is created.</value>
     <comment>{0} = id.</comment>
   </data>
+  <data name="Builds" xml:space="preserve">
+    <value>Builds</value>
+  </data>
+  <data name="Releases" xml:space="preserve">
+    <value>Releases</value>
+  </data>
 </root>
