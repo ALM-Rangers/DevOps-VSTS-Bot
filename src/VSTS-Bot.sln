@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSTS-Bot.Api", "VSTS-Bot.Api\VSTS-Bot.Api.csproj", "{A8BA1066-5695-4D71-ABB4-65E5A5E0C3D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSTS-Bot.Api.UnitTests", "VSTS-Bot.Api.UnitTests\VSTS-Bot.Api.UnitTests.csproj", "{2812FF9C-9607-490C-93E2-FE4FF1FA8F54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSTS-Bot.AcceptanceTests", "VSTS-Bot.AcceptanceTests\VSTS-Bot.AcceptanceTests.csproj", "{FBE04D69-C8BC-4D0D-9D74-B919A293E53A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "General", "General", "{CA3F633B-4AE8-40EA-AD4D-02F12D3B0342}"
+	ProjectSection(SolutionItems) = preProject
+		VSTS-Bot.runsettings = VSTS-Bot.runsettings
+		VSTS-Bot.Unittests.runsettings = VSTS-Bot.Unittests.runsettings
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common Files", "Common Files", "{8D6039D5-30BF-4802-9E85-756354114B31}"
+	ProjectSection(SolutionItems) = preProject
+		Common\CommonAssemblyInfo.cs = Common\CommonAssemblyInfo.cs
+		Common\CustomDictionary.xml = Common\CustomDictionary.xml
+		Common\ProductionCodeRules.ruleset = Common\ProductionCodeRules.ruleset
+		Common\StrongNameKey.snk = Common\StrongNameKey.snk
+		Common\TestCodeRules.ruleset = Common\TestCodeRules.ruleset
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSTS-Bot.Common.Tests", "VSTS-Bot.Common.Tests\VSTS-Bot.Common.Tests.csproj", "{8164747D-607D-449F-AE5C-3170E5676954}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A8BA1066-5695-4D71-ABB4-65E5A5E0C3D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8BA1066-5695-4D71-ABB4-65E5A5E0C3D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8BA1066-5695-4D71-ABB4-65E5A5E0C3D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8BA1066-5695-4D71-ABB4-65E5A5E0C3D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2812FF9C-9607-490C-93E2-FE4FF1FA8F54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2812FF9C-9607-490C-93E2-FE4FF1FA8F54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2812FF9C-9607-490C-93E2-FE4FF1FA8F54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2812FF9C-9607-490C-93E2-FE4FF1FA8F54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBE04D69-C8BC-4D0D-9D74-B919A293E53A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBE04D69-C8BC-4D0D-9D74-B919A293E53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBE04D69-C8BC-4D0D-9D74-B919A293E53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBE04D69-C8BC-4D0D-9D74-B919A293E53A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8164747D-607D-449F-AE5C-3170E5676954}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8164747D-607D-449F-AE5C-3170E5676954}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8164747D-607D-449F-AE5C-3170E5676954}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8164747D-607D-449F-AE5C-3170E5676954}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
