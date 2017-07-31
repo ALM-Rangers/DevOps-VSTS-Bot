@@ -30,15 +30,8 @@ namespace Vsar.TSBot
         /// <param name="lifetimeScope"><see cref="ILifetimeScope"/> for autofac.</param>
         public static void Register(HttpConfiguration config, ILifetimeScope lifetimeScope)
         {
-            if (config == null)
-            {
-                throw new ArgumentNullException(nameof(config));
-            }
-
-            if (lifetimeScope == null)
-            {
-                throw new ArgumentNullException(nameof(lifetimeScope));
-            }
+            config.ThrowIfNull(nameof(config));
+            lifetimeScope.ThrowIfNull(nameof(lifetimeScope));
 
             // Json settings
             config.Formatters.JsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;

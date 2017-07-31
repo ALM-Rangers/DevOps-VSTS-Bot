@@ -27,7 +27,8 @@ namespace Vsar.TSBot.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
-        private Uri eulaUri;
+        private readonly Uri eulaUri;
+
         [NonSerialized]
         private TelemetryClient telemetryClient;
 
@@ -45,19 +46,24 @@ namespace Vsar.TSBot.Dialogs
         /// <inheritdoc />
         public async Task StartAsync(IDialogContext context)
         {
+            context.ThrowIfNull(nameof(context));
+
             context.Wait(this.HandleActivityAsync);
 
             await Task.CompletedTask;
         }
 
         /// <summary>
-        /// Handles any incoming activity.
+        /// Handles any incoming result.
         /// </summary>
         /// <param name="context">A <see cref="IDialogContext"/>.</param>
         /// <param name="result">a <see cref="IMessageActivity"/>.</param>
         /// <returns>a <see cref="Task"/>.</returns>
         public virtual async Task HandleActivityAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
             var activity = await result;
 
             // Occurs when the conversation starts.
@@ -75,11 +81,14 @@ namespace Vsar.TSBot.Dialogs
         /// Handles any incoming command and route them to the appropiate dialog.
         /// </summary>
         /// <param name="context">A <see cref="IDialogContext"/>.</param>
-        /// <param name="activity">An <see cref="IMessageActivity"/>.</param>
+        /// <param name="result">An <see cref="IMessageActivity"/>.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public virtual async Task HandleCommandAsync(IDialogContext context, IMessageActivity activity)
+        public virtual async Task HandleCommandAsync(IDialogContext context, IMessageActivity result)
         {
-            var dialog = GlobalConfiguration.Configuration.DependencyResolver.Find(activity.Text);
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
+            var dialog = GlobalConfiguration.Configuration.DependencyResolver.Find(result.Text);
 
             if (dialog == null)
             {
@@ -92,9 +101,9 @@ namespace Vsar.TSBot.Dialogs
             }
             else
             {
-                this.telemetryClient.TrackEvent(activity.Text);
+                this.telemetryClient.TrackEvent(result.Text);
 
-                await context.Forward(dialog, this.ResumeAfterChildDialog, activity, CancellationToken.None);
+                await context.Forward(dialog, this.ResumeAfterChildDialog, result, CancellationToken.None);
             }
         }
 
@@ -102,11 +111,14 @@ namespace Vsar.TSBot.Dialogs
         /// Welcomes a user.
         /// </summary>
         /// <param name="context">A <see cref="IDialogContext"/>.</param>
-        /// <param name="activity">An <see cref="IMessageActivity"/>.</param>
+        /// <param name="result">An <see cref="IMessageActivity"/>.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public virtual async Task WelcomeAsync(IDialogContext context, IMessageActivity activity)
+        public virtual async Task WelcomeAsync(IDialogContext context, IMessageActivity result)
         {
-            var message = activity as IConversationUpdateActivity;
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
+            var message = result as IConversationUpdateActivity;
             if (message == null)
             {
                 return;
@@ -132,6 +144,9 @@ namespace Vsar.TSBot.Dialogs
         /// <returns>A <see cref="Task"/>.</returns>
         public virtual Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
         {
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
             context.Wait(this.HandleActivityAsync);
             return Task.CompletedTask;
         }

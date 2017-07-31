@@ -75,9 +75,12 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Welcome_No_Message()
         {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = null;
+
             var target = this.Fixture.RootDialog;
 
-            await target.WelcomeAsync(this.Fixture.DialogContext.Object, null);
+            await target.WelcomeAsync(this.Fixture.DialogContext.Object, toBot);
         }
 
         [TestMethod]

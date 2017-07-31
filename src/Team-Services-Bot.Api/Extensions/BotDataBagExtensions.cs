@@ -34,10 +34,7 @@ namespace Vsar.TSBot
         /// <returns>An account.</returns>
         public static string GetAccount(this IBotDataBag dataBag)
         {
-            if (dataBag == null)
-            {
-                throw new ArgumentNullException(nameof(dataBag));
-            }
+            dataBag.ThrowIfNull(nameof(dataBag));
 
             return dataBag.TryGetValue(Account, out string account) ? account : string.Empty;
         }
@@ -49,10 +46,7 @@ namespace Vsar.TSBot
         /// <returns>the name of the current team project.</returns>
         public static string GetTeamProject(this IBotDataBag dataBag)
         {
-            if (dataBag == null)
-            {
-                throw new ArgumentNullException(nameof(dataBag));
-            }
+            dataBag.ThrowIfNull(nameof(dataBag));
 
             return dataBag.TryGetValue(TeamProject, out string teamProject) ? teamProject : string.Empty;
         }
@@ -64,10 +58,7 @@ namespace Vsar.TSBot
         /// <returns>The <see cref="VstsProfile"/>.</returns>
         public static VstsProfile GetNotValidatedByPinProfile(this IBotDataBag dataBag)
         {
-            if (dataBag == null)
-            {
-                throw new ArgumentNullException(nameof(dataBag));
-            }
+            dataBag.ThrowIfNull(nameof(dataBag));
 
             return dataBag.TryGetValue(NotValidatedByPinProfile, out VstsProfile profile) ? profile : null;
         }
@@ -79,10 +70,7 @@ namespace Vsar.TSBot
         /// <returns>A pin.</returns>
         public static string GetPin(this BotData data)
         {
-            if (data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
+            data.ThrowIfNull(nameof(data));
 
             return data.GetProperty<string>(Pin) ?? string.Empty;
         }
@@ -94,10 +82,7 @@ namespace Vsar.TSBot
         /// <returns>A pin.</returns>
         public static string GetPin(this IBotDataBag dataBag)
         {
-            if (dataBag == null)
-            {
-                throw new ArgumentNullException(nameof(dataBag));
-            }
+            dataBag.ThrowIfNull(nameof(dataBag));
 
             return dataBag.TryGetValue(Pin, out string result) ? result : string.Empty;
         }
@@ -111,10 +96,7 @@ namespace Vsar.TSBot
         {
             var authenticationService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IAuthenticationService>();
 
-            if (dataBag == null)
-            {
-                throw new ArgumentNullException(nameof(dataBag));
-            }
+            dataBag.ThrowIfNull(nameof(dataBag));
 
             if (!dataBag.TryGetValue(Profile, out VstsProfile profile))
             {
@@ -139,10 +121,7 @@ namespace Vsar.TSBot
         /// <returns>The profile.</returns>
         public static IList<VstsProfile> GetProfiles(this BotData data)
         {
-            if (data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
+            data.ThrowIfNull(nameof(data));
 
             return data.GetProperty<IList<VstsProfile>>(Profiles) ?? new List<VstsProfile>();
         }
@@ -154,10 +133,7 @@ namespace Vsar.TSBot
         /// <returns>A list of profiles.</returns>
         public static IList<VstsProfile> GetProfiles(this IBotDataBag dataBag)
         {
-            if (dataBag == null)
-            {
-                throw new ArgumentNullException(nameof(dataBag));
-            }
+            dataBag.ThrowIfNull(nameof(dataBag));
 
             return dataBag.TryGetValue(Profiles, out IList<VstsProfile> results) ? results : new List<VstsProfile>();
         }
@@ -169,15 +145,8 @@ namespace Vsar.TSBot
         /// <param name="account">The account.</param>
         public static void SetAccount(this BotData data, string account)
         {
-            if (data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            if (account == null)
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
+            data.ThrowIfNull(nameof(data));
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
 
             data.SetProperty(Account, account);
         }
@@ -189,15 +158,8 @@ namespace Vsar.TSBot
         /// <param name="account">the account.</param>
         public static void SetAccount(this IBotDataBag dataBag, string account)
         {
-            if (dataBag == null)
-            {
-                throw new ArgumentNullException(nameof(dataBag));
-            }
-
-            if (account == null)
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
+            dataBag.ThrowIfNull(nameof(dataBag));
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
 
             dataBag.SetValue(Account, account);
         }
@@ -209,15 +171,8 @@ namespace Vsar.TSBot
         /// <param name="profile">The profile.</param>
         public static void SetNotValidatedByPinProfile(this BotData data, VstsProfile profile)
         {
-            if (data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            if (profile == null)
-            {
-                throw new ArgumentNullException(nameof(profile));
-            }
+            data.ThrowIfNull(nameof(data));
+            profile.ThrowIfNull(nameof(profile));
 
             data.SetProperty(NotValidatedByPinProfile, profile);
         }
@@ -229,15 +184,8 @@ namespace Vsar.TSBot
         /// <param name="profile">The profile.</param>
         public static void SetProfile(this BotData data, VstsProfile profile)
         {
-            if (data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            if (profile == null)
-            {
-                throw new ArgumentNullException(nameof(profile));
-            }
+            data.ThrowIfNull(nameof(data));
+            profile.ThrowIfNull(nameof(profile));
 
             data.SetProperty(Profile, profile);
         }
@@ -249,15 +197,8 @@ namespace Vsar.TSBot
         /// <param name="profile">The profile.</param>
         public static void SetProfile(this IBotDataBag dataBag, VstsProfile profile)
         {
-            if (dataBag == null)
-            {
-                throw new ArgumentNullException(nameof(dataBag));
-            }
-
-            if (profile == null)
-            {
-                throw new ArgumentNullException(nameof(profile));
-            }
+            dataBag.ThrowIfNull(nameof(dataBag));
+            profile.ThrowIfNull(nameof(profile));
 
             dataBag.SetValue(Profile, profile);
         }
@@ -269,15 +210,8 @@ namespace Vsar.TSBot
         /// <param name="teamProject">The team project.</param>
         public static void SetTeamProject(this BotData data, string teamProject)
         {
-            if (data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            if (string.IsNullOrWhiteSpace(teamProject))
-            {
-                throw new ArgumentNullException(nameof(teamProject));
-            }
+            data.ThrowIfNull(nameof(data));
+            teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
 
             data.SetProperty(TeamProject, teamProject);
         }
@@ -289,15 +223,8 @@ namespace Vsar.TSBot
         /// <param name="teamProject">The team project.</param>
         public static void SetTeamProject(this IBotDataBag dataBag, string teamProject)
         {
-            if (dataBag == null)
-            {
-                throw new ArgumentNullException(nameof(dataBag));
-            }
-
-            if (string.IsNullOrWhiteSpace(teamProject))
-            {
-                throw new ArgumentNullException(nameof(teamProject));
-            }
+            dataBag.ThrowIfNull(nameof(dataBag));
+            teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
 
             dataBag.SetValue(TeamProject, teamProject);
         }
@@ -309,15 +236,8 @@ namespace Vsar.TSBot
         /// <param name="pin">The pin.</param>
         public static void SetPin(this IBotDataBag dataBag, string pin)
         {
-            if (dataBag == null)
-            {
-                throw new ArgumentNullException(nameof(dataBag));
-            }
-
-            if (string.IsNullOrWhiteSpace(pin))
-            {
-                throw new ArgumentNullException(nameof(pin));
-            }
+            dataBag.ThrowIfNull(nameof(dataBag));
+            pin.ThrowIfNullOrWhiteSpace(nameof(pin));
 
             dataBag.SetValue(Pin, pin);
         }
@@ -329,15 +249,8 @@ namespace Vsar.TSBot
         /// <param name="profiles">the profile.</param>
         public static void SetProfiles(this BotData data, IList<VstsProfile> profiles)
         {
-            if (data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            if (profiles == null)
-            {
-                throw new ArgumentNullException(nameof(profiles));
-            }
+            data.ThrowIfNull(nameof(data));
+            profiles.ThrowIfNull(nameof(profiles));
 
             data.SetProperty(Profiles, profiles);
         }
@@ -349,15 +262,8 @@ namespace Vsar.TSBot
         /// <param name="profiles">the profile.</param>
         public static void SetProfiles(this IBotDataBag dataBag, IList<VstsProfile> profiles)
         {
-            if (dataBag == null)
-            {
-                throw new ArgumentNullException(nameof(dataBag));
-            }
-
-            if (profiles == null)
-            {
-                throw new ArgumentNullException(nameof(profiles));
-            }
+            dataBag.ThrowIfNull(nameof(dataBag));
+            profiles.ThrowIfNull(nameof(profiles));
 
             dataBag.SetValue(Profiles, profiles);
         }

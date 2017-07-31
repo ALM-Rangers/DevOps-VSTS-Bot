@@ -61,6 +61,8 @@ namespace Vsar.TSBot.Dialogs
         /// <inheritdoc />
         public async Task StartAsync(IDialogContext context)
         {
+            context.ThrowIfNull(nameof(context));
+
             context.Wait(this.ReleasesAsync);
 
             await Task.CompletedTask;
@@ -74,15 +76,8 @@ namespace Vsar.TSBot.Dialogs
         /// <returns>A <see cref="Task"/>.</returns>
         public async Task ReleasesAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            if (result == null)
-            {
-                throw new ArgumentNullException(nameof(result));
-            }
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
 
             this.Account = context.UserData.GetAccount();
             this.Profile = context.UserData.GetProfile();
@@ -122,15 +117,8 @@ namespace Vsar.TSBot.Dialogs
         /// <returns>A <see cref="Task"/>.</returns>
         public async Task CreateAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            if (result == null)
-            {
-                throw new ArgumentNullException(nameof(result));
-            }
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
 
             var activity = await result;
             var text = (activity.Text ?? string.Empty).ToLowerInvariant();

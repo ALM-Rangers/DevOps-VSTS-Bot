@@ -24,10 +24,7 @@ namespace Vsar.TSBot.Cards
         /// <param name="releaseDefinition">A release definition.</param>
         public ReleaseDefinitionCard(ReleaseDefinition releaseDefinition)
         {
-            if (releaseDefinition == null)
-            {
-                throw new ArgumentNullException(nameof(releaseDefinition));
-            }
+            releaseDefinition.ThrowIfNull(nameof(releaseDefinition));
 
             this.Title = releaseDefinition.Name;
 

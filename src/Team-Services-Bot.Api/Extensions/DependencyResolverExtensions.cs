@@ -30,15 +30,8 @@ namespace Vsar.TSBot
         /// <returns>A <see cref="IDialog{TResult}"/>.</returns>
         public static IDialog<object> Find(this IDependencyScope resolver, string activityText)
         {
-            if (resolver == null)
-            {
-                throw new ArgumentNullException(nameof(resolver));
-            }
-
-            if (string.IsNullOrWhiteSpace(activityText))
-            {
-                return null;
-            }
+            resolver.ThrowIfNull(nameof(resolver));
+            activityText.ThrowIfNullOrWhiteSpace(nameof(activityText));
 
             var dialogs = resolver.GetServices<Meta<IDialog<object>>>();
 
@@ -57,10 +50,7 @@ namespace Vsar.TSBot
         public static T GetService<T>(this IDependencyScope resolver)
             where T : class
         {
-            if (resolver == null)
-            {
-                throw new ArgumentNullException(nameof(resolver));
-            }
+            resolver.ThrowIfNull(nameof(resolver));
 
             return resolver.GetService(typeof(T)) as T;
         }
@@ -73,10 +63,7 @@ namespace Vsar.TSBot
         /// <returns>The service.</returns>
         public static IEnumerable<T> GetServices<T>(this IDependencyScope resolver)
         {
-            if (resolver == null)
-            {
-                throw new ArgumentNullException(nameof(resolver));
-            }
+            resolver.ThrowIfNull(nameof(resolver));
 
             return resolver.GetServices(typeof(T)) as IEnumerable<T>;
         }

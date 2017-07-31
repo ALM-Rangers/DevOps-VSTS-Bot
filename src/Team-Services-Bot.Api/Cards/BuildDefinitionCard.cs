@@ -24,10 +24,7 @@ namespace Vsar.TSBot.Cards
         /// <param name="buildDefinition">A  build definition.</param>
         public BuildDefinitionCard(BuildDefinitionReference buildDefinition)
         {
-            if (buildDefinition == null)
-            {
-                throw new ArgumentNullException(nameof(buildDefinition));
-            }
+            buildDefinition.ThrowIfNull(nameof(buildDefinition));
 
             this.Title = buildDefinition.Name;
 

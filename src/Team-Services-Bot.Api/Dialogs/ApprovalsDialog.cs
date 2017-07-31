@@ -73,6 +73,8 @@ namespace Vsar.TSBot.Dialogs
         /// <inheritdoc />
         public async Task StartAsync(IDialogContext context)
         {
+            context.ThrowIfNull(nameof(context));
+
             context.Wait(this.ApprovalsAsync);
 
             await Task.CompletedTask;
@@ -86,6 +88,9 @@ namespace Vsar.TSBot.Dialogs
         /// <returns>An async <see cref="Task"/>/.</returns>
         public virtual async Task ApprovalsAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
             var activity = await result;
             var reply = context.MakeMessage();
 
@@ -118,6 +123,9 @@ namespace Vsar.TSBot.Dialogs
         /// <returns>An async <see cref="Task"/>/.</returns>
         public virtual async Task ApproveOrRejectAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
             var activity = await result;
 
             var matchApprove = Regex.Match(activity.Text, CommandMatchApprove);
@@ -173,6 +181,9 @@ namespace Vsar.TSBot.Dialogs
         /// <returns>A <see cref="Task"/>.</returns>
         public virtual async Task ChangeStatusAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
             var activity = await result;
 
             await this.ChangeStatusAsync(context, this.ApprovalId, activity.Text, this.IsApproved);
@@ -188,6 +199,8 @@ namespace Vsar.TSBot.Dialogs
         /// <returns>A <see cref="Task"/>.</returns>
         public virtual async Task ChangeStatusAsync(IDialogContext context, int approvalId, string comment, bool isApproved)
         {
+            context.ThrowIfNull(nameof(context));
+
             var reply = context.MakeMessage();
 
             var status = isApproved ? ApprovalStatus.Approved : ApprovalStatus.Rejected;

@@ -31,20 +31,9 @@ namespace Vsar.TSBot.Cards
         /// <param name="teamProject">A team project.</param>
         public ApprovalCard(string account, ReleaseApproval approval, string teamProject)
         {
-            if (string.IsNullOrWhiteSpace(account))
-            {
-                throw new ArgumentNullException(nameof(account));
-            }
-
-            if (approval == null)
-            {
-                throw new ArgumentNullException(nameof(approval));
-            }
-
-            if (string.IsNullOrWhiteSpace(teamProject))
-            {
-                throw new ArgumentNullException(nameof(teamProject));
-            }
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
+            approval.ThrowIfNull(nameof(approval));
+            teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
 
             this.Subtitle = approval.ReleaseReference.Name;
             this.Text = approval.ReleaseEnvironmentReference.Name;
