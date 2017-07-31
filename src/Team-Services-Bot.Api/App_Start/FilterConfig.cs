@@ -25,10 +25,7 @@ namespace Vsar.TSBot
         /// <param name="filters">The filters.</param>
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
-            if (filters == null)
-            {
-                throw new ArgumentNullException(nameof(filters));
-            }
+            filters.ThrowIfNull(nameof(filters));
 
             filters.Add(new HandleErrorAttribute());
         }

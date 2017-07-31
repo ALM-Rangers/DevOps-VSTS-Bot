@@ -31,6 +31,6 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets the command coming from the users.
         /// </summary>
-        public string Command { get; private set; }
+        public string Command { get; }
     }
 }

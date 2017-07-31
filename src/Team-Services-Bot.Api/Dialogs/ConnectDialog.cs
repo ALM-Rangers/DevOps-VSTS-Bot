@@ -50,20 +50,9 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="vstsService">VSTS accessor</param>
         public ConnectDialog(string appId, string appScope, Uri authorizeUrl, IVstsService vstsService)
         {
-            if (string.IsNullOrWhiteSpace(appId))
-            {
-                throw new ArgumentNullException(nameof(appId));
-            }
-
-            if (string.IsNullOrWhiteSpace(appScope))
-            {
-                throw new ArgumentNullException(nameof(appScope));
-            }
-
-            if (authorizeUrl == null)
-            {
-                throw new ArgumentNullException(nameof(authorizeUrl));
-            }
+            appId.ThrowIfNullOrWhiteSpace(nameof(appId));
+            appScope.ThrowIfNullOrWhiteSpace(nameof(appScope));
+            authorizeUrl.ThrowIfNull(nameof(authorizeUrl));
 
             this.appId = appId;
             this.appScope = appScope;
@@ -99,6 +88,8 @@ namespace Vsar.TSBot.Dialogs
         /// <inheritdoc />
         public async Task StartAsync(IDialogContext context)
         {
+            context.ThrowIfNull(nameof(context));
+
             context.Wait(this.ConnectAsync);
 
             await Task.CompletedTask;
@@ -112,15 +103,8 @@ namespace Vsar.TSBot.Dialogs
         /// <returns>A <see cref="Task"/>.</returns>
         public virtual async Task ConnectAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            if (result == null)
-            {
-                throw new ArgumentNullException(nameof(result));
-            }
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
 
             var activity = await result;
             var text = (activity.Text ?? string.Empty).ToLowerInvariant();
@@ -139,15 +123,18 @@ namespace Vsar.TSBot.Dialogs
         /// Generates a login card and presents it to the user.
         /// </summary>
         /// <param name="context">A <see cref="IDialogContext"/></param>
-        /// <param name="activity">A <see cref="IMessageActivity"/>.</param>
+        /// <param name="result">A <see cref="IMessageActivity"/>.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public virtual async Task LogOnAsync(IDialogContext context, IMessageActivity activity)
+        public virtual async Task LogOnAsync(IDialogContext context, IMessageActivity result)
         {
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
             // Set pin.
             this.Pin = GeneratePin();
             context.UserData.SetPin(this.Pin);
 
-            var card = new LogOnCard(this.appId, this.appScope, new Uri(this.authorizeUrl), activity.ChannelId, activity.From.Id);
+            var card = new LogOnCard(this.appId, this.appScope, new Uri(this.authorizeUrl), result.ChannelId, result.From.Id);
 
             var reply = context.MakeMessage();
             reply.Attachments.Add(card);
@@ -164,6 +151,9 @@ namespace Vsar.TSBot.Dialogs
         /// <returns>A <see cref="Task"/>.</returns>
         public virtual async Task PinReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
             var activity = await result;
 
             var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
@@ -191,10 +181,13 @@ namespace Vsar.TSBot.Dialogs
         /// Shows a selection list of accounts to the user.
         /// </summary>
         /// <param name="context">A <see cref="IDialogContext"/></param>
-        /// <param name="activity">A <see cref="IMessageActivity"/>.</param>
+        /// <param name="result">A <see cref="IMessageActivity"/>.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public virtual async Task SelectAccountAsync(IDialogContext context, IMessageActivity activity)
+        public virtual async Task SelectAccountAsync(IDialogContext context, IMessageActivity result)
         {
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
             var reply = context.MakeMessage();
 
             var accounts = this.Profiles
@@ -218,6 +211,9 @@ namespace Vsar.TSBot.Dialogs
         /// <returns>A <see cref="Task"/>.</returns>
         public virtual async Task AccountReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
             var activity = await result;
 
             this.Account = activity.Text.Trim();
@@ -240,10 +236,13 @@ namespace Vsar.TSBot.Dialogs
         /// Shows a selection list of the projects to the user.
         /// </summary>
         /// <param name="context">A <see cref="IDialogContext"/></param>
-        /// <param name="activity">A <see cref="IMessageActivity"/>.</param>
+        /// <param name="result">A <see cref="IMessageActivity"/>.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public virtual async Task SelectProjectAsync(IDialogContext context, IMessageActivity activity)
+        public virtual async Task SelectProjectAsync(IDialogContext context, IMessageActivity result)
         {
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
             var reply = context.MakeMessage();
 
             var projects = await this.vstsService.GetProjects(this.Account, this.Profile.Token);
@@ -266,6 +265,9 @@ namespace Vsar.TSBot.Dialogs
         /// <returns>A <see cref="Task"/>.</returns>
         public virtual async Task ProjectReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
             var activity = await result;
 
             this.TeamProject = activity.Text.Trim();
@@ -279,10 +281,13 @@ namespace Vsar.TSBot.Dialogs
         /// Continues the process.
         /// </summary>
         /// <param name="context">A <see cref="IDialogContext"/>.</param>
-        /// <param name="activity">An <see cref="IMessageActivity"/>.</param>
+        /// <param name="result">An <see cref="IMessageActivity"/>.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public virtual async Task ContinueProcess(IDialogContext context, IMessageActivity activity)
+        public virtual async Task ContinueProcess(IDialogContext context, IMessageActivity result)
         {
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
             this.Profile = context.UserData.GetProfile();
             this.Profiles = context.UserData.GetProfiles();
 
@@ -291,14 +296,14 @@ namespace Vsar.TSBot.Dialogs
             // No Profiles, so we have to login.
             if (!this.Profiles.Any() || this.Profile == null)
             {
-                await this.LogOnAsync(context, activity);
+                await this.LogOnAsync(context, result);
                 return;
             }
 
             // No account, show a list available accounts.
             if (string.IsNullOrWhiteSpace(this.Account))
             {
-                await this.SelectAccountAsync(context, activity);
+                await this.SelectAccountAsync(context, result);
                 return;
             }
 
@@ -307,7 +312,7 @@ namespace Vsar.TSBot.Dialogs
             // No team project, ....
             if (string.IsNullOrWhiteSpace(this.TeamProject))
             {
-                await this.SelectProjectAsync(context, activity);
+                await this.SelectProjectAsync(context, result);
                 return;
             }
 

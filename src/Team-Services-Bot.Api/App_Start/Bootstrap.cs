@@ -37,10 +37,7 @@ namespace Vsar.TSBot
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Bootstrapper for Autofac. So it is intented to hit all needed dependencies in one place.")]
         public static IContainer Build(IConfigurationProvider configurationProvider, bool isDebugging)
         {
-            if (configurationProvider == null)
-            {
-                throw new ArgumentNullException(nameof(configurationProvider));
-            }
+            configurationProvider.ThrowIfNull(nameof(configurationProvider));
 
             var builder = new ContainerBuilder();
 

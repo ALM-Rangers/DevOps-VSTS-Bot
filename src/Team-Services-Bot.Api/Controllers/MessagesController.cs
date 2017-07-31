@@ -15,12 +15,9 @@ namespace Vsar.TSBot
     using System.Threading.Tasks;
     using System.Web.Http;
     using Autofac;
-    using Autofac.Core;
     using Dialogs;
     using Microsoft.ApplicationInsights;
-    using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
-    using Microsoft.VisualStudio.Services.Common;
     using Resources;
 
     /// <summary>
