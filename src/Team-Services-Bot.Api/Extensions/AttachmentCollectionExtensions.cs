@@ -9,7 +9,6 @@
 
 namespace Vsar.TSBot
 {
-    using System;
     using System.Collections.Generic;
     using Microsoft.Bot.Connector;
 
@@ -25,15 +24,8 @@ namespace Vsar.TSBot
         /// <param name="card">The card.</param>
         public static void Add(this IList<Attachment> attachments, HeroCard card)
         {
-            if (attachments == null)
-            {
-                throw new ArgumentNullException(nameof(attachments));
-            }
-
-            if (card == null)
-            {
-                throw new ArgumentNullException(nameof(card));
-            }
+            attachments.ThrowIfNull(nameof(attachments));
+            card.ThrowIfNull(nameof(card));
 
             attachments.Add(card.ToAttachment());
         }
@@ -45,15 +37,8 @@ namespace Vsar.TSBot
         /// <param name="card">The card.</param>
         public static void Add(this IList<Attachment> attachments, SigninCard card)
         {
-            if (attachments == null)
-            {
-                throw new ArgumentNullException(nameof(attachments));
-            }
-
-            if (card == null)
-            {
-                throw new ArgumentNullException(nameof(card));
-            }
+            attachments.ThrowIfNull(nameof(attachments));
+            card.ThrowIfNull(nameof(card));
 
             attachments.Add(card.ToAttachment());
         }
