@@ -160,7 +160,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please login to Team Services. After login you will receive a five digit pin number, please enter the pin number..
+        ///   Looks up a localized string similar to Please login to Visual Studio Team Services. After login you will receive a five digit pin number, please enter the pin number..
         /// </summary>
         internal static string PleaseLogin {
             get {
@@ -241,7 +241,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hi {0}. Good to see you. I will help you with your Team Services tasks. Please read the [EULA]({1}) if you have not done so..
+        ///   Looks up a localized string similar to Hi {0}. Good to see you. I will help you with your Visual Studio Team Services tasks. Please read the [EULA]({1}) if you have not done so..
         /// </summary>
         internal static string WelcomeUser {
             get {

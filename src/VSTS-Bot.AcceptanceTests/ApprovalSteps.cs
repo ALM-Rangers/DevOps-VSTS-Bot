@@ -11,7 +11,6 @@ namespace Vsar.TSBot.AcceptanceTests
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using FluentAssertions;
     using Microsoft.Bot.Connector.DirectLine;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
@@ -37,7 +36,7 @@ namespace Vsar.TSBot.AcceptanceTests
         public void ThenIGetAListOfApprovalsOn(Table table)
         {
             var activities = Config.Client.Conversations.GetActivities(Config.ConversationId);
-            var activity = activities.Activities.LastOrDefault(a => string.Equals(a.From.Id, Config.BotId, StringComparison.OrdinalIgnoreCase));
+            var activity = activities.Activities.Last(a => string.Equals(a.From.Id, Config.BotId, StringComparison.OrdinalIgnoreCase));
             var cards = activity.Attachments.Select(a => a.Content).Cast<JObject>().ToList();
 
             cards.Should().HaveCount(table.RowCount);

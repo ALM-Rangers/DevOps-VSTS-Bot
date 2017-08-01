@@ -1,5 +1,5 @@
 ﻿Feature: Connect
-	In order to talk to Team Services, we need to be able to connect to Team Services
+	In order to talk to Visual Studio Team Services, we need to be able to connect to Team Services
 
 Background: 
 	Given A user 'Test User'

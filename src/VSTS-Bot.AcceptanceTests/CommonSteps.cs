@@ -152,7 +152,7 @@ namespace Vsar.TSBot.AcceptanceTests
         [Then(@"the bot should respond with the welcome message\.")]
         public void ThenTheBotShouldRespondWithTheWelcomeMessage_()
         {
-            var pattern = "Hi Test User. Good to see you. I will help you with your Team Services tasks. Please read the \\[EULA\\]\\(.+\\) if you have not done so.";
+            var pattern = "Hi Test User. Good to see you. I will help you with your Visual Studio Team Services tasks. Please read the \\[EULA\\]\\(.+\\) if you have not done so.";
 
             var activities = Config.Client.Conversations.GetActivities(Config.ConversationId);
             var activity = activities.Activities.FirstOrDefault(a => string.Equals(a.From.Id, Config.BotId, StringComparison.OrdinalIgnoreCase));

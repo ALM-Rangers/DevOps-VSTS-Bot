@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Represents a Team Services VSTSProfile.
+// Represents a Visual Studio Team Services VSTSProfile.
 // </summary>
 // ———————————————————————————————
 
@@ -14,7 +14,7 @@ namespace Vsar.TSBot
     using System.Runtime.Serialization;
 
     /// <summary>
-    /// Represents a Team Services VSTSProfile.
+    /// Represents a Visual Studio Team Services VSTSProfile.
     /// </summary>
     [DataContract]
     [Serializable]

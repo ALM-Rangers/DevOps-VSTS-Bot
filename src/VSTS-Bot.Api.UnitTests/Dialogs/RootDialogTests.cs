@@ -97,7 +97,7 @@ namespace Vsar.TSBot.UnitTests
 
             this.Fixture.DialogContext
                 .Verify(c => c.PostAsync(
-                    It.Is<IMessageActivity>(a => Regex.IsMatch(a.Text, $"Hi {toBot.From.Name}. Good to see you. I will help you with your Team Services tasks. Please read the \\[EULA\\]\\(.+\\) if you have not done so.")),
+                    It.Is<IMessageActivity>(a => Regex.IsMatch(a.Text, $"Hi {toBot.From.Name}. Good to see you. I will help you with your Visual Studio Team Services tasks. Please read the \\[EULA\\]\\(.+\\) if you have not done so.")),
                     CancellationToken.None));
         }
 
