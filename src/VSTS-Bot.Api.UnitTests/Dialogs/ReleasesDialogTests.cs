@@ -12,7 +12,6 @@ namespace Vsar.TSBot.UnitTests
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Common.Tests;
     using Dialogs;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
@@ -20,7 +19,7 @@ namespace Vsar.TSBot.UnitTests
     using Moq;
 
     [TestClass]
-    [TestCategory(TestCategories.Unit)]
+    [TestCategory("Unit")]
     public class ReleasesDialogTests : TestsBase<DialogFixture>
     {
         public ReleasesDialogTests()

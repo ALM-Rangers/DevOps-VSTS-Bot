@@ -369,7 +369,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
-    <Content Include="..\Common\StrongNameKey.snk" />
     <Content Include="AppSettings.config">
       <SubType>Designer</SubType>
     </Content>

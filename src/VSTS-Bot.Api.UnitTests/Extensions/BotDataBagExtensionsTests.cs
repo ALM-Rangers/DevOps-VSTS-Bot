@@ -14,7 +14,6 @@ namespace Vsar.TSBot.UnitTests.Extensions
     using System.Web.Http;
     using Autofac;
     using Autofac.Integration.WebApi;
-    using Common.Tests;
     using FluentAssertions;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
@@ -23,7 +22,7 @@ namespace Vsar.TSBot.UnitTests.Extensions
 
     [ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory(TestCategories.Unit)]
+    [TestCategory("Unit")]
     public class BotDataBagExtensionsTests
     {
         [TestMethod]

@@ -18,8 +18,6 @@ namespace Vsar.TSBot.UnitTests
     using System.Web.Http;
     using Autofac;
     using Autofac.Integration.WebApi;
-    using Cards;
-    using Common.Tests;
     using Dialogs;
     using FluentAssertions;
     using Microsoft.Bot.Connector;
@@ -32,7 +30,7 @@ namespace Vsar.TSBot.UnitTests
     /// Tests for <see cref="ConnectDialog"/>.
     /// </summary>
     [TestClass]
-    [TestCategory(TestCategories.Unit)]
+    [TestCategory("Unit")]
     [ExcludeFromCodeCoverage]
     public class ConnectDialogTests : TestsBase<DialogFixture>
     {

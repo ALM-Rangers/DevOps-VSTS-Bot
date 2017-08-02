@@ -13,7 +13,6 @@ namespace Vsar.TSBot.UnitTests.Services
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading.Tasks;
-    using Common.Tests;
     using FluentAssertions;
     using Microsoft.QualityTools.Testing.Fakes;
     using Microsoft.TeamFoundation.Build.WebApi;
@@ -38,7 +37,7 @@ namespace Vsar.TSBot.UnitTests.Services
     /// Unit tests for <see cref="VstsService"/>.
     /// </summary>
     [TestClass]
-    [TestCategory(TestCategories.Unit)]
+    [TestCategory("Unit")]
     public class VstsServiceTest
     {
         private readonly OAuthToken token = new OAuthToken { AccessToken = @"x25onorum4neacdjmvzvaxjeosik7qxo7fbnn6lebefeday7fxmq" };

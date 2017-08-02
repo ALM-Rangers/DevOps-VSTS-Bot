@@ -10,13 +10,12 @@ namespace Vsar.TSBot.UnitTests
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Web.Mvc;
-    using Common.Tests;
     using FluentAssertions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory(TestCategories.Unit)]
+    [TestCategory("Unit")]
     public class EulaControllerTests
     {
         [TestMethod]

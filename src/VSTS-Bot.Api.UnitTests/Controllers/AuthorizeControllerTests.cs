@@ -15,7 +15,6 @@ namespace Vsar.TSBot.UnitTests
     using System.Linq;
     using System.Threading.Tasks;
     using System.Web.Mvc;
-    using Common.Tests;
     using FluentAssertions;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.Services.Account;
@@ -28,7 +27,7 @@ namespace Vsar.TSBot.UnitTests
     /// </summary>
     [ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory(TestCategories.Unit)]
+    [TestCategory("Unit")]
     public class AuthorizeControllerTests
     {
         [TestMethod]
