@@ -29,10 +29,10 @@ namespace Vsar.TSBot
         /// </summary>
         protected void Application_Start()
         {
-            TelemetryConfiguration.Active.InstrumentationKey = WebConfigurationManager.AppSettings["InstrumentationKey"];
+            TelemetryConfiguration.Active.InstrumentationKey = Config.InstrumentationKey;
 
             // Web API configuration and services
-            var container = Bootstrap.Build(new WebConfigurationProvider(), this.Context.IsDebuggingEnabled);
+            var container = Bootstrap.Build(this.Context.IsDebuggingEnabled);
 
             GlobalConfiguration.Configure(c => WebApiConfig.Register(c, container));
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
