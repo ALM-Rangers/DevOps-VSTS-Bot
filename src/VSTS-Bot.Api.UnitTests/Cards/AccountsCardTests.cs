@@ -11,7 +11,6 @@ namespace Vsar.TSBot.UnitTests.Cards
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using Common.Tests;
     using FluentAssertions;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -19,7 +18,7 @@ namespace Vsar.TSBot.UnitTests.Cards
 
     [ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory(TestCategories.Unit)]
+    [TestCategory("Unit")]
     public class AccountsCardTests
     {
         [TestMethod]

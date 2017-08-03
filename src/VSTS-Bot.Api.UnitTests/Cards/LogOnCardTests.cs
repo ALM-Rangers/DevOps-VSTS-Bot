@@ -10,14 +10,13 @@ namespace Vsar.TSBot.UnitTests.Cards
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-    using Common.Tests;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TSBot.Cards;
 
     [ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory(TestCategories.Unit)]
+    [TestCategory("Unit")]
     public class LogOnCardTests
     {
         [TestMethod]

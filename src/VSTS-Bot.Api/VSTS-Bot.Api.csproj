@@ -306,7 +306,6 @@
     </Compile>
     <Compile Include="App_Start\Bootstrap.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="App_Start\ConfigurationSettingName.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
@@ -317,6 +316,7 @@
     <Compile Include="Cards\MainOptionsCard.cs" />
     <Compile Include="Cards\ProjectsCard.cs" />
     <Compile Include="Cards\ReleaseDefinitionCard.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="Controllers\AuthorizeController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\EulaController.cs" />
@@ -327,8 +327,6 @@
     <Compile Include="Dialogs\ReleasesDialog.cs" />
     <Compile Include="DI\CommandMetadataAttribute.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />
-    <Compile Include="DI\IConfigurationProvider.cs" />
-    <Compile Include="DI\WebConfigurationProvider.cs" />
     <Compile Include="Extensions\DependencyResolverExtensions.cs" />
     <Compile Include="Extensions\AttachmentCollectionExtensions.cs" />
     <Compile Include="Extensions\BotDataBagExtensions.cs" />
@@ -369,7 +367,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
-    <Content Include="..\Common\StrongNameKey.snk" />
     <Content Include="AppSettings.config">
       <SubType>Designer</SubType>
     </Content>

@@ -14,7 +14,6 @@ namespace Vsar.TSBot.UnitTests
     using System.Net.Http;
     using System.Threading.Tasks;
     using Autofac;
-    using Common.Tests;
     using Dialogs;
     using FluentAssertions;
     using Microsoft.ApplicationInsights;
@@ -25,7 +24,7 @@ namespace Vsar.TSBot.UnitTests
 
     [ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory(TestCategories.Unit)]
+    [TestCategory("Unit")]
     public class MessagesControllerTests
     {
         [TestMethod]

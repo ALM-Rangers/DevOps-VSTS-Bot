@@ -12,7 +12,6 @@ namespace Vsar.TSBot
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Web;
     using Autofac;
     using Autofac.Extras.AttributeMetadata;
     using Autofac.Integration.Mvc;
@@ -31,22 +30,16 @@ namespace Vsar.TSBot
         /// <summary>
         /// Builds a <see cref="IContainer"/> that has all the necessary types registered to run the application.
         /// </summary>
-        /// <param name="configurationProvider">The provider used to access configuration information.</param>
         /// <param name="isDebugging">Flag that indicates if the application is in debugging modus.</param>
         /// <returns>A <see cref="IContainer"/>.</returns>
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Bootstrapper for Autofac. So it is intented to hit all needed dependencies in one place.")]
-        public static IContainer Build(IConfigurationProvider configurationProvider, bool isDebugging)
+        public static IContainer Build(bool isDebugging)
         {
-            configurationProvider.ThrowIfNull(nameof(configurationProvider));
-
             var builder = new ContainerBuilder();
 
             builder
                 .RegisterType<DialogInvoker>()
                 .As<IDialogInvoker>();
-
-            builder
-                .RegisterInstance(configurationProvider);
 
             builder
                 .RegisterModule<AttributedMetadataModule>();
@@ -56,15 +49,13 @@ namespace Vsar.TSBot
                 .RegisterType<TelemetryClient>()
                 .SingleInstance();
 
-            var microsoftAppCredentials = new MicrosoftAppCredentials(
-                configurationProvider.GetValue(ConfigurationSettingName.MicrosoftApplicationId),
-                configurationProvider.GetValue(ConfigurationSettingName.MicrosoftApplicationPassword));
+            var microsoftAppCredentials =
+                new MicrosoftAppCredentials(Config.MicrosoftApplicationId, Config.MicrosoftAppPassword);
 
             // When debugging with the bot emulator we need to use the listening url from the emulator.
-            if (isDebugging && !string.IsNullOrEmpty(configurationProvider.GetValue(ConfigurationSettingName.EmulatorListeningUrl)))
+            if (isDebugging && !string.IsNullOrEmpty(Config.EmulatorListeningUrl))
             {
-                builder.Register(c => new StateClient(
-                    new Uri(configurationProvider.GetValue(ConfigurationSettingName.EmulatorListeningUrl)), microsoftAppCredentials));
+                builder.Register(c => new StateClient(new Uri(Config.EmulatorListeningUrl), microsoftAppCredentials));
             }
             else
             {
@@ -77,8 +68,8 @@ namespace Vsar.TSBot
 
             builder
                 .RegisterType<AuthenticationService>()
-                .WithParameter("appSecret", configurationProvider.GetValue(ConfigurationSettingName.ApplicationSecret))
-                .WithParameter("authorizeUrl", new Uri(configurationProvider.GetValue(ConfigurationSettingName.AuthorizeUrl)))
+                .WithParameter("appSecret", Config.ApplicationSecret)
+                .WithParameter("authorizeUrl", Config.AuthorizeUrl)
                 .AsImplementedInterfaces();
 
             builder
@@ -104,9 +95,9 @@ namespace Vsar.TSBot
 
             builder
                 .RegisterType<ConnectDialog>()
-                .WithParameter("appId", configurationProvider.GetValue(ConfigurationSettingName.ApplicationId))
-                .WithParameter("appScope", configurationProvider.GetValue(ConfigurationSettingName.ApplicationScope))
-                .WithParameter("authorizeUrl", new Uri(configurationProvider.GetValue(ConfigurationSettingName.AuthorizeUrl)))
+                .WithParameter("appId", Config.ApplicationId)
+                .WithParameter("appScope", Config.ApplicationScope)
+                .WithParameter("authorizeUrl", Config.AuthorizeUrl)
                 .AsImplementedInterfaces();
 
             builder

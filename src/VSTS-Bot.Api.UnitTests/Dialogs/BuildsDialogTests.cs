@@ -13,7 +13,6 @@ namespace Vsar.TSBot.UnitTests
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
-    using Common.Tests;
     using Dialogs;
     using Microsoft.Bot.Connector;
     using Microsoft.TeamFoundation.Build.WebApi;
@@ -21,7 +20,7 @@ namespace Vsar.TSBot.UnitTests
     using Moq;
 
     [TestClass]
-    [TestCategory(TestCategories.Unit)]
+    [TestCategory("Unit")]
     [ExcludeFromCodeCoverage]
     public class BuildsDialogTests : TestsBase<DialogFixture>
     {

@@ -19,7 +19,6 @@ namespace Vsar.TSBot.UnitTests
     using Autofac;
     using Autofac.Extras.AttributeMetadata;
     using Autofac.Integration.WebApi;
-    using Common.Tests;
     using Dialogs;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
@@ -29,7 +28,7 @@ namespace Vsar.TSBot.UnitTests
     using TSBot.Cards;
 
     [TestClass]
-    [TestCategory(TestCategories.Unit)]
+    [TestCategory("Unit")]
     [ExcludeFromCodeCoverage]
     public class RootDialogTests : TestsBase<DialogFixture>
     {

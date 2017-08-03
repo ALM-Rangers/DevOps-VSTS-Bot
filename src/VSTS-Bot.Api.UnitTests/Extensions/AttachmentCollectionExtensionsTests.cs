@@ -11,14 +11,13 @@ namespace Vsar.TSBot.UnitTests.Extensions
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using Common.Tests;
     using FluentAssertions;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory(TestCategories.Unit)]
+    [TestCategory("Unit")]
     public class AttachmentCollectionExtensionsTests
     {
         [TestMethod]

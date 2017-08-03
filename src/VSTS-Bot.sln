@@ -24,8 +24,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common Files", "Common File
 		Common\TestCodeRules.ruleset = Common\TestCodeRules.ruleset
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSTS-Bot.Common.Tests", "VSTS-Bot.Common.Tests\VSTS-Bot.Common.Tests.csproj", "{8164747D-607D-449F-AE5C-3170E5676954}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,10 +42,6 @@ Global
 		{FBE04D69-C8BC-4D0D-9D74-B919A293E53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBE04D69-C8BC-4D0D-9D74-B919A293E53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBE04D69-C8BC-4D0D-9D74-B919A293E53A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8164747D-607D-449F-AE5C-3170E5676954}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8164747D-607D-449F-AE5C-3170E5676954}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8164747D-607D-449F-AE5C-3170E5676954}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8164747D-607D-449F-AE5C-3170E5676954}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

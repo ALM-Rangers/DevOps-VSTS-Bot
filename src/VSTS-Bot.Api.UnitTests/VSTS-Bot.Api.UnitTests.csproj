@@ -276,16 +276,11 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="..\Common\StrongNameKey.snk" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VSTS-Bot.Api\VSTS-Bot.Api.csproj">
       <Project>{A8BA1066-5695-4D71-ABB4-65E5A5E0C3D4}</Project>
       <Name>VSTS-Bot.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\VSTS-Bot.Common.Tests\VSTS-Bot.Common.Tests.csproj">
-      <Project>{8164747D-607D-449F-AE5C-3170E5676954}</Project>
-      <Name>VSTS-Bot.Common.Tests</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

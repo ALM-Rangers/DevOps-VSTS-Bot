@@ -10,14 +10,13 @@ namespace Vsar.TSBot.UnitTests.Cards
 {
     using System;
     using System.Linq;
-    using Common.Tests;
     using FluentAssertions;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TSBot.Cards;
 
     [TestClass]
-    [TestCategory(TestCategories.Unit)]
+    [TestCategory("Unit")]
     public class ReleaseDefinitionCardTests
     {
         [TestMethod]
