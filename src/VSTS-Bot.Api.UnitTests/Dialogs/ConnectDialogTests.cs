@@ -263,7 +263,7 @@ namespace Vsar.TSBot.UnitTests
 
             this.Fixture.DialogContext
                 .Verify(c => c.PostAsync(
-                    It.Is<IMessageActivity>(a => a.Text.Equals("Connected to account / teamproject.", StringComparison.OrdinalIgnoreCase)), CancellationToken.None));
+                    It.Is<IMessageActivity>(a => a.Text.Equals($"Dear {toBot.From.Name}. I have connected you to your team project 'teamproject', which is in account 'account'.", StringComparison.OrdinalIgnoreCase)), CancellationToken.None));
             this.Fixture.DialogContext
                 .Verify(c => c.Done(It.IsAny<IMessageActivity>()));
 

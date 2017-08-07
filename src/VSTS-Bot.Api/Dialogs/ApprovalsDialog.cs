@@ -113,6 +113,10 @@ namespace Vsar.TSBot.Dialogs
 
                 context.Wait(this.ApproveOrRejectAsync);
             }
+            else
+            {
+                context.Fail(new UnknownCommandException());
+            }
         }
 
         /// <summary>
@@ -169,7 +173,7 @@ namespace Vsar.TSBot.Dialogs
             }
             else
             {
-                context.Done(reply);
+                context.Fail(new UnknownCommandException());
             }
         }
 

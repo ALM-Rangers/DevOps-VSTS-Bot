@@ -142,13 +142,19 @@ namespace Vsar.TSBot.Dialogs
         /// <param name="context">A result.</param>
         /// <param name="result">A <see cref="IMessageActivity"/>.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        public virtual Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
+        public virtual async Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
         {
             context.ThrowIfNull(nameof(context));
             result.ThrowIfNull(nameof(result));
 
-            context.Wait(this.HandleActivityAsync);
-            return Task.CompletedTask;
+            try
+            {
+                await result;
+            }
+            catch (UnknownCommandException)
+            {
+                await this.HandleCommandAsync(context, context.Activity as IMessageActivity);
+            }
         }
 
         [ExcludeFromCodeCoverage]

@@ -115,7 +115,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Connected to {0} / {1}..
+        ///   Looks up a localized string similar to Dear {0}. I have connected you to your team project &apos;{2}&apos;, which is in account &apos;{1}&apos;..
         /// </summary>
         internal static string ConnectedTo {
             get {

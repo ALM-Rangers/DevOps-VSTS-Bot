@@ -318,7 +318,7 @@ namespace Vsar.TSBot.Dialogs
 
             context.UserData.SetTeamProject(this.TeamProject);
 
-            reply.Text = string.Format(Labels.ConnectedTo, this.Account, this.TeamProject);
+            reply.Text = string.Format(Labels.ConnectedTo, result.From.Name, this.Account, this.TeamProject);
             await context.PostAsync(reply);
 
             context.Done(reply);

@@ -74,7 +74,7 @@ namespace Vsar.TSBot.UnitTests
             var target = new ReleasesDialog(this.Fixture.VstsService.Object);
             await target.ReleasesAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
-            this.Fixture.DialogContext.Verify(c => c.Done(It.IsAny<IMessageActivity>()));
+            this.Fixture.DialogContext.Verify(c => c.Fail(It.IsAny<UnknownCommandException>()));
         }
 
         [TestMethod]
@@ -138,7 +138,7 @@ namespace Vsar.TSBot.UnitTests
             var target = new ReleasesDialog(this.Fixture.VstsService.Object);
             await target.CreateAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
-            this.Fixture.DialogContext.Verify(c => c.Done(It.IsAny<IMessageActivity>()));
+            this.Fixture.DialogContext.Verify(c => c.Fail(It.IsAny<UnknownCommandException>()));
         }
 
         [TestMethod]

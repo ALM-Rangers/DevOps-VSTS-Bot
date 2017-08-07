@@ -151,11 +151,13 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Resume_After_Child_Finishes()
         {
-            var target = this.Fixture.RootDialog;
+            var fromBot = this.Fixture.CreateMessage();
 
-            await target.ResumeAfterChildDialog(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(string.Empty));
+            var target = new Mock<RootDialog>(new Uri("http://eula.com"), this.Fixture.TelemetryClient) { CallBase = true };
 
-            this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.HandleActivityAsync));
+            await target.Object.ResumeAfterChildDialog(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(fromBot));
+
+            target.Verify(d => d.HandleCommandAsync(this.Fixture.DialogContext.Object, It.IsAny<IMessageActivity>()), Times.Never);
         }
 
         [TestMethod]

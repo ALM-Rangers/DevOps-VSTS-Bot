@@ -105,7 +105,7 @@ namespace Vsar.TSBot.Dialogs
             }
             else
             {
-                context.Done(reply);
+                context.Fail(new UnknownCommandException());
             }
         }
 
@@ -133,9 +133,12 @@ namespace Vsar.TSBot.Dialogs
                 reply.Text = string.Format(Labels.BuildQueued, build.Id);
 
                 await context.PostAsync(reply);
+                context.Done(reply);
             }
-
-            context.Done(reply);
+            else
+            {
+                context.Fail(new UnknownCommandException());
+            }
         }
 
         [ExcludeFromCodeCoverage]

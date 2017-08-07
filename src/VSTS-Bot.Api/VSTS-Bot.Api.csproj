@@ -327,6 +327,7 @@
     <Compile Include="Dialogs\ReleasesDialog.cs" />
     <Compile Include="DI\CommandMetadataAttribute.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />
+    <Compile Include="Exceptions\UnknownCommandException.cs" />
     <Compile Include="Extensions\DependencyResolverExtensions.cs" />
     <Compile Include="Extensions\AttachmentCollectionExtensions.cs" />
     <Compile Include="Extensions\BotDataBagExtensions.cs" />
