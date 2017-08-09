@@ -2,7 +2,7 @@
 THIRD-PARTY SOFTWARE NOTICES AND INFORMATION
 Do Not Translate or Localize
 
-Team-Services-Bot incorporates components from the projects listed below. Microsoft licenses these components to you under Microsoft’s licensing terms for the Visual Studio Team Services Bot.  The original copyright notices and the licenses under which Microsoft received such components are set forth below for informational purposes. Microsoft reserves all rights not expressly granted herein, whether by implication, estoppel or otherwise.
+Visual Studio Team Services Bot incorporates components from the projects listed below. Microsoft licenses these components to you under Microsoft’s licensing terms for the Visual Studio Team Services Bot.  The original copyright notices and the licenses under which Microsoft received such components are set forth below for informational purposes. Microsoft reserves all rights not expressly granted herein, whether by implication, estoppel or otherwise.
 
 
 1.	Antlr (http://www.antlr3.org/)
