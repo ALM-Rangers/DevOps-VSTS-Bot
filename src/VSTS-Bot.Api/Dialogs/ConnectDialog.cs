@@ -85,6 +85,12 @@ namespace Vsar.TSBot.Dialogs
         /// </summary>
         public string TeamProject { get; set; }
 
+        /// <summary>
+        /// Gets or sets a list of team projects.
+        /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Need to be able to set the Team Projects.")]
+        public IList<string> TeamProjects { get; set; } = new List<string>();
+
         /// <inheritdoc />
         public async Task StartAsync(IDialogContext context)
         {
@@ -194,7 +200,7 @@ namespace Vsar.TSBot.Dialogs
                 .SelectMany(a => a.Accounts)
                 .Distinct()
                 .OrderBy(a => a)
-                .ToArray();
+                .ToList();
 
             reply.Text = Labels.ConnectToAccount;
             reply.Attachments.Add(new AccountsCard(accounts));
@@ -217,8 +223,8 @@ namespace Vsar.TSBot.Dialogs
             var activity = await result;
 
             this.Account = activity.Text.Trim();
-            this.Profile = this.Profiles
-                .FirstOrDefault(p => p.Accounts.Any(a => string.Equals(a, this.Account, StringComparison.OrdinalIgnoreCase)));
+            this.Profile = this.Profiles.FirstOrDefault(p => p.Accounts.Any(
+                a => string.Equals(a, this.Account, StringComparison.OrdinalIgnoreCase)));
 
             if (this.Profile == null)
             {
@@ -246,12 +252,12 @@ namespace Vsar.TSBot.Dialogs
             var reply = context.MakeMessage();
 
             var projects = await this.vstsService.GetProjects(this.Account, this.Profile.Token);
-            var projectsNames = projects
+            this.TeamProjects = projects
                 .Select(project => project.Name)
                 .ToList();
 
             reply.Text = Labels.ConnectToProject;
-            reply.Attachments.Add(new ProjectsCard(projectsNames));
+            reply.Attachments.Add(new ProjectsCard(this.TeamProjects));
 
             await context.PostAsync(reply);
             context.Wait(this.ProjectReceivedAsync);
@@ -270,11 +276,18 @@ namespace Vsar.TSBot.Dialogs
 
             var activity = await result;
 
-            this.TeamProject = activity.Text.Trim();
+            if (!this.TeamProjects.Contains(activity.Text.Trim()))
+            {
+                await this.SelectProjectAsync(context, activity);
+            }
+            else
+            {
+                this.TeamProject = activity.Text.Trim();
 
-            context.UserData.SetTeamProject(this.TeamProject);
+                context.UserData.SetTeamProject(this.TeamProject);
 
-            await this.ContinueProcess(context, activity);
+                await this.ContinueProcess(context, activity);
+            }
         }
 
         /// <summary>

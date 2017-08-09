@@ -427,7 +427,7 @@ namespace Vsar.TSBot.UnitTests
         {
             var account = "Account1";
             var profile = new VstsProfile { Accounts = new List<string> { account }, Token = new OAuthToken() };
-            var projects = new List<TeamProjectReference> { new TeamProjectReference() };
+            var projects = new List<TeamProjectReference> { new TeamProjectReference { Name = "Project1" } };
 
             var toBot = this.Fixture.CreateMessage();
 
@@ -443,6 +443,8 @@ namespace Vsar.TSBot.UnitTests
                     It.Is<IMessageActivity>(a => a.Attachments.First().Content is ProjectsCard),
                     CancellationToken.None));
             this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.ProjectReceivedAsync));
+
+            target.TeamProjects.Should().Contain("Project1");
         }
 
         [TestMethod]
@@ -457,6 +459,7 @@ namespace Vsar.TSBot.UnitTests
 
             var mocked = new Mock<ConnectDialog>(appId, appScope, new Uri(authorizeUrl), this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
+            target.TeamProjects = new List<string> { "Project1" };
 
             mocked.Setup(m => m.ContinueProcess(this.Fixture.DialogContext.Object, toBot)).Returns(Task.CompletedTask).Verifiable();
 
