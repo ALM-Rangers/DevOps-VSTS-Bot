@@ -1,0 +1,39 @@
+﻿@model Authorize
+<!--
+// ———————————————————————————————
+// <copyright file="Index.cshtml">
+// Licensed under the MIT License. See License.txt in the project root for license information.
+// </copyright>
+// <summary>
+// The page you see after the authentication page of VSTS.
+// </summary>
+// ———————————————————————————————
+-->
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>View</title>
+</head>
+
+<body>
+@foreach (var item in ViewData.ModelState)
+{
+    if (item.Value.Errors.Any())
+    {
+        foreach (ModelError e in item.Value.Errors)
+        {
+            <summary style="color: red">
+                @e.ErrorMessage
+            </summary>
+        }
+        
+    }
+}
+<div>
+    Pin: @Model.Pin
+</div>
+</body>
+</html>
