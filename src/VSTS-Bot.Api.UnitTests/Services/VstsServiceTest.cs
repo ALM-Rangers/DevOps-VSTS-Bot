@@ -60,6 +60,7 @@ namespace Vsar.TSBot.UnitTests.Services
             {
                 Id = Guid.NewGuid(),
                 Token = this.token,
+                DisplayName = "me",
                 EmailAddress = "me@email.com"
             };
 
@@ -199,6 +200,7 @@ namespace Vsar.TSBot.UnitTests.Services
             {
                 Id = Guid.NewGuid(),
                 Token = this.token,
+                DisplayName = "me",
                 EmailAddress = "me@email.com"
             };
             var service = new VstsService();
@@ -243,7 +245,7 @@ namespace Vsar.TSBot.UnitTests.Services
                     }.Instance
                 });
 
-                IList<ReleaseApproval> actual = await service.GetApprovals(accountName, projectName, profile);
+                var actual = await service.GetApprovals(accountName, projectName, profile);
 
                 Assert.AreEqual(expected.Count, actual.Count);
 
