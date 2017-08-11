@@ -173,7 +173,7 @@ namespace Vsar.TSBot
 
             using (var client = await this.ConnectAsync<ProfileHttpClient>(token))
             {
-                return await client.GetProfileAsync(new ProfileQueryContext(AttributesScope.Core));
+                return await client.GetProfileAsync(new ProfileQueryContext(AttributesScope.Application));
             }
         }
 
