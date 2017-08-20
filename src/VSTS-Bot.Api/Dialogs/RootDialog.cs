@@ -92,8 +92,10 @@ namespace Vsar.TSBot.Dialogs
 
             if (dialog == null)
             {
+                var teamProject = context.UserData.GetTeamProject();
+
                 var reply = context.MakeMessage();
-                reply.Attachments.Add(new MainOptionsCard());
+                reply.Attachments.Add(new MainOptionsCard(!string.IsNullOrEmpty(teamProject)));
 
                 await context.PostAsync(reply);
 
