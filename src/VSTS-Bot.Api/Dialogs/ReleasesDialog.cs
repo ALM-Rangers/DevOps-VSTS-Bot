@@ -91,6 +91,14 @@ namespace Vsar.TSBot.Dialogs
             {
                 var releaseDefinitions =
                     await this.vstsService.GetReleaseDefinitionsAsync(this.Account, this.TeamProject, this.Profile.Token);
+                if (!releaseDefinitions.Any())
+                {
+                    reply.Text = Labels.NoReleases;
+                    await context.PostAsync(reply);
+                    context.Done(reply);
+                    return;
+                }
+
                 var cards = releaseDefinitions.Select(rd => new ReleaseDefinitionCard(rd)).ToList();
 
                 foreach (var card in cards)

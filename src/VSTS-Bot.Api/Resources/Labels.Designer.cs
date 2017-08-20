@@ -115,6 +115,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connect.
+        /// </summary>
+        internal static string Connect {
+            get {
+                return ResourceManager.GetString("Connect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dear {0}. I have connected you to your team project &apos;{2}&apos;, which is in account &apos;{1}&apos;..
         /// </summary>
         internal static string ConnectedTo {
@@ -156,6 +165,33 @@ namespace Vsar.TSBot.Resources {
         internal static string MissingComment {
             get {
                 return ResourceManager.GetString("MissingComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are no approvals available for you.
+        /// </summary>
+        internal static string NoApprovals {
+            get {
+                return ResourceManager.GetString("NoApprovals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are no builds available..
+        /// </summary>
+        internal static string NoBuilds {
+            get {
+                return ResourceManager.GetString("NoBuilds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are no releases available..
+        /// </summary>
+        internal static string NoReleases {
+            get {
+                return ResourceManager.GetString("NoReleases", resourceCulture);
             }
         }
         
