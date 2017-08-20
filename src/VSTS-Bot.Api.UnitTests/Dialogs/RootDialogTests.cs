@@ -164,6 +164,11 @@ namespace Vsar.TSBot.UnitTests
         public async Task Handle_Message_Activity()
         {
             var message = this.Fixture.CreateMessage();
+            var teamProject = "anteamproject";
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
+                .Returns(true);
 
             var mocked = new Mock<RootDialog>(new Uri("https://an.url.toEula"), this.Fixture.TelemetryClient) { CallBase = true };
             var target = mocked.Object;

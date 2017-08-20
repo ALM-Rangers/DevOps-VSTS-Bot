@@ -187,6 +187,9 @@
   <data name="NoApprovals" xml:space="preserve">
     <value>There are no approvals available for you</value>
   </data>
+  <data name="Connect" xml:space="preserve">
+    <value>Connect</value>
+  </data>
   <data name="NoBuilds" xml:space="preserve">
     <value>There are no builds available.</value>
   </data>
