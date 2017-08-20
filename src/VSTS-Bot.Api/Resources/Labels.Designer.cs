@@ -160,6 +160,33 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There are no approvals available for you.
+        /// </summary>
+        internal static string NoApprovals {
+            get {
+                return ResourceManager.GetString("NoApprovals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are no builds available..
+        /// </summary>
+        internal static string NoBuilds {
+            get {
+                return ResourceManager.GetString("NoBuilds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are no releases available..
+        /// </summary>
+        internal static string NoReleases {
+            get {
+                return ResourceManager.GetString("NoReleases", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please login to Visual Studio Team Services. After login you will receive a five digit pin number, please enter the pin number..
         /// </summary>
         internal static string PleaseLogin {

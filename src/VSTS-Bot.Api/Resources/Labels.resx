@@ -184,4 +184,13 @@
   <data name="Releases" xml:space="preserve">
     <value>Releases</value>
   </data>
+  <data name="NoApprovals" xml:space="preserve">
+    <value>There are no approvals available for you</value>
+  </data>
+  <data name="NoBuilds" xml:space="preserve">
+    <value>There are no builds available.</value>
+  </data>
+  <data name="NoReleases" xml:space="preserve">
+    <value>There are no releases available.</value>
+  </data>
 </root>
