@@ -10,11 +10,10 @@
 namespace Vsar.TSBot
 {
     using System.Diagnostics.CodeAnalysis;
-    using System.Web.Configuration;
     using System.Web.Http;
     using System.Web.Mvc;
+    using System.Web.Optimization;
     using System.Web.Routing;
-    using Autofac;
     using Autofac.Integration.Mvc;
     using Microsoft.ApplicationInsights.Extensibility;
 
@@ -41,7 +40,7 @@ namespace Vsar.TSBot
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
-            // BundleConfig.RegisterBundles(BundleTable.Bundles);
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
     }
 }

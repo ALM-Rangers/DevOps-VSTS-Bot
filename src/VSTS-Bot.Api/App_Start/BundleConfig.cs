@@ -10,6 +10,7 @@
 namespace Vsar.TSBot
 {
     using System.Diagnostics.CodeAnalysis;
+    using System.Web.Optimization;
 
     /// <summary>
     /// Controls the way we bundle css and javascript.
@@ -20,14 +21,18 @@ namespace Vsar.TSBot
         /// <summary>
         /// Bundles CSS and Javascript.
         /// </summary>
-        public static void RegisterBundles() // BundleCollection bundles)
+        /// <param name="bundles">A collection of bundles.</param>
+        public static void RegisterBundles(BundleCollection bundles)
         {
-            /*
-            bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                        "~/Scripts/jquery-{version}.js"));
+            bundles.ThrowIfNull(nameof(bundles));
 
+            bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
+                "~/Scripts/jquery-{version}.js"));
+
+            /*
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
+            */
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at https://modernizr.com to pick only the tests you need.
@@ -41,7 +46,6 @@ namespace Vsar.TSBot
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
-            */
         }
     }
 }
