@@ -11,6 +11,7 @@ namespace Vsar.TSBot.Dialogs
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.Runtime.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
@@ -156,6 +157,11 @@ namespace Vsar.TSBot.Dialogs
             catch (UnknownCommandException)
             {
                 await this.HandleCommandAsync(context, context.Activity as IMessageActivity);
+            }
+            catch (Exception e)
+            {
+                this.telemetryClient.TrackException(e);
+                await context.PostAsync(string.Format(CultureInfo.CurrentUICulture, Labels.ErrorOccurred, e.Message));
             }
         }
 
