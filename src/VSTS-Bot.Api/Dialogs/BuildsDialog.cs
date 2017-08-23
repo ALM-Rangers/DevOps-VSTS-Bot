@@ -113,7 +113,7 @@ namespace Vsar.TSBot.Dialogs
             }
             else
             {
-                context.Fail(new UnknownCommandException());
+                context.Fail(new UnknownCommandException(activity.Text));
             }
         }
 
@@ -145,7 +145,7 @@ namespace Vsar.TSBot.Dialogs
             }
             else
             {
-                context.Fail(new UnknownCommandException());
+                context.Fail(new UnknownCommandException(activity.Text));
             }
         }
 

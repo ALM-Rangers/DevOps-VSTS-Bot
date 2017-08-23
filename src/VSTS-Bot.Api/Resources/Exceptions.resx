@@ -132,4 +132,8 @@
   <data name="AccountNotFound" xml:space="preserve">
     <value>The specified account couldn't be found.</value>
   </data>
+  <data name="UnknownCommandException" xml:space="preserve">
+    <value>The command '{0}' is unknown</value>
+    <comment>{0} = CommandName</comment>
+  </data>
 </root>

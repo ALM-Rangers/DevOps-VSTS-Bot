@@ -160,7 +160,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to **Error occurred:** {0}&quot;.
+        ///   Looks up a localized string similar to **Error occurred:** {0}.
         /// </summary>
         internal static string ErrorOccurred {
             get {

@@ -79,7 +79,7 @@ namespace Vsar.TSBot.Dialogs
         }
 
         /// <summary>
-        /// Handles any incoming command and route them to the appropiate dialog.
+        /// Handles any incoming command and route them to the appropriate dialog.
         /// </summary>
         /// <param name="context">A <see cref="IDialogContext"/>.</param>
         /// <param name="result">An <see cref="IMessageActivity"/>.</param>
@@ -154,14 +154,10 @@ namespace Vsar.TSBot.Dialogs
             {
                 await result;
             }
-            catch (UnknownCommandException)
-            {
-                await this.HandleCommandAsync(context, context.Activity as IMessageActivity);
-            }
             catch (Exception e)
             {
                 this.telemetryClient.TrackException(e);
-                await context.PostAsync(string.Format(CultureInfo.CurrentUICulture, Labels.ErrorOccurred, e.Message));
+                await context.PostAsync(string.Format(CultureInfo.CurrentCulture, Labels.ErrorOccurred, e.Message));
             }
         }
 
