@@ -101,6 +101,15 @@ namespace Vsar.TSBot.Dialogs
             if (activity.Text.Equals(CommandMatchApprovals, StringComparison.OrdinalIgnoreCase))
             {
                 var approvals = await this.vstsService.GetApprovals(this.Account, this.TeamProject, this.Profile);
+                if (!approvals.Any())
+                {
+                    reply.Text = Labels.NoApprovals;
+                    await context.PostAsync(reply);
+
+                    context.Done(reply);
+                    return;
+                }
+
                 var cards = approvals.Select(a => new ApprovalCard(this.Account, a, this.TeamProject)).ToList();
 
                 foreach (var card in cards)

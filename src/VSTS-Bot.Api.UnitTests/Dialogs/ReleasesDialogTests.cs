@@ -78,6 +78,42 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
+        public async Task Releases_Empty_List()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "releases";
+
+            var account = "anaccount";
+            var profile = this.Fixture.CreateProfile();
+            var teamProject = "anteamproject";
+
+            var releaseDefinitions = new List<ReleaseDefinition>();
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("Account", out account))
+                .Returns(true);
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("Profile", out profile))
+                .Returns(true);
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
+                .Returns(true);
+
+            this.Fixture.VstsService
+                .Setup(s => s.GetReleaseDefinitionsAsync(account, teamProject, profile.Token))
+                .ReturnsAsync(() => releaseDefinitions);
+
+            var target = new ReleasesDialog(this.Fixture.VstsService.Object);
+            await target.ReleasesAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            this.Fixture.VstsService.VerifyAll();
+
+            this.Fixture.DialogContext.Verify(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None));
+
+            this.Fixture.DialogContext.Verify(c => c.Done(It.IsAny<IMessageActivity>()));
+        }
+
+        [TestMethod]
         public async Task Releases()
         {
             var toBot = this.Fixture.CreateMessage();

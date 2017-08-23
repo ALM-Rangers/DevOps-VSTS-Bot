@@ -28,6 +28,12 @@ namespace Vsar.TSBot
         public IList<string> Accounts { get; set; } = new List<string>();
 
         /// <summary>
+        /// Gets or sets the display name.
+        /// </summary>
+        [DataMember]
+        public string DisplayName { get; set; }
+
+        /// <summary>
         /// Gets or sets the email address.
         /// </summary>
         [DataMember]

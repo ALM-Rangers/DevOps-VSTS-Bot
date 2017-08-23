@@ -39,10 +39,9 @@ namespace Vsar.TSBot.Cards
             this.Text = approval.ReleaseEnvironmentReference.Name;
             this.Title = approval.ReleaseDefinitionReference.Name;
 
-            var url = string.Format(CultureInfo.InvariantCulture, FormatReleaseUrl, HttpUtility.UrlEncode(account), HttpUtility.UrlEncode(teamProject), approval.ReleaseDefinitionReference.Id, approval.ReleaseReference.Id);
-
-            this.Tap = new CardAction(ActionTypes.OpenUrl, value: url);
-
+            // TODO: Switch as slack shows this really weird.
+            // var url = string.Format(CultureInfo.InvariantCulture, FormatReleaseUrl, HttpUtility.UrlEncode(account), HttpUtility.UrlEncode(teamProject), approval.ReleaseDefinitionReference.Id, approval.ReleaseReference.Id);
+            // this.Tap = new CardAction(ActionTypes.OpenUrl, value: url);
             this.Buttons.Add(new CardAction(ActionTypes.ImBack, Labels.Approve, value: FormattableString.Invariant($"approve {approval.Id}")));
             this.Buttons.Add(new CardAction(ActionTypes.ImBack, Labels.Reject, value: FormattableString.Invariant($"reject {approval.Id}")));
         }

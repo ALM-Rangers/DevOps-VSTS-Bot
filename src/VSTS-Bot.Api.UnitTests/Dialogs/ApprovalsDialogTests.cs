@@ -62,6 +62,42 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
+        public async Task List_Approvals_Empty_List()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "approvals";
+
+            var account = "anaccount";
+            var approvals = new List<ReleaseApproval>();
+            var profile = this.Fixture.CreateProfile();
+            var teamProject = "anteamproject";
+
+            var service = new Mock<IVstsService>();
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("Account", out account))
+                .Returns(true);
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("Profile", out profile))
+                .Returns(true);
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
+                .Returns(true);
+            service
+                .Setup(s => s.GetApprovals(account, teamProject, profile))
+                .ReturnsAsync(approvals);
+
+            var target = new ApprovalsDialog(service.Object);
+
+            await target.ApprovalsAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            this.Fixture.DialogContext
+                .Verify(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None));
+            this.Fixture.DialogContext
+                .Verify(c => c.Done(It.IsAny<IMessageActivity>()));
+        }
+
+        [TestMethod]
         public async Task List_Approvals()
         {
             var toBot = this.Fixture.CreateMessage();
