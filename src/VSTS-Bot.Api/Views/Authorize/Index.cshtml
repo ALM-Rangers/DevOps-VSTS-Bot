@@ -10,15 +10,10 @@
 // ———————————————————————————————
 -->
 
-<!DOCTYPE html>
+@{
+    ViewBag.Title = "Visual Studio Team Services | Authorize";
+}
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>View</title>
-</head>
-
-<body>
 @foreach (var item in ViewData.ModelState)
 {
     if (item.Value.Errors.Any())
@@ -35,5 +30,3 @@
 <div>
     Pin: @Model.Pin
 </div>
-</body>
-</html>

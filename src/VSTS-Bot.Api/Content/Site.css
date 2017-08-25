@@ -1,5 +1,5 @@
 ﻿body {
-    padding-top: 50px;
+    padding-top: 0;
     padding-bottom: 20px;
 }
 
@@ -29,6 +29,10 @@ textarea {
 
 .navbar {
     border-radius: 0;
+}
+
+.navbar.top {
+    margin-bottom: 0;
 }
 
 .navbar-inverse .navbar-brand {
