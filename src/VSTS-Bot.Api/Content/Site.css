@@ -3,6 +3,10 @@
     padding-bottom: 20px;
 }
 
+body, h1, h2, h3, h4, p, th {
+    font-family: Segoe UI, sans-serif;
+}
+
 footer {
     text-align: center;
 }
@@ -41,4 +45,34 @@ textarea {
 
 .navbar-inverse .navbar-nav > li > a {
     color: white;
+}
+
+#pin {
+    border: none;
+    border-color: Transparent;
+    cursor: default;
+    font-size: 40px;
+    height: 75px;
+    min-width: 100%;
+    overflow: auto;
+    outline: none;
+    text-align: center;
+    width: 100%;
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+#pinLabel {
+    font-size: 40px;
+}
+
+#copy {
+    border: none;
+    font-size: 36px;
+}
+
+#copy:hover {
+    background-color: white;
 }
