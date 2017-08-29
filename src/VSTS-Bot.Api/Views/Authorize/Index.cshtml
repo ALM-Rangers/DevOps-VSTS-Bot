@@ -14,15 +14,20 @@
     ViewBag.Title = "Visual Studio Team Services | Authorize";
 }
 
+@foreach (var item in ViewData.ModelState)
+{
+    if (item.Value.Errors.Any())
+    {
+        foreach (ModelError e in item.Value.Errors)
+        {
+            <summary style="color: red">
+                @e.ErrorMessage
+            </summary>
+        }
+    }
+}
 
 <div>
-    <div class="row">
-        <div class="col-sm-3"></div>
-        <div class="col-sm-6">
-            
-        </div>
-        <div class="col-sm-3"></div>
-    </div>
     <div class="row">
         <div class="col-sm-4"></div>
         <div class="col-sm-4 text-center">
@@ -45,6 +50,13 @@
             </button>
         </div>
         <div class="col-sm-5"></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6 text-center">
+            Please copy this PIN number to your chat application, so that I can help you connect to your team project. Do not share the PIN with anyone to keep our chat secure!
+        </div>
+        <div class="col-sm-3"></div>
     </div>
 </div>
 
