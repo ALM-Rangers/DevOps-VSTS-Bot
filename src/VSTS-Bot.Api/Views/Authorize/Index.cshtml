@@ -10,15 +10,10 @@
 // ———————————————————————————————
 -->
 
-<!DOCTYPE html>
+@{
+    ViewBag.Title = "Visual Studio Team Services | Authorize";
+}
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>View</title>
-</head>
-
-<body>
 @foreach (var item in ViewData.ModelState)
 {
     if (item.Value.Errors.Any())
@@ -29,11 +24,63 @@
                 @e.ErrorMessage
             </summary>
         }
-        
     }
 }
+
 <div>
-    Pin: @Model.Pin
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4 text-center">
+            <label id="pinLabel">Pin</label>
+        </div>
+        <div class="col-sm-4"></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <textarea class="form-control" id="pin" disabled="disabled">@Model.Pin</textarea>
+        </div>
+        <div class="col-sm-4"></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-5"></div>
+        <div class="col-sm-2 text-center">
+            <button id="copy" class="btn btn-lg btn-default">
+                <span class="glyphicon glyphicon-copy"></span>
+            </button>
+        </div>
+        <div class="col-sm-5"></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6 text-center">
+            Please copy this PIN number to your chat application, so that I can help you connect to your team project. Do not share the PIN with anyone to keep our chat secure!
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
 </div>
-</body>
-</html>
+
+@section Scripts {
+    <script language="javascript">
+        $(function() {
+            $('#copy').click(function() {
+                var pin = $('#pin');
+
+                if (window.clipboardData && window.clipboardData.setData) {
+                    // IE specific code path to prevent textarea being shown while dialog is visible.
+                    return clipboardData.setData("Text", pin.text());
+
+                } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+
+                    pin.select();
+
+                    try {
+                        return document.execCommand("copy"); // Security exception may be thrown by some browsers.
+                    } catch (ex) {
+                        console.warn("Copy to clipboard failed.", ex);
+                    }
+                }
+            });
+        });
+    </script>
+}
