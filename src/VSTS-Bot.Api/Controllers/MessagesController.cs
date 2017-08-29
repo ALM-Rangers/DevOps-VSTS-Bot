@@ -65,7 +65,7 @@ namespace Vsar.TSBot
                 }
                 else
                 {
-                    this.HandleSystemMessage(activity);
+                    await this.HandleSystemMessage(activity);
                 }
             }
             catch (Exception ex)
@@ -78,7 +78,7 @@ namespace Vsar.TSBot
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Reviewed.")]
-        private async void HandleSystemMessage(Activity message)
+        private async Task HandleSystemMessage(Activity message)
         {
             if (string.Compare(message.Type, ActivityTypes.DeleteUserData, StringComparison.OrdinalIgnoreCase) == 0)
             {
@@ -102,10 +102,11 @@ namespace Vsar.TSBot
             }
             else if (string.Compare(message.Type, ActivityTypes.Typing, StringComparison.OrdinalIgnoreCase) == 0)
             {
-                // Handle knowing tha the user is typing
+                // Handle knowing that the user is typing
             }
             else if (string.Compare(message.Type, ActivityTypes.Ping, StringComparison.OrdinalIgnoreCase) == 0)
             {
+                // Handle ping message
             }
         }
     }

@@ -196,4 +196,8 @@
   <data name="NoReleases" xml:space="preserve">
     <value>There are no releases available.</value>
   </data>
+  <data name="ErrorOccurred" xml:space="preserve">
+    <value>**Error occurred:** {0}</value>
+    <comment>{0} = Exception.Message</comment>
+  </data>
 </root>
