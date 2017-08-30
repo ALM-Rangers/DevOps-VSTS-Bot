@@ -19,7 +19,7 @@ namespace Vsar.TSBot.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Exceptions {
@@ -93,6 +93,15 @@ namespace Vsar.TSBot.Resources {
         internal static string TeamProjectNotFound {
             get {
                 return ResourceManager.GetString("TeamProjectNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The command &apos;{0}&apos; is unknown.
+        /// </summary>
+        internal static string UnknownCommandException {
+            get {
+                return ResourceManager.GetString("UnknownCommandException", resourceCulture);
             }
         }
         
