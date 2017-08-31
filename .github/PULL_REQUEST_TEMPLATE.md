@@ -8,4 +8,4 @@ Changes proposed in this pull request:
 - 
 - 
 
-@ALM-Rangers/Team-Services-Bot
+@ALM-Rangers/VSTS-Bot
