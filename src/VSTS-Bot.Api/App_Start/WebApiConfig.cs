@@ -9,7 +9,6 @@
 
 namespace Vsar.TSBot
 {
-    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Web.Http;
     using Autofac;

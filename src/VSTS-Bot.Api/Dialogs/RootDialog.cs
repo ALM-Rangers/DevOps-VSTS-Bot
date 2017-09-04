@@ -154,10 +154,14 @@ namespace Vsar.TSBot.Dialogs
             {
                 await result;
             }
-            catch (Exception e)
+            catch (UnknownCommandException)
             {
-                this.telemetryClient.TrackException(e);
-                await context.PostAsync(string.Format(CultureInfo.CurrentCulture, Labels.ErrorOccurred, e.Message));
+                await this.HandleCommandAsync(context, context.Activity as IMessageActivity);
+            }
+            catch (Exception ex)
+            {
+                this.telemetryClient.TrackException(ex);
+                await context.PostAsync(string.Format(CultureInfo.CurrentCulture, Labels.ErrorOccurred, ex.Message));
             }
         }
 
