@@ -356,7 +356,7 @@ namespace Vsar.TSBot.Dialogs
         [OnSerializing]
         private void OnSerializingMethod(StreamingContext context)
         {
-            this.vstsService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IVstsService>();
+            // this.vstsService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IVstsService>();
         }
     }
 }
