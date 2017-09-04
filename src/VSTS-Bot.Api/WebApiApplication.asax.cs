@@ -10,11 +10,9 @@
 namespace Vsar.TSBot
 {
     using System.Diagnostics.CodeAnalysis;
-    using System.Web.Configuration;
     using System.Web.Http;
     using System.Web.Mvc;
     using System.Web.Routing;
-    using Autofac;
     using Autofac.Integration.Mvc;
     using Microsoft.ApplicationInsights.Extensibility;
 
