@@ -351,12 +351,5 @@ namespace Vsar.TSBot.Dialogs
                 return value.ToString("00000", CultureInfo.InvariantCulture);
             }
         }
-
-        [ExcludeFromCodeCoverage]
-        [OnSerializing]
-        private void OnSerializingMethod(StreamingContext context)
-        {
-            // this.vstsService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IVstsService>();
-        }
     }
 }
