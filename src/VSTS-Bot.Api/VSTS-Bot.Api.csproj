@@ -379,7 +379,11 @@
     <Compile Include="Services\BotService.cs" />
     <Compile Include="Services\IAuthenticationService.cs" />
     <Compile Include="Services\IBotService.cs" />
+    <Compile Include="Services\IVstsApplicationRegistry.cs" />
     <Compile Include="Services\IVstsService.cs" />
+    <Compile Include="Services\VstsApplication.cs" />
+    <Compile Include="Services\VstsApplicationRegistrationKey.cs" />
+    <Compile Include="Services\VstsApplicationRegistry.cs" />
     <Compile Include="Services\VstsService.cs" />
     <Compile Include="WebApiApplication.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -464,7 +468,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>3979</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost:44377/</IISUrl>
+          <IISUrl>https://127.0.0.1:44377/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -26,23 +26,21 @@ namespace Vsar.TSBot.Cards
         /// <summary>
         /// Initializes a new instance of the <see cref="LogOnCard"/> class.
         /// </summary>
-        /// <param name="appId">The app id.</param>
-        /// <param name="appScope">The app scope.</param>
+        /// <param name="application">VSTS application information</param>
         /// <param name="authorizeUrl">The authorizeUrl.</param>
         /// <param name="channelId">The channelId.</param>
         /// <param name="userId">The userId.</param>
-        public LogOnCard(string appId, string appScope, Uri authorizeUrl, string channelId, string userId)
+        public LogOnCard(VstsApplication application, Uri authorizeUrl, string channelId, string userId)
             : base(Labels.PleaseLogin)
         {
-            appId.ThrowIfNullOrWhiteSpace(nameof(appId));
-            appScope.ThrowIfNullOrWhiteSpace(nameof(appScope));
+            application.ThrowIfNull(nameof(application));
             authorizeUrl.ThrowIfNull(nameof(authorizeUrl));
             channelId.ThrowIfNullOrWhiteSpace(nameof(channelId));
             userId.ThrowIfNullOrWhiteSpace(nameof(userId));
 
             var button = new CardAction
             {
-                Value = string.Format(CultureInfo.InvariantCulture, UrlOAuth, appId, channelId, userId, appScope, authorizeUrl),
+                Value = string.Format(CultureInfo.InvariantCulture, UrlOAuth, application.Id, channelId, userId, application.Scope, authorizeUrl),
                 Type = string.Equals(channelId, ChannelIds.Msteams, StringComparison.Ordinal) ? ActionTypes.OpenUrl : ActionTypes.Signin,
                 Title = Labels.AuthenticationRequired
             };

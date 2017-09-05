@@ -61,6 +61,11 @@ namespace Vsar.TSBot.UnitTests
         public Mock<IVstsService> VstsService { get; } = new Mock<IVstsService>();
 
         /// <summary>
+        /// Gets mocked <see cref="IVstsApplicationRegistry"/>
+        /// </summary>
+        public Mock<IVstsApplicationRegistry> VstsApplicationRegistry { get; } = new Mock<IVstsApplicationRegistry>();
+
+        /// <summary>
         /// Creates a default <see cref="IMessageActivity"/>.
         /// </summary>
         /// <returns>A <see cref="IMessageActivity"/>.</returns>
