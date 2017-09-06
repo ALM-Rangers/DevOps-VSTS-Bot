@@ -9,12 +9,9 @@
 namespace Vsar.TSBot.Dialogs
 {
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Runtime.Serialization;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
-    using System.Web.Http;
     using Cards;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
@@ -25,22 +22,19 @@ namespace Vsar.TSBot.Dialogs
     /// </summary>
     [CommandMetadata("releases")]
     [Serializable]
-    public class ReleasesDialog : IDialog<object>
+    public class ReleasesDialog : DialogBase, IDialog<object>
     {
         private const string CommandMatchReleases = "releases";
         private const string CommandMatchCreate = @"create (\d+)";
-
-        [NonSerialized]
-        private IVstsService vstsService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReleasesDialog"/> class.
         /// </summary>
         /// <param name="vstsService">VSTS accessor</param>
-        /// <exception cref="ArgumentNullException">Occurs when the vstsService is missing.</exception>
-        public ReleasesDialog(IVstsService vstsService)
+        /// <param name="vstsApplicationRegistry">VSTS Application registry accessor.</param>
+        public ReleasesDialog(IVstsService vstsService, IVstsApplicationRegistry vstsApplicationRegistry)
+            : base(vstsService, vstsApplicationRegistry)
         {
-            this.vstsService = vstsService ?? throw new ArgumentNullException(nameof(vstsService));
         }
 
         /// <summary>
@@ -79,18 +73,19 @@ namespace Vsar.TSBot.Dialogs
             context.ThrowIfNull(nameof(context));
             result.ThrowIfNull(nameof(result));
 
+            var activity = await result;
+
             this.Account = context.UserData.GetAccount();
-            this.Profile = context.UserData.GetProfile();
+            this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(activity));
             this.TeamProject = context.UserData.GetTeamProject();
 
-            var activity = await result;
             var text = (activity.Text ?? string.Empty).ToLowerInvariant();
             var reply = context.MakeMessage();
 
             if (text.Equals(CommandMatchReleases, StringComparison.OrdinalIgnoreCase))
             {
                 var releaseDefinitions =
-                    await this.vstsService.GetReleaseDefinitionsAsync(this.Account, this.TeamProject, this.Profile.Token);
+                    await this.VstsService.GetReleaseDefinitionsAsync(this.Account, this.TeamProject, this.Profile.Token);
                 if (!releaseDefinitions.Any())
                 {
                     reply.Text = Labels.NoReleases;
@@ -136,7 +131,7 @@ namespace Vsar.TSBot.Dialogs
             if (match.Success)
             {
                 var definitionId = Convert.ToInt32(match.Groups[1].Value);
-                var release = await this.vstsService.CreateReleaseAsync(this.Account, this.TeamProject, definitionId, this.Profile.Token);
+                var release = await this.VstsService.CreateReleaseAsync(this.Account, this.TeamProject, definitionId, this.Profile.Token);
                 reply.Text = string.Format(Labels.ReleaseCreated, release.Id);
 
                 await context.PostAsync(reply);
@@ -146,13 +141,6 @@ namespace Vsar.TSBot.Dialogs
             {
                 context.Fail(new UnknownCommandException(activity.Text));
             }
-        }
-
-        [ExcludeFromCodeCoverage]
-        [OnSerializing]
-        private void OnSerializingMethod(StreamingContext context)
-        {
-            this.vstsService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IVstsService>();
         }
     }
 }

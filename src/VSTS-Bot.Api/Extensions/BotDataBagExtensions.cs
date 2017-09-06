@@ -91,12 +91,12 @@ namespace Vsar.TSBot
         /// Get the current profile.
         /// </summary>
         /// <param name="dataBag">The data bag.</param>
+        /// <param name="authenticationService"><see cref="IAuthenticationService"/> object.</param>
         /// <returns>A VstsProfile.</returns>
-        public static VstsProfile GetProfile(this IBotDataBag dataBag)
+        public static VstsProfile GetProfile(this IBotDataBag dataBag, IAuthenticationService authenticationService)
         {
-            var authenticationService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IAuthenticationService>();
-
             dataBag.ThrowIfNull(nameof(dataBag));
+            authenticationService.ThrowIfNull(nameof(authenticationService));
 
             if (!dataBag.TryGetValue(Profile, out VstsProfile profile))
             {

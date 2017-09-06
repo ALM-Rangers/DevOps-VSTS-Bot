@@ -350,6 +350,7 @@
     <Compile Include="Dialogs\ApprovalsDialog.cs" />
     <Compile Include="Dialogs\BuildsDialog.cs" />
     <Compile Include="Dialogs\ConnectDialog.cs" />
+    <Compile Include="Dialogs\DialogBase.cs" />
     <Compile Include="Dialogs\ReleasesDialog.cs" />
     <Compile Include="DI\CommandMetadataAttribute.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />
@@ -379,6 +380,7 @@
     <Compile Include="Services\BotService.cs" />
     <Compile Include="Services\IAuthenticationService.cs" />
     <Compile Include="Services\IBotService.cs" />
+    <Compile Include="Services\IVstsApplication.cs" />
     <Compile Include="Services\IVstsApplicationRegistry.cs" />
     <Compile Include="Services\IVstsService.cs" />
     <Compile Include="Services\VstsApplication.cs" />

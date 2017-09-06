@@ -14,7 +14,7 @@ namespace Vsar.TSBot
     /// <summary>
     /// Represent VSTS Application registration information required to authenticate custom application by VSTS
     /// </summary>
-    public class VstsApplication
+    public class VstsApplication : IVstsApplication
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="VstsApplication"/> class.
@@ -22,26 +22,28 @@ namespace Vsar.TSBot
         /// <param name="id">Application ID</param>
         /// <param name="secret">Application secret</param>
         /// <param name="scope">Application scope</param>
-        public VstsApplication(string id, string secret, string scope)
+        /// <param name="redirectUri">Redirect URI</param>
+        public VstsApplication(string id, string secret, string scope, Uri redirectUri)
         {
             this.Id = id ?? throw new ArgumentNullException(nameof(id));
             this.Secret = secret ?? throw new ArgumentNullException(nameof(secret));
             this.Scope = scope ?? throw new ArgumentNullException(nameof(scope));
+            this.RedirectUri = redirectUri ?? throw new ArgumentNullException(nameof(redirectUri));
         }
 
-        /// <summary>
-        /// Gets application ID
-        /// </summary>
+        /// <inheritdoc />
         public string Id { get; }
 
-        /// <summary>
-        /// Gets application secret
-        /// </summary>
+        /// <inheritdoc />
         public string Secret { get; }
 
-        /// <summary>
-        /// Gets VSTS application scope
-        /// </summary>
+        /// <inheritdoc />
         public string Scope { get; }
+
+        /// <inheritdoc />
+        public Uri RedirectUri { get; }
+
+        /// <inheritdoc />
+        public IAuthenticationService AuthenticationService => new AuthenticationService(this.Secret, this.RedirectUri);
     }
 }

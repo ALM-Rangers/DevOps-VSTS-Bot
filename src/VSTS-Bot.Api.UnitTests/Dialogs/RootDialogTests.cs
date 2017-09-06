@@ -127,7 +127,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "connect";
 
-            var dialog = new ConnectDialog(new Uri("https://someurl.com"), new Mock<IVstsService>().Object, new Mock<IVstsApplicationRegistry>().Object);
+            var dialog = new ConnectDialog(new Mock<IVstsService>().Object, new Mock<IVstsApplicationRegistry>().Object);
 
             var container = new ContainerBuilder();
             container

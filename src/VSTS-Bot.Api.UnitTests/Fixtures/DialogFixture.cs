@@ -29,7 +29,6 @@ namespace Vsar.TSBot.UnitTests
 
         public DialogFixture()
         {
-            this.AuthenticationService = new Mock<IAuthenticationService>();
             this.RootDialog = new RootDialog(new Uri("https://an.url.toEula"), this.TelemetryClient);
             this.DialogContext
                 .Setup(c => c.UserData)
@@ -38,8 +37,6 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(c => c.MakeMessage())
                 .Returns(this.CreateMessage);
         }
-
-        public Mock<IAuthenticationService> AuthenticationService { get; }
 
         public Mock<IDialogContext> DialogContext { get; } = new Mock<IDialogContext>();
 

@@ -20,16 +20,18 @@ namespace Vsar.TSBot.UnitTests.Services
             var appId = "myappId";
             var appSecret = "myappSecret";
             var appScope = "myappScope";
+            var redirectUrl = new Uri("https://localjost/redirectcallback");
 
-            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplicationRegistry(null, appSecret, appScope));
-            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplicationRegistry(appId, null, appScope));
-            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplicationRegistry(appId, appSecret, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplicationRegistry(null, appSecret, appScope, redirectUrl));
+            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplicationRegistry(appId, null, appScope, redirectUrl));
+            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplicationRegistry(appId, appSecret, null, redirectUrl));
+            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplicationRegistry(appId, appSecret, appScope, null));
         }
 
         [TestMethod]
         public void GetVstsApplicationRegistrationTest()
         {
-            var sut = new VstsApplicationRegistry("myappId", "myappSecret", "myappScope");
+            var sut = new VstsApplicationRegistry("myappId", "myappSecret", "myappScope", new Uri("https://localjost/redirectcallback"));
 
             Assert.ThrowsException<ArgumentNullException>(() => sut.GetVstsApplicationRegistration(null));
 

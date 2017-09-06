@@ -35,6 +35,7 @@ namespace Vsar.TSBot.UnitTests.Extensions
         public void GetAccount_No_Account()
         {
             string account;
+
             var dataBag = new Mock<IBotDataBag>();
 
             dataBag.Setup(d => d.TryGetValue("Account", out account)).Returns(false).Verifiable();
@@ -71,6 +72,7 @@ namespace Vsar.TSBot.UnitTests.Extensions
         public void GetTeamProject_No_TeamProject()
         {
             string teamProject;
+
             var dataBag = new Mock<IBotDataBag>();
 
             dataBag.Setup(d => d.TryGetValue("TeamProject", out teamProject)).Returns(false).Verifiable();
@@ -198,7 +200,13 @@ namespace Vsar.TSBot.UnitTests.Extensions
         [TestMethod]
         public void GetProfile_Missing_BotDataBag()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).GetProfile());
+            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).GetProfile(new Mock<IAuthenticationService>().Object));
+        }
+
+        [TestMethod]
+        public void GetProfile_Missing_AuthenticationService()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new Mock<IBotDataBag>().Object.GetProfile(null));
         }
 
         [TestMethod]
@@ -219,7 +227,7 @@ namespace Vsar.TSBot.UnitTests.Extensions
 
             mocked.Setup(m => m.TryGetValue("Profile", out profile)).Returns(false).Verifiable();
 
-            var result = mocked.Object.GetProfile();
+            var result = mocked.Object.GetProfile(authenticationService.Object);
 
             mocked.Verify();
 
@@ -246,7 +254,7 @@ namespace Vsar.TSBot.UnitTests.Extensions
             mocked.Setup(m => m.TryGetValue("Profile", out profile)).Returns(true).Verifiable();
             authenticationService.Setup(a => a.GetToken(profile.Token)).ReturnsAsync(newToken).Verifiable();
 
-            var result = mocked.Object.GetProfile();
+            var result = mocked.Object.GetProfile(authenticationService.Object);
 
             mocked.Verify();
             authenticationService.Verify();
@@ -272,7 +280,7 @@ namespace Vsar.TSBot.UnitTests.Extensions
 
             mocked.Setup(m => m.TryGetValue("Profile", out profile)).Returns(true).Verifiable();
 
-            var result = mocked.Object.GetProfile();
+            var result = mocked.Object.GetProfile(new Mock<IAuthenticationService>().Object);
 
             mocked.Verify();
             result.Should().Be(profile);

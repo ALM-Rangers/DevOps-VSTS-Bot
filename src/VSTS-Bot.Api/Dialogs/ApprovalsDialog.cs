@@ -27,22 +27,20 @@ namespace Vsar.TSBot.Dialogs
     /// </summary>
     [CommandMetadata("approvals")]
     [Serializable]
-    public class ApprovalsDialog : IDialog<object>
+    public class ApprovalsDialog : DialogBase, IDialog<object>
     {
         private const string CommandMatchApprovals = "approvals";
         private const string CommandMatchApprove = @"approve (\d+) *(.*?)$";
         private const string CommandMatchReject = @"reject (\d+) *(.*?)$";
 
-        [NonSerialized]
-        private IVstsService vstsService;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ApprovalsDialog"/> class.
         /// </summary>
         /// <param name="vstsService">The <see cref="IVstsService"/>.</param>
-        public ApprovalsDialog(IVstsService vstsService)
+        /// <param name="applicationRegistry">The <see cref="IVstsApplicationRegistry"/>.</param>
+        public ApprovalsDialog(IVstsService vstsService, IVstsApplicationRegistry applicationRegistry)
+            : base(vstsService, applicationRegistry)
         {
-            this.vstsService = vstsService ?? throw new ArgumentNullException(nameof(vstsService));
         }
 
         /// <summary>
@@ -95,12 +93,12 @@ namespace Vsar.TSBot.Dialogs
             var reply = context.MakeMessage();
 
             this.Account = context.UserData.GetAccount();
-            this.Profile = context.UserData.GetProfile();
+            this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(activity));
             this.TeamProject = context.UserData.GetTeamProject();
 
             if (activity.Text.Equals(CommandMatchApprovals, StringComparison.OrdinalIgnoreCase))
             {
-                var approvals = await this.vstsService.GetApprovals(this.Account, this.TeamProject, this.Profile);
+                var approvals = await this.VstsService.GetApprovals(this.Account, this.TeamProject, this.Profile);
                 if (!approvals.Any())
                 {
                     reply.Text = Labels.NoApprovals;
@@ -217,19 +215,12 @@ namespace Vsar.TSBot.Dialogs
             var reply = context.MakeMessage();
 
             var status = isApproved ? ApprovalStatus.Approved : ApprovalStatus.Rejected;
-            await this.vstsService.ChangeApprovalStatus(this.Account, this.TeamProject, this.Profile, approvalId, status, comment);
+            await this.VstsService.ChangeApprovalStatus(this.Account, this.TeamProject, this.Profile, approvalId, status, comment);
 
             reply.Text = isApproved ? Labels.Approved : Labels.Rejected;
             await context.PostAsync(reply);
 
             context.Done(reply);
-        }
-
-        [ExcludeFromCodeCoverage]
-        [OnSerializing]
-        private void OnSerializingMethod(StreamingContext context)
-        {
-            this.vstsService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IVstsService>();
         }
     }
 }

@@ -14,6 +14,7 @@ namespace Vsar.TSBot.Cards
     using System.Globalization;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
+    using Microsoft.VisualStudio.Services.Common;
     using Resources;
 
     /// <summary>
@@ -27,20 +28,18 @@ namespace Vsar.TSBot.Cards
         /// Initializes a new instance of the <see cref="LogOnCard"/> class.
         /// </summary>
         /// <param name="application">VSTS application information</param>
-        /// <param name="authorizeUrl">The authorizeUrl.</param>
         /// <param name="channelId">The channelId.</param>
         /// <param name="userId">The userId.</param>
-        public LogOnCard(VstsApplication application, Uri authorizeUrl, string channelId, string userId)
+        public LogOnCard(IVstsApplication application, string channelId, string userId)
             : base(Labels.PleaseLogin)
         {
             application.ThrowIfNull(nameof(application));
-            authorizeUrl.ThrowIfNull(nameof(authorizeUrl));
             channelId.ThrowIfNullOrWhiteSpace(nameof(channelId));
             userId.ThrowIfNullOrWhiteSpace(nameof(userId));
 
             var button = new CardAction
             {
-                Value = string.Format(CultureInfo.InvariantCulture, UrlOAuth, application.Id, channelId, userId, application.Scope, authorizeUrl),
+                Value = string.Format(CultureInfo.InvariantCulture, UrlOAuth, application.Id, channelId, userId, application.Scope, application.RedirectUri),
                 Type = string.Equals(channelId, ChannelIds.Msteams, StringComparison.Ordinal) ? ActionTypes.OpenUrl : ActionTypes.Signin,
                 Title = Labels.AuthenticationRequired
             };

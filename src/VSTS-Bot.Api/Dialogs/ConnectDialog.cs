@@ -29,30 +29,19 @@ namespace Vsar.TSBot.Dialogs
     /// </summary>
     [CommandMetadata("connect")]
     [Serializable]
-    public class ConnectDialog : IDialog<object>
+    public class ConnectDialog : DialogBase, IDialog<object>
     {
         private const string CommandMatchConnect = @"connect *(\S*) *(\S*)";
         private const string CommandMatchPin = @"(\d{4})";
 
-        private readonly string authorizeUrl;
-
-        [NonSerialized]
-        private readonly IVstsApplicationRegistry vstsApplicationRegistry;
-
-        [NonSerialized]
-        private readonly IVstsService vstsService;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectDialog"/> class.
         /// </summary>
-        /// <param name="authorizeUrl">The URL to return to after authentication.</param>
         /// <param name="vstsService">VSTS accessor.</param>
         /// <param name="vstsApplicationRegistry">VSTS Application registry accessor.</param>
-        public ConnectDialog(Uri authorizeUrl, IVstsService vstsService, IVstsApplicationRegistry vstsApplicationRegistry)
+        public ConnectDialog(IVstsService vstsService, IVstsApplicationRegistry vstsApplicationRegistry)
+            : base(vstsService, vstsApplicationRegistry)
         {
-            this.authorizeUrl = (authorizeUrl ?? throw new ArgumentNullException(nameof(authorizeUrl))).ToString();
-            this.vstsService = vstsService ?? throw new ArgumentNullException(nameof(vstsService));
-            this.vstsApplicationRegistry = vstsApplicationRegistry ?? throw new ArgumentNullException(nameof(vstsApplicationRegistry));
         }
 
         /// <summary>
@@ -135,9 +124,9 @@ namespace Vsar.TSBot.Dialogs
             this.Pin = GeneratePin();
             context.UserData.SetPin(this.Pin);
 
-            var vstsApplication = this.vstsApplicationRegistry.GetVstsApplicationRegistration(new VstsApplicationRegistrationKey(result));
+            var vstsApplication = this.VstsApplicationRegistry.GetVstsApplicationRegistration(new VstsApplicationRegistrationKey(result));
 
-            var card = new LogOnCard(vstsApplication, new Uri(this.authorizeUrl), result.ChannelId, result.From.Id);
+            var card = new LogOnCard(vstsApplication, result.ChannelId, result.From.Id);
 
             var reply = context.MakeMessage();
             reply.Attachments.Add(card);
@@ -248,7 +237,7 @@ namespace Vsar.TSBot.Dialogs
 
             var reply = context.MakeMessage();
 
-            var projects = await this.vstsService.GetProjects(this.Account, this.Profile.Token);
+            var projects = await this.VstsService.GetProjects(this.Account, this.Profile.Token);
             this.TeamProjects = projects
                 .Select(project => project.Name)
                 .ToList();
@@ -298,7 +287,7 @@ namespace Vsar.TSBot.Dialogs
             context.ThrowIfNull(nameof(context));
             result.ThrowIfNull(nameof(result));
 
-            this.Profile = context.UserData.GetProfile();
+            this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(result));
             this.Profiles = context.UserData.GetProfiles();
 
             var reply = context.MakeMessage();

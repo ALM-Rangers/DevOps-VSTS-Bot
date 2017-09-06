@@ -17,20 +17,23 @@ namespace Vsar.TSBot.UnitTests.Services
         [TestMethod]
         public void VstsApplicationConstructorTest()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication(null, "secret", "scope"));
-            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication("id", null, "scope"));
-            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication("id", "secret", null));
-            Assert.IsNotNull(new VstsApplication("id", "secret", "scope"));
+            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication(null, "secret", "scope", new Uri("http://localhost/redirect")));
+            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication("id", null, "scope", new Uri("http://localhost/redirect")));
+            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication("id", "secret", null, new Uri("http://localhost/redirect")));
+            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication("id", "secret", "scope", null));
+            Assert.IsNotNull(new VstsApplication("id", "secret", "scope", new Uri("http://localhost/redirect")));
         }
 
         [TestMethod]
         public void VstsApplicationPropertiesTest()
         {
-            var sut = new VstsApplication("id", "secret", "scope");
+            var sut = new VstsApplication("id", "secret", "scope", new Uri("http://localhost/redirect"));
 
             Assert.AreEqual("id", sut.Id);
             Assert.AreEqual("secret", sut.Secret);
             Assert.AreEqual("scope", sut.Scope);
+            Assert.AreEqual(new Uri("http://localhost/redirect"), sut.RedirectUri);
+            Assert.IsNotNull(sut.AuthenticationService);
         }
     }
 }
