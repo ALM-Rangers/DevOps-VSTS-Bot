@@ -31,6 +31,18 @@ namespace Vsar.TSBot.UnitTests
     public class AuthorizeControllerTests
     {
         [TestMethod]
+        public void ConstructorArgumentCheckForNull()
+        {
+            var registryMock = new Mock<IVstsApplicationRegistry>();
+            var vstsMock = new Mock<IVstsService>();
+            var botMock = new Mock<IBotService>();
+
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController(null, registryMock.Object, vstsMock.Object));
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController(botMock.Object, null, vstsMock.Object));
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController(botMock.Object, registryMock.Object, null));
+        }
+
+        [TestMethod]
         public async Task Authorize_No_Code()
         {
             var applicationRegistry = new Mock<IVstsApplicationRegistry>();
