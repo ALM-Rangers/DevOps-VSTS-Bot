@@ -10,6 +10,9 @@
 namespace Vsar.TSBot.Dialogs
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Runtime.Serialization;
+    using System.Web.Http;
     using Microsoft.Bot.Connector;
 
     /// <summary>
@@ -19,10 +22,10 @@ namespace Vsar.TSBot.Dialogs
     public abstract class DialogBase
     {
         [NonSerialized]
-        private readonly IVstsService vstsService;
+        private IVstsService vstsService;
 
         [NonSerialized]
-        private readonly IVstsApplicationRegistry vstsApplicationRegistry;
+        private IVstsApplicationRegistry vstsApplicationRegistry;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DialogBase"/> class.
@@ -54,6 +57,14 @@ namespace Vsar.TSBot.Dialogs
         {
             return this.VstsApplicationRegistry
                 .GetVstsApplicationRegistration(new VstsApplicationRegistrationKey(activity)).AuthenticationService;
+        }
+
+        [ExcludeFromCodeCoverage]
+        [OnSerializing]
+        private void OnSerializingMethod(StreamingContext context)
+        {
+            this.vstsService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IVstsService>();
+            this.vstsApplicationRegistry = GlobalConfiguration.Configuration.DependencyResolver.GetService<IVstsApplicationRegistry>();
         }
     }
 }
