@@ -75,6 +75,10 @@ namespace Vsar.TSBot
                 .AsImplementedInterfaces();
 
             builder
+                .RegisterType<AuthenticationServiceFactory>()
+                .AsImplementedInterfaces();
+
+            builder
                 .RegisterType<VstsApplicationRegistry>()
                 .WithParameter("applicationId", Config.ApplicationId)
                 .WithParameter("applicationSecret", Config.ApplicationSecret)

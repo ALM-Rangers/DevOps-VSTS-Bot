@@ -20,6 +20,7 @@ namespace Vsar.TSBot
         private readonly string applicationSecret;
         private readonly string applicationScope;
         private readonly Uri redirectUri;
+        private readonly IAuthenticationServiceFactory authenticationServiceFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VstsApplicationRegistry"/> class.
@@ -28,12 +29,14 @@ namespace Vsar.TSBot
         /// <param name="applicationSecret">Application secret used by default.</param>
         /// <param name="applicationScope">Application scope used by defult.</param>
         /// <param name="redirectUri">Redirect URI.</param>
-        public VstsApplicationRegistry(string applicationId, string applicationSecret, string applicationScope, Uri redirectUri)
+        /// <param name="authenticationServiceFactory">The authentication service factory.</param>
+        public VstsApplicationRegistry(string applicationId, string applicationSecret, string applicationScope, Uri redirectUri, IAuthenticationServiceFactory authenticationServiceFactory)
         {
             this.applicationId = applicationId ?? throw new ArgumentNullException(nameof(applicationId));
             this.applicationSecret = applicationSecret ?? throw new ArgumentNullException(nameof(applicationSecret));
             this.applicationScope = applicationScope ?? throw new ArgumentNullException(nameof(applicationScope));
             this.redirectUri = redirectUri ?? throw new ArgumentNullException(nameof(redirectUri));
+            this.authenticationServiceFactory = authenticationServiceFactory ?? throw new ArgumentNullException(nameof(authenticationServiceFactory));
         }
 
         /// <inheritdoc />
@@ -44,7 +47,7 @@ namespace Vsar.TSBot
                 throw new ArgumentNullException(nameof(userId));
             }
 
-            return new VstsApplication(this.applicationId, this.applicationSecret, this.applicationScope, this.redirectUri);
+            return new VstsApplication(this.applicationId, this.applicationSecret, this.applicationScope, this.redirectUri, this.authenticationServiceFactory);
         }
     }
 }

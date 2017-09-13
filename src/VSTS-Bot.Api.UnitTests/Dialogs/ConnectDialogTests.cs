@@ -287,7 +287,7 @@ namespace Vsar.TSBot.UnitTests
 
             this.Fixture.VstsApplicationRegistry
                 .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
-                .Returns(new VstsApplication("id", "secret", "scope", new Uri("http://localhost/redirect")));
+                .Returns(new VstsApplication("id", "secret", "scope", new Uri("http://localhost/redirect"), new Mock<IAuthenticationServiceFactory>().Object));
 
             var target = new ConnectDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
 

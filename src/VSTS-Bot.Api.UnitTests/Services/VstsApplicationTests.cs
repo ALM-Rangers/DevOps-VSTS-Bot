@@ -9,7 +9,9 @@
 namespace Vsar.TSBot.UnitTests.Services
 {
     using System;
+    using Autofac;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
 
     [TestClass]
     public class VstsApplicationTests
@@ -17,22 +19,40 @@ namespace Vsar.TSBot.UnitTests.Services
         [TestMethod]
         public void VstsApplicationConstructorTest()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication(null, "secret", "scope", new Uri("http://localhost/redirect")));
-            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication("id", null, "scope", new Uri("http://localhost/redirect")));
-            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication("id", "secret", null, new Uri("http://localhost/redirect")));
-            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication("id", "secret", "scope", null));
-            Assert.IsNotNull(new VstsApplication("id", "secret", "scope", new Uri("http://localhost/redirect")));
+            var id = "id";
+            var secret = "secret";
+            var scope = "scope";
+            var redirectUri = new Uri("http://localhost/redirect");
+            var serviceFactory = new Mock<IAuthenticationServiceFactory>().Object;
+
+            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication(null, secret, scope, redirectUri, serviceFactory));
+            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication(id, null, scope, redirectUri, serviceFactory));
+            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication(id, secret, null, redirectUri, serviceFactory));
+            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication(id, secret, scope, null, serviceFactory));
+            Assert.ThrowsException<ArgumentNullException>(() => new VstsApplication(id, secret, scope, redirectUri, null));
+            Assert.IsNotNull(new VstsApplication(id, secret, scope, redirectUri, serviceFactory));
         }
 
         [TestMethod]
         public void VstsApplicationPropertiesTest()
         {
-            var sut = new VstsApplication("id", "secret", "scope", new Uri("http://localhost/redirect"));
+            var id = "id";
+            var secret = "secret";
+            var scope = "scope";
+            var redirectUri = new Uri("http://localhost/redirect");
 
-            Assert.AreEqual("id", sut.Id);
-            Assert.AreEqual("secret", sut.Secret);
-            Assert.AreEqual("scope", sut.Scope);
-            Assert.AreEqual(new Uri("http://localhost/redirect"), sut.RedirectUri);
+            var factoryMock = new Mock<IAuthenticationServiceFactory>();
+
+            factoryMock
+                .Setup(factory => factory.GetService(It.IsAny<IVstsApplication>()))
+                .Returns(() => new Mock<IAuthenticationService>().Object);
+
+            var sut = new VstsApplication(id, secret, scope, redirectUri, factoryMock.Object);
+
+            Assert.AreEqual(id, sut.Id);
+            Assert.AreEqual(secret, sut.Secret);
+            Assert.AreEqual(scope, sut.Scope);
+            Assert.AreEqual(redirectUri, sut.RedirectUri);
             Assert.IsNotNull(sut.AuthenticationService);
         }
     }

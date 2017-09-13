@@ -10,12 +10,15 @@
 namespace Vsar.TSBot
 {
     using System;
+    using System.Web.Http;
 
     /// <summary>
     /// Represent VSTS Application registration information required to authenticate custom application by VSTS
     /// </summary>
     public class VstsApplication : IVstsApplication
     {
+        private readonly IAuthenticationServiceFactory authenticationServiceFactory;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="VstsApplication"/> class.
         /// </summary>
@@ -23,12 +26,14 @@ namespace Vsar.TSBot
         /// <param name="secret">Application secret</param>
         /// <param name="scope">Application scope</param>
         /// <param name="redirectUri">Redirect URI</param>
-        public VstsApplication(string id, string secret, string scope, Uri redirectUri)
+        /// <param name="authenticationServiceFactory">The authentication service factory.</param>
+        public VstsApplication(string id, string secret, string scope, Uri redirectUri, IAuthenticationServiceFactory authenticationServiceFactory)
         {
             this.Id = id ?? throw new ArgumentNullException(nameof(id));
             this.Secret = secret ?? throw new ArgumentNullException(nameof(secret));
             this.Scope = scope ?? throw new ArgumentNullException(nameof(scope));
             this.RedirectUri = redirectUri ?? throw new ArgumentNullException(nameof(redirectUri));
+            this.authenticationServiceFactory = authenticationServiceFactory ?? throw new ArgumentNullException(nameof(authenticationServiceFactory));
         }
 
         /// <inheritdoc />
@@ -44,6 +49,6 @@ namespace Vsar.TSBot
         public Uri RedirectUri { get; }
 
         /// <inheritdoc />
-        public IAuthenticationService AuthenticationService => new AuthenticationService(this.Secret, this.RedirectUri);
+        public IAuthenticationService AuthenticationService => this.authenticationServiceFactory.GetService(this);
     }
 }
