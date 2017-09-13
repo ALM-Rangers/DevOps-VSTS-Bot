@@ -53,10 +53,14 @@ namespace Vsar.TSBot.Dialogs
         /// </summary>
         /// <param name="activity">The <see cref="IMessageActivity"/>.</param>
         /// <returns><see cref="IAuthenticationService"/></returns>
-        protected IAuthenticationService GetAuthenticationService(IMessageActivity activity)
+        protected IAuthenticationService GetAuthenticationService(IActivity activity)
         {
-            return this.VstsApplicationRegistry
-                .GetVstsApplicationRegistration(new VstsApplicationRegistrationKey(activity)).AuthenticationService;
+            if (activity == null)
+            {
+                throw new ArgumentNullException(nameof(activity));
+            }
+
+            return this.VstsApplicationRegistry.GetVstsApplicationRegistration(activity.From.Id).AuthenticationService;
         }
 
         [ExcludeFromCodeCoverage]

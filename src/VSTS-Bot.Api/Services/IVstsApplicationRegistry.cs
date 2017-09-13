@@ -17,8 +17,8 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets <see cref="VstsApplication"/> representing VSTS application for specified session key.
         /// </summary>
-        /// <param name="sessionKey">Free format <see cref="string"/> representing session key.</param>
+        /// <param name="userId">Free format <see cref="string"/> representing the user ID.</param>
         /// <returns>Instance of the <see cref="IVstsApplication"/> class.</returns>
-        IVstsApplication GetVstsApplicationRegistration(VstsApplicationRegistrationKey sessionKey);
+        IVstsApplication GetVstsApplicationRegistration(string userId);
     }
 }

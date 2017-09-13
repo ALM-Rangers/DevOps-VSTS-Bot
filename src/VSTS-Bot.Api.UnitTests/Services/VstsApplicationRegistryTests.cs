@@ -35,7 +35,7 @@ namespace Vsar.TSBot.UnitTests.Services
 
             Assert.ThrowsException<ArgumentNullException>(() => sut.GetVstsApplicationRegistration(null));
 
-            var actual = sut.GetVstsApplicationRegistration(new VstsApplicationRegistrationKey("channelId", "userId"));
+            var actual = sut.GetVstsApplicationRegistration("userId");
             Assert.IsNotNull(actual);
         }
     }

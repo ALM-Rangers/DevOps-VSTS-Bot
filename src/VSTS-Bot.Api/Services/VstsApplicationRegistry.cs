@@ -37,11 +37,11 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc />
-        public IVstsApplication GetVstsApplicationRegistration(VstsApplicationRegistrationKey sessionKey)
+        public IVstsApplication GetVstsApplicationRegistration(string userId)
         {
-            if (sessionKey == null)
+            if (userId == null)
             {
-                throw new ArgumentNullException(nameof(sessionKey));
+                throw new ArgumentNullException(nameof(userId));
             }
 
             return new VstsApplication(this.applicationId, this.applicationSecret, this.applicationScope, this.redirectUri);

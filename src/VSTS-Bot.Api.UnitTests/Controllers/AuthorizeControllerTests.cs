@@ -37,9 +37,24 @@ namespace Vsar.TSBot.UnitTests
             var vstsMock = new Mock<IVstsService>();
             var botMock = new Mock<IBotService>();
 
-            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController(null, registryMock.Object, vstsMock.Object));
-            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController(botMock.Object, null, vstsMock.Object));
-            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController(botMock.Object, registryMock.Object, null));
+            Assert.ThrowsException<ArgumentNullException>(() =>
+            {
+                using (new AuthorizeController(null, registryMock.Object, vstsMock.Object))
+                {
+                }
+            });
+            Assert.ThrowsException<ArgumentNullException>(() =>
+            {
+                using (new AuthorizeController(botMock.Object, null, vstsMock.Object))
+                {
+                }
+            });
+            Assert.ThrowsException<ArgumentNullException>(() =>
+            {
+                using (new AuthorizeController(botMock.Object, registryMock.Object, null))
+                {
+                }
+            });
         }
 
         [TestMethod]
@@ -103,7 +118,7 @@ namespace Vsar.TSBot.UnitTests
                 .Returns(authenticationService.Object);
 
             applicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<VstsApplicationRegistrationKey>()))
+                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
                 .Returns(application.Object);
 
             vstsService

@@ -14,11 +14,9 @@ namespace Vsar.TSBot.Dialogs
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
-    using System.Runtime.Serialization;
     using System.Security.Cryptography;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
-    using System.Web.Http;
     using Cards;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
@@ -124,7 +122,7 @@ namespace Vsar.TSBot.Dialogs
             this.Pin = GeneratePin();
             context.UserData.SetPin(this.Pin);
 
-            var vstsApplication = this.VstsApplicationRegistry.GetVstsApplicationRegistration(new VstsApplicationRegistrationKey(result));
+            var vstsApplication = this.VstsApplicationRegistry.GetVstsApplicationRegistration(result.From.Id);
 
             var card = new LogOnCard(vstsApplication, result.ChannelId, result.From.Id);
 

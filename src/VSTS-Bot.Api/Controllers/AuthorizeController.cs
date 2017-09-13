@@ -68,8 +68,7 @@ namespace Vsar.TSBot
                 var userId = stateArray[1];
 
                 // Get the security token.
-                var sessionKey = new VstsApplicationRegistrationKey(channelId, userId);
-                var token = await this.applicationRegistry.GetVstsApplicationRegistration(sessionKey).AuthenticationService.GetToken(code);
+                var token = await this.applicationRegistry.GetVstsApplicationRegistration(userId).AuthenticationService.GetToken(code);
                 var profile = await this.vstsService.GetProfile(token);
                 var accounts = await this.vstsService.GetAccounts(token, profile.Id);
                 var vstsProfile = CreateVstsProfile(accounts, profile, token);

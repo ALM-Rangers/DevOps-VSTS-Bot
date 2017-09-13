@@ -385,7 +385,6 @@
     <Compile Include="Services\IVstsApplicationRegistry.cs" />
     <Compile Include="Services\IVstsService.cs" />
     <Compile Include="Services\VstsApplication.cs" />
-    <Compile Include="Services\VstsApplicationRegistrationKey.cs" />
     <Compile Include="Services\VstsApplicationRegistry.cs" />
     <Compile Include="Services\VstsService.cs" />
     <Compile Include="WebApiApplication.asax.cs">

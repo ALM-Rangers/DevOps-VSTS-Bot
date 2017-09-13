@@ -109,7 +109,7 @@ namespace Vsar.TSBot.UnitTests
                 .Returns(new Mock<IAuthenticationService>().Object);
 
             this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<VstsApplicationRegistrationKey>()))
+                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
                 .Returns(applicationMock.Object);
 
             await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
@@ -138,7 +138,7 @@ namespace Vsar.TSBot.UnitTests
                 .Returns(new Mock<IAuthenticationService>().Object);
 
             this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<VstsApplicationRegistrationKey>()))
+                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
                 .Returns(applicationMock.Object);
 
             await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
@@ -183,7 +183,7 @@ namespace Vsar.TSBot.UnitTests
                 .Returns(new Mock<IAuthenticationService>().Object);
 
             this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<VstsApplicationRegistrationKey>()))
+                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
                 .Returns(applicationMock.Object);
 
             await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
@@ -229,7 +229,7 @@ namespace Vsar.TSBot.UnitTests
                 .Returns(new Mock<IAuthenticationService>().Object);
 
             this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<VstsApplicationRegistrationKey>()))
+                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
                 .Returns(applicationMock.Object);
 
             await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
@@ -265,7 +265,7 @@ namespace Vsar.TSBot.UnitTests
                 .Returns(new Mock<IAuthenticationService>().Object);
 
             this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<VstsApplicationRegistrationKey>()))
+                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
                 .Returns(applicationMock.Object);
 
             await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
@@ -286,7 +286,7 @@ namespace Vsar.TSBot.UnitTests
             toBot.Text = "connect account teamproject";
 
             this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<VstsApplicationRegistrationKey>()))
+                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
                 .Returns(new VstsApplication("id", "secret", "scope", new Uri("http://localhost/redirect")));
 
             var target = new ConnectDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);

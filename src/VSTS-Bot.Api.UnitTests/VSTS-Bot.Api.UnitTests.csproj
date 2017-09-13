@@ -278,7 +278,6 @@
     <Compile Include="Fixtures\MockConnectorFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Dialogs\RootDialogTests.cs" />
-    <Compile Include="Services\VstsApplicationRegistrationKeyTests.cs" />
     <Compile Include="Services\VstsApplicationRegistryTests.cs" />
     <Compile Include="Services\VstsApplicationTests.cs" />
     <Compile Include="Services\VstsServiceTest.cs" />

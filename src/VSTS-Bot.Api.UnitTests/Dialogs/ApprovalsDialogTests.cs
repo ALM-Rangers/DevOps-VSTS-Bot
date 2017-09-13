@@ -104,7 +104,7 @@ namespace Vsar.TSBot.UnitTests
                 .Returns(new Mock<IAuthenticationService>().Object);
 
             this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<VstsApplicationRegistrationKey>()))
+                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
                 .Returns(applicationMock.Object);
 
             var target = new ApprovalsDialog(service.Object, this.Fixture.VstsApplicationRegistry.Object);
@@ -157,7 +157,7 @@ namespace Vsar.TSBot.UnitTests
                 .Returns(new Mock<IAuthenticationService>().Object);
 
             this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<VstsApplicationRegistrationKey>()))
+                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
                 .Returns(applicationMock.Object);
 
             var target = new ApprovalsDialog(service.Object, this.Fixture.VstsApplicationRegistry.Object);
