@@ -15,7 +15,6 @@
     <AssemblyName>Vsar.TSBot.Api</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44377</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -26,6 +25,7 @@
     <ApplicationInsightsResourceId>/subscriptions/691223ba-28e5-43b0-a9cd-25c73d1746da/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/Team-Services-Bot</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/691223ba-28e5-43b0-a9cd-25c73d1746da/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/Team-Services-Bot</ApplicationInsightsAnnotationResourceId>
     <Use64BitIISExpress />
+    <IISExpressSSLPort />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -301,6 +301,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\Bot.png" />
     <Content Include="Content\Images\Logo.png" />
     <Content Include="Content\Images\Microsoft.png" />
     <Content Include="Content\Site.css" />
@@ -464,7 +465,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>3979</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost:44377/</IISUrl>
+          <IISUrl>http://localhost:3979/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
