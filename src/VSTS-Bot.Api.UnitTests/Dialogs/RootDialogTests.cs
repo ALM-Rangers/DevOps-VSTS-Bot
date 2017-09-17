@@ -55,6 +55,7 @@ namespace Vsar.TSBot.UnitTests
         public void Constructor()
         {
             var target = new RootDialog(new Uri("https://an.url.toEula"), new TelemetryClient());
+            Assert.IsNotNull(target);
         }
 
         [TestMethod]
@@ -126,8 +127,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "connect";
 
-            var vstsService = new Mock<IVstsService>();
-            var dialog = new ConnectDialog("appid", "appscope", new Uri("https://someurl.com"), vstsService.Object);
+            var dialog = new ConnectDialog(new Mock<IVstsService>().Object, new Mock<IVstsApplicationRegistry>().Object);
 
             var container = new ContainerBuilder();
             container
@@ -164,6 +164,8 @@ namespace Vsar.TSBot.UnitTests
         public async Task Handle_Message_Activity()
         {
             var message = this.Fixture.CreateMessage();
+
+            // ReSharper disable once NotAccessedVariable
             var teamProject = "anteamproject";
 
             this.Fixture.UserData

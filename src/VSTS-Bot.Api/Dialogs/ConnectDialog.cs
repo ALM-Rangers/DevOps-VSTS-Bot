@@ -14,11 +14,9 @@ namespace Vsar.TSBot.Dialogs
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
-    using System.Runtime.Serialization;
     using System.Security.Cryptography;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
-    using System.Web.Http;
     using Cards;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
@@ -29,35 +27,19 @@ namespace Vsar.TSBot.Dialogs
     /// </summary>
     [CommandMetadata("connect")]
     [Serializable]
-    public class ConnectDialog : IDialog<object>
+    public class ConnectDialog : DialogBase, IDialog<object>
     {
         private const string CommandMatchConnect = @"connect *(\S*) *(\S*)";
         private const string CommandMatchPin = @"(\d{4})";
 
-        private readonly string appId;
-        private readonly string appScope;
-        private readonly string authorizeUrl;
-
-        [NonSerialized]
-        private IVstsService vstsService;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectDialog"/> class.
         /// </summary>
-        /// <param name="appId">The registered application id.</param>
-        /// <param name="appScope">The registered application scope.</param>
-        /// <param name="authorizeUrl">The URL to return to after authentication.</param>
-        /// <param name="vstsService">VSTS accessor</param>
-        public ConnectDialog(string appId, string appScope, Uri authorizeUrl, IVstsService vstsService)
+        /// <param name="vstsService">VSTS accessor.</param>
+        /// <param name="vstsApplicationRegistry">VSTS Application registry accessor.</param>
+        public ConnectDialog(IVstsService vstsService, IVstsApplicationRegistry vstsApplicationRegistry)
+            : base(vstsService, vstsApplicationRegistry)
         {
-            appId.ThrowIfNullOrWhiteSpace(nameof(appId));
-            appScope.ThrowIfNullOrWhiteSpace(nameof(appScope));
-            authorizeUrl.ThrowIfNull(nameof(authorizeUrl));
-
-            this.appId = appId;
-            this.appScope = appScope;
-            this.authorizeUrl = authorizeUrl.ToString();
-            this.vstsService = vstsService ?? throw new ArgumentNullException(nameof(vstsService));
         }
 
         /// <summary>
@@ -140,7 +122,9 @@ namespace Vsar.TSBot.Dialogs
             this.Pin = GeneratePin();
             context.UserData.SetPin(this.Pin);
 
-            var card = new LogOnCard(this.appId, this.appScope, new Uri(this.authorizeUrl), result.ChannelId, result.From.Id);
+            var vstsApplication = this.VstsApplicationRegistry.GetVstsApplicationRegistration(result.From.Id);
+
+            var card = new LogOnCard(vstsApplication, result.ChannelId, result.From.Id);
 
             var reply = context.MakeMessage();
             reply.Attachments.Add(card);
@@ -251,7 +235,7 @@ namespace Vsar.TSBot.Dialogs
 
             var reply = context.MakeMessage();
 
-            var projects = await this.vstsService.GetProjects(this.Account, this.Profile.Token);
+            var projects = await this.VstsService.GetProjects(this.Account, this.Profile.Token);
             this.TeamProjects = projects
                 .Select(project => project.Name)
                 .ToList();
@@ -301,7 +285,7 @@ namespace Vsar.TSBot.Dialogs
             context.ThrowIfNull(nameof(context));
             result.ThrowIfNull(nameof(result));
 
-            this.Profile = context.UserData.GetProfile();
+            this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(result));
             this.Profiles = context.UserData.GetProfiles();
 
             var reply = context.MakeMessage();
@@ -350,13 +334,6 @@ namespace Vsar.TSBot.Dialogs
 
                 return value.ToString("00000", CultureInfo.InvariantCulture);
             }
-        }
-
-        [ExcludeFromCodeCoverage]
-        [OnSerializing]
-        private void OnSerializingMethod(StreamingContext context)
-        {
-            this.vstsService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IVstsService>();
         }
     }
 }

@@ -34,7 +34,15 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Constructor_Missing_VstsService()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new ApprovalsDialog(null));
+            Assert.ThrowsException<ArgumentNullException>(() => new ApprovalsDialog(null, this.Fixture.VstsApplicationRegistry.Object));
+
+            await Task.CompletedTask;
+        }
+
+        [TestMethod]
+        public async Task Constructor_Missing_VstsApplicationRegistry()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new ApprovalsDialog(this.Fixture.VstsService.Object, null));
 
             await Task.CompletedTask;
         }
@@ -42,7 +50,9 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Constructor()
         {
-            var target = new ApprovalsDialog(this.Fixture.VstsService.Object);
+            var target = new ApprovalsDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+
+            Assert.IsNotNull(target);
 
             await Task.CompletedTask;
         }
@@ -53,7 +63,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var mocked = new Mock<ApprovalsDialog>(this.Fixture.VstsService.Object) { CallBase = true };
+            var mocked = new Mock<ApprovalsDialog>(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { CallBase = true };
             var target = mocked.Object;
 
             await target.StartAsync(this.Fixture.DialogContext.Object);
@@ -87,7 +97,17 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(s => s.GetApprovals(account, teamProject, profile))
                 .ReturnsAsync(approvals);
 
-            var target = new ApprovalsDialog(service.Object);
+            var applicationMock = new Mock<IVstsApplication>();
+
+            applicationMock
+                .Setup(application => application.AuthenticationService)
+                .Returns(new Mock<IAuthenticationService>().Object);
+
+            this.Fixture.VstsApplicationRegistry
+                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
+                .Returns(applicationMock.Object);
+
+            var target = new ApprovalsDialog(service.Object, this.Fixture.VstsApplicationRegistry.Object);
 
             await target.ApprovalsAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -130,7 +150,17 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(s => s.GetApprovals(account, teamProject, profile))
                 .ReturnsAsync(approvals);
 
-            var target = new ApprovalsDialog(service.Object);
+            var applicationMock = new Mock<IVstsApplication>();
+
+            applicationMock
+                .Setup(application => application.AuthenticationService)
+                .Returns(new Mock<IAuthenticationService>().Object);
+
+            this.Fixture.VstsApplicationRegistry
+                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
+                .Returns(applicationMock.Object);
+
+            var target = new ApprovalsDialog(service.Object, this.Fixture.VstsApplicationRegistry.Object);
 
             await target.ApprovalsAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -154,6 +184,7 @@ namespace Vsar.TSBot.UnitTests
             var teamProject = "anteamproject";
 
             var service = new Mock<IVstsService>();
+            var registry = new Mock<IVstsApplicationRegistry>();
 
             this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("Account", out account))
@@ -165,7 +196,7 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
                 .Returns(true);
 
-            var target = new ApprovalsDialog(service.Object)
+            var target = new ApprovalsDialog(service.Object, registry.Object)
             {
                 Account = account,
                 Profile = profile,
@@ -190,6 +221,7 @@ namespace Vsar.TSBot.UnitTests
             var teamProject = "anteamproject";
 
             var service = new Mock<IVstsService>();
+            var registry = new Mock<IVstsApplicationRegistry>();
 
             this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("Account", out account))
@@ -201,7 +233,7 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
                 .Returns(true);
 
-            var target = new ApprovalsDialog(service.Object)
+            var target = new ApprovalsDialog(service.Object, registry.Object)
             {
                 Account = account,
                 Profile = profile,
@@ -227,6 +259,7 @@ namespace Vsar.TSBot.UnitTests
             var teamProject = "anteamproject";
 
             var service = new Mock<IVstsService>();
+            var registry = new Mock<IVstsApplicationRegistry>();
 
             this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("Account", out account))
@@ -238,7 +271,7 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
                 .Returns(true);
 
-            var target = new ApprovalsDialog(service.Object)
+            var target = new ApprovalsDialog(service.Object, registry.Object)
             {
                 Account = account,
                 Profile = profile,
@@ -272,7 +305,7 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
                 .Returns(true);
 
-            var target = new ApprovalsDialog(this.Fixture.VstsService.Object)
+            var target = new ApprovalsDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object)
             {
                 Account = account,
                 Profile = profile,
@@ -293,7 +326,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "invalid";
 
-            var target = new ApprovalsDialog(this.Fixture.VstsService.Object);
+            var target = new ApprovalsDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
 
             await target.ApproveOrRejectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -306,7 +339,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "A comment";
 
-            var mocked = new Mock<ApprovalsDialog>(this.Fixture.VstsService.Object) { CallBase = true };
+            var mocked = new Mock<ApprovalsDialog>(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { CallBase = true };
             var target = mocked.Object;
             target.ApprovalId = 1;
             target.IsApproved = true;

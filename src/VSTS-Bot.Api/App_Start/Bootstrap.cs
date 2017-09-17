@@ -67,17 +67,23 @@ namespace Vsar.TSBot
                 .AsImplementedInterfaces();
 
             builder
-                .RegisterType<AuthenticationService>()
-                .WithParameter("appSecret", Config.ApplicationSecret)
-                .WithParameter("authorizeUrl", Config.AuthorizeUrl)
-                .AsImplementedInterfaces();
-
-            builder
                 .RegisterType<BotService>()
                 .AsImplementedInterfaces();
 
             builder
                 .RegisterType<VstsService>()
+                .AsImplementedInterfaces();
+
+            builder
+                .RegisterType<AuthenticationServiceFactory>()
+                .AsImplementedInterfaces();
+
+            builder
+                .RegisterType<VstsApplicationRegistry>()
+                .WithParameter("applicationId", Config.ApplicationId)
+                .WithParameter("applicationSecret", Config.ApplicationSecret)
+                .WithParameter("applicationScope", Config.ApplicationScope)
+                .WithParameter("redirectUri", Config.AuthorizeUrl)
                 .AsImplementedInterfaces();
 
             builder
@@ -89,15 +95,7 @@ namespace Vsar.TSBot
             builder
                 .RegisterAssemblyTypes(typeof(Bootstrap).Assembly)
                 .Where(t => t.GetInterfaces().Any(i => i.IsAssignableFrom(typeof(IDialog<object>))))
-                .Except<ConnectDialog>()
                 .Except<RootDialog>()
-                .AsImplementedInterfaces();
-
-            builder
-                .RegisterType<ConnectDialog>()
-                .WithParameter("appId", Config.ApplicationId)
-                .WithParameter("appScope", Config.ApplicationScope)
-                .WithParameter("authorizeUrl", Config.AuthorizeUrl)
                 .AsImplementedInterfaces();
 
             builder

@@ -15,7 +15,6 @@
     <AssemblyName>Vsar.TSBot.Api</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44377</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -26,6 +25,7 @@
     <ApplicationInsightsResourceId>/subscriptions/691223ba-28e5-43b0-a9cd-25c73d1746da/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/Team-Services-Bot</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/691223ba-28e5-43b0-a9cd-25c73d1746da/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/Team-Services-Bot</ApplicationInsightsAnnotationResourceId>
     <Use64BitIISExpress />
+    <IISExpressSSLPort />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -301,6 +301,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\Bot.png" />
     <Content Include="Content\Images\Logo.png" />
     <Content Include="Content\Images\Microsoft.png" />
     <Content Include="Content\Site.css" />
@@ -350,6 +351,7 @@
     <Compile Include="Dialogs\ApprovalsDialog.cs" />
     <Compile Include="Dialogs\BuildsDialog.cs" />
     <Compile Include="Dialogs\ConnectDialog.cs" />
+    <Compile Include="Dialogs\DialogBase.cs" />
     <Compile Include="Dialogs\ReleasesDialog.cs" />
     <Compile Include="DI\CommandMetadataAttribute.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />
@@ -376,10 +378,16 @@
       <DependentUpon>Labels.resx</DependentUpon>
     </Compile>
     <Compile Include="Services\AuthenticationService.cs" />
+    <Compile Include="Services\AuthenticationServiceFactory.cs" />
     <Compile Include="Services\BotService.cs" />
     <Compile Include="Services\IAuthenticationService.cs" />
+    <Compile Include="Services\IAuthenticationServiceFactory.cs" />
     <Compile Include="Services\IBotService.cs" />
+    <Compile Include="Services\IVstsApplication.cs" />
+    <Compile Include="Services\IVstsApplicationRegistry.cs" />
     <Compile Include="Services\IVstsService.cs" />
+    <Compile Include="Services\VstsApplication.cs" />
+    <Compile Include="Services\VstsApplicationRegistry.cs" />
     <Compile Include="Services\VstsService.cs" />
     <Compile Include="WebApiApplication.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -464,7 +472,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>3979</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost:44377/</IISUrl>
+          <IISUrl>https://127.0.0.1:44377/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

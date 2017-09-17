@@ -476,7 +476,7 @@ namespace Vsar.TSBot.UnitTests.Services
 
                 InitializeConnectionShim(clients);
 
-                // await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.GetProjects("someaccount", this.token));
+                ////  await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.GetProjects("someaccount", this.token));
                 IEnumerable<TeamProjectReference> actual = await service.GetProjects(accounts[0].AccountName, this.token);
 
                 expected.ShouldAllBeEquivalentTo(actual);
@@ -500,7 +500,7 @@ namespace Vsar.TSBot.UnitTests.Services
 
             using (ShimsContext.Create())
             {
-                var client = new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2())
+                new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2())
                 {
                     GetReleaseAsyncStringInt32NullableOfBooleanIEnumerableOfStringObjectCancellationToken =
                         (teamProject, id, arg3, arg4, arg5, cancellationToken) =>
