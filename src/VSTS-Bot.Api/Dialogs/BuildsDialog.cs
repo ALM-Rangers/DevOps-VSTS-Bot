@@ -25,22 +25,20 @@ namespace Vsar.TSBot.Dialogs
     /// </summary>
     [CommandMetadata("builds")]
     [Serializable]
-    public class BuildsDialog : IDialog<object>
+    public class BuildsDialog : DialogBase, IDialog<object>
     {
         private const string CommandMatchBuilds = "builds";
         private const string CommandMatchQueue = @"queue (\d+)";
-
-        [NonSerialized]
-        private IVstsService vstsService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BuildsDialog"/> class.
         /// </summary>
         /// <param name="vstsService">VSTS accessor</param>
+        /// <param name="vstsApplicationRegistry">VSTS Application registry accessor.</param>
         /// <exception cref="ArgumentNullException">Occurs when the vstsService is missing.</exception>
-        public BuildsDialog(IVstsService vstsService)
+        public BuildsDialog(IVstsService vstsService, IVstsApplicationRegistry vstsApplicationRegistry)
+            : base(vstsService, vstsApplicationRegistry)
         {
-            this.vstsService = vstsService ?? throw new ArgumentNullException(nameof(vstsService));
         }
 
         /// <summary>
@@ -79,18 +77,19 @@ namespace Vsar.TSBot.Dialogs
             context.ThrowIfNull(nameof(context));
             result.ThrowIfNull(nameof(result));
 
+            var activity = await result;
+
             this.Account = context.UserData.GetAccount();
-            this.Profile = context.UserData.GetProfile();
+            this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(activity));
             this.TeamProject = context.UserData.GetTeamProject();
 
-            var activity = await result;
             var text = (activity.Text ?? string.Empty).ToLowerInvariant();
             var reply = context.MakeMessage();
 
             if (text.Equals(CommandMatchBuilds, StringComparison.OrdinalIgnoreCase))
             {
                 var buildDefinitions =
-                    await this.vstsService.GetBuildDefinitionsAsync(this.Account, this.TeamProject, this.Profile.Token);
+                    await this.VstsService.GetBuildDefinitionsAsync(this.Account, this.TeamProject, this.Profile.Token);
                 if (!buildDefinitions.Any())
                 {
                     reply.Text = Labels.NoBuilds;
@@ -137,7 +136,7 @@ namespace Vsar.TSBot.Dialogs
             {
                 var buildDefinitionId = Convert.ToInt32(match.Groups[1].Value);
 
-                var build = await this.vstsService.QueueBuildAsync(this.Account, this.TeamProject, buildDefinitionId, this.Profile.Token);
+                var build = await this.VstsService.QueueBuildAsync(this.Account, this.TeamProject, buildDefinitionId, this.Profile.Token);
                 reply.Text = string.Format(Labels.BuildQueued, build.Id);
 
                 await context.PostAsync(reply);
@@ -147,13 +146,6 @@ namespace Vsar.TSBot.Dialogs
             {
                 context.Fail(new UnknownCommandException(activity.Text));
             }
-        }
-
-        [ExcludeFromCodeCoverage]
-        [OnSerializing]
-        private void OnSerializingMethod(StreamingContext context)
-        {
-            this.vstsService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IVstsService>();
         }
     }
 }
