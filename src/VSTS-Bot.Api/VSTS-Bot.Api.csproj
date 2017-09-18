@@ -25,7 +25,7 @@
     <ApplicationInsightsResourceId>/subscriptions/691223ba-28e5-43b0-a9cd-25c73d1746da/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/Team-Services-Bot</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/691223ba-28e5-43b0-a9cd-25c73d1746da/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/Team-Services-Bot</ApplicationInsightsAnnotationResourceId>
     <Use64BitIISExpress />
-    <IISExpressSSLPort />
+    <IISExpressSSLPort>44377</IISExpressSSLPort>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -304,6 +304,10 @@
     <Content Include="Content\Images\Bot.png" />
     <Content Include="Content\Images\Logo.png" />
     <Content Include="Content\Images\Microsoft.png" />
+    <Content Include="Content\Images\Skype-for-business.png" />
+    <Content Include="Content\Images\Skype.png" />
+    <Content Include="Content\Images\Slack.png" />
+    <Content Include="Content\Images\Teams.png" />
     <Content Include="Content\Site.css" />
     <Content Include="default.htm" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -472,7 +476,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>3979</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://127.0.0.1:44377/</IISUrl>
+          <IISUrl>http://localhost:3979/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
