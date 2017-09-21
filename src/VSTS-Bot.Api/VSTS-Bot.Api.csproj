@@ -301,6 +301,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\Add_to_skype.png" />
     <Content Include="Content\Images\Bot.png" />
     <Content Include="Content\Images\Logo.png" />
     <Content Include="Content\Images\Microsoft.png" />
