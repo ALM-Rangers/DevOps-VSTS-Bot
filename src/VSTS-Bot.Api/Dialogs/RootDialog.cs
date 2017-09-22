@@ -89,7 +89,13 @@ namespace Vsar.TSBot.Dialogs
             context.ThrowIfNull(nameof(context));
             result.ThrowIfNull(nameof(result));
 
-            var dialog = GlobalConfiguration.Configuration.DependencyResolver.Find(result.Text);
+            if (result.Conversation.IsGroup.GetValueOrDefault() && !result.MentionsRecipient())
+            {
+                context.Wait(this.HandleActivityAsync);
+                return;
+            }
+
+            var dialog = GlobalConfiguration.Configuration.DependencyResolver.Find(result.RemoveRecipientMention());
 
             if (dialog == null)
             {
