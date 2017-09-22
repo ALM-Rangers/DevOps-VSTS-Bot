@@ -9,12 +9,9 @@
 namespace Vsar.TSBot.Dialogs
 {
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Runtime.Serialization;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
-    using System.Web.Http;
     using Cards;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
@@ -27,6 +24,8 @@ namespace Vsar.TSBot.Dialogs
     [Serializable]
     public class BuildsDialog : DialogBase, IDialog<object>
     {
+        private const int TakeSize = 7;
+
         private const string CommandMatchBuilds = "builds";
         private const string CommandMatchQueue = @"queue (\d+)";
 
@@ -83,8 +82,7 @@ namespace Vsar.TSBot.Dialogs
             this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(activity));
             this.TeamProject = context.UserData.GetTeamProject();
 
-            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
-            var reply = context.MakeMessage();
+            var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
 
             if (text.Equals(CommandMatchBuilds, StringComparison.OrdinalIgnoreCase))
             {
@@ -92,21 +90,29 @@ namespace Vsar.TSBot.Dialogs
                     await this.VstsService.GetBuildDefinitionsAsync(this.Account, this.TeamProject, this.Profile.Token);
                 if (!buildDefinitions.Any())
                 {
+                    var reply = context.MakeMessage();
                     reply.Text = Labels.NoBuilds;
                     await context.PostAsync(reply);
                     context.Done(reply);
                     return;
                 }
 
-                var cards = buildDefinitions.Select(bd => new BuildDefinitionCard(bd)).ToList();
-
-                foreach (var card in cards)
+                var skip = 0;
+                while (skip < buildDefinitions.Count)
                 {
-                    reply.Attachments.Add(card);
-                }
+                    var cards = buildDefinitions.Skip(skip).Take(TakeSize).Select(bd => new BuildDefinitionCard(bd)).ToList();
+                    var reply = context.MakeMessage();
 
-                reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-                await context.PostAsync(reply);
+                    foreach (var card in cards)
+                    {
+                        reply.Attachments.Add(card);
+                    }
+
+                    reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+                    await context.PostAsync(reply);
+
+                    skip += TakeSize;
+                }
 
                 context.Wait(this.QueueAsync);
             }

@@ -24,5 +24,15 @@ namespace Vsar.TSBot
         {
             return this.View();
         }
+
+        /// <summary>
+        /// Returns how it works page.
+        /// </summary>
+        /// <param name="channels">The channels to show</param>
+        /// <returns>A view.</returns>
+        public ActionResult HowItWorks(Channel channels = Channel.All)
+        {
+            return this.View(new { Channels = channels });
+        }
     }
 }
