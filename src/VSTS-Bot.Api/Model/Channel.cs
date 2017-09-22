@@ -28,7 +28,7 @@ namespace Vsar.TSBot
 
         /// <summary>
         /// Teams channel.
-        /// </summary>
+        /// </summary>5
         Teams = 4,
 
         /// <summary>

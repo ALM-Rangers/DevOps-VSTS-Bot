@@ -24,6 +24,8 @@ namespace Vsar.TSBot.Dialogs
     [Serializable]
     public class ReleasesDialog : DialogBase, IDialog<object>
     {
+        private const int TakeSize = 7;
+
         private const string CommandMatchReleases = "releases";
         private const string CommandMatchCreate = @"create (\d+)";
 
@@ -80,7 +82,6 @@ namespace Vsar.TSBot.Dialogs
             this.TeamProject = context.UserData.GetTeamProject();
 
             var text = (activity.Text ?? string.Empty).ToLowerInvariant();
-            var reply = context.MakeMessage();
 
             if (text.Equals(CommandMatchReleases, StringComparison.OrdinalIgnoreCase))
             {
@@ -88,21 +89,29 @@ namespace Vsar.TSBot.Dialogs
                     await this.VstsService.GetReleaseDefinitionsAsync(this.Account, this.TeamProject, this.Profile.Token);
                 if (!releaseDefinitions.Any())
                 {
+                    var reply = context.MakeMessage();
                     reply.Text = Labels.NoReleases;
                     await context.PostAsync(reply);
                     context.Done(reply);
                     return;
                 }
 
-                var cards = releaseDefinitions.Select(rd => new ReleaseDefinitionCard(rd)).ToList();
-
-                foreach (var card in cards)
+                var skip = 0;
+                while (skip < releaseDefinitions.Count)
                 {
-                    reply.Attachments.Add(card);
-                }
+                    var cards = releaseDefinitions.Skip(skip).Take(TakeSize).Select(rd => new ReleaseDefinitionCard(rd)).ToList();
+                    var reply = context.MakeMessage();
 
-                reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-                await context.PostAsync(reply);
+                    foreach (var card in cards)
+                    {
+                        reply.Attachments.Add(card);
+                    }
+
+                    reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+                    await context.PostAsync(reply);
+
+                    skip += TakeSize;
+                }
 
                 context.Wait(this.CreateAsync);
             }

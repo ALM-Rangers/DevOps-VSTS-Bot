@@ -10,12 +10,9 @@
 namespace Vsar.TSBot.Dialogs
 {
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Runtime.Serialization;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
-    using System.Web.Http;
     using Cards;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
@@ -29,6 +26,8 @@ namespace Vsar.TSBot.Dialogs
     [Serializable]
     public class ApprovalsDialog : DialogBase, IDialog<object>
     {
+        private const int TakeSize = 7;
+
         private const string CommandMatchApprovals = "approvals";
         private const string CommandMatchApprove = @"approve (\d+) *(.*?)$";
         private const string CommandMatchReject = @"reject (\d+) *(.*?)$";
@@ -90,7 +89,6 @@ namespace Vsar.TSBot.Dialogs
             result.ThrowIfNull(nameof(result));
 
             var activity = await result;
-            var reply = context.MakeMessage();
 
             this.Account = context.UserData.GetAccount();
             this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(activity));
@@ -101,6 +99,7 @@ namespace Vsar.TSBot.Dialogs
                 var approvals = await this.VstsService.GetApprovals(this.Account, this.TeamProject, this.Profile);
                 if (!approvals.Any())
                 {
+                    var reply = context.MakeMessage();
                     reply.Text = Labels.NoApprovals;
                     await context.PostAsync(reply);
 
@@ -108,15 +107,22 @@ namespace Vsar.TSBot.Dialogs
                     return;
                 }
 
-                var cards = approvals.Select(a => new ApprovalCard(this.Account, a, this.TeamProject)).ToList();
-
-                foreach (var card in cards)
+                var skip = 0;
+                while (skip < approvals.Count)
                 {
-                    reply.Attachments.Add(card);
-                }
+                    var cards = approvals.Skip(skip).Take(TakeSize).Select(a => new ApprovalCard(this.Account, a, this.TeamProject)).ToList();
+                    var reply = context.MakeMessage();
 
-                reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-                await context.PostAsync(reply);
+                    foreach (var card in cards)
+                    {
+                        reply.Attachments.Add(card);
+                    }
+
+                    reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+                    await context.PostAsync(reply);
+
+                    skip += TakeSize;
+                }
 
                 context.Wait(this.ApproveOrRejectAsync);
             }
