@@ -303,6 +303,17 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Images\Add_to_skype.png" />
     <Content Include="Content\Images\Bot.png" />
+    <Content Include="Content\Images\HowItWorks\Teams\approval_1.png" />
+    <Content Include="Content\Images\HowItWorks\Teams\approval_2.png" />
+    <Content Include="Content\Images\HowItWorks\Teams\build_1.png" />
+    <Content Include="Content\Images\HowItWorks\Teams\build_2.png" />
+    <Content Include="Content\Images\HowItWorks\Teams\connect_1.png" />
+    <Content Include="Content\Images\HowItWorks\Teams\connect_2.png" />
+    <Content Include="Content\Images\HowItWorks\Teams\connect_3.png" />
+    <Content Include="Content\Images\HowItWorks\Teams\connect_4.png" />
+    <Content Include="Content\Images\HowItWorks\Teams\connect_5.png" />
+    <Content Include="Content\Images\HowItWorks\Teams\release_1.png" />
+    <Content Include="Content\Images\HowItWorks\Teams\release_2.png" />
     <Content Include="Content\Images\Logo.png" />
     <Content Include="Content\Images\Microsoft.png" />
     <Content Include="Content\Images\Skype-for-business.png" />
@@ -366,6 +377,7 @@
     <Compile Include="Extensions\BotDataBagExtensions.cs" />
     <Compile Include="Extensions\GuardExtensions.cs" />
     <Compile Include="Model\Authorize.cs" />
+    <Compile Include="Model\Channel.cs" />
     <Compile Include="Model\OAuthToken.cs" />
     <Compile Include="Model\VstsProfile.cs" />
     <Compile Include="Properties\GlobalSuppressions.cs" />
@@ -417,6 +429,7 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Scripts\jquery-1.9.1.min.map" />
+    <Content Include="Views\Default\HowItWorks.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
