@@ -81,7 +81,7 @@ namespace Vsar.TSBot.Dialogs
             this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(activity));
             this.TeamProject = context.UserData.GetTeamProject();
 
-            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
+            var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
 
             if (text.Equals(CommandMatchReleases, StringComparison.OrdinalIgnoreCase))
             {
@@ -133,7 +133,7 @@ namespace Vsar.TSBot.Dialogs
             result.ThrowIfNull(nameof(result));
 
             var activity = await result;
-            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
+            var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
             var reply = context.MakeMessage();
 
             var match = Regex.Match(text, CommandMatchCreate);

@@ -82,7 +82,7 @@ namespace Vsar.TSBot.Dialogs
             this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(activity));
             this.TeamProject = context.UserData.GetTeamProject();
 
-            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
+            var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
 
             if (text.Equals(CommandMatchBuilds, StringComparison.OrdinalIgnoreCase))
             {

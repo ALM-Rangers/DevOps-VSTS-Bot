@@ -94,7 +94,9 @@ namespace Vsar.TSBot.Dialogs
             this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(activity));
             this.TeamProject = context.UserData.GetTeamProject();
 
-            if (activity.Text.Equals(CommandMatchApprovals, StringComparison.OrdinalIgnoreCase))
+            var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
+
+            if (text.Equals(CommandMatchApprovals, StringComparison.OrdinalIgnoreCase))
             {
                 var approvals = await this.VstsService.GetApprovals(this.Account, this.TeamProject, this.Profile);
                 if (!approvals.Any())
