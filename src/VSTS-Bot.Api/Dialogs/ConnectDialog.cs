@@ -95,7 +95,7 @@ namespace Vsar.TSBot.Dialogs
             result.ThrowIfNull(nameof(result));
 
             var activity = await result;
-            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
+            var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
 
             var match = Regex.Match(text, CommandMatchConnect);
             if (match.Success)
