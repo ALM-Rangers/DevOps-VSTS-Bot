@@ -200,4 +200,10 @@
     <value>**Error occurred:** {0}</value>
     <comment>{0} = Exception.Message</comment>
   </data>
+  <data name="Help" xml:space="preserve">
+    <value>I am here to help you. Please select one of the following commands.</value>
+  </data>
+  <data name="UnknownCommand" xml:space="preserve">
+    <value>Sorry, I did not recognize that command. Please select one of the following commands.</value>
+  </data>
 </root>

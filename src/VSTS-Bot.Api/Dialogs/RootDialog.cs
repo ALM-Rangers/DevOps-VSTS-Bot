@@ -28,6 +28,8 @@ namespace Vsar.TSBot.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
+        private const string CommandMatchHelp = "help";
+
         private readonly Uri eulaUri;
 
         [NonSerialized]
@@ -89,6 +91,7 @@ namespace Vsar.TSBot.Dialogs
             context.ThrowIfNull(nameof(context));
             result.ThrowIfNull(nameof(result));
 
+            // Message is coming from a group chat, so skipping if the bot is not explicitly mentioned.
             if (result.Conversation.IsGroup.GetValueOrDefault() && !result.MentionsRecipient())
             {
                 context.Wait(this.HandleActivityAsync);
@@ -102,6 +105,11 @@ namespace Vsar.TSBot.Dialogs
                 var teamProject = context.UserData.GetTeamProject();
 
                 var reply = context.MakeMessage();
+
+                reply.Text = result.Text.Trim().Equals(CommandMatchHelp, StringComparison.OrdinalIgnoreCase)
+                    ? Labels.Help
+                    : Labels.UnknownCommand;
+
                 reply.Attachments.Add(new MainOptionsCard(!string.IsNullOrEmpty(teamProject)));
 
                 await context.PostAsync(reply);
