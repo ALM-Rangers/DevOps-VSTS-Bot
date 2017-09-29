@@ -2,7 +2,7 @@
 THIRD-PARTY SOFTWARE NOTICES AND INFORMATION
 Do Not Translate or Localize
 
-Visual Studio Team Services Bot incorporates components from the projects listed below. ALM | DevOps Ranger Contributors license these components to you under ALM | DevOps Ranger�s licensing terms for the Visual Studio Team Services Bot.  The original copyright notices and the licenses under which ALM | DevOps Rangers received such components are set forth below for informational purposes. ALM | DevOps Rangers reserves all rights not expressly granted herein, whether by implication, estoppel or otherwise.
+Visual Studio Team Services Bot incorporates components from the projects listed below. ALM | DevOps Ranger Contributors license these components to you under ALM | DevOps Ranger�s licensing terms for the Visual Studio Team Services Bot.  The original copyright notices and the licenses under which ALM | DevOps Rangers received such components are set forth below for informational purposes. ALM | DevOps Rangers reserve all rights not expressly granted herein, whether by implication, estoppel or otherwise.
 
 
 1.	Antlr (http://www.antlr3.org/)
