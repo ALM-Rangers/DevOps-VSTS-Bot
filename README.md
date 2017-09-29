@@ -1,4 +1,4 @@
-# Visual Studio Team Services Bot 
+# VSTS-Bot 
 
 ![Build Status](https://almrangers.visualstudio.com/_apis/public/build/definitions/7f3cfb9a-d1cb-4e66-9d36-1af87b906fe9/143/badge)
 
