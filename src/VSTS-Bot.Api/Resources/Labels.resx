@@ -206,4 +206,10 @@
   <data name="UnknownCommand" xml:space="preserve">
     <value>Sorry, I did not recognize that command. Please select one of the following commands.</value>
   </data>
+  <data name="HelpAll" xml:space="preserve">
+    <value>Reconnect to another account through 'connect'; Get your approvals by typing or clicking 'approvals'; With 'builds' you can queue a build; And with 'releases' you can create a release.</value>
+  </data>
+  <data name="HelpConnect" xml:space="preserve">
+    <value>Please first 'connect' to your account, by clicking or typing connect.</value>
+  </data>
 </root>

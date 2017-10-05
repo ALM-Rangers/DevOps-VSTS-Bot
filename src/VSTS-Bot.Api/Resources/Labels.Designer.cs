@@ -178,6 +178,24 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reconnect to another account through &apos;connect&apos;; Get your approvals by typing or clicking &apos;approvals&apos;; With &apos;builds&apos; you can queue a build; And with &apos;releases&apos; you can create a release..
+        /// </summary>
+        internal static string HelpAll {
+            get {
+                return ResourceManager.GetString("HelpAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please first &apos;connect&apos; to your account, by clicking or typing connect..
+        /// </summary>
+        internal static string HelpConnect {
+            get {
+                return ResourceManager.GetString("HelpConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please provide a comment..
         /// </summary>
         internal static string MissingComment {

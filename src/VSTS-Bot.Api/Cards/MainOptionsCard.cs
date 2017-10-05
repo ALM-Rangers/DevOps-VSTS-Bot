@@ -26,6 +26,8 @@ namespace Vsar.TSBot.Cards
         {
             if (isConnected)
             {
+                this.Text = Labels.HelpAll;
+
                 var button1 = new CardAction(ActionTypes.ImBack, Labels.Approvals, value: "approvals");
                 var button2 = new CardAction(ActionTypes.ImBack, Labels.Builds, value: "builds");
                 var button3 = new CardAction(ActionTypes.ImBack, Labels.Connect, value: "connect");
@@ -34,6 +36,8 @@ namespace Vsar.TSBot.Cards
             }
             else
             {
+                this.Text = Labels.HelpConnect;
+
                 var button = new CardAction(ActionTypes.ImBack, Labels.Connect, value: "connect");
                 this.Buttons = new List<CardAction> { button };
             }
