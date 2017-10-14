@@ -17,7 +17,9 @@ namespace Vsar.TSBot
     using Autofac;
     using Dialogs;
     using Microsoft.ApplicationInsights;
+    using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
+    using Newtonsoft.Json.Linq;
     using Resources;
 
     /// <summary>
@@ -60,6 +62,14 @@ namespace Vsar.TSBot
                 if (string.Equals(activity.Type, ActivityTypes.Message, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(activity.Type, ActivityTypes.ConversationUpdate, StringComparison.OrdinalIgnoreCase))
                 {
+                    dynamic data = activity.ChannelData;
+
+                    if (activity.ChannelId.Equals(ChannelIds.Slack, StringComparison.OrdinalIgnoreCase) &&
+                        data.SlackMessage.type == "event_callback")
+                    {
+                        return this.Request.CreateResponse(status);
+                    }
+
                     var dialog = this.container.Resolve<RootDialog>(new NamedParameter("eulaUri", new Uri($"{this.Request.RequestUri.GetLeftPart(UriPartial.Authority)}/Eula")));
                     await this.dialogInvoker.SendAsync(activity, () => dialog);
                 }
