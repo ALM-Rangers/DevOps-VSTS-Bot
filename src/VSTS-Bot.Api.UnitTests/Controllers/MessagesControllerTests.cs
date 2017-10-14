@@ -30,7 +30,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Post_Activity()
         {
-            var activity = new Activity { Type = ActivityTypes.Message };
+            var activity = new Activity { Type = ActivityTypes.Message, ChannelId = ChannelIds.Directline };
 
             var telemetryClient = new TelemetryClient();
 
@@ -61,7 +61,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Post_Activity_ConversationUpdate()
         {
-            var activity = new Activity { Type = ActivityTypes.ConversationUpdate };
+            var activity = new Activity { Type = ActivityTypes.ConversationUpdate, ChannelId = ChannelIds.Directline };
 
             var telemetryClient = new TelemetryClient();
 
@@ -93,7 +93,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Post_Activity_Exception_Occurs()
         {
-            var activity = new Activity { Type = ActivityTypes.Message };
+            var activity = new Activity { Type = ActivityTypes.Message, ChannelId = ChannelIds.Directline };
 
             var telemetryClient = new TelemetryClient();
 
