@@ -64,8 +64,10 @@ namespace Vsar.TSBot
                 {
                     dynamic data = activity.ChannelData;
 
-                    if (activity.ChannelId.Equals(ChannelIds.Slack, StringComparison.OrdinalIgnoreCase) &&
-                        data.SlackMessage.type != "event_callback")
+                    if (data != null &&
+                        (activity.ChannelId.Equals(ChannelIds.Slack, StringComparison.OrdinalIgnoreCase) &&
+                         data.SlackMessage != null &&
+                         data.SlackMessage.type != "event_callback"))
                     {
                         return this.Request.CreateResponse(status);
                     }
