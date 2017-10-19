@@ -3,7 +3,7 @@
 ![Build Status](https://almrangers.visualstudio.com/_apis/public/build/definitions/7f3cfb9a-d1cb-4e66-9d36-1af87b906fe9/143/badge)
 
 ## Introduction
-**Visual Studio Team Services Bot** is Bot for Microsoft Teams, Skype and Slack, based on [Microsoft Bot Framework](https://dev.botframework.com/). Read [VSTS Bot is now in preview](https://blogs.msdn.microsoft.com/visualstudioalmrangers/2017/10/12/visual-studio-team-services-bot-vsts-bot-is-now-in-preview/) for details.
+**ALM | DevOps Rangers community Bot** is a Bot for Microsoft Teams, Skype and Slack, based on [Microsoft Bot Framework](https://dev.botframework.com/). Read [VSTS Bot is now in preview](https://blogs.msdn.microsoft.com/visualstudioalmrangers/2017/10/12/visual-studio-team-services-bot-vsts-bot-is-now-in-preview/) for details.
 
 ## Getting Started
 1. Read the documention about [Microsoft Bot Framework](https://dev.botframework.com/).
