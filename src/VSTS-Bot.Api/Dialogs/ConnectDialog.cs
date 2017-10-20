@@ -146,7 +146,7 @@ namespace Vsar.TSBot.Dialogs
 
             var activity = await result;
 
-            var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
+            var text = (activity.RemoveRecipientMention() ?? string.Empty).Trim().ToLowerInvariant();
             var match = Regex.Match(text, CommandMatchPin);
 
             if (match.Success && string.Equals(this.Pin, text, StringComparison.OrdinalIgnoreCase))
