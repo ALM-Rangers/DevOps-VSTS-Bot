@@ -205,7 +205,7 @@ namespace Vsar.TSBot.Dialogs
 
             var activity = await result;
 
-            await this.ChangeStatusAsync(context, this.ApprovalId, activity.Text, this.IsApproved);
+            await this.ChangeStatusAsync(context, this.ApprovalId, activity.RemoveRecipientMention().Trim(), this.IsApproved);
         }
 
         /// <summary>
