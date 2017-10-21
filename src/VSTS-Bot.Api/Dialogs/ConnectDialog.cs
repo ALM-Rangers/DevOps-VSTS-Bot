@@ -146,7 +146,7 @@ namespace Vsar.TSBot.Dialogs
 
             var activity = await result;
 
-            var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
+            var text = (activity.RemoveRecipientMention() ?? string.Empty).Trim().ToLowerInvariant();
             var match = Regex.Match(text, CommandMatchPin);
 
             if (match.Success && string.Equals(this.Pin, text, StringComparison.OrdinalIgnoreCase))
@@ -206,7 +206,7 @@ namespace Vsar.TSBot.Dialogs
 
             var activity = await result;
 
-            this.Account = activity.Text.Trim();
+            this.Account = activity.RemoveRecipientMention().Trim();
             this.Profile = this.Profiles.FirstOrDefault(p => p.Accounts.Any(
                 a => string.Equals(a, this.Account, StringComparison.OrdinalIgnoreCase)));
 
@@ -259,14 +259,15 @@ namespace Vsar.TSBot.Dialogs
             result.ThrowIfNull(nameof(result));
 
             var activity = await result;
+            var text = activity.RemoveRecipientMention().Trim();
 
-            if (!this.TeamProjects.Contains(activity.Text.Trim()))
+            if (!this.TeamProjects.Contains(text))
             {
                 await this.SelectProjectAsync(context, activity);
             }
             else
             {
-                this.TeamProject = activity.Text.Trim();
+                this.TeamProject = text;
 
                 context.UserData.SetTeamProject(this.TeamProject);
 

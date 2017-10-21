@@ -147,8 +147,8 @@ namespace Vsar.TSBot.Dialogs
 
             var activity = await result;
 
-            var matchApprove = Regex.Match(activity.Text, CommandMatchApprove);
-            var matchReject = Regex.Match(activity.Text, CommandMatchReject);
+            var matchApprove = Regex.Match(activity.RemoveRecipientMention(), CommandMatchApprove);
+            var matchReject = Regex.Match(activity.RemoveRecipientMention(), CommandMatchReject);
 
             var reply = context.MakeMessage();
 
@@ -205,7 +205,7 @@ namespace Vsar.TSBot.Dialogs
 
             var activity = await result;
 
-            await this.ChangeStatusAsync(context, this.ApprovalId, activity.Text, this.IsApproved);
+            await this.ChangeStatusAsync(context, this.ApprovalId, activity.RemoveRecipientMention().Trim(), this.IsApproved);
         }
 
         /// <summary>
