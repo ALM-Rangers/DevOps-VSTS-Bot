@@ -134,7 +134,7 @@ namespace Vsar.TSBot.Dialogs
             result.ThrowIfNull(nameof(result));
 
             var activity = await result;
-            var text = (activity.Text ?? string.Empty).ToLowerInvariant();
+            var text = (activity.RemoveRecipientMention() ?? string.Empty).ToLowerInvariant();
             var reply = context.MakeMessage();
 
             var match = Regex.Match(text, CommandMatchQueue);
