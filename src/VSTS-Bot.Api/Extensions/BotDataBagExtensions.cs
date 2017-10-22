@@ -11,7 +11,6 @@ namespace Vsar.TSBot
 {
     using System;
     using System.Collections.Generic;
-    using System.Web.Http;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
 
@@ -26,6 +25,15 @@ namespace Vsar.TSBot
         private const string Profile = "Profile";
         private const string Profiles = "Profiles";
         private const string TeamProject = "TeamProject";
+
+        /// <summary>
+        /// Clears the NotValidatedByPinProfile.
+        /// </summary>
+        /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
+        public static void ClearNotValidatedByPinProfile(this IBotDataBag dataBag)
+        {
+            dataBag.SetValue(NotValidatedByPinProfile, (VstsProfile)null);
+        }
 
         /// <summary>
         /// Gets the current account name.

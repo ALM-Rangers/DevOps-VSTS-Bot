@@ -61,28 +61,28 @@ namespace Vsar.TSBot
             var microsoftAppCredentials =
                 new MicrosoftAppCredentials(Config.MicrosoftApplicationId, Config.MicrosoftAppPassword);
 
-            if (!isDebugging)
-            {
-                builder
-                    .Register(c => new DocumentClient(Config.DocumentDbUrl, Config.DocumentDbKey))
-                    .As<IDocumentClient>()
-                    .SingleInstance();
+            var client = new DocumentClient(Config.DocumentDbUri, Config.DocumentDbKey);
+            IBotDataStore<BotData> store = new DocumentDbBotDataStore(client);
 
-                builder
-                    .Register(c => new DocumentDbBotDataStore(c.Resolve<IDocumentClient>()))
-                    .Keyed<IBotDataStore<BotData>>(AzureModule.Key_DataStore)
-                    .AsSelf()
-                    .SingleInstance();
+            builder
+                .Register(c => client)
+                .As<IDocumentClient>()
+                .SingleInstance();
 
-                builder
-                    .Register(c =>
-                        new CachingBotDataStore(
-                            c.ResolveKeyed<DocumentDbBotDataStore>(AzureModule.Key_DataStore),
-                            CachingBotDataStoreConsistencyPolicy.ETagBasedConsistency))
-                    .As<IBotDataStore<BotData>>()
-                    .AsSelf()
-                    .InstancePerLifetimeScope();
-            }
+            builder
+                .Register(c => store)
+                .Keyed<IBotDataStore<BotData>>(AzureModule.Key_DataStore)
+                .AsSelf()
+                .SingleInstance();
+
+            builder
+                .Register(c =>
+                    new CachingBotDataStore(
+                        store,
+                        CachingBotDataStoreConsistencyPolicy.ETagBasedConsistency))
+                .As<IBotDataStore<BotData>>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
 
             // When debugging with the bot emulator we need to use the listening url from the emulator.
             if (isDebugging && !string.IsNullOrEmpty(Config.EmulatorListeningUrl))

@@ -44,7 +44,7 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets the url for Document DB
         /// </summary>
-        public static Uri DocumentDbUrl => new Uri(WebConfigurationManager.AppSettings["DocumentDbUrl"]);
+        public static Uri DocumentDbUri => new Uri(WebConfigurationManager.AppSettings["DocumentDbUri"]);
 
         /// <summary>
         /// Gets the instrumentation key for application insights.
