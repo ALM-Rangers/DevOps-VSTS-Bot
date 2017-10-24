@@ -72,8 +72,15 @@ namespace Vsar.TSBot
                         return this.Request.CreateResponse(status);
                     }
 
-                    var dialog = this.container.Resolve<RootDialog>(new NamedParameter("eulaUri", new Uri($"{this.Request.RequestUri.GetLeftPart(UriPartial.Authority)}/Eula")));
-                    await this.dialogInvoker.SendAsync(activity, () => dialog);
+                    var connector = new ConnectorClient(new Uri(activity.ServiceUrl));
+
+                    var reply = activity.CreateReply();
+                    reply.Type = ActivityTypes.Typing;
+
+                    await connector.Conversations.ReplyToActivityAsync(reply);
+
+                    RootDialog Dialog() => this.container.Resolve<RootDialog>(new NamedParameter("eulaUri", new Uri($"{this.Request.RequestUri.GetLeftPart(UriPartial.Authority)}/Eula")));
+                    await this.dialogInvoker.SendAsync(activity, Dialog);
                 }
                 else
                 {
