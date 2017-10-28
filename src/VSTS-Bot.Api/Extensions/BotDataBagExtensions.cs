@@ -32,6 +32,8 @@ namespace Vsar.TSBot
         /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
         public static void ClearNotValidatedByPinProfile(this IBotDataBag dataBag)
         {
+            dataBag.ThrowIfNull(nameof(dataBag));
+
             dataBag.RemoveValue(NotValidatedByPinProfile);
         }
 
