@@ -8,6 +8,7 @@
 ## Getting Started
 1. Read the documention about [Microsoft Bot Framework](https://dev.botframework.com/).
 2. Download the [Bot Framework Emulator](https://docs.botframework.com/en-us/tools/bot-framework-emulator/#navtitle) to help you test.
+3. Download the [Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator) which we emulate Cosmos DB on your local machine.
 3. Run Git-Ignore-Changes.bat which will disable tracking of Team-Services-Bot.runsettings and AppSettings.config, so your local information will not get uploaded to the repository.
 4. For the Acceptance tests:
    1. Download [ngrok](https://ngrok.com/download) to help run the Acceptance tests.
@@ -46,7 +47,10 @@
          <!-- update these with your BotId, Microsoft App Id and your Microsoft App Password-->
          <add key="AppId" value="" />
          <add key="AppSecret" value="" />
+         <add key="AppScope" value=""/>
          <add key="AuthorizeUrl" value="" />
+         <add key="DocumentDbKey" value="C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==" />
+         <add key="DocumentDbUri" value="https://localhost:8081" />
          <add key="EmulatorListeningUrl" value="" />
          <add key="InstrumentationKey" value="" />
          <add key="BotId" value="" />

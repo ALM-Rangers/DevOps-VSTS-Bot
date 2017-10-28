@@ -10,7 +10,10 @@
 namespace Vsar.TSBot
 {
     using System.Diagnostics.CodeAnalysis;
+    using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Connector;
 
     /// <summary>
@@ -19,27 +22,30 @@ namespace Vsar.TSBot
     [ExcludeFromCodeCoverage]
     public class BotService : IBotService
     {
-        private readonly IBotState botState;
+        private readonly IBotDataStore<BotData> store;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BotService"/> class.
         /// </summary>
-        /// <param name="botState">The botstate.</param>
-        public BotService(IBotState botState)
+        /// <param name="store">The store.</param>
+        public BotService(IBotDataStore<BotData> store)
         {
-            this.botState = botState;
+            this.store = store;
         }
 
         /// <inheritdoc />
         public async Task<BotData> GetUserData(string channelId, string userId)
         {
-            return await this.botState.GetUserDataAsync(channelId, userId);
+            var key = new Address(string.Empty, channelId, userId, string.Empty, string.Empty);
+            return await this.store.LoadAsync(key, BotStoreType.BotUserData, CancellationToken.None);
         }
 
         /// <inheritdoc />
         public async Task SetUserData(string channelId, string userId, BotData botData)
         {
-            await this.botState.SetUserDataAsync(channelId, userId, botData);
+            var key = new Address(string.Empty, channelId, userId, string.Empty, string.Empty);
+            await this.store.SaveAsync(key, BotStoreType.BotUserData, botData, CancellationToken.None);
+            await this.store.FlushAsync(key, CancellationToken.None);
         }
     }
 }

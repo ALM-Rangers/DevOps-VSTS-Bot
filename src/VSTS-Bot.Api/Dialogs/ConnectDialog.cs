@@ -158,6 +158,7 @@ namespace Vsar.TSBot.Dialogs
                 this.Profile = profile;
                 context.UserData.SetProfile(profile);
                 context.UserData.SetProfiles(profiles);
+                context.UserData.ClearNotValidatedByPinProfile();
 
                 await this.ContinueProcess(context, activity);
                 return;
