@@ -43,7 +43,7 @@ namespace Vsar.TSBot.AcceptanceTests
 
             if (profile != null)
             {
-                target.SetProfile(profile);
+                target.SetProperty("Profile", profile);
             }
 
             Config.BotState.SetUserData(ChannelIds.Directline, Config.UserName, target);
@@ -130,8 +130,8 @@ namespace Vsar.TSBot.AcceptanceTests
                 Token = token
             };
 
-            data.SetProfile(profile);
-            data.SetProfiles(new List<VstsProfile> { profile });
+            data.SetProperty("Profile", profile);
+            data.SetProperty("Profiles", new List<VstsProfile> { profile });
 
             Config.BotState.SetUserDataAsync(ChannelIds.Directline, Config.UserName, data).Wait();
 
@@ -144,8 +144,8 @@ namespace Vsar.TSBot.AcceptanceTests
         {
             var data = Config.BotState.GetUserData(ChannelIds.Directline, Config.UserName);
 
-            data.SetAccount(Config.Account);
-            data.SetTeamProject(teamProject.Value);
+            data.SetProperty("Account", Config.Account);
+            data.SetProperty("TeamProject", teamProject.Value);
 
             Config.BotState.SetUserData(ChannelIds.Directline, Config.UserName, data);
         }
