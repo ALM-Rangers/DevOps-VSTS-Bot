@@ -11,6 +11,10 @@ namespace Vsar.TSBot.AcceptanceTests
 {
     using System;
     using System.Globalization;
+    using Microsoft.Azure.Documents.Client;
+    using Microsoft.Bot.Builder.Azure;
+    using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Connector;
     using Microsoft.Bot.Connector.DirectLine;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
@@ -38,21 +42,20 @@ namespace Vsar.TSBot.AcceptanceTests
         public static string BotSecret => TestContext.Properties["BotSecret"].ToString();
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "As we are using Specflow we can not determine when the client is out of scope.")]
-        public static IBotState BotState
+        public static IBotData BotData
         {
             get
             {
-                if (!ScenarioContext.Current.ContainsKey("BotState"))
+                if (!ScenarioContext.Current.ContainsKey("BotData"))
                 {
-                    var microsoftAppCredentials = new MicrosoftAppCredentials(
-                        MicrosoftApplicationId,
-                        MicrosoftApplicationPassword);
+                    var client = new DocumentClient(DocumentDbUri, DocumentDbKey);
+                    IBotDataStore<BotData> store = new DocumentDbBotDataStore(client);
 
-                    var client = new StateClient(microsoftAppCredentials);
-                    ScenarioContext.Current["BotState"] = new BotState(client);
+                    var address = new Address(BotId, ChannelIds.Directline, UserName, string.Empty, string.Empty);
+                    ScenarioContext.Current["BotData"] = new JObjectBotData(address, store);
                 }
 
-                return ScenarioContext.Current["BotState"] as IBotState;
+                return ScenarioContext.Current["BotData"] as IBotData;
             }
         }
 
@@ -73,6 +76,10 @@ namespace Vsar.TSBot.AcceptanceTests
             get { return ScenarioContext.Current["ConversationId"].ToString(); }
             set { ScenarioContext.Current["ConversationId"] = value; }
         }
+
+        public static string DocumentDbKey => TestContext.Properties["DocumentDbKey"].ToString();
+
+        public static Uri DocumentDbUri => new Uri(TestContext.Properties["DocumentDbUri"].ToString());
 
         public static string MicrosoftApplicationId => TestContext.Properties["MicrosoftApplicationId"].ToString();
 
