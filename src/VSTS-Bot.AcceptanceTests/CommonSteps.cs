@@ -15,10 +15,7 @@ namespace Vsar.TSBot.AcceptanceTests
     using System.Text.RegularExpressions;
     using System.Threading;
     using FluentAssertions;
-    using Microsoft.Bot.Builder.Dialogs;
-    using Microsoft.Bot.Connector;
     using Microsoft.Bot.Connector.DirectLine;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TechTalk.SpecFlow;
     using Activity = Microsoft.Bot.Connector.DirectLine.Activity;
     using ActivityTypes = Microsoft.Bot.Connector.DirectLine.ActivityTypes;
@@ -36,15 +33,18 @@ namespace Vsar.TSBot.AcceptanceTests
         [Given(@"A clean state")]
         public void GivenACleanState()
         {
+            var botData = Config.GetBotData();
+            botData.LoadAsync(CancellationToken.None).Wait();
+
             // Keep the profile for the refresh token.
-            var profile = Config.BotData.UserData.GetValue<VstsProfile>("Profile");
+            botData.UserData.TryGetValue<VstsProfile>("Profile", out var profile);
 
             if (profile != null)
             {
-                Config.BotData.UserData.SetValue("Profile", profile);
+                botData.UserData.SetValue("Profile", profile);
             }
 
-            Config.BotData.FlushAsync(CancellationToken.None).Wait();
+            botData.FlushAsync(CancellationToken.None).Wait();
         }
 
         [StepArgumentTransformation("config:(.+)")]
@@ -105,7 +105,10 @@ namespace Vsar.TSBot.AcceptanceTests
             var authService = new AuthenticationService(Config.AppSecret, Config.AuthorizeUrl);
             var vstsService = new VstsService();
 
-            var profile = Config.BotData.UserData.GetValue<VstsProfile>("Profile");
+            var botData = Config.GetBotData();
+            botData.LoadAsync(CancellationToken.None).Wait();
+
+            botData.UserData.TryGetValue("Profile", out VstsProfile profile);
             var refreshToken = Config.RefreshToken;
 
             if (profile != null && !Config.RefreshTokenReinitialize)
@@ -127,10 +130,10 @@ namespace Vsar.TSBot.AcceptanceTests
                 Token = token
             };
 
-            Config.BotData.UserData.SetValue("Profile", profile);
-            Config.BotData.UserData.SetValue("Profiles", new List<VstsProfile> { profile });
+            botData.UserData.SetValue("Profile", profile);
+            botData.UserData.SetValue("Profiles", new List<VstsProfile> { profile });
 
-            Config.BotData.FlushAsync(CancellationToken.None).Wait();
+            botData.FlushAsync(CancellationToken.None).Wait();
 
             Config.Profile = profile;
             Config.Token = token;
@@ -139,10 +142,13 @@ namespace Vsar.TSBot.AcceptanceTests
         [Given(@"I am connected to '(.*)'")]
         public void GivenIAmConnectedTo(KeyValuePair<string, string> teamProject)
         {
-            Config.BotData.UserData.SetValue("Account", Config.Account);
-            Config.BotData.UserData.SetValue("TeamProject", teamProject.Value);
+            var botData = Config.GetBotData();
+            botData.LoadAsync(CancellationToken.None).Wait();
 
-            Config.BotData.FlushAsync(CancellationToken.None);
+            botData.UserData.SetValue("Account", Config.Account);
+            botData.UserData.SetValue("TeamProject", teamProject.Value);
+
+            botData.FlushAsync(CancellationToken.None);
         }
 
         [Then(@"the bot should respond with the welcome message\.")]
