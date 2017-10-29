@@ -86,6 +86,10 @@ namespace Vsar.TSBot.Dialogs
 
             if (text.Equals(CommandMatchBuilds, StringComparison.OrdinalIgnoreCase))
             {
+                var typing = context.MakeMessage();
+                typing.Type = ActivityTypes.Typing;
+                await context.PostAsync(typing);
+
                 var buildDefinitions =
                     await this.VstsService.GetBuildDefinitionsAsync(this.Account, this.TeamProject, this.Profile.Token);
                 if (!buildDefinitions.Any())
@@ -140,6 +144,10 @@ namespace Vsar.TSBot.Dialogs
             var match = Regex.Match(text, CommandMatchQueue);
             if (match.Success)
             {
+                var typing = context.MakeMessage();
+                typing.Type = ActivityTypes.Typing;
+                await context.PostAsync(typing);
+
                 var buildDefinitionId = Convert.ToInt32(match.Groups[1].Value);
 
                 var build = await this.VstsService.QueueBuildAsync(this.Account, this.TeamProject, buildDefinitionId, this.Profile.Token);

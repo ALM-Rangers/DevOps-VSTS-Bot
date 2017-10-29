@@ -228,9 +228,17 @@ namespace Vsar.TSBot.UnitTests
 
             this.Fixture.VstsService.VerifyAll();
             this.Fixture.DialogContext
-                .Verify(dc => dc.PostAsync(
-                    It.Is<IMessageActivity>(a => a.Text.Equals("Build with id 99 is queued.", StringComparison.OrdinalIgnoreCase)),
-                    CancellationToken.None));
+                .Verify(
+                    dc => dc.PostAsync(
+                        It.Is<IMessageActivity>(a => string.Equals(a.Type, ActivityTypes.Typing, StringComparison.Ordinal)),
+                        CancellationToken.None),
+                    Times.Once);
+            this.Fixture.DialogContext
+                .Verify(
+                    dc => dc.PostAsync(
+                        It.Is<IMessageActivity>(a => !string.IsNullOrEmpty(a.Text) && a.Text.Equals("Build with id 99 is queued.", StringComparison.OrdinalIgnoreCase)),
+                        CancellationToken.None),
+                    Times.Once);
 
             this.Fixture.DialogContext.Verify(c => c.Done(It.IsAny<IMessageActivity>()));
         }

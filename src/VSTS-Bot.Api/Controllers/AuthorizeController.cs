@@ -12,8 +12,10 @@ namespace Vsar.TSBot
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Web.Mvc;
+    using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.VisualStudio.Services.Account;
     using Resources;
 
@@ -23,18 +25,18 @@ namespace Vsar.TSBot
     public class AuthorizeController : Controller
     {
         private readonly IVstsApplicationRegistry applicationRegistry;
-        private readonly IBotService botService;
+        private readonly IBotDataFactory botDataFactory;
         private readonly IVstsService vstsService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthorizeController"/> class.
         /// </summary>
-        /// <param name="botService">The botService.</param>
+        /// <param name="botDataFactory">The bot data factory;</param>
         /// <param name="applicationRegistry">VSTS Application Registry</param>
         /// <param name="vstsService">The profileService.s</param>
-        public AuthorizeController(IBotService botService, IVstsApplicationRegistry applicationRegistry, IVstsService vstsService)
+        public AuthorizeController(IBotDataFactory botDataFactory, IVstsApplicationRegistry applicationRegistry, IVstsService vstsService)
         {
-            this.botService = botService ?? throw new ArgumentNullException(nameof(botService));
+            this.botDataFactory = botDataFactory ?? throw new ArgumentNullException(nameof(botDataFactory));
             this.applicationRegistry = applicationRegistry ?? throw new ArgumentNullException(nameof(applicationRegistry));
             this.vstsService = vstsService ?? throw new ArgumentNullException(nameof(vstsService));
         }
@@ -50,7 +52,7 @@ namespace Vsar.TSBot
         public async Task<ActionResult> Index(string code, string error, string state)
         {
             var stateArray = (state ?? string.Empty).Split(';');
-            string pin = string.Empty;
+            var pin = string.Empty;
 
             try
             {
@@ -73,16 +75,19 @@ namespace Vsar.TSBot
                 var accounts = await this.vstsService.GetAccounts(token, profile.Id);
                 var vstsProfile = CreateVstsProfile(accounts, profile, token);
 
-                var data = await this.botService.GetUserData(channelId, userId);
-                pin = data.GetPin();
+                var address = new Address(string.Empty, channelId, userId, string.Empty, string.Empty);
+                var botData = this.botDataFactory.Create(address);
+                await botData.LoadAsync(CancellationToken.None);
 
-                data.SetNotValidatedByPinProfile(vstsProfile);
+                pin = botData.UserData.GetPin();
 
-                await this.botService.SetUserData(channelId, userId, data);
+                botData.UserData.SetNotValidatedByPinProfile(vstsProfile);
+
+                await botData.FlushAsync(CancellationToken.None);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this.ModelState.AddModelError(string.Empty, e.Message);
+                this.ModelState.AddModelError(string.Empty, ex.Message);
             }
 
             return this.View(new Authorize(pin));

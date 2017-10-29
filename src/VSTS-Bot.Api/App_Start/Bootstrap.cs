@@ -18,7 +18,11 @@ namespace Vsar.TSBot
     using Autofac.Integration.WebApi;
     using Dialogs;
     using Microsoft.ApplicationInsights;
+    using Microsoft.Azure.Documents;
+    using Microsoft.Azure.Documents.Client;
+    using Microsoft.Bot.Builder.Azure;
     using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Connector;
 
     /// <summary>
@@ -32,11 +36,16 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="isDebugging">Flag that indicates if the application is in debugging modus.</param>
         /// <returns>A <see cref="IContainer"/>.</returns>
-        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Bootstrapper for Autofac. So it is intented to hit all needed dependencies in one place.")]
         public static IContainer Build(bool isDebugging)
         {
-            var builder = new ContainerBuilder();
+            Conversation.UpdateContainer(builder => Build(builder, isDebugging));
 
+            return Conversation.Container;
+        }
+
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Bootstrapper for Autofac. So it is intented to hit all needed dependencies in one place.")]
+        private static void Build(ContainerBuilder builder, bool isDebugging)
+        {
             builder
                 .RegisterType<DialogInvoker>()
                 .As<IDialogInvoker>();
@@ -51,6 +60,29 @@ namespace Vsar.TSBot
 
             var microsoftAppCredentials =
                 new MicrosoftAppCredentials(Config.MicrosoftApplicationId, Config.MicrosoftAppPassword);
+
+            var client = new DocumentClient(Config.DocumentDbUri, Config.DocumentDbKey);
+            IBotDataStore<BotData> store = new DocumentDbBotDataStore(client);
+
+            builder
+                .Register(c => client)
+                .As<IDocumentClient>()
+                .SingleInstance();
+
+            builder
+                .Register(c => store)
+                .Keyed<IBotDataStore<BotData>>(AzureModule.Key_DataStore)
+                .AsSelf()
+                .SingleInstance();
+
+            builder
+                .Register(c =>
+                    new CachingBotDataStore(
+                        store,
+                        CachingBotDataStoreConsistencyPolicy.ETagBasedConsistency))
+                .As<IBotDataStore<BotData>>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
 
             // When debugging with the bot emulator we need to use the listening url from the emulator.
             if (isDebugging && !string.IsNullOrEmpty(Config.EmulatorListeningUrl))
@@ -67,8 +99,8 @@ namespace Vsar.TSBot
                 .AsImplementedInterfaces();
 
             builder
-                .RegisterType<BotService>()
-                .AsImplementedInterfaces();
+                .RegisterType<BotDataFactory>()
+                .As<IBotDataFactory>();
 
             builder
                 .RegisterType<VstsService>()
@@ -101,8 +133,6 @@ namespace Vsar.TSBot
             builder
                 .RegisterType<RootDialog>()
                 .AsSelf();
-
-            return builder.Build();
         }
     }
 }

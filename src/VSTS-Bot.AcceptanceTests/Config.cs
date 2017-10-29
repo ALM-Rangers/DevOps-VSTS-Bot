@@ -11,6 +11,10 @@ namespace Vsar.TSBot.AcceptanceTests
 {
     using System;
     using System.Globalization;
+    using Microsoft.Azure.Documents.Client;
+    using Microsoft.Bot.Builder.Azure;
+    using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Connector;
     using Microsoft.Bot.Connector.DirectLine;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
@@ -19,14 +23,16 @@ namespace Vsar.TSBot.AcceptanceTests
 
     public static class Config
     {
+        private static readonly object PadLock = new object();
         private static bool? refreshTokenReinitialize;
+        private static IBotDataStore<BotData> store;
 
         public static string Account => TestContext.Properties["Account"].ToString();
 
         public static ReleaseApproval Approval
         {
-            get { return ScenarioContext.Current["Approval"] as ReleaseApproval; }
-            set { ScenarioContext.Current["Approval"] = value; }
+            get => ScenarioContext.Current["Approval"] as ReleaseApproval;
+            set => ScenarioContext.Current["Approval"] = value;
         }
 
         public static string AppSecret => TestContext.Properties["AppSecret"].ToString();
@@ -37,42 +43,27 @@ namespace Vsar.TSBot.AcceptanceTests
 
         public static string BotSecret => TestContext.Properties["BotSecret"].ToString();
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "As we are using Specflow we can not determine when the client is out of scope.")]
-        public static IBotState BotState
-        {
-            get
-            {
-                if (!ScenarioContext.Current.ContainsKey("BotState"))
-                {
-                    var microsoftAppCredentials = new MicrosoftAppCredentials(
-                        MicrosoftApplicationId,
-                        MicrosoftApplicationPassword);
-
-                    var client = new StateClient(microsoftAppCredentials);
-                    ScenarioContext.Current["BotState"] = new BotState(client);
-                }
-
-                return ScenarioContext.Current["BotState"] as IBotState;
-            }
-        }
-
         public static int BuildId
         {
-            get { return Convert.ToInt32(ScenarioContext.Current["BuildId"], CultureInfo.InvariantCulture); }
-            set { ScenarioContext.Current["BuildId"] = value; }
+            get => Convert.ToInt32(ScenarioContext.Current["BuildId"], CultureInfo.InvariantCulture);
+            set => ScenarioContext.Current["BuildId"] = value;
         }
 
         public static DirectLineClient Client
         {
-            get { return ScenarioContext.Current["Client"] as DirectLineClient; }
-            set { ScenarioContext.Current["Client"] = value; }
+            get => ScenarioContext.Current["Client"] as DirectLineClient;
+            set => ScenarioContext.Current["Client"] = value;
         }
 
         public static string ConversationId
         {
-            get { return ScenarioContext.Current["ConversationId"].ToString(); }
-            set { ScenarioContext.Current["ConversationId"] = value; }
+            get => ScenarioContext.Current["ConversationId"].ToString();
+            set => ScenarioContext.Current["ConversationId"] = value;
         }
+
+        public static string DocumentDbKey => TestContext.Properties["DocumentDbKey"].ToString();
+
+        public static Uri DocumentDbUri => new Uri(TestContext.Properties["DocumentDbUri"].ToString());
 
         public static string MicrosoftApplicationId => TestContext.Properties["MicrosoftApplicationId"].ToString();
 
@@ -80,28 +71,38 @@ namespace Vsar.TSBot.AcceptanceTests
 
         public static VstsProfile Profile
         {
-            get { return (VstsProfile)ScenarioContext.Current["Profile"]; }
-            set { ScenarioContext.Current["Profile"] = value; }
+            get => (VstsProfile)ScenarioContext.Current["Profile"];
+            set => ScenarioContext.Current["Profile"] = value;
         }
 
         public static int ReleaseId
         {
-            get { return Convert.ToInt32(ScenarioContext.Current["ReleaseId"], CultureInfo.InvariantCulture); }
-            set { ScenarioContext.Current["ReleaseId"] = value; }
+            get => Convert.ToInt32(ScenarioContext.Current["ReleaseId"], CultureInfo.InvariantCulture);
+            set => ScenarioContext.Current["ReleaseId"] = value;
         }
 
         public static string RefreshToken => TestContext.Properties["RefreshToken"].ToString();
 
         public static bool RefreshTokenReinitialize
         {
+            get => refreshTokenReinitialize.GetValueOrDefault(Convert.ToBoolean(TestContext.Properties["RefreshTokenReinitialize"], CultureInfo.InvariantCulture));
+            set => refreshTokenReinitialize = value;
+        }
+
+        public static IBotDataStore<BotData> Store
+        {
             get
             {
-                return refreshTokenReinitialize.GetValueOrDefault(Convert.ToBoolean(TestContext.Properties["RefreshTokenReinitialize"], CultureInfo.InvariantCulture));
-            }
+                lock (PadLock)
+                {
+                    if (store == null)
+                    {
+                        var client = new DocumentClient(DocumentDbUri, DocumentDbKey);
+                        store = new CachingBotDataStore(new DocumentDbBotDataStore(client), CachingBotDataStoreConsistencyPolicy.ETagBasedConsistency);
+                    }
+                }
 
-            set
-            {
-                refreshTokenReinitialize = value;
+                return store;
             }
         }
 
@@ -109,18 +110,24 @@ namespace Vsar.TSBot.AcceptanceTests
 
         public static string TeamProjectTwo => TestContext.Properties["TeamProjectTwo"].ToString();
 
+        public static TestContext TestContext => ScenarioContext.Current["TestContext"] as TestContext;
+
         public static OAuthToken Token
         {
-            get { return (OAuthToken)ScenarioContext.Current["Token"]; }
-            set { ScenarioContext.Current["Token"] = value; }
+            get => (OAuthToken)ScenarioContext.Current["Token"];
+            set => ScenarioContext.Current["Token"] = value;
         }
 
         public static string UserName
         {
-            get { return ScenarioContext.Current["UserName"].ToString(); }
-            set { ScenarioContext.Current["UserName"] = value; }
+            get => ScenarioContext.Current["UserName"].ToString();
+            set => ScenarioContext.Current["UserName"] = value;
         }
 
-        private static TestContext TestContext => ScenarioContext.Current["TestContext"] as TestContext;
+        public static IBotData GetBotData()
+        {
+            var address = new Address(string.Empty, ChannelIds.Directline, UserName, string.Empty, string.Empty);
+            return new JObjectBotData(address, Store);
+        }
     }
 }
