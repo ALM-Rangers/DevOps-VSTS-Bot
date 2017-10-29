@@ -85,6 +85,10 @@ namespace Vsar.TSBot.Dialogs
 
             if (text.Equals(CommandMatchReleases, StringComparison.OrdinalIgnoreCase))
             {
+                var typing = context.MakeMessage();
+                typing.Type = ActivityTypes.Typing;
+                await context.PostAsync(typing);
+
                 var releaseDefinitions =
                     await this.VstsService.GetReleaseDefinitionsAsync(this.Account, this.TeamProject, this.Profile.Token);
                 if (!releaseDefinitions.Any())
@@ -139,6 +143,10 @@ namespace Vsar.TSBot.Dialogs
             var match = Regex.Match(text, CommandMatchCreate);
             if (match.Success)
             {
+                var typing = context.MakeMessage();
+                typing.Type = ActivityTypes.Typing;
+                await context.PostAsync(typing);
+
                 var definitionId = Convert.ToInt32(match.Groups[1].Value);
                 var release = await this.VstsService.CreateReleaseAsync(this.Account, this.TeamProject, definitionId, this.Profile.Token);
                 reply.Text = string.Format(Labels.ReleaseCreated, release.Id);

@@ -72,8 +72,8 @@ namespace Vsar.TSBot
                         return this.Request.CreateResponse(status);
                     }
 
-                    var dialog = this.container.Resolve<RootDialog>(new NamedParameter("eulaUri", new Uri($"{this.Request.RequestUri.GetLeftPart(UriPartial.Authority)}/Eula")));
-                    await this.dialogInvoker.SendAsync(activity, () => dialog);
+                    RootDialog Dialog() => this.container.Resolve<RootDialog>(new NamedParameter("eulaUri", new Uri($"{this.Request.RequestUri.GetLeftPart(UriPartial.Authority)}/Eula")));
+                    await this.dialogInvoker.SendAsync(activity, Dialog);
                 }
                 else
                 {

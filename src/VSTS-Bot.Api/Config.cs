@@ -37,6 +37,16 @@ namespace Vsar.TSBot
         public static Uri AuthorizeUrl => new Uri(WebConfigurationManager.AppSettings["AuthorizeUrl"]);
 
         /// <summary>
+        /// Gets the key for Document DB.
+        /// </summary>
+        public static string DocumentDbKey => WebConfigurationManager.AppSettings["DocumentDbKey"];
+
+        /// <summary>
+        /// Gets the url for Document DB
+        /// </summary>
+        public static Uri DocumentDbUri => new Uri(WebConfigurationManager.AppSettings["DocumentDbUri"]);
+
+        /// <summary>
         /// Gets the instrumentation key for application insights.
         /// </summary>
         public static string InstrumentationKey => WebConfigurationManager.AppSettings["InstrumentationKey"];

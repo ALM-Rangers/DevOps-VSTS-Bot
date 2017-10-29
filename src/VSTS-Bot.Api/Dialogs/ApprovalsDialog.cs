@@ -96,6 +96,10 @@ namespace Vsar.TSBot.Dialogs
 
             var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
 
+            var typing = context.MakeMessage();
+            typing.Type = ActivityTypes.Typing;
+            await context.PostAsync(typing);
+
             if (text.Equals(CommandMatchApprovals, StringComparison.OrdinalIgnoreCase))
             {
                 var approvals = await this.VstsService.GetApprovals(this.Account, this.TeamProject, this.Profile);
@@ -219,6 +223,10 @@ namespace Vsar.TSBot.Dialogs
         public virtual async Task ChangeStatusAsync(IDialogContext context, int approvalId, string comment, bool isApproved)
         {
             context.ThrowIfNull(nameof(context));
+
+            var typing = context.MakeMessage();
+            typing.Type = ActivityTypes.Typing;
+            await context.PostAsync(typing);
 
             var reply = context.MakeMessage();
 
