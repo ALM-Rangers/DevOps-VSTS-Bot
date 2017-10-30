@@ -76,18 +76,6 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets the pin.
         /// </summary>
-        /// <param name="data">The bot data.</param>
-        /// <returns>A pin.</returns>
-        public static string GetPin(this BotData data)
-        {
-            data.ThrowIfNull(nameof(data));
-
-            return data.GetProperty<string>(Pin) ?? string.Empty;
-        }
-
-        /// <summary>
-        /// Gets the pin.
-        /// </summary>
         /// <param name="dataBag">The dataBag.</param>
         /// <returns>A pin.</returns>
         public static string GetPin(this IBotDataBag dataBag)
@@ -127,18 +115,6 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets the profiles.
         /// </summary>
-        /// <param name="data">Bot data</param>
-        /// <returns>The profile.</returns>
-        public static IList<VstsProfile> GetProfiles(this BotData data)
-        {
-            data.ThrowIfNull(nameof(data));
-
-            return data.GetProperty<IList<VstsProfile>>(Profiles) ?? new List<VstsProfile>();
-        }
-
-        /// <summary>
-        /// Gets the profiles.
-        /// </summary>
         /// <param name="dataBag">The data.</param>
         /// <returns>A list of profiles.</returns>
         public static IList<VstsProfile> GetProfiles(this IBotDataBag dataBag)
@@ -146,19 +122,6 @@ namespace Vsar.TSBot
             dataBag.ThrowIfNull(nameof(dataBag));
 
             return dataBag.TryGetValue(Profiles, out IList<VstsProfile> results) ? results : new List<VstsProfile>();
-        }
-
-        /// <summary>
-        /// Sets the current account.
-        /// </summary>
-        /// <param name="data">The bot data.</param>
-        /// <param name="account">The account.</param>
-        public static void SetAccount(this BotData data, string account)
-        {
-            data.ThrowIfNull(nameof(data));
-            account.ThrowIfNullOrWhiteSpace(nameof(account));
-
-            data.SetProperty(Account, account);
         }
 
         /// <summary>
@@ -177,27 +140,14 @@ namespace Vsar.TSBot
         /// <summary>
         /// Sets the not validated by pin profile.
         /// </summary>
-        /// <param name="data">The bot data.</param>
+        /// <param name="dataBag">The <see cref="IBotDataBag"/>.</param>
         /// <param name="profile">The profile.</param>
-        public static void SetNotValidatedByPinProfile(this BotData data, VstsProfile profile)
+        public static void SetNotValidatedByPinProfile(this IBotDataBag dataBag, VstsProfile profile)
         {
-            data.ThrowIfNull(nameof(data));
+            dataBag.ThrowIfNull(nameof(dataBag));
             profile.ThrowIfNull(nameof(profile));
 
-            data.SetProperty(NotValidatedByPinProfile, profile);
-        }
-
-        /// <summary>
-        /// Sets the current vsts profile.
-        /// </summary>
-        /// <param name="data">The bot data.</param>
-        /// <param name="profile">The profile.</param>
-        public static void SetProfile(this BotData data, VstsProfile profile)
-        {
-            data.ThrowIfNull(nameof(data));
-            profile.ThrowIfNull(nameof(profile));
-
-            data.SetProperty(Profile, profile);
+            dataBag.SetValue(NotValidatedByPinProfile, profile);
         }
 
         /// <summary>
@@ -211,19 +161,6 @@ namespace Vsar.TSBot
             profile.ThrowIfNull(nameof(profile));
 
             dataBag.SetValue(Profile, profile);
-        }
-
-        /// <summary>
-        /// Sets the current team project.
-        /// </summary>
-        /// <param name="data">The bot data.</param>
-        /// <param name="teamProject">The team project.</param>
-        public static void SetTeamProject(this BotData data, string teamProject)
-        {
-            data.ThrowIfNull(nameof(data));
-            teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
-
-            data.SetProperty(TeamProject, teamProject);
         }
 
         /// <summary>
@@ -250,19 +187,6 @@ namespace Vsar.TSBot
             pin.ThrowIfNullOrWhiteSpace(nameof(pin));
 
             dataBag.SetValue(Pin, pin);
-        }
-
-        /// <summary>
-        /// Sets the profile.
-        /// </summary>
-        /// <param name="data">the botdats.</param>
-        /// <param name="profiles">the profile.</param>
-        public static void SetProfiles(this BotData data, IList<VstsProfile> profiles)
-        {
-            data.ThrowIfNull(nameof(data));
-            profiles.ThrowIfNull(nameof(profiles));
-
-            data.SetProperty(Profiles, profiles);
         }
 
         /// <summary>

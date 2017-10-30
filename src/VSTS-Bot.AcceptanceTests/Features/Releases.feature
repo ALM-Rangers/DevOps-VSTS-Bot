@@ -3,10 +3,10 @@
 
 Background: 
 	Given A user 'Test User'
+	And I started a conversation
 	And A clean state
 	And Is authorized
 	And I am connected to 'config:TeamProjectOne'
-	And I started a conversation
 	And I say 'Hi'
 
 @Acceptance

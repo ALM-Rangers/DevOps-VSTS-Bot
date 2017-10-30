@@ -16,6 +16,8 @@ namespace Vsar.TSBot.UnitTests
     using System.Threading.Tasks;
     using System.Web.Mvc;
     using FluentAssertions;
+    using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.Services.Account;
     using Microsoft.VisualStudio.Services.Profile;
@@ -35,7 +37,7 @@ namespace Vsar.TSBot.UnitTests
         {
             var registryMock = new Mock<IVstsApplicationRegistry>();
             var vstsMock = new Mock<IVstsService>();
-            var botMock = new Mock<IBotService>();
+            var botDataFactoryMock = new Mock<IBotDataFactory>();
 
             Assert.ThrowsException<ArgumentNullException>(() =>
             {
@@ -45,13 +47,13 @@ namespace Vsar.TSBot.UnitTests
             });
             Assert.ThrowsException<ArgumentNullException>(() =>
             {
-                using (new AuthorizeController(botMock.Object, null, vstsMock.Object))
+                using (new AuthorizeController(botDataFactoryMock.Object, null, vstsMock.Object))
                 {
                 }
             });
             Assert.ThrowsException<ArgumentNullException>(() =>
             {
-                using (new AuthorizeController(botMock.Object, registryMock.Object, null))
+                using (new AuthorizeController(botDataFactoryMock.Object, registryMock.Object, null))
                 {
                 }
             });
@@ -61,10 +63,10 @@ namespace Vsar.TSBot.UnitTests
         public async Task Authorize_No_Code()
         {
             var applicationRegistry = new Mock<IVstsApplicationRegistry>();
-            var botService = new Mock<IBotService>();
+            var botDataFactoryMock = new Mock<IBotDataFactory>();
             var vstsService = new Mock<IVstsService>();
 
-            var target = new AuthorizeController(botService.Object, applicationRegistry.Object, vstsService.Object);
+            var target = new AuthorizeController(botDataFactoryMock.Object, applicationRegistry.Object, vstsService.Object);
             var result = await target.Index(null, null, null) as ViewResult;
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.ViewData.ModelState.First(pair => pair.Value.Errors.Any()));
@@ -74,10 +76,10 @@ namespace Vsar.TSBot.UnitTests
         public async Task Authorize_No_State()
         {
             var applicationRegistry = new Mock<IVstsApplicationRegistry>();
-            var botService = new Mock<IBotService>();
+            var botDataFactoryMock = new Mock<IBotDataFactory>();
             var vstsService = new Mock<IVstsService>();
 
-            var target = new AuthorizeController(botService.Object, applicationRegistry.Object, vstsService.Object);
+            var target = new AuthorizeController(botDataFactoryMock.Object, applicationRegistry.Object, vstsService.Object);
             var result = await target.Index("123567890", null, null) as ViewResult;
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.ViewData.ModelState.First(pair => pair.Value.Errors.Any()));
@@ -93,21 +95,20 @@ namespace Vsar.TSBot.UnitTests
             var authenticationService = new Mock<IAuthenticationService>();
             var application = new Mock<IVstsApplication>();
             var applicationRegistry = new Mock<IVstsApplicationRegistry>();
-            var botService = new Mock<IBotService>();
+            var botDataFactoryMock = new Mock<IBotDataFactory>();
+            var botData = new Mock<IBotData>();
+            var botDataBag = new Mock<IBotDataBag>();
             var vstsService = new Mock<IVstsService>();
 
             var token = new OAuthToken();
             var profile = new Profile();
             var accounts = new List<Account> { new Account(Guid.NewGuid()) { AccountName = "Account1" } };
-            var botData = new BotData();
 
-            var target = new AuthorizeController(botService.Object, applicationRegistry.Object, vstsService.Object);
+            var target = new AuthorizeController(botDataFactoryMock.Object, applicationRegistry.Object, vstsService.Object);
 
             const string code = "1234567890";
-            const string pin = "12345";
             const string state = "channel1;user1";
-
-            botData.SetProperty("Pin", pin);
+            string pin = "12345";
 
             authenticationService
                 .Setup(a => a.GetToken(code))
@@ -129,19 +130,25 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(p => p.GetAccounts(token, It.IsAny<Guid>()))
                 .ReturnsAsync(accounts);
 
-            botService
-                .Setup(b => b.GetUserData("channel1", "user1"))
-                .ReturnsAsync(botData);
+            botDataFactoryMock
+                .Setup(b => b.Create(It.Is<Address>(a =>
+                    a.ChannelId.Equals("channel1", StringComparison.Ordinal) &&
+                    a.UserId.Equals("user1", StringComparison.Ordinal))))
+                .Returns(botData.Object);
 
-            botService
-                .Setup(b => b.SetUserData("channel1", "user1", botData))
-                .Returns(Task.CompletedTask);
+            botData
+                .Setup(bd => bd.UserData)
+                .Returns(botDataBag.Object);
+
+            botDataBag
+                .Setup(bd => bd.TryGetValue("Pin", out pin))
+                .Returns(true);
 
             var result = await target.Index(code, string.Empty, state) as ViewResult;
-            var vstsProfile = botData.GetProperty<VstsProfile>("NotValidatedByPinProfile");
+
+            botDataBag.Verify(bd => bd.SetValue("NotValidatedByPinProfile", It.IsAny<VstsProfile>()));
 
             result.Should().NotBeNull();
-            vstsProfile.Should().NotBeNull();
             ((Authorize)result.Model).Pin.Should().Be(pin);
         }
     }

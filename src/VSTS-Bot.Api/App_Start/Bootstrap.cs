@@ -99,8 +99,8 @@ namespace Vsar.TSBot
                 .AsImplementedInterfaces();
 
             builder
-                .RegisterType<BotService>()
-                .AsImplementedInterfaces();
+                .RegisterType<BotDataFactory>()
+                .As<IBotDataFactory>();
 
             builder
                 .RegisterType<VstsService>()

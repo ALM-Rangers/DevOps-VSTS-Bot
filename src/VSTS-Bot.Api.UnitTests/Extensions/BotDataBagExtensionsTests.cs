@@ -100,32 +100,6 @@ namespace Vsar.TSBot.UnitTests.Extensions
         }
 
         [TestMethod]
-        public void GetPin_Missing_BotData()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => ((BotData)null).GetPin());
-        }
-
-        [TestMethod]
-        public void GetPin_BotData_No_Pin()
-        {
-            var target = new BotData();
-            var result = target.GetPin();
-
-            result.Should().BeEmpty();
-        }
-
-        [TestMethod]
-        public void GetPin_BotData()
-        {
-            var target = new BotData();
-            target.SetProperty("Pin", "12345");
-
-            var result = target.GetPin();
-
-            result.Should().Be("12345");
-        }
-
-        [TestMethod]
         public void GetNotValidatedByPinProfile_Missing_BotDataBag()
         {
             Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).GetNotValidatedByPinProfile());
@@ -317,32 +291,6 @@ namespace Vsar.TSBot.UnitTests.Extensions
         }
 
         [TestMethod]
-        public void SetAccount_Missing_BotData()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => ((BotData)null).SetAccount(null));
-        }
-
-        [TestMethod]
-        public void SetAccount_BotData_Missing_Account()
-        {
-            var data = new BotData();
-            Assert.ThrowsException<ArgumentNullException>(() => data.SetAccount(null));
-        }
-
-        [TestMethod]
-        public void SetAccount_BotData()
-        {
-            var account = "Account1";
-            var data = new BotData();
-
-            data.SetAccount(account);
-
-            var result = data.GetProperty<string>("Account");
-
-            result.Should().Be(account);
-        }
-
-        [TestMethod]
         public void SetAccount_Missing_BotDataBag()
         {
             Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).SetAccount(null));
@@ -367,55 +315,26 @@ namespace Vsar.TSBot.UnitTests.Extensions
         }
 
         [TestMethod]
-        public void SetNotValidatedByPinProfile_Missing_BotData()
+        public void SetNotValidatedByPinProfile_Missing_BotDataBag()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => ((BotData)null).SetNotValidatedByPinProfile(null));
+            Assert.ThrowsException<ArgumentNullException>(() => ((IBotDataBag)null).SetNotValidatedByPinProfile(null));
         }
 
         [TestMethod]
-        public void SetNotValidatedByPinProfile_BotData_Missing_Profile()
+        public void SetNotValidatedByPinProfile_BotDataBag_Missing_Profile()
         {
-            var data = new BotData();
-            Assert.ThrowsException<ArgumentNullException>(() => data.SetNotValidatedByPinProfile(null));
+            var mocked = new Mock<IBotDataBag>();
+            Assert.ThrowsException<ArgumentNullException>(() => mocked.Object.SetNotValidatedByPinProfile(null));
         }
 
         [TestMethod]
-        public void SetNotValidatedByPinProfile_BotData()
+        public void SetNotValidatedByPinProfile_BotDataBag()
         {
             var profile = new VstsProfile();
-            var data = new BotData();
+            var mocked = new Mock<IBotDataBag>();
 
-            data.SetNotValidatedByPinProfile(profile);
-
-            var result = data.GetProperty<VstsProfile>("NotValidatedByPinProfile");
-
-            result.Should().BeOfType<VstsProfile>();
-        }
-
-        [TestMethod]
-        public void SetProfile_Missing_BotData()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => ((BotData)null).SetProfile(null));
-        }
-
-        [TestMethod]
-        public void SetProfile_BotData_Missing_Profile()
-        {
-            var data = new BotData();
-            Assert.ThrowsException<ArgumentNullException>(() => data.SetProfile(null));
-        }
-
-        [TestMethod]
-        public void SetProfile_BotData()
-        {
-            var profile = new VstsProfile();
-            var data = new BotData();
-
-            data.SetProfile(profile);
-
-            var result = data.GetProperty<VstsProfile>("Profile");
-
-            result.Should().BeOfType<VstsProfile>();
+            mocked.Object.SetNotValidatedByPinProfile(profile);
+            mocked.Verify(m => m.SetValue("NotValidatedByPinProfile", profile));
         }
 
         [TestMethod]
