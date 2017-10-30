@@ -35,10 +35,10 @@ namespace Vsar.TSBot.Dialogs
         /// <summary>
         /// Initializes a new instance of the <see cref="ApprovalsDialog"/> class.
         /// </summary>
+        /// <param name="authenticationService">The authenticationService.</param>
         /// <param name="vstsService">The <see cref="IVstsService"/>.</param>
-        /// <param name="applicationRegistry">The <see cref="IVstsApplicationRegistry"/>.</param>
-        public ApprovalsDialog(IVstsService vstsService, IVstsApplicationRegistry applicationRegistry)
-            : base(vstsService, applicationRegistry)
+        public ApprovalsDialog(IAuthenticationService authenticationService, IVstsService vstsService)
+            : base(authenticationService, vstsService)
         {
         }
 
@@ -91,7 +91,7 @@ namespace Vsar.TSBot.Dialogs
             var activity = await result;
 
             this.Account = context.UserData.GetAccount();
-            this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(activity));
+            this.Profile = context.UserData.GetProfile(this.AuthenticationService);
             this.TeamProject = context.UserData.GetTeamProject();
 
             var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();

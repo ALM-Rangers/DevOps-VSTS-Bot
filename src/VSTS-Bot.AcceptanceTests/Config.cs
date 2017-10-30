@@ -124,6 +124,7 @@ namespace Vsar.TSBot.AcceptanceTests
             set => ScenarioContext.Current["UserName"] = value;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Test code, nothing to worry about.")]
         public static IBotData GetBotData()
         {
             var address = new Address(string.Empty, ChannelIds.Directline, UserName, string.Empty, string.Empty);

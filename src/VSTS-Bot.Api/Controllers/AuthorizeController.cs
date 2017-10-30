@@ -24,20 +24,20 @@ namespace Vsar.TSBot
     /// </summary>
     public class AuthorizeController : Controller
     {
-        private readonly IVstsApplicationRegistry applicationRegistry;
+        private readonly IAuthenticationService authenticationService;
         private readonly IBotDataFactory botDataFactory;
         private readonly IVstsService vstsService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthorizeController"/> class.
         /// </summary>
+        /// <param name="authenticationService">The authentication service.</param>
         /// <param name="botDataFactory">The bot data factory;</param>
-        /// <param name="applicationRegistry">VSTS Application Registry</param>
         /// <param name="vstsService">The profileService.s</param>
-        public AuthorizeController(IBotDataFactory botDataFactory, IVstsApplicationRegistry applicationRegistry, IVstsService vstsService)
+        public AuthorizeController(IAuthenticationService authenticationService, IBotDataFactory botDataFactory, IVstsService vstsService)
         {
+            this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             this.botDataFactory = botDataFactory ?? throw new ArgumentNullException(nameof(botDataFactory));
-            this.applicationRegistry = applicationRegistry ?? throw new ArgumentNullException(nameof(applicationRegistry));
             this.vstsService = vstsService ?? throw new ArgumentNullException(nameof(vstsService));
         }
 
@@ -70,7 +70,7 @@ namespace Vsar.TSBot
                 var userId = stateArray[1];
 
                 // Get the security token.
-                var token = await this.applicationRegistry.GetVstsApplicationRegistration(userId).AuthenticationService.GetToken(code);
+                var token = await this.authenticationService.GetToken(code);
                 var profile = await this.vstsService.GetProfile(token);
                 var accounts = await this.vstsService.GetAccounts(token, profile.Id);
                 var vstsProfile = CreateVstsProfile(accounts, profile, token);

@@ -43,17 +43,41 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        public async Task Constructor_Empty_VstsService()
+        public async Task Constructor_Empty_AppId()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(null, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(null, "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object));
 
             await Task.CompletedTask;
         }
 
         [TestMethod]
-        public async Task Constructor_Empty_VstsApplicationRegistry()
+        public async Task Constructor_Empty_AppScope()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog(this.Fixture.VstsService.Object, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog("appId", null, new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object));
+
+            await Task.CompletedTask;
+        }
+
+        [TestMethod]
+        public async Task Constructor_Empty_AuthorizeUrl()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog("appId", "appScope", null, this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object));
+
+            await Task.CompletedTask;
+        }
+
+        [TestMethod]
+        public async Task Constructor_Empty_AuthenticationService()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog("appId", "appScope", new Uri("http://authorize.url"), null, this.Fixture.VstsService.Object));
+
+            await Task.CompletedTask;
+        }
+
+        [TestMethod]
+        public async Task Constructor_Empty_VstsService()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new ConnectDialog("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, null));
 
             await Task.CompletedTask;
         }
@@ -64,7 +88,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var mocked = new Mock<ConnectDialog>(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             await target.StartAsync(this.Fixture.DialogContext.Object);
@@ -75,7 +99,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Connect_Missing_Context()
         {
-            var target = new ConnectDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new ConnectDialog("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.ConnectAsync(null, null));
         }
@@ -83,7 +107,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Connect_Missing_Awaitable()
         {
-            var target = new ConnectDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new ConnectDialog("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.ConnectAsync(this.Fixture.DialogContext.Object, null));
         }
@@ -94,23 +118,13 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var mocked = new Mock<ConnectDialog>(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             mocked
                 .Setup(m => m.LogOnAsync(this.Fixture.DialogContext.Object, toBot))
                 .Returns(Task.CompletedTask)
                 .Verifiable();
-
-            var applicationMock = new Mock<IVstsApplication>();
-
-            applicationMock
-                .Setup(application => application.AuthenticationService)
-                .Returns(new Mock<IAuthenticationService>().Object);
-
-            this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
-                .Returns(applicationMock.Object);
 
             await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -123,23 +137,13 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "connect";
 
-            var mocked = new Mock<ConnectDialog>(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             mocked
                 .Setup(m => m.LogOnAsync(this.Fixture.DialogContext.Object, toBot))
                 .Returns(Task.CompletedTask)
                 .Verifiable();
-
-            var applicationMock = new Mock<IVstsApplication>();
-
-            applicationMock
-                .Setup(application => application.AuthenticationService)
-                .Returns(new Mock<IAuthenticationService>().Object);
-
-            this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
-                .Returns(applicationMock.Object);
 
             await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -161,7 +165,7 @@ namespace Vsar.TSBot.UnitTests
             var container = builder.Build();
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
-            var mocked = new Mock<ConnectDialog>(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             this.Fixture.UserData
@@ -175,16 +179,6 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(m => m.SelectAccountAsync(this.Fixture.DialogContext.Object, toBot))
                 .Returns(Task.CompletedTask)
                 .Verifiable();
-
-            var applicationMock = new Mock<IVstsApplication>();
-
-            applicationMock
-                .Setup(application => application.AuthenticationService)
-                .Returns(new Mock<IAuthenticationService>().Object);
-
-            this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
-                .Returns(applicationMock.Object);
 
             await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -207,7 +201,7 @@ namespace Vsar.TSBot.UnitTests
             var container = builder.Build();
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
-            var mocked = new Mock<ConnectDialog>(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             this.Fixture.UserData
@@ -221,16 +215,6 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(m => m.SelectProjectAsync(this.Fixture.DialogContext.Object, toBot))
                 .Returns(Task.CompletedTask)
                 .Verifiable();
-
-            var applicationMock = new Mock<IVstsApplication>();
-
-            applicationMock
-                .Setup(application => application.AuthenticationService)
-                .Returns(new Mock<IAuthenticationService>().Object);
-
-            this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
-                .Returns(applicationMock.Object);
 
             await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -248,7 +232,7 @@ namespace Vsar.TSBot.UnitTests
 
             Assert.IsNotNull(profiles);
 
-            var mocked = new Mock<ConnectDialog>(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             this.Fixture.UserData
@@ -257,16 +241,6 @@ namespace Vsar.TSBot.UnitTests
             this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("Profiles", out profiles))
                 .Returns(true);
-
-            var applicationMock = new Mock<IVstsApplication>();
-
-            applicationMock
-                .Setup(application => application.AuthenticationService)
-                .Returns(new Mock<IAuthenticationService>().Object);
-
-            this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
-                .Returns(applicationMock.Object);
 
             await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -285,11 +259,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "connect account teamproject";
 
-            this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
-                .Returns(new VstsApplication("id", "secret", "scope", new Uri("http://localhost/redirect"), new Mock<IAuthenticationServiceFactory>().Object));
-
-            var target = new ConnectDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new ConnectDialog("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
 
             await target.LogOnAsync(this.Fixture.DialogContext.Object, toBot);
 
@@ -307,7 +277,7 @@ namespace Vsar.TSBot.UnitTests
             var profile = new VstsProfile();
             var profiles = new List<VstsProfile>() as IList<VstsProfile>;
 
-            var mocked = new Mock<ConnectDialog>(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
             target.Pin = "12345";
 
@@ -330,7 +300,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "00000";
 
-            var target = new ConnectDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { Pin = "12345" };
+            var target = new ConnectDialog("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { Pin = "12345" };
 
             await target.PinReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -347,7 +317,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var target = new ConnectDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { Pin = "12345" };
+            var target = new ConnectDialog("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { Pin = "12345" };
 
             await target.PinReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -367,7 +337,7 @@ namespace Vsar.TSBot.UnitTests
 
             var toBot = this.Fixture.CreateMessage();
 
-            var target = new ConnectDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { Profiles = profiles };
+            var target = new ConnectDialog("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { Profiles = profiles };
 
             await target.SelectAccountAsync(this.Fixture.DialogContext.Object, toBot);
 
@@ -388,7 +358,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "UnknownAccount";
 
-            var mocked = new Mock<ConnectDialog>(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
             target.Profiles = profiles;
 
@@ -409,7 +379,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "Account3";
 
-            var mocked = new Mock<ConnectDialog>(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
             target.Profiles = profiles;
 
@@ -432,7 +402,7 @@ namespace Vsar.TSBot.UnitTests
 
             var toBot = this.Fixture.CreateMessage();
 
-            var target = new ConnectDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { Account = account, Profile = profile };
+            var target = new ConnectDialog("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { Account = account, Profile = profile };
 
             this.Fixture.VstsService.Setup(s => s.GetProjects(account, profile.Token)).ReturnsAsync(projects).Verifiable();
 
@@ -454,7 +424,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "Project1";
 
-            var mocked = new Mock<ConnectDialog>(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { CallBase = true };
+            var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
             target.TeamProjects = new List<string> { "Project1" };
 

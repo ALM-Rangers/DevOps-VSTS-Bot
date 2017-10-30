@@ -18,7 +18,6 @@ namespace Vsar.TSBot.UnitTests
     using FluentAssertions;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Dialogs.Internals;
-    using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.Services.Account;
     using Microsoft.VisualStudio.Services.Profile;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -33,40 +32,40 @@ namespace Vsar.TSBot.UnitTests
     public class AuthorizeControllerTests
     {
         [TestMethod]
-        public void ConstructorArgumentCheckForNull()
+        public void Constructor_Missing_AuthenticationService()
         {
-            var registryMock = new Mock<IVstsApplicationRegistry>();
-            var vstsMock = new Mock<IVstsService>();
+            var botDataFactoryMock = new Mock<IBotDataFactory>();
+            var vstsServiceMock = new Mock<IVstsService>();
+
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController(null, botDataFactoryMock.Object, vstsServiceMock.Object));
+        }
+
+        [TestMethod]
+        public void Constructor_Missing_BotDataFactory()
+        {
+            var authenticationServiceMock = new Mock<IAuthenticationService>();
+            var vstsServiceMock = new Mock<IVstsService>();
+
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController(authenticationServiceMock.Object, null, vstsServiceMock.Object));
+        }
+
+        [TestMethod]
+        public void Constructor_Missing_VstsService()
+        {
+            var authenticationServiceMock = new Mock<IAuthenticationService>();
             var botDataFactoryMock = new Mock<IBotDataFactory>();
 
-            Assert.ThrowsException<ArgumentNullException>(() =>
-            {
-                using (new AuthorizeController(null, registryMock.Object, vstsMock.Object))
-                {
-                }
-            });
-            Assert.ThrowsException<ArgumentNullException>(() =>
-            {
-                using (new AuthorizeController(botDataFactoryMock.Object, null, vstsMock.Object))
-                {
-                }
-            });
-            Assert.ThrowsException<ArgumentNullException>(() =>
-            {
-                using (new AuthorizeController(botDataFactoryMock.Object, registryMock.Object, null))
-                {
-                }
-            });
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController(authenticationServiceMock.Object, botDataFactoryMock.Object, null));
         }
 
         [TestMethod]
         public async Task Authorize_No_Code()
         {
-            var applicationRegistry = new Mock<IVstsApplicationRegistry>();
+            var authenticationServiceMock = new Mock<IAuthenticationService>();
             var botDataFactoryMock = new Mock<IBotDataFactory>();
-            var vstsService = new Mock<IVstsService>();
+            var vstsServiceMock = new Mock<IVstsService>();
 
-            var target = new AuthorizeController(botDataFactoryMock.Object, applicationRegistry.Object, vstsService.Object);
+            var target = new AuthorizeController(authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object);
             var result = await target.Index(null, null, null) as ViewResult;
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.ViewData.ModelState.First(pair => pair.Value.Errors.Any()));
@@ -75,11 +74,11 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Authorize_No_State()
         {
-            var applicationRegistry = new Mock<IVstsApplicationRegistry>();
+            var authenticationServiceMock = new Mock<IAuthenticationService>();
             var botDataFactoryMock = new Mock<IBotDataFactory>();
-            var vstsService = new Mock<IVstsService>();
+            var vstsServiceMock = new Mock<IVstsService>();
 
-            var target = new AuthorizeController(botDataFactoryMock.Object, applicationRegistry.Object, vstsService.Object);
+            var target = new AuthorizeController(authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object);
             var result = await target.Index("123567890", null, null) as ViewResult;
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.ViewData.ModelState.First(pair => pair.Value.Errors.Any()));
@@ -92,41 +91,31 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Authorize_A_Valid_LogOn()
         {
-            var authenticationService = new Mock<IAuthenticationService>();
-            var application = new Mock<IVstsApplication>();
-            var applicationRegistry = new Mock<IVstsApplicationRegistry>();
+            var authenticationServiceMock = new Mock<IAuthenticationService>();
             var botDataFactoryMock = new Mock<IBotDataFactory>();
             var botData = new Mock<IBotData>();
             var botDataBag = new Mock<IBotDataBag>();
-            var vstsService = new Mock<IVstsService>();
+            var vstsServiceMock = new Mock<IVstsService>();
 
             var token = new OAuthToken();
             var profile = new Profile();
             var accounts = new List<Account> { new Account(Guid.NewGuid()) { AccountName = "Account1" } };
 
-            var target = new AuthorizeController(botDataFactoryMock.Object, applicationRegistry.Object, vstsService.Object);
+            var target = new AuthorizeController(authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object);
 
             const string code = "1234567890";
             const string state = "channel1;user1";
             string pin = "12345";
 
-            authenticationService
+            authenticationServiceMock
                 .Setup(a => a.GetToken(code))
                 .ReturnsAsync(() => token);
 
-            application
-                .Setup(vstsApplication => vstsApplication.AuthenticationService)
-                .Returns(authenticationService.Object);
-
-            applicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
-                .Returns(application.Object);
-
-            vstsService
+            vstsServiceMock
                 .Setup(p => p.GetProfile(token))
                 .ReturnsAsync(profile);
 
-            vstsService
+            vstsServiceMock
                 .Setup(p => p.GetAccounts(token, It.IsAny<Guid>()))
                 .ReturnsAsync(accounts);
 
