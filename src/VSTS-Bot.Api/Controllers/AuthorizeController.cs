@@ -24,19 +24,28 @@ namespace Vsar.TSBot
     /// </summary>
     public class AuthorizeController : Controller
     {
+        private readonly string appSecret;
         private readonly IAuthenticationService authenticationService;
+        private readonly Uri authorizeUrl;
         private readonly IBotDataFactory botDataFactory;
         private readonly IVstsService vstsService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthorizeController"/> class.
         /// </summary>
+        /// <param name="appSecret">The app secret.</param>
+        /// <param name="authorizeUrl">The authorize url.</param>
         /// <param name="authenticationService">The authentication service.</param>
         /// <param name="botDataFactory">The bot data factory;</param>
         /// <param name="vstsService">The profileService.s</param>
-        public AuthorizeController(IAuthenticationService authenticationService, IBotDataFactory botDataFactory, IVstsService vstsService)
+        public AuthorizeController(string appSecret, Uri authorizeUrl, IAuthenticationService authenticationService, IBotDataFactory botDataFactory, IVstsService vstsService)
         {
+            appSecret.ThrowIfNull(nameof(appSecret));
+            authorizeUrl.ThrowIfNull(nameof(authorizeUrl));
+
+            this.appSecret = appSecret;
             this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+            this.authorizeUrl = authorizeUrl;
             this.botDataFactory = botDataFactory ?? throw new ArgumentNullException(nameof(botDataFactory));
             this.vstsService = vstsService ?? throw new ArgumentNullException(nameof(vstsService));
         }
@@ -70,7 +79,7 @@ namespace Vsar.TSBot
                 var userId = stateArray[1];
 
                 // Get the security token.
-                var token = await this.authenticationService.GetToken(code);
+                var token = await this.authenticationService.GetToken(this.appSecret, this.authorizeUrl, code);
                 var profile = await this.vstsService.GetProfile(token);
                 var accounts = await this.vstsService.GetAccounts(token, profile.Id);
                 var vstsProfile = CreateVstsProfile(accounts, profile, token);

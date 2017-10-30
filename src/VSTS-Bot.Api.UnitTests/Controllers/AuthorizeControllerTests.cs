@@ -32,12 +32,33 @@ namespace Vsar.TSBot.UnitTests
     public class AuthorizeControllerTests
     {
         [TestMethod]
-        public void Constructor_Missing_AuthenticationService()
+        public void Constructor_Missing_AppId()
         {
+            var authenticationServiceMock = new Mock<IAuthenticationService>();
             var botDataFactoryMock = new Mock<IBotDataFactory>();
             var vstsServiceMock = new Mock<IVstsService>();
 
-            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController(null, botDataFactoryMock.Object, vstsServiceMock.Object));
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController(null, new Uri("http://authorize.url"), authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object));
+        }
+
+        [TestMethod]
+        public void Constructor_Missing_AuthorizeUrl()
+        {
+            var authenticationServiceMock = new Mock<IAuthenticationService>();
+            var botDataFactoryMock = new Mock<IBotDataFactory>();
+            var vstsServiceMock = new Mock<IVstsService>();
+
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController("appId", null, authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object));
+        }
+
+        [TestMethod]
+        public void Constructor_Missing_AuthenticationService()
+        {
+            var authenticationServiceMock = new Mock<IAuthenticationService>();
+            var botDataFactoryMock = new Mock<IBotDataFactory>();
+            var vstsServiceMock = new Mock<IVstsService>();
+
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController("appId", new Uri("http://authorize.url"), null, botDataFactoryMock.Object, vstsServiceMock.Object));
         }
 
         [TestMethod]
@@ -46,7 +67,7 @@ namespace Vsar.TSBot.UnitTests
             var authenticationServiceMock = new Mock<IAuthenticationService>();
             var vstsServiceMock = new Mock<IVstsService>();
 
-            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController(authenticationServiceMock.Object, null, vstsServiceMock.Object));
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController("appId", new Uri("http://authorize.url"), authenticationServiceMock.Object, null, vstsServiceMock.Object));
         }
 
         [TestMethod]
@@ -55,7 +76,7 @@ namespace Vsar.TSBot.UnitTests
             var authenticationServiceMock = new Mock<IAuthenticationService>();
             var botDataFactoryMock = new Mock<IBotDataFactory>();
 
-            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController(authenticationServiceMock.Object, botDataFactoryMock.Object, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController("appId", new Uri("http://authorize.url"), authenticationServiceMock.Object, botDataFactoryMock.Object, null));
         }
 
         [TestMethod]
@@ -65,7 +86,7 @@ namespace Vsar.TSBot.UnitTests
             var botDataFactoryMock = new Mock<IBotDataFactory>();
             var vstsServiceMock = new Mock<IVstsService>();
 
-            var target = new AuthorizeController(authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object);
+            var target = new AuthorizeController("appId", new Uri("http://authorize.url"), authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object);
             var result = await target.Index(null, null, null) as ViewResult;
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.ViewData.ModelState.First(pair => pair.Value.Errors.Any()));
@@ -78,7 +99,7 @@ namespace Vsar.TSBot.UnitTests
             var botDataFactoryMock = new Mock<IBotDataFactory>();
             var vstsServiceMock = new Mock<IVstsService>();
 
-            var target = new AuthorizeController(authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object);
+            var target = new AuthorizeController("appId", new Uri("http://authorize.url"), authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object);
             var result = await target.Index("123567890", null, null) as ViewResult;
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.ViewData.ModelState.First(pair => pair.Value.Errors.Any()));
@@ -101,14 +122,14 @@ namespace Vsar.TSBot.UnitTests
             var profile = new Profile();
             var accounts = new List<Account> { new Account(Guid.NewGuid()) { AccountName = "Account1" } };
 
-            var target = new AuthorizeController(authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object);
+            var target = new AuthorizeController("appId", new Uri("http://authorize.url"), authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object);
 
             const string code = "1234567890";
             const string state = "channel1;user1";
             string pin = "12345";
 
             authenticationServiceMock
-                .Setup(a => a.GetToken(code))
+                .Setup(a => a.GetToken("appId", new Uri("http://authorize.url"), code))
                 .ReturnsAsync(() => token);
 
             vstsServiceMock

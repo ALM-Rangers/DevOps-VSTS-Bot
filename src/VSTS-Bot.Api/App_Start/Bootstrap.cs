@@ -104,8 +104,6 @@ namespace Vsar.TSBot
 
             builder
                 .RegisterType<AuthenticationService>()
-                .WithParameter("appSecret", Config.ApplicationSecret)
-                .WithParameter("authorizeUrl", Config.AuthorizeUrl)
                 .As<IAuthenticationService>();
 
             builder
@@ -113,7 +111,14 @@ namespace Vsar.TSBot
                 .As<IVstsService>();
 
             builder
-                .RegisterControllers(typeof(Bootstrap).Assembly);
+                .RegisterControllers(typeof(Bootstrap).Assembly)
+                .Except<AuthorizeController>();
+
+            builder
+                .RegisterType<AuthorizeController>()
+                .WithParameter("appSecret", Config.ApplicationSecret)
+                .WithParameter("authorizeUrl", Config.AuthorizeUrl)
+                .AsSelf();
 
             builder
                 .RegisterApiControllers(typeof(Bootstrap).Assembly);
