@@ -12,8 +12,10 @@ namespace Vsar.TSBot
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Web.Mvc;
+    using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.VisualStudio.Services.Account;
     using Resources;
 
@@ -22,20 +24,29 @@ namespace Vsar.TSBot
     /// </summary>
     public class AuthorizeController : Controller
     {
-        private readonly IVstsApplicationRegistry applicationRegistry;
-        private readonly IBotService botService;
+        private readonly string appSecret;
+        private readonly IAuthenticationService authenticationService;
+        private readonly Uri authorizeUrl;
+        private readonly IBotDataFactory botDataFactory;
         private readonly IVstsService vstsService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthorizeController"/> class.
         /// </summary>
-        /// <param name="botService">The botService.</param>
-        /// <param name="applicationRegistry">VSTS Application Registry</param>
+        /// <param name="appSecret">The app secret.</param>
+        /// <param name="authorizeUrl">The authorize url.</param>
+        /// <param name="authenticationService">The authentication service.</param>
+        /// <param name="botDataFactory">The bot data factory;</param>
         /// <param name="vstsService">The profileService.s</param>
-        public AuthorizeController(IBotService botService, IVstsApplicationRegistry applicationRegistry, IVstsService vstsService)
+        public AuthorizeController(string appSecret, Uri authorizeUrl, IAuthenticationService authenticationService, IBotDataFactory botDataFactory, IVstsService vstsService)
         {
-            this.botService = botService ?? throw new ArgumentNullException(nameof(botService));
-            this.applicationRegistry = applicationRegistry ?? throw new ArgumentNullException(nameof(applicationRegistry));
+            appSecret.ThrowIfNull(nameof(appSecret));
+            authorizeUrl.ThrowIfNull(nameof(authorizeUrl));
+
+            this.appSecret = appSecret;
+            this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+            this.authorizeUrl = authorizeUrl;
+            this.botDataFactory = botDataFactory ?? throw new ArgumentNullException(nameof(botDataFactory));
             this.vstsService = vstsService ?? throw new ArgumentNullException(nameof(vstsService));
         }
 
@@ -50,7 +61,7 @@ namespace Vsar.TSBot
         public async Task<ActionResult> Index(string code, string error, string state)
         {
             var stateArray = (state ?? string.Empty).Split(';');
-            string pin = string.Empty;
+            var pin = string.Empty;
 
             try
             {
@@ -68,21 +79,24 @@ namespace Vsar.TSBot
                 var userId = stateArray[1];
 
                 // Get the security token.
-                var token = await this.applicationRegistry.GetVstsApplicationRegistration(userId).AuthenticationService.GetToken(code);
+                var token = await this.authenticationService.GetToken(this.appSecret, this.authorizeUrl, code);
                 var profile = await this.vstsService.GetProfile(token);
                 var accounts = await this.vstsService.GetAccounts(token, profile.Id);
                 var vstsProfile = CreateVstsProfile(accounts, profile, token);
 
-                var data = await this.botService.GetUserData(channelId, userId);
-                pin = data.GetPin();
+                var address = new Address(string.Empty, channelId, userId, string.Empty, string.Empty);
+                var botData = this.botDataFactory.Create(address);
+                await botData.LoadAsync(CancellationToken.None);
 
-                data.SetNotValidatedByPinProfile(vstsProfile);
+                pin = botData.UserData.GetPin();
 
-                await this.botService.SetUserData(channelId, userId, data);
+                botData.UserData.SetNotValidatedByPinProfile(vstsProfile);
+
+                await botData.FlushAsync(CancellationToken.None);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this.ModelState.AddModelError(string.Empty, e.Message);
+                this.ModelState.AddModelError(string.Empty, ex.Message);
             }
 
             return this.View(new Authorize(pin));

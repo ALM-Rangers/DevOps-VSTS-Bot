@@ -14,6 +14,7 @@ namespace Vsar.TSBot
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Web;
     using Microsoft.TeamFoundation.Build.WebApi;
     using Microsoft.TeamFoundation.Core.WebApi;
     using Microsoft.VisualStudio.Services.Account;
@@ -245,7 +246,7 @@ namespace Vsar.TSBot
         {
             var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
 
-            var uri = !string.IsNullOrWhiteSpace(account) ? new Uri(string.Format(CultureInfo.InvariantCulture, VstsUrl, account)) : this.vstsAppUrl;
+            var uri = !string.IsNullOrWhiteSpace(account) ? new Uri(string.Format(CultureInfo.InvariantCulture, VstsUrl, HttpUtility.UrlEncode(account))) : this.vstsAppUrl;
 
             return await new VssConnection(uri, credentials).GetClientAsync<T>();
         }

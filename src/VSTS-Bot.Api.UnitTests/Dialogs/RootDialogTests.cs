@@ -125,9 +125,9 @@ namespace Vsar.TSBot.UnitTests
         public async Task Forward_Command()
         {
             var toBot = this.Fixture.CreateMessage();
-            toBot.Text = "connect";
+            toBot.Text = "builds";
 
-            var dialog = new ConnectDialog(new Mock<IVstsService>().Object, new Mock<IVstsApplicationRegistry>().Object);
+            var dialog = new BuildsDialog(new Mock<IAuthenticationService>().Object, new Mock<IVstsService>().Object);
 
             var container = new ContainerBuilder();
             container
@@ -143,7 +143,6 @@ namespace Vsar.TSBot.UnitTests
 
             await target.HandleCommandAsync(this.Fixture.DialogContext.Object, toBot);
 
-            // TODO:
             this.Fixture.DialogContext
                 .Verify(c => c.Forward<object, IMessageActivity>(dialog, target.ResumeAfterChildDialog, toBot, CancellationToken.None));
         }

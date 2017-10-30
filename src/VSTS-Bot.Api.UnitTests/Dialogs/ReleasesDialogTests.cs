@@ -28,17 +28,17 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        public async Task Constructor_Empty_VstsService()
+        public async Task Constructor_Empty_AuthenticationService()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new ReleasesDialog(null, this.Fixture.VstsApplicationRegistry.Object));
+            Assert.ThrowsException<ArgumentNullException>(() => new ReleasesDialog(null, this.Fixture.VstsService.Object));
 
             await Task.CompletedTask;
         }
 
         [TestMethod]
-        public async Task Constructor_Empty_VstsApplicationRegistry()
+        public async Task Constructor_Empty_VstsService()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new ReleasesDialog(this.Fixture.VstsService.Object, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new ReleasesDialog(this.Fixture.AuthenticationService.Object, null));
 
             await Task.CompletedTask;
         }
@@ -49,7 +49,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var mocked = new Mock<ReleasesDialog>(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { CallBase = true };
+            var mocked = new Mock<ReleasesDialog>(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             await target.StartAsync(this.Fixture.DialogContext.Object);
@@ -60,7 +60,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Releases_Missing_Context()
         {
-            var target = new ReleasesDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new ReleasesDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.ReleasesAsync(null, null));
         }
@@ -68,7 +68,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Releases_Missing_Awaitable()
         {
-            var target = new ReleasesDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new ReleasesDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.ReleasesAsync(this.Fixture.DialogContext.Object, null));
         }
@@ -79,17 +79,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var applicationMock = new Mock<IVstsApplication>();
-
-            applicationMock
-                .Setup(application => application.AuthenticationService)
-                .Returns(new Mock<IAuthenticationService>().Object);
-
-            this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
-                .Returns(applicationMock.Object);
-
-            var target = new ReleasesDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new ReleasesDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
             await target.ReleasesAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
             this.Fixture.DialogContext.Verify(c => c.Fail(It.IsAny<UnknownCommandException>()));
@@ -121,17 +111,7 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(s => s.GetReleaseDefinitionsAsync(account, teamProject, profile.Token))
                 .ReturnsAsync(() => releaseDefinitions);
 
-            var applicationMock = new Mock<IVstsApplication>();
-
-            applicationMock
-                .Setup(application => application.AuthenticationService)
-                .Returns(new Mock<IAuthenticationService>().Object);
-
-            this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
-                .Returns(applicationMock.Object);
-
-            var target = new ReleasesDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new ReleasesDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
             await target.ReleasesAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
             this.Fixture.VstsService.VerifyAll();
@@ -167,17 +147,7 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(s => s.GetReleaseDefinitionsAsync(account, teamProject, profile.Token))
                 .ReturnsAsync(() => releaseDefinitions);
 
-            var applicationMock = new Mock<IVstsApplication>();
-
-            applicationMock
-                .Setup(application => application.AuthenticationService)
-                .Returns(new Mock<IAuthenticationService>().Object);
-
-            this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
-                .Returns(applicationMock.Object);
-
-            var target = new ReleasesDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new ReleasesDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
             await target.ReleasesAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
             this.Fixture.VstsService.VerifyAll();
@@ -190,7 +160,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Create_Missing_Context()
         {
-            var target = new ReleasesDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new ReleasesDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.CreateAsync(null, null));
         }
@@ -198,7 +168,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Create_Missing_Awaitable()
         {
-            var target = new ReleasesDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new ReleasesDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.CreateAsync(this.Fixture.DialogContext.Object, null));
         }
@@ -209,7 +179,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var target = new ReleasesDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new ReleasesDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
             await target.CreateAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
             this.Fixture.DialogContext.Verify(c => c.Fail(It.IsAny<UnknownCommandException>()));
@@ -227,7 +197,7 @@ namespace Vsar.TSBot.UnitTests
 
             var release = new Release();
 
-            var target = new ReleasesDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object)
+            var target = new ReleasesDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object)
             {
                 Account = account,
                 Profile = profile,

@@ -13,11 +13,9 @@ namespace Vsar.TSBot.AcceptanceTests
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using System.Threading;
     using FluentAssertions;
-    using Microsoft.Bot.Builder.Dialogs;
-    using Microsoft.Bot.Connector;
     using Microsoft.Bot.Connector.DirectLine;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TechTalk.SpecFlow;
     using Activity = Microsoft.Bot.Connector.DirectLine.Activity;
     using ActivityTypes = Microsoft.Bot.Connector.DirectLine.ActivityTypes;
@@ -35,18 +33,18 @@ namespace Vsar.TSBot.AcceptanceTests
         [Given(@"A clean state")]
         public void GivenACleanState()
         {
-            var initial = Config.BotState.GetUserData(ChannelIds.Directline, Config.UserName) ?? new BotData();
+            var botData = Config.GetBotData();
+            botData.LoadAsync(CancellationToken.None).Wait();
 
             // Keep the profile for the refresh token.
-            var profile = initial.GetProperty<VstsProfile>("Profile");
-            var target = new BotData { ETag = initial.ETag };
+            botData.UserData.TryGetValue<VstsProfile>("Profile", out var profile);
 
             if (profile != null)
             {
-                target.SetProfile(profile);
+                botData.UserData.SetValue("Profile", profile);
             }
 
-            Config.BotState.SetUserData(ChannelIds.Directline, Config.UserName, target);
+            botData.FlushAsync(CancellationToken.None).Wait();
         }
 
         [StepArgumentTransformation("config:(.+)")]
@@ -104,11 +102,13 @@ namespace Vsar.TSBot.AcceptanceTests
         [Given(@"Is authorized")]
         public void GivenIsAuthorized()
         {
-            var authService = new AuthenticationService(Config.AppSecret, Config.AuthorizeUrl);
+            var authService = new AuthenticationService();
             var vstsService = new VstsService();
 
-            var data = Config.BotState.GetUserData(ChannelIds.Directline, Config.UserName);
-            var profile = data.GetProperty<VstsProfile>("Profile");
+            var botData = Config.GetBotData();
+            botData.LoadAsync(CancellationToken.None).Wait();
+
+            botData.UserData.TryGetValue("Profile", out VstsProfile profile);
             var refreshToken = Config.RefreshToken;
 
             if (profile != null && !Config.RefreshTokenReinitialize)
@@ -118,7 +118,13 @@ namespace Vsar.TSBot.AcceptanceTests
 
             Config.RefreshTokenReinitialize = false;
 
-            var token = authService.GetToken(new OAuthToken { RefreshToken = refreshToken }).Result;
+            var oldToken = new OAuthToken
+            {
+                AppSecret = Config.AppSecret,
+                AuthorizeUrl = Config.AuthorizeUrl,
+                RefreshToken = refreshToken
+            };
+            var token = authService.GetToken(oldToken).Result;
             var p = vstsService.GetProfile(token).Result;
             var accounts = vstsService.GetAccounts(token, p.Id).Result;
             profile = new VstsProfile
@@ -130,10 +136,10 @@ namespace Vsar.TSBot.AcceptanceTests
                 Token = token
             };
 
-            data.SetProfile(profile);
-            data.SetProfiles(new List<VstsProfile> { profile });
+            botData.UserData.SetValue("Profile", profile);
+            botData.UserData.SetValue("Profiles", new List<VstsProfile> { profile });
 
-            Config.BotState.SetUserDataAsync(ChannelIds.Directline, Config.UserName, data).Wait();
+            botData.FlushAsync(CancellationToken.None).Wait();
 
             Config.Profile = profile;
             Config.Token = token;
@@ -142,12 +148,13 @@ namespace Vsar.TSBot.AcceptanceTests
         [Given(@"I am connected to '(.*)'")]
         public void GivenIAmConnectedTo(KeyValuePair<string, string> teamProject)
         {
-            var data = Config.BotState.GetUserData(ChannelIds.Directline, Config.UserName);
+            var botData = Config.GetBotData();
+            botData.LoadAsync(CancellationToken.None).Wait();
 
-            data.SetAccount(Config.Account);
-            data.SetTeamProject(teamProject.Value);
+            botData.UserData.SetValue("Account", Config.Account);
+            botData.UserData.SetValue("TeamProject", teamProject.Value);
 
-            Config.BotState.SetUserData(ChannelIds.Directline, Config.UserName, data);
+            botData.FlushAsync(CancellationToken.None);
         }
 
         [Then(@"the bot should respond with the welcome message\.")]
