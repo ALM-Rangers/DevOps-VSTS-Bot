@@ -37,7 +37,7 @@ namespace Vsar.TSBot
         private readonly Uri vstsAppUrl = new Uri("https://app.vssps.visualstudio.com");
 
         /// <inheritdoc />
-        public async Task ChangeApprovalStatus(string account, string teamProject, VstsProfile profile, int approvalId, ApprovalStatus status, string comments)
+        public async Task ChangeApprovalStatus(string account, string teamProject, Profile profile, int approvalId, ApprovalStatus status, string comments)
         {
             account.ThrowIfNullOrWhiteSpace(nameof(account));
             teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
@@ -128,7 +128,7 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc/>
-        public async Task<IList<ReleaseApproval>> GetApprovals(string account, string teamProject, VstsProfile profile)
+        public async Task<IList<ReleaseApproval>> GetApprovals(string account, string teamProject, Profile profile)
         {
             account.ThrowIfNullOrWhiteSpace(nameof(account));
             teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
@@ -168,7 +168,7 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc/>
-        public async Task<Profile> GetProfile(OAuthToken token)
+        public async Task<Microsoft.VisualStudio.Services.Profile.Profile> GetProfile(OAuthToken token)
         {
             token.ThrowIfNull(nameof(token));
 

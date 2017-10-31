@@ -82,10 +82,12 @@ namespace Vsar.TSBot.UnitTests
             };
         }
 
-        public VstsProfile CreateProfile()
+        public Profile CreateProfile()
         {
-            return new VstsProfile
+            return new Profile
             {
+                IsSelected = true,
+                IsValidated = true,
                 Token = new OAuthToken { ExpiresIn = 3600 }
             };
         }

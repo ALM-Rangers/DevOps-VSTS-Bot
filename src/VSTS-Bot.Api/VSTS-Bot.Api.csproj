@@ -427,12 +427,12 @@
     <Compile Include="Exceptions\UnknownCommandException.cs" />
     <Compile Include="Extensions\DependencyResolverExtensions.cs" />
     <Compile Include="Extensions\AttachmentCollectionExtensions.cs" />
-    <Compile Include="Extensions\BotDataBagExtensions.cs" />
     <Compile Include="Extensions\GuardExtensions.cs" />
     <Compile Include="Model\Authorize.cs" />
     <Compile Include="Model\Channel.cs" />
     <Compile Include="Model\OAuthToken.cs" />
-    <Compile Include="Model\VstsProfile.cs" />
+    <Compile Include="Model\UserData.cs" />
+    <Compile Include="Model\Profile.cs" />
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="DI\DialogInvoker.cs" />
     <Compile Include="DI\IDialogInvoker.cs" />

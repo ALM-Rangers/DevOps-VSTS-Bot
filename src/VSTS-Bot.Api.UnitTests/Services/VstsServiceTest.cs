@@ -32,6 +32,7 @@ namespace Vsar.TSBot.UnitTests.Services
     using Microsoft.VisualStudio.Services.WebApi;
     using Microsoft.VisualStudio.Services.WebApi.Fakes;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Profile = TSBot.Profile;
 
     /// <summary>
     /// Unit tests for <see cref="VstsService"/>.
@@ -56,7 +57,7 @@ namespace Vsar.TSBot.UnitTests.Services
             var comment = "My comment";
             var status = ApprovalStatus.Undefined;
 
-            var profile = new VstsProfile
+            var profile = new Profile
             {
                 Id = Guid.NewGuid(),
                 Token = this.token,
@@ -84,7 +85,7 @@ namespace Vsar.TSBot.UnitTests.Services
                             AccountUri = new Uri("https://myaccount.visualstudio.com")
                         }
                     }),
-                    GetProfileHttpClient(new Profile()),
+                    GetProfileHttpClient(new Microsoft.VisualStudio.Services.Profile.Profile()),
                     new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2())
                     {
                         GetApprovalAsyncStringInt32NullableOfBooleanObjectCancellationToken = (p, i, includeHistory, userState, cancellationToken) => Task.Run(
@@ -148,7 +149,7 @@ namespace Vsar.TSBot.UnitTests.Services
                             AccountUri = new Uri("https://myaccount.visualstudio.com")
                         }
                     }),
-                    GetProfileHttpClient(new Profile()),
+                    GetProfileHttpClient(new Microsoft.VisualStudio.Services.Profile.Profile()),
                     new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2())
                     {
                         GetReleaseDefinitionAsyncStringInt32IEnumerableOfStringObjectCancellationToken = (project, definitionId, filters, userState, cancellationToken) => Task.Run(
@@ -196,7 +197,7 @@ namespace Vsar.TSBot.UnitTests.Services
         {
             var accountName = "MyAccount";
             var projectName = "MyProject";
-            var profile = new VstsProfile
+            var profile = new Profile
             {
                 Id = Guid.NewGuid(),
                 Token = this.token,
@@ -230,7 +231,7 @@ namespace Vsar.TSBot.UnitTests.Services
                             AccountUri = new Uri("https://myaccount.visualstudio.com")
                         }
                     }),
-                    GetProfileHttpClient(new Profile()),
+                    GetProfileHttpClient(new Microsoft.VisualStudio.Services.Profile.Profile()),
                     new ShimReleaseHttpClient2
                     {
                         GetApprovalsAsync2StringStringNullableOfApprovalStatusIEnumerableOfInt32NullableOfApprovalTypeNullableOfInt32NullableOfInt32NullableOfReleaseQueryOrderNullableOfBooleanObjectCancellationToken
@@ -292,7 +293,7 @@ namespace Vsar.TSBot.UnitTests.Services
                             AccountUri = new Uri("https://myaccount.visualstudio.com")
                         }
                     }),
-                    GetProfileHttpClient(new Profile()),
+                    GetProfileHttpClient(new Microsoft.VisualStudio.Services.Profile.Profile()),
                     new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2())
                     {
                         GetApprovalAsyncStringInt32NullableOfBooleanObjectCancellationToken
@@ -398,11 +399,11 @@ namespace Vsar.TSBot.UnitTests.Services
 
             using (ShimsContext.Create())
             {
-                var expected = new Profile();
+                var expected = new Microsoft.VisualStudio.Services.Profile.Profile();
 
                 InitializeConnectionShim(GetProfileHttpClient(expected));
 
-                Profile actual = await service.GetProfile(this.token);
+                Microsoft.VisualStudio.Services.Profile.Profile actual = await service.GetProfile(this.token);
 
                 Assert.AreEqual(expected, actual);
             }
@@ -471,7 +472,7 @@ namespace Vsar.TSBot.UnitTests.Services
 
                 var clients = new VssHttpClientBase[]
                 {
-                    GetAccountHttpClient(accounts), GetProjectHttpClient(expected), GetProfileHttpClient(new Profile())
+                    GetAccountHttpClient(accounts), GetProjectHttpClient(expected), GetProfileHttpClient(new Microsoft.VisualStudio.Services.Profile.Profile())
                 };
 
                 InitializeConnectionShim(clients);
@@ -603,7 +604,7 @@ namespace Vsar.TSBot.UnitTests.Services
                     () => (object)clients.FirstOrDefault(client => client.GetType() == type), cancellationToken);
         }
 
-        private static ProfileHttpClient GetProfileHttpClient(Profile profile)
+        private static ProfileHttpClient GetProfileHttpClient(Microsoft.VisualStudio.Services.Profile.Profile profile)
         {
             var shimProfileClient = new ShimProfileHttpClient
             {

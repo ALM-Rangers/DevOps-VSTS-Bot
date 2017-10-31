@@ -37,7 +37,7 @@ namespace Vsar.TSBot.AcceptanceTests
             botData.LoadAsync(CancellationToken.None).Wait();
 
             // Keep the profile for the refresh token.
-            botData.UserData.TryGetValue<VstsProfile>("Profile", out var profile);
+            botData.UserData.TryGetValue<Profile>("Profile", out var profile);
 
             if (profile != null)
             {
@@ -108,7 +108,7 @@ namespace Vsar.TSBot.AcceptanceTests
             var botData = Config.GetBotData();
             botData.LoadAsync(CancellationToken.None).Wait();
 
-            botData.UserData.TryGetValue("Profile", out VstsProfile profile);
+            botData.UserData.TryGetValue("Profile", out Profile profile);
             var refreshToken = Config.RefreshToken;
 
             if (profile != null && !Config.RefreshTokenReinitialize)
@@ -127,7 +127,7 @@ namespace Vsar.TSBot.AcceptanceTests
             var token = authService.GetToken(oldToken).Result;
             var p = vstsService.GetProfile(token).Result;
             var accounts = vstsService.GetAccounts(token, p.Id).Result;
-            profile = new VstsProfile
+            profile = new Profile
             {
                 Accounts = accounts.Select(a => a.AccountName).ToList(),
                 Id = p.Id,
@@ -137,7 +137,7 @@ namespace Vsar.TSBot.AcceptanceTests
             };
 
             botData.UserData.SetValue("Profile", profile);
-            botData.UserData.SetValue("Profiles", new List<VstsProfile> { profile });
+            botData.UserData.SetValue("Profiles", new List<Profile> { profile });
 
             botData.FlushAsync(CancellationToken.None).Wait();
 

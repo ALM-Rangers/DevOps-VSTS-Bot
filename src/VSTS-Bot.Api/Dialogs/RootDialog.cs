@@ -102,7 +102,7 @@ namespace Vsar.TSBot.Dialogs
 
             if (dialog == null)
             {
-                var teamProject = context.UserData.GetTeamProject();
+                var data = context.UserData.GetValue<UserData>("userData");
 
                 var reply = context.MakeMessage();
 
@@ -110,7 +110,7 @@ namespace Vsar.TSBot.Dialogs
                     ? Labels.Help
                     : Labels.UnknownCommand;
 
-                reply.Attachments.Add(new MainOptionsCard(!string.IsNullOrEmpty(teamProject)));
+                reply.Attachments.Add(new MainOptionsCard(!string.IsNullOrEmpty(data.TeamProject)));
 
                 await context.PostAsync(reply);
 

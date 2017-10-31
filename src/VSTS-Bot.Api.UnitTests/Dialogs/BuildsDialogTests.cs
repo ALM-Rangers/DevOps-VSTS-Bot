@@ -78,6 +78,10 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Builds_No_Text()
         {
+            var profile = this.Fixture.CreateProfile();
+            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
+            data.Profiles.Add(profile);
+
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
@@ -94,26 +98,20 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "builds";
 
-            var account = "anaccount";
             var profile = this.Fixture.CreateProfile();
-            var teamProject = "anteamproject";
+            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
+            data.Profiles.Add(profile);
 
             var buildDefinitions = new List<BuildDefinitionReference>();
 
             var target = new BuildsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
 
             this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Account", out account))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Profile", out profile))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
+                .Setup(ud => ud.TryGetValue("userData", out data))
                 .Returns(true);
 
             this.Fixture.VstsService
-                .Setup(s => s.GetBuildDefinitionsAsync(account, teamProject, profile.Token))
+                .Setup(s => s.GetBuildDefinitionsAsync(data.Account, data.TeamProject, profile.Token))
                 .ReturnsAsync(buildDefinitions);
 
             await target.BuildsAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
@@ -130,26 +128,20 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "builds";
 
-            var account = "anaccount";
             var profile = this.Fixture.CreateProfile();
-            var teamProject = "anteamproject";
+            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
+            data.Profiles.Add(profile);
 
             var buildDefinitions = new List<BuildDefinitionReference> { new BuildDefinitionReference { Name = "Build 1" } };
 
             var target = new BuildsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
 
             this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Account", out account))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Profile", out profile))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
+                .Setup(ud => ud.TryGetValue("userData", out data))
                 .Returns(true);
 
             this.Fixture.VstsService
-                .Setup(s => s.GetBuildDefinitionsAsync(account, teamProject, profile.Token))
+                .Setup(s => s.GetBuildDefinitionsAsync(data.Account, data.TeamProject, profile.Token))
                 .ReturnsAsync(buildDefinitions);
 
             await target.BuildsAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));

@@ -33,7 +33,7 @@ namespace Vsar.TSBot
         /// <param name="status">The approval status.</param>
         /// <param name="comments">A comment.</param>
         /// <returns>A void task.</returns>
-        Task ChangeApprovalStatus(string account, string teamProject, VstsProfile profile, int approvalId, ApprovalStatus status, string comments);
+        Task ChangeApprovalStatus(string account, string teamProject, Profile profile, int approvalId, ApprovalStatus status, string comments);
 
         /// <summary>
         /// Creates a release.
@@ -72,7 +72,7 @@ namespace Vsar.TSBot
         /// <param name="profile">The profile of the user.</param>
         /// <returns>A list with <see cref="ReleaseApproval"/>.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "We are implementing async function, so nesting is ok.")]
-        Task<IList<ReleaseApproval>> GetApprovals(string account, string teamProject, VstsProfile profile);
+        Task<IList<ReleaseApproval>> GetApprovals(string account, string teamProject, Profile profile);
 
         /// <summary>
         /// Gets the build based on the id.
@@ -98,8 +98,8 @@ namespace Vsar.TSBot
         /// Gets the profile from vsts.
         /// </summary>
         /// <param name="token">A <see cref="OAuthToken"/>.s</param>
-        /// <returns>A <see cref="Profile"/>.</returns>
-        Task<Profile> GetProfile(OAuthToken token);
+        /// <returns>A <see cref="Microsoft.VisualStudio.Services.Profile.Profile"/>.</returns>
+        Task<Microsoft.VisualStudio.Services.Profile.Profile> GetProfile(OAuthToken token);
 
         /// <summary>
         /// Gets team projects from VSTS account

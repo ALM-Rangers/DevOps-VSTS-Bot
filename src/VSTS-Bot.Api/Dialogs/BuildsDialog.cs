@@ -47,7 +47,7 @@ namespace Vsar.TSBot.Dialogs
         /// <summary>
         /// Gets or sets the profile.
         /// </summary>
-        public VstsProfile Profile { get; set; }
+        public Profile Profile { get; set; }
 
         /// <summary>
         /// Gets or sets the Team Project.
@@ -77,14 +77,16 @@ namespace Vsar.TSBot.Dialogs
 
             var activity = await result;
 
-            this.Account = context.UserData.GetAccount();
-            this.Profile = context.UserData.GetProfile(this.AuthenticationService);
-            this.TeamProject = context.UserData.GetTeamProject();
-
             var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
 
             if (text.Equals(CommandMatchBuilds, StringComparison.OrdinalIgnoreCase))
             {
+                var data = context.UserData.GetValue<UserData>("userData");
+
+                this.Account = data.Account;
+                this.Profile = await this.GetValidatedProfile(context.UserData);
+                this.TeamProject = data.TeamProject;
+
                 var typing = context.MakeMessage();
                 typing.Type = ActivityTypes.Typing;
                 await context.PostAsync(typing);
