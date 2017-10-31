@@ -448,16 +448,10 @@
       <DependentUpon>Labels.resx</DependentUpon>
     </Compile>
     <Compile Include="Services\AuthenticationService.cs" />
-    <Compile Include="Services\AuthenticationServiceFactory.cs" />
     <Compile Include="Services\BotDataFactory.cs" />
     <Compile Include="Services\IAuthenticationService.cs" />
-    <Compile Include="Services\IAuthenticationServiceFactory.cs" />
     <Compile Include="Services\IBotDataFactory.cs" />
-    <Compile Include="Services\IVstsApplication.cs" />
-    <Compile Include="Services\IVstsApplicationRegistry.cs" />
     <Compile Include="Services\IVstsService.cs" />
-    <Compile Include="Services\VstsApplication.cs" />
-    <Compile Include="Services\VstsApplicationRegistry.cs" />
     <Compile Include="Services\VstsService.cs" />
     <Compile Include="WebApiApplication.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

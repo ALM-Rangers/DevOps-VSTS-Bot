@@ -32,11 +32,10 @@ namespace Vsar.TSBot.Dialogs
         /// <summary>
         /// Initializes a new instance of the <see cref="BuildsDialog"/> class.
         /// </summary>
-        /// <param name="vstsService">VSTS accessor</param>
-        /// <param name="vstsApplicationRegistry">VSTS Application registry accessor.</param>
-        /// <exception cref="ArgumentNullException">Occurs when the vstsService is missing.</exception>
-        public BuildsDialog(IVstsService vstsService, IVstsApplicationRegistry vstsApplicationRegistry)
-            : base(vstsService, vstsApplicationRegistry)
+        /// <param name="authenticationService">The authenticationService.</param>
+        /// <param name="vstsService">The <see cref="IVstsService"/>.</param>
+        public BuildsDialog(IAuthenticationService authenticationService, IVstsService vstsService)
+            : base(authenticationService, vstsService)
         {
         }
 
@@ -79,7 +78,7 @@ namespace Vsar.TSBot.Dialogs
             var activity = await result;
 
             this.Account = context.UserData.GetAccount();
-            this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(activity));
+            this.Profile = context.UserData.GetProfile(this.AuthenticationService);
             this.TeamProject = context.UserData.GetTeamProject();
 
             var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();

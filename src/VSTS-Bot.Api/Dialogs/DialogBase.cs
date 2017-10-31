@@ -13,62 +13,46 @@ namespace Vsar.TSBot.Dialogs
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.Serialization;
     using System.Web.Http;
-    using Microsoft.Bot.Connector;
 
     /// <summary>
-    /// Implements basic holding of <see cref="IVstsService"/> and <see cref="IVstsApplicationRegistry"/>.
+    /// Implements basic holding of <see cref="IVstsService"/> and <see cref="IAuthenticationService"/>.
     /// </summary>
     [Serializable]
     public abstract class DialogBase
     {
         [NonSerialized]
-        private IVstsService vstsService;
+        private IAuthenticationService authenticationService;
 
         [NonSerialized]
-        private IVstsApplicationRegistry vstsApplicationRegistry;
+        private IVstsService vstsService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DialogBase"/> class.
         /// </summary>
+        /// <param name="authenticationService">The authenticationService.</param>
         /// <param name="vstsService">VSTS accessor.</param>
-        /// <param name="vstsApplicationRegistry">VSTS Application registry accessor.</param>
-        protected DialogBase(IVstsService vstsService, IVstsApplicationRegistry vstsApplicationRegistry)
+        protected DialogBase(IAuthenticationService authenticationService, IVstsService vstsService)
         {
+            this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             this.vstsService = vstsService ?? throw new ArgumentNullException(nameof(vstsService));
-            this.vstsApplicationRegistry = vstsApplicationRegistry ?? throw new ArgumentNullException(nameof(vstsApplicationRegistry));
         }
+
+        /// <summary>
+        /// Gets the authentication service.
+        /// </summary>
+        protected IAuthenticationService AuthenticationService => this.authenticationService;
 
         /// <summary>
         /// Gets <see cref="IVstsService"/>
         /// </summary>
         protected IVstsService VstsService => this.vstsService;
 
-        /// <summary>
-        /// Gets <see cref="IVstsApplicationRegistry"/>.
-        /// </summary>
-        protected IVstsApplicationRegistry VstsApplicationRegistry => this.vstsApplicationRegistry;
-
-        /// <summary>
-        /// Gets <see cref="IAuthenticationService"/> for the <see cref="IMessageActivity"/>.
-        /// </summary>
-        /// <param name="activity">The <see cref="IMessageActivity"/>.</param>
-        /// <returns><see cref="IAuthenticationService"/></returns>
-        protected IAuthenticationService GetAuthenticationService(IActivity activity)
-        {
-            if (activity == null)
-            {
-                throw new ArgumentNullException(nameof(activity));
-            }
-
-            return this.VstsApplicationRegistry.GetVstsApplicationRegistration(activity.From.Id).AuthenticationService;
-        }
-
         [ExcludeFromCodeCoverage]
         [OnSerializing]
         private void OnSerializingMethod(StreamingContext context)
         {
+            this.authenticationService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IAuthenticationService>();
             this.vstsService = GlobalConfiguration.Configuration.DependencyResolver.GetService<IVstsService>();
-            this.vstsApplicationRegistry = GlobalConfiguration.Configuration.DependencyResolver.GetService<IVstsApplicationRegistry>();
         }
     }
 }

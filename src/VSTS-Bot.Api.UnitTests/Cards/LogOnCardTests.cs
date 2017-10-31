@@ -21,34 +21,41 @@ namespace Vsar.TSBot.UnitTests.Cards
     public class LogOnCardTests
     {
         [TestMethod]
-        public void Constructor_Missing_VstsApplication()
+        public void Constructor_Missing_AppId()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard(null, null, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard(null, "appScope", new Uri("https://authorize.url"), ChannelIds.Skype, "userId"));
+        }
+
+        [TestMethod]
+        public void Constructor_Missing_AppScope()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard("appId", null, new Uri("https://authorize.url"), ChannelIds.Skype, "userId"));
+        }
+
+        [TestMethod]
+        public void Constructor_Missing_AuthorizeUrl()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard("appId", "appScope", null, ChannelIds.Skype, "userId"));
         }
 
         [TestMethod]
         public void Constructor_Missing_ChannelId()
         {
-            var factory = new Mock<IAuthenticationServiceFactory>().Object;
-            var application = new VstsApplication("id", "secret", "scope", new Uri("http://localhost/redirect"), factory);
-            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard(application, null, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard("appId", "appScope", new Uri("https://authorize.url"), null, "userId"));
         }
 
         [TestMethod]
         public void Constructor_Missing_UserId()
         {
-            var factory = new Mock<IAuthenticationServiceFactory>().Object;
-            var application = new VstsApplication("id", "secret", "scope", new Uri("http://localhost/redirect"), factory);
-            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard(application, ChannelIds.Skype, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new LogOnCard("appId", "appScope", new Uri("https://authorize.url"), ChannelIds.Skype, null));
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "target", Justification = "Test code, nothing to worry about.")]
         [TestMethod]
         public void Constructor()
         {
-            var factory = new Mock<IAuthenticationServiceFactory>().Object;
-            var application = new VstsApplication("id", "secret", "scope", new Uri("http://localhost/redirect"), factory);
-            Assert.IsNotNull(new LogOnCard(application, ChannelIds.Skype, "userId"));
-            Assert.IsNotNull(new LogOnCard(application, ChannelIds.Msteams, "userId"));
+            var target = new LogOnCard("appId", "appScope", new Uri("https://authorize.url"), ChannelIds.Skype, "userId");
+            target = new LogOnCard("appId", "appScope", new Uri("https://authorize.url"), ChannelIds.Msteams, "userId");
         }
     }
 }

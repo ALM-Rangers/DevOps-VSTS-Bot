@@ -103,23 +103,22 @@ namespace Vsar.TSBot
                 .As<IBotDataFactory>();
 
             builder
+                .RegisterType<AuthenticationService>()
+                .As<IAuthenticationService>();
+
+            builder
                 .RegisterType<VstsService>()
-                .AsImplementedInterfaces();
+                .As<IVstsService>();
 
             builder
-                .RegisterType<AuthenticationServiceFactory>()
-                .AsImplementedInterfaces();
+                .RegisterControllers(typeof(Bootstrap).Assembly)
+                .Except<AuthorizeController>();
 
             builder
-                .RegisterType<VstsApplicationRegistry>()
-                .WithParameter("applicationId", Config.ApplicationId)
-                .WithParameter("applicationSecret", Config.ApplicationSecret)
-                .WithParameter("applicationScope", Config.ApplicationScope)
-                .WithParameter("redirectUri", Config.AuthorizeUrl)
-                .AsImplementedInterfaces();
-
-            builder
-                .RegisterControllers(typeof(Bootstrap).Assembly);
+                .RegisterType<AuthorizeController>()
+                .WithParameter("appSecret", Config.ApplicationSecret)
+                .WithParameter("authorizeUrl", Config.AuthorizeUrl)
+                .AsSelf();
 
             builder
                 .RegisterApiControllers(typeof(Bootstrap).Assembly);
@@ -127,7 +126,15 @@ namespace Vsar.TSBot
             builder
                 .RegisterAssemblyTypes(typeof(Bootstrap).Assembly)
                 .Where(t => t.GetInterfaces().Any(i => i.IsAssignableFrom(typeof(IDialog<object>))))
+                .Except<ConnectDialog>()
                 .Except<RootDialog>()
+                .AsImplementedInterfaces();
+
+            builder
+                .RegisterType<ConnectDialog>()
+                .WithParameter("appId", Config.ApplicationId)
+                .WithParameter("appScope", Config.ApplicationScope)
+                .WithParameter("authorizeUrl", Config.AuthorizeUrl)
                 .AsImplementedInterfaces();
 
             builder

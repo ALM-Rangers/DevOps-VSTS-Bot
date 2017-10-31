@@ -32,14 +32,28 @@ namespace Vsar.TSBot.Dialogs
         private const string CommandMatchConnect = @"connect *(\S*) *(\S*)";
         private const string CommandMatchPin = @"(\d{4})";
 
+        private readonly string appId;
+        private readonly string appScope;
+        private readonly string authorizeUrl;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectDialog"/> class.
         /// </summary>
-        /// <param name="vstsService">VSTS accessor.</param>
-        /// <param name="vstsApplicationRegistry">VSTS Application registry accessor.</param>
-        public ConnectDialog(IVstsService vstsService, IVstsApplicationRegistry vstsApplicationRegistry)
-            : base(vstsService, vstsApplicationRegistry)
+        /// <param name="appId">The registered application id.</param>
+        /// <param name="appScope">The registered application scope.</param>
+        /// <param name="authorizeUrl">The URL to return to after authentication.</param>
+        /// <param name="authenticationService">The authenticationService.</param>
+        /// <param name="vstsService">The <see cref="IVstsService"/>.</param>
+        public ConnectDialog(string appId, string appScope, Uri authorizeUrl, IAuthenticationService authenticationService, IVstsService vstsService)
+            : base(authenticationService, vstsService)
         {
+            appId.ThrowIfNullOrWhiteSpace(nameof(appId));
+            appScope.ThrowIfNullOrWhiteSpace(nameof(appScope));
+            authorizeUrl.ThrowIfNull(nameof(authorizeUrl));
+
+            this.appId = appId;
+            this.appScope = appScope;
+            this.authorizeUrl = authorizeUrl.ToString();
         }
 
         /// <summary>
@@ -122,9 +136,7 @@ namespace Vsar.TSBot.Dialogs
             this.Pin = GeneratePin();
             context.UserData.SetPin(this.Pin);
 
-            var vstsApplication = this.VstsApplicationRegistry.GetVstsApplicationRegistration(result.From.Id);
-
-            var card = new LogOnCard(vstsApplication, result.ChannelId, result.From.Id);
+            var card = new LogOnCard(this.appId, this.appScope, new Uri(this.authorizeUrl), result.ChannelId, result.From.Id);
 
             var reply = context.MakeMessage();
             reply.Attachments.Add(card);
@@ -287,7 +299,7 @@ namespace Vsar.TSBot.Dialogs
             context.ThrowIfNull(nameof(context));
             result.ThrowIfNull(nameof(result));
 
-            this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(result));
+            this.Profile = context.UserData.GetProfile(this.AuthenticationService);
             this.Profiles = context.UserData.GetProfiles();
 
             var reply = context.MakeMessage();

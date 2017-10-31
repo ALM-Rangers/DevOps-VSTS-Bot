@@ -102,7 +102,7 @@ namespace Vsar.TSBot.AcceptanceTests
         [Given(@"Is authorized")]
         public void GivenIsAuthorized()
         {
-            var authService = new AuthenticationService(Config.AppSecret, Config.AuthorizeUrl);
+            var authService = new AuthenticationService();
             var vstsService = new VstsService();
 
             var botData = Config.GetBotData();
@@ -118,7 +118,13 @@ namespace Vsar.TSBot.AcceptanceTests
 
             Config.RefreshTokenReinitialize = false;
 
-            var token = authService.GetToken(new OAuthToken { RefreshToken = refreshToken }).Result;
+            var oldToken = new OAuthToken
+            {
+                AppSecret = Config.AppSecret,
+                AuthorizeUrl = Config.AuthorizeUrl,
+                RefreshToken = refreshToken
+            };
+            var token = authService.GetToken(oldToken).Result;
             var p = vstsService.GetProfile(token).Result;
             var accounts = vstsService.GetAccounts(token, p.Id).Result;
             profile = new VstsProfile
