@@ -11,10 +11,8 @@ namespace Vsar.TSBot.AcceptanceTests
     using System;
     using System.Collections.Generic;
     using System.Threading;
-    using System.Threading.Tasks;
     using FluentAssertions;
     using Microsoft.Bot.Builder.Dialogs;
-    using Microsoft.Bot.Connector;
     using Microsoft.Bot.Connector.DirectLine;
     using TechTalk.SpecFlow;
     using Activity = Microsoft.Bot.Connector.DirectLine.Activity;
@@ -43,11 +41,10 @@ namespace Vsar.TSBot.AcceptanceTests
             var botData = Config.GetBotData();
             botData.LoadAsync(CancellationToken.None).Wait();
 
-            var account = botData.UserData.GetValue<string>("Account");
-            var project = botData.UserData.GetValue<string>("TeamProject");
+            botData.UserData.TryGetValue("userData", out UserData data);
 
-            account.ToUpperInvariant().Should().Be(Config.Account.ToUpperInvariant());
-            project.ToUpperInvariant().Should().Be(teamProject.Value.ToUpperInvariant());
+            data.Account.ToUpperInvariant().Should().Be(Config.Account.ToUpperInvariant());
+            data.TeamProject.ToUpperInvariant().Should().Be(teamProject.Value.ToUpperInvariant());
         }
     }
 }

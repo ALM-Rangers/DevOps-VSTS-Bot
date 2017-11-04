@@ -102,7 +102,10 @@ namespace Vsar.TSBot.Dialogs
 
             if (dialog == null)
             {
-                var data = context.UserData.GetValue<UserData>("userData");
+                if (!context.UserData.TryGetValue("userData", out UserData data))
+                {
+                    data = new UserData();
+                }
 
                 var reply = context.MakeMessage();
 

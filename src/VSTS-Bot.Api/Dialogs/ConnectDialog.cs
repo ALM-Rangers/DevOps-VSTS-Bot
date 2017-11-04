@@ -132,7 +132,10 @@ namespace Vsar.TSBot.Dialogs
             context.ThrowIfNull(nameof(context));
             result.ThrowIfNull(nameof(result));
 
-            var data = context.UserData.GetValue<UserData>("userData");
+            if (!context.UserData.TryGetValue("userData", out UserData data))
+            {
+                data = new UserData();
+            }
 
             // Set pin.
             this.Pin = GeneratePin();

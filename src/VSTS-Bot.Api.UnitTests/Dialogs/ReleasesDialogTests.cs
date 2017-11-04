@@ -79,6 +79,14 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
+            var profile = this.Fixture.CreateProfile();
+            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
+            data.Profiles.Add(profile);
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("userData", out data))
+                .Returns(true);
+
             var target = new ReleasesDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
             await target.ReleasesAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -91,24 +99,18 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "releases";
 
-            var account = "anaccount";
             var profile = this.Fixture.CreateProfile();
-            var teamProject = "anteamproject";
+            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
+            data.Profiles.Add(profile);
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("userData", out data))
+                .Returns(true);
 
             var releaseDefinitions = new List<ReleaseDefinition>();
 
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Account", out account))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Profile", out profile))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
-                .Returns(true);
-
             this.Fixture.VstsService
-                .Setup(s => s.GetReleaseDefinitionsAsync(account, teamProject, profile.Token))
+                .Setup(s => s.GetReleaseDefinitionsAsync(data.Account, data.TeamProject, profile.Token))
                 .ReturnsAsync(() => releaseDefinitions);
 
             var target = new ReleasesDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
@@ -127,24 +129,18 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "releases";
 
-            var account = "anaccount";
             var profile = this.Fixture.CreateProfile();
-            var teamProject = "anteamproject";
+            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
+            data.Profiles.Add(profile);
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("userData", out data))
+                .Returns(true);
 
             var releaseDefinitions = new List<ReleaseDefinition> { new ReleaseDefinition { Id = 1 } };
 
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Account", out account))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Profile", out profile))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
-                .Returns(true);
-
             this.Fixture.VstsService
-                .Setup(s => s.GetReleaseDefinitionsAsync(account, teamProject, profile.Token))
+                .Setup(s => s.GetReleaseDefinitionsAsync(data.Account, data.TeamProject, profile.Token))
                 .ReturnsAsync(() => releaseDefinitions);
 
             var target = new ReleasesDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);

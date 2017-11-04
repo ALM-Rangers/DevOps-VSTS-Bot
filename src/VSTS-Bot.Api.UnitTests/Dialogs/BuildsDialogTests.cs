@@ -78,10 +78,6 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Builds_No_Text()
         {
-            var profile = this.Fixture.CreateProfile();
-            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
-            data.Profiles.Add(profile);
-
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 

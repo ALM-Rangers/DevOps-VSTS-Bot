@@ -107,6 +107,14 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "Hi";
 
+            var profile = this.Fixture.CreateProfile();
+            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
+            data.Profiles.Add(profile);
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("userData", out data))
+                .Returns(true);
+
             var container = new ContainerBuilder().Build();
 
             GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
