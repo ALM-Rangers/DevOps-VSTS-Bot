@@ -174,6 +174,7 @@ namespace Vsar.TSBot.Dialogs
 
                 this.Profile = data.ProfileNotValidated;
                 data.SelectProfile(this.Profile);
+                data.Pin = string.Empty;
 
                 context.UserData.SetValue("userData", data);
 

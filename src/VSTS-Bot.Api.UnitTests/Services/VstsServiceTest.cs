@@ -61,8 +61,7 @@ namespace Vsar.TSBot.UnitTests.Services
             {
                 Id = Guid.NewGuid(),
                 Token = this.token,
-                DisplayName = "me",
-                EmailAddress = "me@email.com"
+                DisplayName = "me"
             };
 
             var service = new VstsService();
@@ -201,8 +200,7 @@ namespace Vsar.TSBot.UnitTests.Services
             {
                 Id = Guid.NewGuid(),
                 Token = this.token,
-                DisplayName = "me",
-                EmailAddress = "me@email.com"
+                DisplayName = "me"
             };
             var service = new VstsService();
 

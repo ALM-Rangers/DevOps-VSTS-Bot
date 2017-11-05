@@ -427,9 +427,10 @@
     <Compile Include="Exceptions\UnknownCommandException.cs" />
     <Compile Include="Extensions\DependencyResolverExtensions.cs" />
     <Compile Include="Extensions\AttachmentCollectionExtensions.cs" />
+    <Compile Include="Extensions\EncryptionExtensions.cs" />
     <Compile Include="Extensions\GuardExtensions.cs" />
     <Compile Include="Model\Authorize.cs" />
-    <Compile Include="Model\Channel.cs" />
+    <Compile Include="Model\BotChannels.cs" />
     <Compile Include="Model\OAuthToken.cs" />
     <Compile Include="Model\UserData.cs" />
     <Compile Include="Model\Profile.cs" />
@@ -448,9 +449,9 @@
       <DependentUpon>Labels.resx</DependentUpon>
     </Compile>
     <Compile Include="Services\AuthenticationService.cs" />
-    <Compile Include="Services\BotDataFactory.cs" />
+    <Compile Include="Factories\BotDataFactory.cs" />
     <Compile Include="Services\IAuthenticationService.cs" />
-    <Compile Include="Services\IBotDataFactory.cs" />
+    <Compile Include="Factories\IBotDataFactory.cs" />
     <Compile Include="Services\IVstsService.cs" />
     <Compile Include="Services\VstsService.cs" />
     <Compile Include="WebApiApplication.asax.cs">

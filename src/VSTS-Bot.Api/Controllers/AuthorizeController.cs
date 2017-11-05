@@ -110,7 +110,6 @@ namespace Vsar.TSBot
             {
                 Accounts = accounts.Select(a => a.AccountName).ToList(),
                 DisplayName = profile.DisplayName,
-                EmailAddress = profile.EmailAddress,
                 Id = profile.Id,
                 Token = token
             };

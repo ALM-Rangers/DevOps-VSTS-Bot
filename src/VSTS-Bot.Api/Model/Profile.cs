@@ -16,10 +16,14 @@ namespace Vsar.TSBot
     /// <summary>
     /// Represents a Visual Studio Team Services VSTSProfile.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces", Justification = "Reviewed.")]
     [DataContract]
     [Serializable]
     public class Profile
     {
+        private string displayName;
+        private OAuthToken token;
+
         /// <summary>
         /// Gets or sets a list of account names.
         /// </summary>
@@ -30,14 +34,21 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets or sets the display name.
         /// </summary>
-        [DataMember]
-        public string DisplayName { get; set; }
+        public string DisplayName
+        {
+            get => this.displayName ?? (this.displayName = this.DisplayNameEncrypted.Decrypt<string>(this.Id.ToString()));
+            set
+            {
+                this.displayName = value;
+                this.DisplayNameEncrypted = value.Encrypt(this.Id.ToString());
+            }
+        }
 
         /// <summary>
-        /// Gets or sets the email address.
+        /// Gets or sets the encrypted display name.
         /// </summary>
-        [DataMember]
-        public string EmailAddress { get; set; }
+        [DataMember(Name = "DisplayName")]
+        public string DisplayNameEncrypted { get; set; }
 
         /// <summary>
         /// Gets or sets the id.
@@ -60,7 +71,20 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets or sets the Token.
         /// </summary>
-        [DataMember]
-        public OAuthToken Token { get; set; }
+        public OAuthToken Token
+        {
+            get => this.token ?? (this.token = this.TokenEncrypted.Decrypt<OAuthToken>(this.Id.ToString()));
+            set
+            {
+                this.token = value;
+                this.TokenEncrypted = value.Encrypt(this.Id.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the encrypted token.
+        /// </summary>
+        [DataMember(Name = "Token")]
+        public string TokenEncrypted { get; set; }
     }
 }

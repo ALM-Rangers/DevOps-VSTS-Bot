@@ -379,8 +379,8 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Handle_Account_Received()
         {
-            var profile1 = new Profile { Accounts = new List<string> { "Account1", "Account2" } };
-            var profile2 = new Profile { Accounts = new List<string> { "Account3", "Account4" } };
+            var profile1 = new Profile { Id = Guid.NewGuid(), Accounts = new List<string> { "Account1", "Account2" } };
+            var profile2 = new Profile { Id = Guid.NewGuid(), Accounts = new List<string> { "Account3", "Account4" }, IsSelected = true, IsValidated = true };
 
             var data = new UserData { Profiles = new List<Profile> { profile1, profile2 } };
 

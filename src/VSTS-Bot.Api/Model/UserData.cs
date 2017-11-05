@@ -50,6 +50,7 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets or sets a list of profiles.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Reviewed.")]
         [DataMember]
         public IList<Profile> Profiles { get; set; } = new List<Profile>();
 
