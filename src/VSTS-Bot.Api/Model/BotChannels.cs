@@ -1,5 +1,5 @@
 ﻿// ———————————————————————————————
-// <copyright file="Channel.cs">
+// <copyright file="BotChannels.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
@@ -14,7 +14,7 @@ namespace Vsar.TSBot
     /// Represents a channel.
     /// </summary>
     [Flags]
-    public enum Channel
+    public enum BotChannels
     {
         /// <summary>
         /// Skype channel.

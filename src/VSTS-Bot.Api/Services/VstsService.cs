@@ -14,6 +14,7 @@ namespace Vsar.TSBot
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Web;
     using Microsoft.TeamFoundation.Build.WebApi;
     using Microsoft.TeamFoundation.Core.WebApi;
     using Microsoft.VisualStudio.Services.Account;
@@ -36,7 +37,7 @@ namespace Vsar.TSBot
         private readonly Uri vstsAppUrl = new Uri("https://app.vssps.visualstudio.com");
 
         /// <inheritdoc />
-        public async Task ChangeApprovalStatus(string account, string teamProject, VstsProfile profile, int approvalId, ApprovalStatus status, string comments)
+        public async Task ChangeApprovalStatus(string account, string teamProject, Profile profile, int approvalId, ApprovalStatus status, string comments)
         {
             account.ThrowIfNullOrWhiteSpace(nameof(account));
             teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
@@ -127,7 +128,7 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc/>
-        public async Task<IList<ReleaseApproval>> GetApprovals(string account, string teamProject, VstsProfile profile)
+        public async Task<IList<ReleaseApproval>> GetApprovals(string account, string teamProject, Profile profile)
         {
             account.ThrowIfNullOrWhiteSpace(nameof(account));
             teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
@@ -167,7 +168,7 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc/>
-        public async Task<Profile> GetProfile(OAuthToken token)
+        public async Task<Microsoft.VisualStudio.Services.Profile.Profile> GetProfile(OAuthToken token)
         {
             token.ThrowIfNull(nameof(token));
 
@@ -245,7 +246,7 @@ namespace Vsar.TSBot
         {
             var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
 
-            var uri = !string.IsNullOrWhiteSpace(account) ? new Uri(string.Format(CultureInfo.InvariantCulture, VstsUrl, account)) : this.vstsAppUrl;
+            var uri = !string.IsNullOrWhiteSpace(account) ? new Uri(string.Format(CultureInfo.InvariantCulture, VstsUrl, HttpUtility.UrlEncode(account))) : this.vstsAppUrl;
 
             return await new VssConnection(uri, credentials).GetClientAsync<T>();
         }

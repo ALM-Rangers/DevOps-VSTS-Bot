@@ -107,6 +107,14 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "Hi";
 
+            var profile = this.Fixture.CreateProfile();
+            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
+            data.Profiles.Add(profile);
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("userData", out data))
+                .Returns(true);
+
             var container = new ContainerBuilder().Build();
 
             GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
@@ -125,9 +133,9 @@ namespace Vsar.TSBot.UnitTests
         public async Task Forward_Command()
         {
             var toBot = this.Fixture.CreateMessage();
-            toBot.Text = "connect";
+            toBot.Text = "builds";
 
-            var dialog = new ConnectDialog(new Mock<IVstsService>().Object, new Mock<IVstsApplicationRegistry>().Object);
+            var dialog = new BuildsDialog(new Mock<IAuthenticationService>().Object, new Mock<IVstsService>().Object);
 
             var container = new ContainerBuilder();
             container
@@ -143,7 +151,6 @@ namespace Vsar.TSBot.UnitTests
 
             await target.HandleCommandAsync(this.Fixture.DialogContext.Object, toBot);
 
-            // TODO:
             this.Fixture.DialogContext
                 .Verify(c => c.Forward<object, IMessageActivity>(dialog, target.ResumeAfterChildDialog, toBot, CancellationToken.None));
         }
