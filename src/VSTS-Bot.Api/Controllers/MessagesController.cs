@@ -27,19 +27,16 @@ namespace Vsar.TSBot
     public class MessagesController : ApiController
     {
         private readonly IComponentContext container;
-        private readonly IDialogInvoker dialogInvoker;
         private readonly TelemetryClient telemetryClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagesController"/> class.
         /// </summary>
         /// <param name="container">A <see cref="IComponentContext"/>.</param>
-        /// <param name="dialogInvoker">A <see cref="IDialogInvoker"/>.</param>
         /// <param name="telemetryClient">A <see cref="TelemetryClient"/>.</param>
-        public MessagesController(IComponentContext container, IDialogInvoker dialogInvoker, TelemetryClient telemetryClient)
+        public MessagesController(IComponentContext container, TelemetryClient telemetryClient)
         {
             this.container = container;
-            this.dialogInvoker = dialogInvoker;
             this.telemetryClient = telemetryClient;
         }
 
@@ -68,11 +65,7 @@ namespace Vsar.TSBot
                     }
 
                     RootDialog Dialog() => this.container.Resolve<RootDialog>(new NamedParameter("eulaUri", new Uri($"{this.Request.RequestUri.GetLeftPart(UriPartial.Authority)}/Eula")));
-                    await this.dialogInvoker.SendAsync(activity, Dialog);
-                }
-                else
-                {
-                    await this.HandleSystemMessage(activity);
+                    await Conversation.SendAsync(activity, Dialog);
                 }
             }
             catch (Exception ex)
@@ -82,35 +75,6 @@ namespace Vsar.TSBot
             }
 
             return this.Request.CreateResponse(status);
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Reviewed.")]
-        private async Task HandleSystemMessage(Activity message)
-        {
-            if (string.Compare(message.Type, ActivityTypes.DeleteUserData, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-            }
-            else if (string.Compare(message.Type, ActivityTypes.ConversationUpdate, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                // Handle conversation state changes, like members being added and removed
-                // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
-                // Not available in all channels
-            }
-            else if (string.Compare(message.Type, ActivityTypes.ContactRelationUpdate, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                // Handle add/remove from contact lists
-                // Activity.From + Activity.Action represent what happened
-            }
-            else if (string.Compare(message.Type, ActivityTypes.Typing, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                // Handle knowing that the user is typing
-            }
-            else if (string.Compare(message.Type, ActivityTypes.Ping, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                // Handle ping message
-            }
-
-            await Task.CompletedTask;
         }
     }
 }

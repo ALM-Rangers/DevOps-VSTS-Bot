@@ -47,10 +47,6 @@ namespace Vsar.TSBot
         private static void Build(ContainerBuilder builder, bool isDebugging)
         {
             builder
-                .RegisterType<DialogInvoker>()
-                .As<IDialogInvoker>();
-
-            builder
                 .RegisterModule<AttributedMetadataModule>();
 
             // Using a Telemetry Client per request, so user context, etc is unique per request.

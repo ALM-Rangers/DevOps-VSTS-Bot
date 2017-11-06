@@ -88,6 +88,9 @@
     <Reference Include="Microsoft.Bot.Builder.Autofac, Version=3.10.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bot.Builder.3.11.0\lib\net46\Microsoft.Bot.Builder.Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Bot.Builder.Autofac.3.10.5.0.Fakes">
+      <HintPath>FakesAssemblies\Microsoft.Bot.Builder.Autofac.3.10.5.0.Fakes.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bot.Connector, Version=3.11.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bot.Connector.3.11.1\lib\net45\Microsoft.Bot.Connector.dll</HintPath>
     </Reference>
@@ -276,8 +279,10 @@
     <Compile Include="Dialogs\ConnectDialogTests.cs" />
     <Compile Include="Dialogs\ReleasesDialogTests.cs" />
     <Compile Include="Extensions\AttachmentCollectionExtensionsTests.cs" />
+    <Compile Include="Extensions\DependencyResolverExtensionsTests.cs" />
     <Compile Include="Extensions\EncryptionExtensionsTests.cs" />
     <Compile Include="Extensions\GuardExtensionsTests.cs" />
+    <Compile Include="Factories\BotFactoryTests.cs" />
     <Compile Include="Fixtures\AwaitableFromItem.cs" />
     <Compile Include="Fixtures\DialogFixture.cs" />
     <Compile Include="Properties\GlobalSuppressions.cs" />
@@ -295,6 +300,7 @@
     <Fakes Include="Fakes\Microsoft.TeamFoundation.Core.WebApi.fakes" />
     <Fakes Include="Fakes\Microsoft.TeamFoundation.Build2.WebApi.fakes" />
     <Fakes Include="Fakes\Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.fakes" />
+    <Fakes Include="Fakes\Microsoft.Bot.Builder.Autofac.fakes" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
