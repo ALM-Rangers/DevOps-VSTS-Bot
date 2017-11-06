@@ -22,6 +22,7 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.VisualStudio.Services.Profile;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using Profile = TSBot.Profile;
 
     /// <summary>
     /// Tests for <see cref="AuthorizeController"/> class
@@ -119,14 +120,14 @@ namespace Vsar.TSBot.UnitTests
             var vstsServiceMock = new Mock<IVstsService>();
 
             var token = new OAuthToken();
-            var profile = new Profile();
+            var profile = new Microsoft.VisualStudio.Services.Profile.Profile { DisplayName = "UniqueName" };
             var accounts = new List<Account> { new Account(Guid.NewGuid()) { AccountName = "Account1" } };
 
             var target = new AuthorizeController("appId", new Uri("http://authorize.url"), authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object);
 
             const string code = "1234567890";
             const string state = "channel1;user1";
-            string pin = "12345";
+            var data = new UserData { Pin = "12345" };
 
             authenticationServiceMock
                 .Setup(a => a.GetToken("appId", new Uri("http://authorize.url"), code))
@@ -151,15 +152,17 @@ namespace Vsar.TSBot.UnitTests
                 .Returns(botDataBag.Object);
 
             botDataBag
-                .Setup(bd => bd.TryGetValue("Pin", out pin))
+                .Setup(bd => bd.TryGetValue("userData", out data))
                 .Returns(true);
 
             var result = await target.Index(code, string.Empty, state) as ViewResult;
 
-            botDataBag.Verify(bd => bd.SetValue("NotValidatedByPinProfile", It.IsAny<VstsProfile>()));
+            botDataBag
+                .Verify(bd => bd.SetValue("userData", data));
 
             result.Should().NotBeNull();
-            ((Authorize)result.Model).Pin.Should().Be(pin);
+            ((Authorize)result.Model).Pin.Should().Be(data.Pin);
+            data.Profiles.Should().Contain(p => string.Equals(p.DisplayName, profile.DisplayName, StringComparison.Ordinal));
         }
     }
 }

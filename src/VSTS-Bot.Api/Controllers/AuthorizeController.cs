@@ -61,7 +61,6 @@ namespace Vsar.TSBot
         public async Task<ActionResult> Index(string code, string error, string state)
         {
             var stateArray = (state ?? string.Empty).Split(';');
-            var pin = string.Empty;
 
             try
             {
@@ -80,35 +79,37 @@ namespace Vsar.TSBot
 
                 // Get the security token.
                 var token = await this.authenticationService.GetToken(this.appSecret, this.authorizeUrl, code);
-                var profile = await this.vstsService.GetProfile(token);
-                var accounts = await this.vstsService.GetAccounts(token, profile.Id);
-                var vstsProfile = CreateVstsProfile(accounts, profile, token);
+                var vstsProfile = await this.vstsService.GetProfile(token);
+                var accounts = await this.vstsService.GetAccounts(token, vstsProfile.Id);
+                var profile = CreateProfile(accounts, vstsProfile, token);
 
                 var address = new Address(string.Empty, channelId, userId, string.Empty, string.Empty);
                 var botData = this.botDataFactory.Create(address);
                 await botData.LoadAsync(CancellationToken.None);
 
-                pin = botData.UserData.GetPin();
+                var data = botData.UserData.GetValue<UserData>("userData");
+                data.Profiles.Add(profile);
 
-                botData.UserData.SetNotValidatedByPinProfile(vstsProfile);
+                botData.UserData.SetValue("userData", data);
 
                 await botData.FlushAsync(CancellationToken.None);
+
+                return this.View(new Authorize(data.Pin));
             }
             catch (Exception ex)
             {
                 this.ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            return this.View(new Authorize(pin));
+            return this.View(new Authorize(string.Empty));
         }
 
-        private static VstsProfile CreateVstsProfile(IEnumerable<Account> accounts, Microsoft.VisualStudio.Services.Profile.Profile profile, OAuthToken token)
+        private static Profile CreateProfile(IEnumerable<Account> accounts, Microsoft.VisualStudio.Services.Profile.Profile profile, OAuthToken token)
         {
-            return new VstsProfile
+            return new Profile
             {
                 Accounts = accounts.Select(a => a.AccountName).ToList(),
                 DisplayName = profile.DisplayName,
-                EmailAddress = profile.EmailAddress,
                 Id = profile.Id,
                 Token = token
             };

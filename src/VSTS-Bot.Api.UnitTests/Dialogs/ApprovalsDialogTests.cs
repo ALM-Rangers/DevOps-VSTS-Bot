@@ -77,22 +77,18 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "approvals";
 
-            var account = "anaccount";
             var approvals = new List<ReleaseApproval>();
+
             var profile = this.Fixture.CreateProfile();
-            var teamProject = "anteamproject";
+            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
+            data.Profiles.Add(profile);
 
             this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Account", out account))
+                .Setup(ud => ud.TryGetValue("userData", out data))
                 .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Profile", out profile))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
-                .Returns(true);
+
             this.Fixture.VstsService
-                .Setup(s => s.GetApprovals(account, teamProject, profile))
+                .Setup(s => s.GetApprovals(data.Account, data.TeamProject, profile))
                 .ReturnsAsync(approvals);
 
             var target = new ApprovalsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
@@ -111,7 +107,10 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "approvals";
 
-            var account = "anaccount";
+            var profile = this.Fixture.CreateProfile();
+            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
+            data.Profiles.Add(profile);
+
             var approval = new ReleaseApproval
             {
                 Id = 1,
@@ -120,20 +119,12 @@ namespace Vsar.TSBot.UnitTests
                 ReleaseEnvironmentReference = new ReleaseEnvironmentShallowReference { Name = "Development" }
             };
             var approvals = new List<ReleaseApproval> { approval };
-            var profile = this.Fixture.CreateProfile();
-            var teamProject = "anteamproject";
 
             this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Account", out account))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Profile", out profile))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
+                .Setup(ud => ud.TryGetValue("userData", out data))
                 .Returns(true);
             this.Fixture.VstsService
-                .Setup(s => s.GetApprovals(account, teamProject, profile))
+                .Setup(s => s.GetApprovals(data.Account, data.TeamProject, profile))
                 .ReturnsAsync(approvals);
 
             var target = new ApprovalsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);

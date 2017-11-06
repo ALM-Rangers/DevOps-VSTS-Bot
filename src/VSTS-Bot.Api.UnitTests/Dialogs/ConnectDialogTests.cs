@@ -118,8 +118,14 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
+            UserData data = null;
+
             var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("userData", out data))
+                .Returns(false);
 
             mocked
                 .Setup(m => m.LogOnAsync(this.Fixture.DialogContext.Object, toBot))
@@ -136,6 +142,12 @@ namespace Vsar.TSBot.UnitTests
         {
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "connect";
+
+            UserData data = null;
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("userData", out data))
+                .Returns(false);
 
             var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
@@ -156,10 +168,8 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "connect";
 
-            var profile = new VstsProfile { Token = new OAuthToken { ExpiresIn = 3600 } };
-            var profiles = new List<VstsProfile> { profile } as IList<VstsProfile>;
-
-            Assert.IsNotNull(profiles);
+            var data = new UserData();
+            data.Profiles.Add(this.Fixture.CreateProfile());
 
             var builder = new ContainerBuilder();
             var container = builder.Build();
@@ -169,10 +179,7 @@ namespace Vsar.TSBot.UnitTests
             var target = mocked.Object;
 
             this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Profile", out profile))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Profiles", out profiles))
+                .Setup(ud => ud.TryGetValue("userData", out data))
                 .Returns(true);
 
             mocked
@@ -191,10 +198,8 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "connect account";
 
-            var profile = new VstsProfile { Token = new OAuthToken { ExpiresIn = 3600 } };
-            var profiles = new List<VstsProfile> { profile } as IList<VstsProfile>;
-
-            Assert.IsNotNull(profiles);
+            var data = new UserData();
+            data.Profiles.Add(this.Fixture.CreateProfile());
 
             var builder = new ContainerBuilder();
 
@@ -205,10 +210,7 @@ namespace Vsar.TSBot.UnitTests
             var target = mocked.Object;
 
             this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Profile", out profile))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Profiles", out profiles))
+                .Setup(ud => ud.TryGetValue("userData", out data))
                 .Returns(true);
 
             mocked
@@ -227,19 +229,14 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "connect account teamproject";
 
-            var profile = new VstsProfile { Token = new OAuthToken { ExpiresIn = 3600 } };
-            IList<VstsProfile> profiles = new List<VstsProfile> { profile };
-
-            Assert.IsNotNull(profiles);
+            var data = new UserData();
+            data.Profiles.Add(this.Fixture.CreateProfile());
 
             var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Profile", out profile))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Profiles", out profiles))
+                .Setup(ud => ud.TryGetValue("userData", out data))
                 .Returns(true);
 
             await target.ConnectAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
@@ -259,13 +256,21 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "connect account teamproject";
 
+            var data = new UserData();
+
             var target = new ConnectDialog("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("userData", out data))
+                .Returns(true);
 
             await target.LogOnAsync(this.Fixture.DialogContext.Object, toBot);
 
-            this.Fixture.UserData.Verify(ud => ud.SetValue("Pin", It.IsRegex(@"\d{5}")));
+            this.Fixture.UserData.Verify(ud => ud.SetValue("userData", data));
             this.Fixture.DialogContext.Verify(c => c.PostAsync(It.Is<IMessageActivity>(a => a.Attachments.First().Content is LogOnCard), CancellationToken.None));
             this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.PinReceivedAsync));
+
+            data.Pin.Should().MatchRegex(@"\d{5}");
         }
 
         [TestMethod]
@@ -274,23 +279,25 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "12345";
 
-            var profile = new VstsProfile();
-            var profiles = new List<VstsProfile>() as IList<VstsProfile>;
+            var data = new UserData();
+            data.Profiles.Add(this.Fixture.CreateProfile());
+            data.Profile.IsValidated = false;
 
             var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
             target.Pin = "12345";
 
-            this.Fixture.UserData.Setup(ud => ud.TryGetValue("NotValidatedByPinProfile", out profile)).Returns(true);
-            this.Fixture.UserData.Setup(ud => ud.TryGetValue("Profiles", out profiles)).Returns(true);
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("userData", out data))
+                .Returns(true);
 
             mocked.Setup(m => m.ContinueProcess(this.Fixture.DialogContext.Object, toBot)).Returns(Task.CompletedTask).Verifiable();
 
             await target.PinReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
-            target.Profile.Should().Be(profile);
-            profiles.Should().Contain(profile);
-            this.Fixture.UserData.Verify(ud => ud.SetValue("Profile", profile));
+            target.Profile.Should().Be(data.Profile);
+            data.Profiles.Should().Contain(data.Profile);
+            this.Fixture.UserData.Verify(ud => ud.SetValue("userData", data));
             mocked.Verify();
         }
 
@@ -331,9 +338,9 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Select_Account()
         {
-            var profile1 = new VstsProfile { Accounts = new List<string> { "Account1", "Account2" } };
-            var profile2 = new VstsProfile { Accounts = new List<string> { "Account3", "Account4" } };
-            var profiles = new List<VstsProfile> { profile1, profile2 };
+            var profile1 = new Profile { Accounts = new List<string> { "Account1", "Account2" } };
+            var profile2 = new Profile { Accounts = new List<string> { "Account3", "Account4" } };
+            var profiles = new List<Profile> { profile1, profile2 };
 
             var toBot = this.Fixture.CreateMessage();
 
@@ -351,9 +358,9 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Handle_Unknown_Account_Received()
         {
-            var profile1 = new VstsProfile { Accounts = new List<string> { "Account1", "Account2" } };
-            var profile2 = new VstsProfile { Accounts = new List<string> { "Account3", "Account4" } };
-            var profiles = new List<VstsProfile> { profile1, profile2 };
+            var profile1 = new Profile { Accounts = new List<string> { "Account1", "Account2" } };
+            var profile2 = new Profile { Accounts = new List<string> { "Account3", "Account4" } };
+            var profiles = new List<Profile> { profile1, profile2 };
 
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "UnknownAccount";
@@ -372,32 +379,38 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Handle_Account_Received()
         {
-            var profile1 = new VstsProfile { Accounts = new List<string> { "Account1", "Account2" } };
-            var profile2 = new VstsProfile { Accounts = new List<string> { "Account3", "Account4" } };
-            var profiles = new List<VstsProfile> { profile1, profile2 };
+            var profile1 = new Profile { Id = Guid.NewGuid(), Accounts = new List<string> { "Account1", "Account2" } };
+            var profile2 = new Profile { Id = Guid.NewGuid(), Accounts = new List<string> { "Account3", "Account4" }, IsSelected = true, IsValidated = true };
+
+            var data = new UserData { Profiles = new List<Profile> { profile1, profile2 } };
 
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "Account3";
 
             var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
-            target.Profiles = profiles;
+            target.Profiles = data.Profiles;
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("userData", out data))
+                .Returns(true);
 
             mocked.Setup(m => m.ContinueProcess(this.Fixture.DialogContext.Object, toBot)).Returns(Task.CompletedTask).Verifiable();
 
             await target.AccountReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
-            this.Fixture.UserData.Verify(ud => ud.SetValue("Account", "Account3"));
-            this.Fixture.UserData.Verify(ud => ud.SetValue("Profile", profile2));
-
+            this.Fixture.UserData.Verify(ud => ud.SetValue("userData", data));
             mocked.Verify();
+
+            data.Account.Should().Be("Account3");
+            data.Profile.Should().Be(profile2);
         }
 
         [TestMethod]
         public async Task Select_Project()
         {
             var account = "Account1";
-            var profile = new VstsProfile { Accounts = new List<string> { account }, Token = new OAuthToken() };
+            var profile = new Profile { Accounts = new List<string> { account }, Token = new OAuthToken() };
             var projects = new List<TeamProjectReference> { new TeamProjectReference { Name = "Project1" } };
 
             var toBot = this.Fixture.CreateMessage();
@@ -424,16 +437,24 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "Project1";
 
+            var data = new UserData();
+
             var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
             target.TeamProjects = new List<string> { "Project1" };
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("userData", out data))
+                .Returns(true);
 
             mocked.Setup(m => m.ContinueProcess(this.Fixture.DialogContext.Object, toBot)).Returns(Task.CompletedTask).Verifiable();
 
             await target.ProjectReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
-            this.Fixture.UserData.Verify(ud => ud.SetValue("TeamProject", "Project1"));
+            this.Fixture.UserData.Verify(ud => ud.SetValue("userData", data));
             mocked.Verify();
+
+            data.TeamProject.Should().Be("Project1");
         }
     }
 }

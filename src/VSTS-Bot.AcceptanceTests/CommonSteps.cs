@@ -37,11 +37,12 @@ namespace Vsar.TSBot.AcceptanceTests
             botData.LoadAsync(CancellationToken.None).Wait();
 
             // Keep the profile for the refresh token.
-            botData.UserData.TryGetValue<VstsProfile>("Profile", out var profile);
-
-            if (profile != null)
+            if (botData.UserData.TryGetValue("userData", out UserData data))
             {
-                botData.UserData.SetValue("Profile", profile);
+                data.Account = string.Empty;
+                data.TeamProject = string.Empty;
+
+                botData.UserData.SetValue("userData", data);
             }
 
             botData.FlushAsync(CancellationToken.None).Wait();
@@ -108,12 +109,16 @@ namespace Vsar.TSBot.AcceptanceTests
             var botData = Config.GetBotData();
             botData.LoadAsync(CancellationToken.None).Wait();
 
-            botData.UserData.TryGetValue("Profile", out VstsProfile profile);
+            if (!botData.UserData.TryGetValue("userData", out UserData data))
+            {
+                data = new UserData();
+            }
+
             var refreshToken = Config.RefreshToken;
 
-            if (profile != null && !Config.RefreshTokenReinitialize)
+            if (data.Profile != null && !Config.RefreshTokenReinitialize)
             {
-                refreshToken = profile.Token.RefreshToken;
+                refreshToken = data.Profile.Token.RefreshToken;
             }
 
             Config.RefreshTokenReinitialize = false;
@@ -127,17 +132,18 @@ namespace Vsar.TSBot.AcceptanceTests
             var token = authService.GetToken(oldToken).Result;
             var p = vstsService.GetProfile(token).Result;
             var accounts = vstsService.GetAccounts(token, p.Id).Result;
-            profile = new VstsProfile
+            var profile = new Profile
             {
                 Accounts = accounts.Select(a => a.AccountName).ToList(),
                 Id = p.Id,
                 DisplayName = p.DisplayName,
-                EmailAddress = p.EmailAddress,
                 Token = token
             };
 
-            botData.UserData.SetValue("Profile", profile);
-            botData.UserData.SetValue("Profiles", new List<VstsProfile> { profile });
+            data.Profiles.Clear();
+            data.SelectProfile(profile);
+
+            botData.UserData.SetValue("userData", data);
 
             botData.FlushAsync(CancellationToken.None).Wait();
 
@@ -151,8 +157,15 @@ namespace Vsar.TSBot.AcceptanceTests
             var botData = Config.GetBotData();
             botData.LoadAsync(CancellationToken.None).Wait();
 
-            botData.UserData.SetValue("Account", Config.Account);
-            botData.UserData.SetValue("TeamProject", teamProject.Value);
+            if (!botData.UserData.TryGetValue("userData", out UserData data))
+            {
+                data = new UserData();
+            }
+
+            data.Account = Config.Account;
+            data.TeamProject = teamProject.Value;
+
+            botData.UserData.SetValue("userData", data);
 
             botData.FlushAsync(CancellationToken.None);
         }

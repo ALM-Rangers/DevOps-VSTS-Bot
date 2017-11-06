@@ -69,9 +69,9 @@ namespace Vsar.TSBot.AcceptanceTests
 
         public static string MicrosoftApplicationPassword => TestContext.Properties["MicrosoftApplicationPassword"].ToString();
 
-        public static VstsProfile Profile
+        public static Profile Profile
         {
-            get => (VstsProfile)ScenarioContext.Current["Profile"];
+            get => (Profile)ScenarioContext.Current["Profile"];
             set => ScenarioContext.Current["Profile"] = value;
         }
 

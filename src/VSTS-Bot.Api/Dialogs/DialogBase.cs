@@ -12,7 +12,9 @@ namespace Vsar.TSBot.Dialogs
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.Serialization;
+    using System.Threading.Tasks;
     using System.Web.Http;
+    using Microsoft.Bot.Builder.Dialogs;
 
     /// <summary>
     /// Implements basic holding of <see cref="IVstsService"/> and <see cref="IAuthenticationService"/>.
@@ -46,6 +48,32 @@ namespace Vsar.TSBot.Dialogs
         /// Gets <see cref="IVstsService"/>
         /// </summary>
         protected IVstsService VstsService => this.vstsService;
+
+        /// <summary>
+        /// Validates the OAuthToken and refresh it if necessary.
+        /// </summary>
+        /// <param name="dataBag">The data bag.</param>
+        /// <returns>A validated profile.</returns>
+        protected async Task<Profile> GetValidatedProfile(IBotDataBag dataBag)
+        {
+            if (!dataBag.TryGetValue("userData", out UserData data))
+            {
+                return null;
+            }
+
+            var profile = data.Profile;
+
+            if (profile != null && profile.Token.ExpiresOn.AddMinutes(-5) <= DateTime.UtcNow)
+            {
+                // Replace the current OAuth token.
+                profile.Token = await this.authenticationService.GetToken(profile.Token);
+
+                // Save it.
+                dataBag.SetValue("userData", data);
+            }
+
+            return profile;
+        }
 
         [ExcludeFromCodeCoverage]
         [OnSerializing]

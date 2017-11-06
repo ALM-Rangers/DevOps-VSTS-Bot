@@ -270,7 +270,7 @@
     <Compile Include="Dialogs\ConnectDialogTests.cs" />
     <Compile Include="Dialogs\ReleasesDialogTests.cs" />
     <Compile Include="Extensions\AttachmentCollectionExtensionsTests.cs" />
-    <Compile Include="Extensions\BotDataBagExtensionsTests.cs" />
+    <Compile Include="Extensions\EncryptionExtensionsTests.cs" />
     <Compile Include="Extensions\GuardExtensionsTests.cs" />
     <Compile Include="Fixtures\AwaitableFromItem.cs" />
     <Compile Include="Fixtures\DialogFixture.cs" />
