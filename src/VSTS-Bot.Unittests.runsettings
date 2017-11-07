@@ -12,7 +12,7 @@
                 <ModulePath>.*\.exe$</ModulePath>  
               </Include>  
               <Exclude>
-                <ModulePath>Moq.dll</ModulePath>
+                <ModulePath>.*moq\.dll$</ModulePath>
                 <ModulePath>.*Fluent.*</ModulePath>
                 <ModulePath>.*UnitTests\.dll$</ModulePath>  
               </Exclude>  
