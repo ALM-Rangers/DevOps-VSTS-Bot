@@ -22,6 +22,7 @@ namespace Vsar.TSBot.UnitTests
     using Dialogs;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Builder.Internals.Fibers;
     using Microsoft.Bot.Connector;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
@@ -107,6 +108,14 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "Hi";
 
+            var profile = this.Fixture.CreateProfile();
+            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
+            data.Profiles.Add(profile);
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("userData", out data))
+                .Returns(true);
+
             var container = new ContainerBuilder().Build();
 
             GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(container));
@@ -125,9 +134,9 @@ namespace Vsar.TSBot.UnitTests
         public async Task Forward_Command()
         {
             var toBot = this.Fixture.CreateMessage();
-            toBot.Text = "connect";
+            toBot.Text = "builds";
 
-            var dialog = new ConnectDialog(new Mock<IVstsService>().Object, new Mock<IVstsApplicationRegistry>().Object);
+            var dialog = new BuildsDialog(new Mock<IAuthenticationService>().Object, new Mock<IVstsService>().Object);
 
             var container = new ContainerBuilder();
             container
@@ -143,9 +152,35 @@ namespace Vsar.TSBot.UnitTests
 
             await target.HandleCommandAsync(this.Fixture.DialogContext.Object, toBot);
 
-            // TODO:
             this.Fixture.DialogContext
                 .Verify(c => c.Forward<object, IMessageActivity>(dialog, target.ResumeAfterChildDialog, toBot, CancellationToken.None));
+        }
+
+        [TestMethod]
+        public async Task InGroup_Command()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "builds";
+            toBot.Conversation.IsGroup = true;
+
+            var dialog = new BuildsDialog(new Mock<IAuthenticationService>().Object, new Mock<IVstsService>().Object);
+
+            var container = new ContainerBuilder();
+            container
+                .RegisterModule<AttributedMetadataModule>();
+            container
+                .Register((c, x) => dialog)
+                .As<IDialog<object>>();
+            var build = container.Build();
+
+            GlobalConfiguration.Configure(config => config.DependencyResolver = new AutofacWebApiDependencyResolver(build));
+
+            var target = this.Fixture.RootDialog;
+
+            await target.HandleCommandAsync(this.Fixture.DialogContext.Object, toBot);
+
+            this.Fixture.DialogContext
+                .Verify(c => c.Wait<IMessageActivity>(target.HandleActivityAsync));
         }
 
         [TestMethod]
@@ -158,6 +193,70 @@ namespace Vsar.TSBot.UnitTests
             await target.Object.ResumeAfterChildDialog(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(fromBot));
 
             target.Verify(d => d.HandleCommandAsync(this.Fixture.DialogContext.Object, It.IsAny<IMessageActivity>()), Times.Never);
+        }
+
+        [TestMethod]
+        public async Task Resume_After_Child_UnknownCommandException()
+        {
+            var toBot = this.Fixture.CreateMessage();
+
+            var awaitable = new Mock<IAwaitable<object>>();
+            var awaiter = new Mock<IAwaiter<object>>();
+            awaitable
+                .Setup(a => a.GetAwaiter())
+                .Returns(awaiter.Object);
+            awaiter
+                .Setup(a => a.IsCompleted)
+                .Returns(true);
+            awaiter
+                .Setup(a => a.GetResult())
+                .Throws<UnknownCommandException>();
+
+            this.Fixture.DialogContext
+                .Setup(c => c.Activity)
+                .Returns(toBot);
+
+            var target = new Mock<RootDialog>(new Uri("http://eula.com"), this.Fixture.TelemetryClient) { CallBase = true };
+
+            target
+                .Setup(d => d.HandleCommandAsync(It.IsAny<IDialogContext>(), It.IsAny<IMessageActivity>()))
+                .Returns(Task.CompletedTask);
+
+            await target.Object.ResumeAfterChildDialog(this.Fixture.DialogContext.Object, awaitable.Object);
+
+            target.Verify();
+        }
+
+        [TestMethod]
+        public async Task Resume_After_Child_Exception()
+        {
+            var toBot = this.Fixture.CreateMessage();
+
+            var awaitable = new Mock<IAwaitable<object>>();
+            var awaiter = new Mock<IAwaiter<object>>();
+            awaitable
+                .Setup(a => a.GetAwaiter())
+                .Returns(awaiter.Object);
+            awaiter
+                .Setup(a => a.IsCompleted)
+                .Returns(true);
+            awaiter
+                .Setup(a => a.GetResult())
+                .Throws<Exception>();
+
+            this.Fixture.DialogContext
+                .Setup(c => c.Activity)
+                .Returns(toBot);
+
+            this.Fixture.DialogContext
+                .Setup(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None))
+                .Returns(Task.CompletedTask);
+
+            var target = new Mock<RootDialog>(new Uri("http://eula.com"), this.Fixture.TelemetryClient) { CallBase = true };
+
+            await target.Object.ResumeAfterChildDialog(this.Fixture.DialogContext.Object, awaitable.Object);
+
+            this.Fixture.DialogContext.Verify();
         }
 
         [TestMethod]

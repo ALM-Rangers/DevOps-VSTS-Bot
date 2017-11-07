@@ -3,9 +3,9 @@
 
 Background: 
 	Given A user 'Test User'
+	And I started a conversation
 	And A clean state
 	And Is authorized
-	And I started a conversation
 
 @Acceptance
 Scenario: Connect to a account and team project.

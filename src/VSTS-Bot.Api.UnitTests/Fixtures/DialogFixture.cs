@@ -38,6 +38,11 @@ namespace Vsar.TSBot.UnitTests
                 .Returns(this.CreateMessage);
         }
 
+        /// <summary>
+        /// Gets the authentication service.
+        /// </summary>
+        public Mock<IAuthenticationService> AuthenticationService { get; } = new Mock<IAuthenticationService>();
+
         public Mock<IDialogContext> DialogContext { get; } = new Mock<IDialogContext>();
 
         /// <summary>
@@ -56,11 +61,6 @@ namespace Vsar.TSBot.UnitTests
         /// Gets mocked <see cref="IVstsService"/>
         /// </summary>
         public Mock<IVstsService> VstsService { get; } = new Mock<IVstsService>();
-
-        /// <summary>
-        /// Gets mocked <see cref="IVstsApplicationRegistry"/>
-        /// </summary>
-        public Mock<IVstsApplicationRegistry> VstsApplicationRegistry { get; } = new Mock<IVstsApplicationRegistry>();
 
         /// <summary>
         /// Creates a default <see cref="IMessageActivity"/>.
@@ -82,10 +82,12 @@ namespace Vsar.TSBot.UnitTests
             };
         }
 
-        public VstsProfile CreateProfile()
+        public Profile CreateProfile()
         {
-            return new VstsProfile
+            return new Profile
             {
+                IsSelected = true,
+                IsValidated = true,
                 Token = new OAuthToken { ExpiresIn = 3600 }
             };
         }

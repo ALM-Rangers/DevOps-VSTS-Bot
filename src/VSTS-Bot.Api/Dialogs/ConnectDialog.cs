@@ -32,14 +32,28 @@ namespace Vsar.TSBot.Dialogs
         private const string CommandMatchConnect = @"connect *(\S*) *(\S*)";
         private const string CommandMatchPin = @"(\d{4})";
 
+        private readonly string appId;
+        private readonly string appScope;
+        private readonly string authorizeUrl;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectDialog"/> class.
         /// </summary>
-        /// <param name="vstsService">VSTS accessor.</param>
-        /// <param name="vstsApplicationRegistry">VSTS Application registry accessor.</param>
-        public ConnectDialog(IVstsService vstsService, IVstsApplicationRegistry vstsApplicationRegistry)
-            : base(vstsService, vstsApplicationRegistry)
+        /// <param name="appId">The registered application id.</param>
+        /// <param name="appScope">The registered application scope.</param>
+        /// <param name="authorizeUrl">The URL to return to after authentication.</param>
+        /// <param name="authenticationService">The authenticationService.</param>
+        /// <param name="vstsService">The <see cref="IVstsService"/>.</param>
+        public ConnectDialog(string appId, string appScope, Uri authorizeUrl, IAuthenticationService authenticationService, IVstsService vstsService)
+            : base(authenticationService, vstsService)
         {
+            appId.ThrowIfNullOrWhiteSpace(nameof(appId));
+            appScope.ThrowIfNullOrWhiteSpace(nameof(appScope));
+            authorizeUrl.ThrowIfNull(nameof(authorizeUrl));
+
+            this.appId = appId;
+            this.appScope = appScope;
+            this.authorizeUrl = authorizeUrl.ToString();
         }
 
         /// <summary>
@@ -53,14 +67,14 @@ namespace Vsar.TSBot.Dialogs
         public string Pin { get; set; }
 
         /// <summary>
-        /// Gets or sets a <see cref="VstsProfile"/>.
+        /// Gets or sets a <see cref="TSBot.Profile"/>.
         /// </summary>
-        public VstsProfile Profile { get; set; }
+        public Profile Profile { get; set; }
 
         /// <summary>
-        /// Gets or sets a collection of <see cref="VstsProfile"/>.
+        /// Gets or sets a collection of <see cref="TSBot.Profile"/>.
         /// </summary>
-        public IEnumerable<VstsProfile> Profiles { get; set; }
+        public IEnumerable<Profile> Profiles { get; set; }
 
         /// <summary>
         /// Gets or sets a team project.
@@ -118,13 +132,18 @@ namespace Vsar.TSBot.Dialogs
             context.ThrowIfNull(nameof(context));
             result.ThrowIfNull(nameof(result));
 
+            if (!context.UserData.TryGetValue("userData", out UserData data))
+            {
+                data = new UserData();
+            }
+
             // Set pin.
             this.Pin = GeneratePin();
-            context.UserData.SetPin(this.Pin);
+            data.Pin = this.Pin;
 
-            var vstsApplication = this.VstsApplicationRegistry.GetVstsApplicationRegistration(result.From.Id);
+            context.UserData.SetValue("userData", data);
 
-            var card = new LogOnCard(vstsApplication, result.ChannelId, result.From.Id);
+            var card = new LogOnCard(this.appId, this.appScope, new Uri(this.authorizeUrl), result.ChannelId, result.From.Id);
 
             var reply = context.MakeMessage();
             reply.Attachments.Add(card);
@@ -151,13 +170,13 @@ namespace Vsar.TSBot.Dialogs
 
             if (match.Success && string.Equals(this.Pin, text, StringComparison.OrdinalIgnoreCase))
             {
-                var profile = context.UserData.GetNotValidatedByPinProfile();
-                var profiles = context.UserData.GetProfiles();
+                var data = context.UserData.GetValue<UserData>("userData");
 
-                profiles.Add(profile);
-                this.Profile = profile;
-                context.UserData.SetProfile(profile);
-                context.UserData.SetProfiles(profiles);
+                this.Profile = data.ProfileNotValidated;
+                data.SelectProfile(this.Profile);
+                data.Pin = string.Empty;
+
+                context.UserData.SetValue("userData", data);
 
                 await this.ContinueProcess(context, activity);
                 return;
@@ -216,8 +235,12 @@ namespace Vsar.TSBot.Dialogs
                 return;
             }
 
-            context.UserData.SetAccount(this.Account);
-            context.UserData.SetProfile(this.Profile);
+            var data = context.UserData.GetValue<UserData>("userData");
+
+            data.Account = this.Account;
+            data.SelectProfile(this.Profile);
+
+            context.UserData.SetValue("userData", data);
 
             await this.ContinueProcess(context, activity);
         }
@@ -267,9 +290,11 @@ namespace Vsar.TSBot.Dialogs
             }
             else
             {
-                this.TeamProject = text;
+                var data = context.UserData.GetValue<UserData>("userData");
 
-                context.UserData.SetTeamProject(this.TeamProject);
+                data.TeamProject = this.TeamProject = text;
+
+                context.UserData.SetValue("userData", data);
 
                 await this.ContinueProcess(context, activity);
             }
@@ -286,8 +311,13 @@ namespace Vsar.TSBot.Dialogs
             context.ThrowIfNull(nameof(context));
             result.ThrowIfNull(nameof(result));
 
-            this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(result));
-            this.Profiles = context.UserData.GetProfiles();
+            if (!context.UserData.TryGetValue("userData", out UserData data))
+            {
+                data = new UserData();
+            }
+
+            this.Profile = await this.GetValidatedProfile(context.UserData);
+            this.Profiles = data.Profiles;
 
             var reply = context.MakeMessage();
 
@@ -305,7 +335,7 @@ namespace Vsar.TSBot.Dialogs
                 return;
             }
 
-            context.UserData.SetAccount(this.Account);
+            data.Account = this.Account;
 
             // No team project, ....
             if (string.IsNullOrWhiteSpace(this.TeamProject))
@@ -314,7 +344,9 @@ namespace Vsar.TSBot.Dialogs
                 return;
             }
 
-            context.UserData.SetTeamProject(this.TeamProject);
+            data.TeamProject = this.TeamProject;
+
+            context.UserData.SetValue("userData", data);
 
             reply.Text = string.Format(Labels.ConnectedTo, result.From.Name, this.Account, this.TeamProject);
             await context.PostAsync(reply);
