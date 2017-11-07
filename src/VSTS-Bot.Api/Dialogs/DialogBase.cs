@@ -40,11 +40,6 @@ namespace Vsar.TSBot.Dialogs
         }
 
         /// <summary>
-        /// Gets the authentication service.
-        /// </summary>
-        protected IAuthenticationService AuthenticationService => this.authenticationService;
-
-        /// <summary>
         /// Gets <see cref="IVstsService"/>
         /// </summary>
         protected IVstsService VstsService => this.vstsService;

@@ -54,16 +54,6 @@ namespace Vsar.TSBot
                 if (string.Equals(activity.Type, ActivityTypes.Message, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(activity.Type, ActivityTypes.ConversationUpdate, StringComparison.OrdinalIgnoreCase))
                 {
-                    dynamic data = activity.ChannelData;
-
-                    if (data != null &&
-                        (activity.ChannelId.Equals(ChannelIds.Slack, StringComparison.OrdinalIgnoreCase) &&
-                         data.SlackMessage != null &&
-                         data.SlackMessage.type != "event_callback"))
-                    {
-                        return this.Request.CreateResponse(status);
-                    }
-
                     RootDialog Dialog() => this.container.Resolve<RootDialog>(new NamedParameter("eulaUri", new Uri($"{this.Request.RequestUri.GetLeftPart(UriPartial.Authority)}/Eula")));
                     await Conversation.SendAsync(activity, Dialog);
                 }

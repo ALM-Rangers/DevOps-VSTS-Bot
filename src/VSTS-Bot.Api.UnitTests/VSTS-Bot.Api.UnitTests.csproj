@@ -269,6 +269,7 @@
     <Compile Include="Cards\ApprovalCardTests.cs" />
     <Compile Include="Cards\BuildDefinitionCardTests.cs" />
     <Compile Include="Cards\LogOnCardTests.cs" />
+    <Compile Include="Cards\MainOptionsCardTests.cs" />
     <Compile Include="Cards\ReleaseDefinitionCardTests.cs" />
     <Compile Include="Controllers\AuthorizeControllerTests.cs" />
     <Compile Include="Controllers\DefaultControllerTests.cs" />
@@ -278,6 +279,7 @@
     <Compile Include="Dialogs\BuildsDialogTests.cs" />
     <Compile Include="Dialogs\ConnectDialogTests.cs" />
     <Compile Include="Dialogs\ReleasesDialogTests.cs" />
+    <Compile Include="Exceptions\UnknownCommandExceptionTests.cs" />
     <Compile Include="Extensions\AttachmentCollectionExtensionsTests.cs" />
     <Compile Include="Extensions\DependencyResolverExtensionsTests.cs" />
     <Compile Include="Extensions\EncryptionExtensionsTests.cs" />
@@ -285,6 +287,7 @@
     <Compile Include="Factories\BotFactoryTests.cs" />
     <Compile Include="Fixtures\AwaitableFromItem.cs" />
     <Compile Include="Fixtures\DialogFixture.cs" />
+    <Compile Include="Models\ProfileTests.cs" />
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="Fixtures\MockConnectorFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

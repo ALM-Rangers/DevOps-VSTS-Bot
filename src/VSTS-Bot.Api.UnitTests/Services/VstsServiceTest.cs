@@ -22,7 +22,6 @@ namespace Vsar.TSBot.UnitTests.Services
     using Microsoft.VisualStudio.Services.Account;
     using Microsoft.VisualStudio.Services.Account.Client;
     using Microsoft.VisualStudio.Services.Account.Client.Fakes;
-    using Microsoft.VisualStudio.Services.Profile;
     using Microsoft.VisualStudio.Services.Profile.Client;
     using Microsoft.VisualStudio.Services.Profile.Client.Fakes;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
@@ -32,7 +31,6 @@ namespace Vsar.TSBot.UnitTests.Services
     using Microsoft.VisualStudio.Services.WebApi;
     using Microsoft.VisualStudio.Services.WebApi.Fakes;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Profile = TSBot.Profile;
 
     /// <summary>
     /// Unit tests for <see cref="VstsService"/>.
@@ -152,9 +150,82 @@ namespace Vsar.TSBot.UnitTests.Services
                     new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2())
                     {
                         GetReleaseDefinitionAsyncStringInt32IEnumerableOfStringObjectCancellationToken = (project, definitionId, filters, userState, cancellationToken) => Task.Run(
+                            () => new ReleaseDefinition
+                            {
+                                Artifacts = new List<Artifact>
+                                {
+                                    new Artifact
+                                    {
+                                        IsPrimary = true,
+                                        Alias = "mybuildartifcat",
+                                        DefinitionReference = new Dictionary<string, ArtifactSourceReference>
+                                        {
+                                            { "definition", new ArtifactSourceReference { Id = "1234" } }
+                                        },
+                                        Type = ArtifactTypes.BuildArtifactType
+                                    }
+                                }
+                            }, cancellationToken),
+                        CreateReleaseAsyncReleaseStartMetadataStringObjectCancellationToken = (startMetadata, project, userState, cancellationToken) => Task.Run(
                             () =>
                             {
-                                return new ReleaseDefinition()
+                                Assert.AreEqual(projectName, project);
+                                return new Release();
+                            },
+                            cancellationToken)
+                    },
+                    shimBuildHttpClient.Instance
+                });
+
+                await service.CreateReleaseAsync(accountName, projectName, id, this.token);
+            }
+        }
+
+        /// <summary>
+        /// Tests <see cref="VstsService.CreateReleaseAsync"/> method.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing asynchronous unit test.</returns>
+        [TestMethod]
+        public async Task CreateReleaseAsync_NoBuildsTest()
+        {
+            var accountName = "myaccount";
+            var projectName = "myproject";
+            var service = new VstsService();
+            var id = 1;
+
+            var builds = new List<Build>();
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.CreateReleaseAsync(null, projectName, id, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.CreateReleaseAsync(accountName, null, id, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.CreateReleaseAsync(accountName, projectName, 0, this.token));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.CreateReleaseAsync(accountName, projectName, id, null));
+
+            using (ShimsContext.Create())
+            {
+                var shimBuildHttpClient = new ShimBuildHttpClient();
+
+                shimBuildHttpClient.SendAsyncOf1HttpMethodGuidObjectApiResourceVersionHttpContentIEnumerableOfKeyValuePairOfStringStringObjectCancellationTokenFuncOfHttpResponseMessageCancellationTokenTaskOfM0<IPagedList<Build>>((method, guid, arg3, apiResourceVersion, content, queryParams, arg7, cancellationToken, arg9) =>
+                    Task.Run(
+                        () => new PagedList<Build>(builds, string.Empty) as IPagedList<Build>,
+                        cancellationToken));
+
+                InitializeConnectionShim(new VssHttpClientBase[]
+                {
+                    GetAccountHttpClient(new List<Account>
+                    {
+                        new Account(Guid.Empty)
+                        {
+                            AccountName = "myaccount",
+                            AccountUri = new Uri("https://myaccount.visualstudio.com")
+                        }
+                    }),
+                    GetProfileHttpClient(new Microsoft.VisualStudio.Services.Profile.Profile()),
+                    new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2())
+                    {
+                        GetReleaseDefinitionAsyncStringInt32IEnumerableOfStringObjectCancellationToken = (project, definitionId, filters, userState, cancellationToken) => Task.Run(
+                            () =>
+                            {
+                                return new ReleaseDefinition
                                 {
                                     Artifacts = new List<Artifact>
                                     {
@@ -488,7 +559,6 @@ namespace Vsar.TSBot.UnitTests.Services
         {
             var accountName = "myaccount";
             var projectName = "myproject";
-            var release = new Release();
             var releaseId = 99;
             var service = new VstsService();
 
@@ -496,24 +566,6 @@ namespace Vsar.TSBot.UnitTests.Services
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetReleaseAsync(accountName, null, releaseId, this.token));
             await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await service.GetReleaseAsync(accountName, projectName, -10, this.token));
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetReleaseAsync(accountName, projectName, releaseId, null));
-
-            using (ShimsContext.Create())
-            {
-                new ShimReleaseHttpClientBase(new ShimReleaseHttpClient2())
-                {
-                    GetReleaseAsyncStringInt32NullableOfBooleanIEnumerableOfStringObjectCancellationToken =
-                        (teamProject, id, arg3, arg4, arg5, cancellationToken) =>
-                            Task.Run(
-                                () =>
-                                {
-                                    teamProject.Should().Be(projectName);
-                                    id.Should().Be(releaseId);
-
-                                    return release;
-                                },
-                                cancellationToken)
-                };
-            }
         }
 
         [TestMethod]
