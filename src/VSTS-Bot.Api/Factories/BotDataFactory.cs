@@ -25,12 +25,16 @@ namespace Vsar.TSBot
         /// <param name="store">The <see cref="IBotDataStore{T}"/></param>
         public BotDataFactory(IBotDataStore<BotData> store)
         {
+            store.ThrowIfNull(nameof(store));
+
             this.store = store;
         }
 
         /// <inheritdoc />
         public IBotData Create(Address address)
         {
+            address.ThrowIfNull(nameof(address));
+
             return new JObjectBotData(address, this.store);
         }
     }

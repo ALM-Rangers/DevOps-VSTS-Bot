@@ -274,6 +274,27 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
+        public async Task LogOn_NoUserData()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "connect account teamproject";
+
+            UserData data;
+
+            var target = new ConnectDialog("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("userData", out data))
+                .Returns(false);
+
+            await target.LogOnAsync(this.Fixture.DialogContext.Object, toBot);
+
+            this.Fixture.UserData.Verify(ud => ud.SetValue("userData", It.IsAny<UserData>()));
+            this.Fixture.DialogContext.Verify(c => c.PostAsync(It.Is<IMessageActivity>(a => a.Attachments.First().Content is LogOnCard), CancellationToken.None));
+            this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.PinReceivedAsync));
+        }
+
+        [TestMethod]
         public async Task Handle_Received_Pin()
         {
             var toBot = this.Fixture.CreateMessage();
@@ -455,6 +476,23 @@ namespace Vsar.TSBot.UnitTests
             mocked.Verify();
 
             data.TeamProject.Should().Be("Project1");
+        }
+
+        [TestMethod]
+        public async Task Handle_Project_Received_Invalid_TeamProject()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "Project2";
+
+            var mocked = new Mock<ConnectDialog>("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
+            var target = mocked.Object;
+            target.TeamProjects = new List<string> { "Project1" };
+
+            mocked.Setup(m => m.SelectProjectAsync(this.Fixture.DialogContext.Object, toBot)).Returns(Task.CompletedTask).Verifiable();
+
+            await target.ProjectReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            mocked.Verify();
         }
     }
 }

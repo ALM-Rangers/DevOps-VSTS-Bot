@@ -9,11 +9,13 @@
 namespace Vsar.TSBot
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Web.Configuration;
 
     /// <summary>
     /// Represents the configuration needed for the application.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class Config
     {
         /// <summary>

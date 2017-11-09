@@ -102,12 +102,35 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
+        public async Task List_Approvals_Null_Message()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = null;
+
+            var profile = this.Fixture.CreateProfile();
+            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
+            data.Profiles.Add(profile);
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("userData", out data))
+                .Returns(true);
+
+            var target = new ApprovalsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
+
+            await target.ApprovalsAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            this.Fixture.DialogContext
+                .Verify(c => c.Fail(It.IsAny<UnknownCommandException>()));
+        }
+
+        [TestMethod]
         public async Task List_Approvals()
         {
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "approvals";
 
             var profile = this.Fixture.CreateProfile();
+            profile.Token.ExpiresIn = 0;
             var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
             data.Profiles.Add(profile);
 
@@ -126,6 +149,9 @@ namespace Vsar.TSBot.UnitTests
             this.Fixture.VstsService
                 .Setup(s => s.GetApprovals(data.Account, data.TeamProject, profile))
                 .ReturnsAsync(approvals);
+            this.Fixture.AuthenticationService
+                .Setup(a => a.GetToken(profile.Token))
+                .ReturnsAsync(new OAuthToken());
 
             var target = new ApprovalsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
 
