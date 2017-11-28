@@ -375,8 +375,6 @@
     <Content Include="Content\Images\HowItWorks\Teams\connect_5.png" />
     <Content Include="Content\Images\HowItWorks\Teams\release_1.png" />
     <Content Include="Content\Images\HowItWorks\Teams\release_2.png" />
-    <Content Include="Content\Images\Logo.png" />
-    <Content Include="Content\Images\Microsoft.png" />
     <Content Include="Content\Images\Skype-for-business.png" />
     <Content Include="Content\Images\Skype.png" />
     <Content Include="Content\Images\Slack.png" />
