@@ -19,7 +19,7 @@ namespace Vsar.TSBot.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Labels {
@@ -304,11 +304,47 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Subscribe.
+        /// </summary>
+        internal static string Subscribe {
+            get {
+                return ResourceManager.GetString("Subscribe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To be able to get your approval notifications, I have to create a webhook on your account, that pushes notifications to my service..
+        /// </summary>
+        internal static string SubscriptionDescription_MyApprovals {
+            get {
+                return ResourceManager.GetString("SubscriptionDescription_MyApprovals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My approvals on {0}..
+        /// </summary>
+        internal static string SubscriptionTitle_MyApprovals {
+            get {
+                return ResourceManager.GetString("SubscriptionTitle_MyApprovals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorry, I did not recognize that command. Please select one of the following commands..
         /// </summary>
         internal static string UnknownCommand {
             get {
                 return ResourceManager.GetString("UnknownCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsubscribe.
+        /// </summary>
+        internal static string Unsubscribe {
+            get {
+                return ResourceManager.GetString("Unsubscribe", resourceCulture);
             }
         }
         

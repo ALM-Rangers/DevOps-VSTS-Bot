@@ -212,4 +212,17 @@
   <data name="HelpConnect" xml:space="preserve">
     <value>Please first 'connect' to your account, by clicking or typing connect.</value>
   </data>
+  <data name="Subscribe" xml:space="preserve">
+    <value>Subscribe</value>
+  </data>
+  <data name="SubscriptionDescription_MyApprovals" xml:space="preserve">
+    <value>To be able to get your approval notifications, I have to create a webhook on your account, that pushes notifications to my service.</value>
+  </data>
+  <data name="SubscriptionTitle_MyApprovals" xml:space="preserve">
+    <value>My approvals on {0}.</value>
+    <comment>{0} = team project;</comment>
+  </data>
+  <data name="Unsubscribe" xml:space="preserve">
+    <value>Unsubscribe</value>
+  </data>
 </root>
