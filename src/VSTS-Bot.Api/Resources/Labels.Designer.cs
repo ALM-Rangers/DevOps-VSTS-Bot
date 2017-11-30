@@ -313,7 +313,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To be able to get your approval notifications, I have to create a webhook on your account, that pushes notifications to my service..
+        ///   Looks up a localized string similar to To be able to get your approval notifications, I have to create a web hook on your account, that pushes notifications to my service..
         /// </summary>
         internal static string SubscriptionDescription_MyApprovals {
             get {

@@ -8,6 +8,8 @@
 // ———————————————————————————————
 namespace Vsar.TSBot.Cards
 {
+    using System;
+    using System.Globalization;
     using Microsoft.Bot.Connector;
     using Resources;
 
@@ -26,12 +28,12 @@ namespace Vsar.TSBot.Cards
             subscription.ThrowIfNull(nameof(subscription));
             teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
 
-            this.Title = string.Format(Labels.ResourceManager.GetString("SubscriptionTitle_" + subscription.Type), teamProject);
-            this.Subtitle = Labels.ResourceManager.GetString("SubscriptionDescription_" + subscription.Type);
+            this.Title = string.Format(CultureInfo.CurrentCulture, Labels.ResourceManager.GetString("SubscriptionTitle_" + subscription.SubscriptionType), teamProject);
+            this.Subtitle = Labels.ResourceManager.GetString("SubscriptionDescription_" + subscription.SubscriptionType);
 
             var action = subscription.IsActive
-                ? new CardAction(ActionTypes.ImBack, Labels.Unsubscribe, value: $"unsubscribe {subscription.Type}")
-                : new CardAction(ActionTypes.ImBack, Labels.Subscribe, value: $"subscribe {subscription.Type}");
+                ? new CardAction(ActionTypes.ImBack, Labels.Unsubscribe, value: FormattableString.Invariant($"unsubscribe {subscription.SubscriptionType}"))
+                : new CardAction(ActionTypes.ImBack, Labels.Subscribe, value: FormattableString.Invariant($"subscribe {subscription.SubscriptionType}"));
             this.Buttons.Add(action);
         }
     }

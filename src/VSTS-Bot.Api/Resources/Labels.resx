@@ -216,7 +216,7 @@
     <value>Subscribe</value>
   </data>
   <data name="SubscriptionDescription_MyApprovals" xml:space="preserve">
-    <value>To be able to get your approval notifications, I have to create a webhook on your account, that pushes notifications to my service.</value>
+    <value>To be able to get your approval notifications, I have to create a web hook on your account, that pushes notifications to my service.</value>
   </data>
   <data name="SubscriptionTitle_MyApprovals" xml:space="preserve">
     <value>My approvals on {0}.</value>

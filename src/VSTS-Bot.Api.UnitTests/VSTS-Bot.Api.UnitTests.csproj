@@ -279,6 +279,7 @@
     <Compile Include="Dialogs\BuildsDialogTests.cs" />
     <Compile Include="Dialogs\ConnectDialogTests.cs" />
     <Compile Include="Dialogs\ReleasesDialogTests.cs" />
+    <Compile Include="Dialogs\SubscriptionsDialogTests.cs" />
     <Compile Include="Exceptions\UnknownCommandExceptionTests.cs" />
     <Compile Include="Extensions\AttachmentCollectionExtensionsTests.cs" />
     <Compile Include="Extensions\DependencyResolverExtensionsTests.cs" />

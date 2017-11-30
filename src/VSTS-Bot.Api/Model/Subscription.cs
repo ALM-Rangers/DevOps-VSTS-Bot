@@ -34,7 +34,7 @@ namespace Vsar.TSBot
         /// Gets or sets the type.
         /// </summary>
         [DataMember]
-        public SubscriptionType Type { get; set; }
+        public SubscriptionType SubscriptionType { get; set; }
 
         /// <summary>
         /// Gets or sets the user id.
