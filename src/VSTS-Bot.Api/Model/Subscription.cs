@@ -9,7 +9,9 @@
 namespace Vsar.TSBot
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
     using System.Runtime.Serialization;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Represents a subscription.
@@ -23,6 +25,14 @@ namespace Vsar.TSBot
         /// </summary>
         [DataMember]
         public string ChannelId { get; set; }
+
+        /// <summary>
+        /// Gets the id.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("id")]
+        [Key]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         /// <summary>
         /// Gets or sets a value indicating whether the Subscription has been activated.

@@ -225,4 +225,10 @@
   <data name="Unsubscribe" xml:space="preserve">
     <value>Unsubscribe</value>
   </data>
+  <data name="Subscribed" xml:space="preserve">
+    <value>I subscribed you to the feed.</value>
+  </data>
+  <data name="Unsubscribed" xml:space="preserve">
+    <value>I unsubscribed you from the feed.</value>
+  </data>
 </root>

@@ -9,7 +9,6 @@
 
 namespace Vsar.TSBot
 {
-    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Autofac;
@@ -34,17 +33,16 @@ namespace Vsar.TSBot
         /// <summary>
         /// Builds a <see cref="IContainer"/> that has all the necessary types registered to run the application.
         /// </summary>
-        /// <param name="isDebugging">Flag that indicates if the application is in debugging modus.</param>
         /// <returns>A <see cref="IContainer"/>.</returns>
-        public static IContainer Build(bool isDebugging)
+        public static IContainer Build()
         {
-            Conversation.UpdateContainer(builder => Build(builder, isDebugging));
+            Conversation.UpdateContainer(Build);
 
             return Conversation.Container;
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Bootstrapper for Autofac. So it is intented to hit all needed dependencies in one place.")]
-        private static void Build(ContainerBuilder builder, bool isDebugging)
+        private static void Build(ContainerBuilder builder)
         {
             builder
                 .RegisterModule<AttributedMetadataModule>();
@@ -54,11 +52,9 @@ namespace Vsar.TSBot
                 .RegisterType<TelemetryClient>()
                 .SingleInstance();
 
-            var microsoftAppCredentials =
-                new MicrosoftAppCredentials(Config.MicrosoftApplicationId, Config.MicrosoftAppPassword);
-
             var client = new DocumentClient(Config.DocumentDbUri, Config.DocumentDbKey);
             IBotDataStore<BotData> store = new DocumentDbBotDataStore(client);
+            client.CreateCollectionIfDoesNotExist("botdb", "subscriptioncollection");
 
             builder
                 .Register(c => client)
@@ -81,15 +77,14 @@ namespace Vsar.TSBot
                 .InstancePerLifetimeScope();
 
             // When debugging with the bot emulator we need to use the listening url from the emulator.
-            if (isDebugging && !string.IsNullOrEmpty(Config.EmulatorListeningUrl))
-            {
-                builder.Register(c => new StateClient(new Uri(Config.EmulatorListeningUrl), microsoftAppCredentials));
-            }
-            else
-            {
-                builder.Register(c => new StateClient(microsoftAppCredentials));
-            }
-
+            // if (isDebugging && !string.IsNullOrEmpty(Config.EmulatorListeningUrl))
+            // {
+            //    builder.Register(c => new StateClient(new Uri(Config.EmulatorListeningUrl), microsoftAppCredentials));
+            // }
+            // else
+            // {
+            //    builder.Register(c => new StateClient(microsoftAppCredentials));
+            // }
             builder
                 .RegisterType<BotState>()
                 .AsImplementedInterfaces();

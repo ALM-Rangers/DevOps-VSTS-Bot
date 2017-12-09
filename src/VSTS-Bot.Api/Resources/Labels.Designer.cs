@@ -313,6 +313,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to I subscribed you to the feed..
+        /// </summary>
+        internal static string Subscribed {
+            get {
+                return ResourceManager.GetString("Subscribed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to To be able to get your approval notifications, I have to create a web hook on your account, that pushes notifications to my service..
         /// </summary>
         internal static string SubscriptionDescription_MyApprovals {
@@ -345,6 +354,15 @@ namespace Vsar.TSBot.Resources {
         internal static string Unsubscribe {
             get {
                 return ResourceManager.GetString("Unsubscribe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I unsubscribed you from the feed..
+        /// </summary>
+        internal static string Unsubscribed {
+            get {
+                return ResourceManager.GetString("Unsubscribed", resourceCulture);
             }
         }
         
