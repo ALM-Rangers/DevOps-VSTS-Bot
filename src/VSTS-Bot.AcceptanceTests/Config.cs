@@ -110,7 +110,7 @@ namespace Vsar.TSBot.AcceptanceTests
 
         public static string TeamProjectTwo => TestContext.Properties["TeamProjectTwo"].ToString();
 
-        public static TestContext TestContext => ScenarioContext.Current["TestContext"] as TestContext;
+        public static TestContext TestContext => ScenarioContext.Current.ScenarioContainer.Resolve<TestContext>();
 
         public static OAuthToken Token
         {

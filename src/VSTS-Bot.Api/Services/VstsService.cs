@@ -26,6 +26,7 @@ namespace Vsar.TSBot
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Contracts;
     using Microsoft.VisualStudio.Services.WebApi;
+    using VSTS_Bot.TeamFoundation.Services.WebApi;
 
     /// <summary>
     /// Contains method(s) for accessing VSTS.
@@ -99,6 +100,31 @@ namespace Vsar.TSBot
             {
                 var metaData = new ReleaseStartMetadata { DefinitionId = definitionId, Artifacts = metadatas };
                 return await client.CreateReleaseAsync(metaData, teamProject);
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task<VSTS_Bot.TeamFoundation.Services.WebApi.Subscription> CreateSubscription(string account, VSTS_Bot.TeamFoundation.Services.WebApi.Subscription subscription, OAuthToken token)
+        {
+            account.ThrowIfNull(nameof(account));
+            subscription.ThrowIfNull(nameof(subscription));
+            token.ThrowIfNull(nameof(token));
+
+            using (var client = await this.ConnectAsync<ServiceHooksHttpClient>(token, account))
+            {
+                return await client.CreateSubscriptionAsync(subscription);
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task DeleteSubscription(string account, Guid subscriptionId, OAuthToken token)
+        {
+            account.ThrowIfNull(nameof(account));
+            token.ThrowIfNull(nameof(token));
+
+            using (var client = await this.ConnectAsync<ServiceHooksHttpClient>(token, account))
+            {
+                await client.DeleteSubscriptionAsync(subscriptionId);
             }
         }
 
@@ -201,6 +227,30 @@ namespace Vsar.TSBot
             using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
             {
                 return await client.GetReleaseDefinitionsAsync(teamProject);
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task<VSTS_Bot.TeamFoundation.Services.WebApi.Subscription> GetSubscription(string account, Guid subscriptionId, OAuthToken token)
+        {
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
+            token.ThrowIfNull(nameof(token));
+
+            using (var client = await this.ConnectAsync<ServiceHooksHttpClient>(token, account))
+            {
+                return await client.GetSubscriptionAsync(subscriptionId);
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task<IList<VSTS_Bot.TeamFoundation.Services.WebApi.Subscription>> GetSubscriptions(string account, OAuthToken token)
+        {
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
+            token.ThrowIfNull(nameof(token));
+
+            using (var client = await this.ConnectAsync<ServiceHooksHttpClient>(token, account))
+            {
+                return await client.GetSubscriptionsAsync();
             }
         }
 

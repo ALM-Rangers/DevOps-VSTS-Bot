@@ -28,7 +28,7 @@ namespace Vsar.TSBot.AcceptanceTests.Features
 #line 1 "Approvals.feature"
 #line hidden
         
-        public Microsoft.VisualStudio.TestTools.UnitTesting.TestContext TestContext
+        public virtual Microsoft.VisualStudio.TestTools.UnitTesting.TestContext TestContext
         {
             get
             {
@@ -76,7 +76,7 @@ namespace Vsar.TSBot.AcceptanceTests.Features
         public virtual void ScenarioSetup(TechTalk.SpecFlow.ScenarioInfo scenarioInfo)
         {
             testRunner.OnScenarioStart(scenarioInfo);
-            testRunner.ScenarioContext.Add("TestContext", TestContext);
+            testRunner.ScenarioContext.ScenarioContainer.RegisterInstanceAs<Microsoft.VisualStudio.TestTools.UnitTesting.TestContext>(TestContext);
         }
         
         public virtual void ScenarioCleanup()

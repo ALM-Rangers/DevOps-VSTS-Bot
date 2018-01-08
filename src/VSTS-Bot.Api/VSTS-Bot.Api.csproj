@@ -540,6 +540,12 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VSTS-Bot.TeamFoundation.Services.WebApi\VSTS-Bot.TeamFoundation.Services.WebApi.csproj">
+      <Project>{f528c603-f858-4f6c-9961-0691e24bfca4}</Project>
+      <Name>VSTS-Bot.TeamFoundation.Services.WebApi</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
