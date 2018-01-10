@@ -11,6 +11,7 @@ namespace Vsar.TSBot
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using Autofac;
     using Autofac.Extras.AttributeMetadata;
     using Autofac.Integration.Mvc;
@@ -51,6 +52,10 @@ namespace Vsar.TSBot
             builder
                 .RegisterType<TelemetryClient>()
                 .SingleInstance();
+
+            builder
+                .RegisterInstance(new MicrosoftAppCredentials(Config.MicrosoftApplicationId, Config.MicrosoftAppPassword))
+                .AsSelf();
 
             var client = new DocumentClient(Config.DocumentDbUri, Config.DocumentDbKey);
             IBotDataStore<BotData> store = new DocumentDbBotDataStore(client);

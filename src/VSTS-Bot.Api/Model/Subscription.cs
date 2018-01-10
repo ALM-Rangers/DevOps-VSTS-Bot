@@ -21,6 +21,18 @@ namespace Vsar.TSBot
     public class Subscription
     {
         /// <summary>
+        /// Gets or sets the bot id.
+        /// </summary>
+        [DataMember]
+        public string BotId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the bot name.
+        /// </summary>
+        [DataMember]
+        public string BotName { get; set; }
+
+        /// <summary>
         /// Gets or sets the channel id.
         /// </summary>
         [DataMember]
@@ -41,14 +53,39 @@ namespace Vsar.TSBot
         public bool IsActive { get; set; }
 
         /// <summary>
+        /// Gets or sets the profile display name.
+        /// </summary>
+        [DataMember]
+        public string ProfileDisplayName { get; set; }
+
+        /// <summary>
         /// Gets or sets the Profile Id.
         /// </summary>
         [DataMember]
         public Guid ProfileId { get; set; }
 
         /// <summary>
+        /// Gets or sets the Recipient id.
+        /// </summary>
+        [DataMember]
+        public string RecipientId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Recipient name.
+        /// </summary>
+        [DataMember]
+        public string RecipientName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the service uri.
+        /// </summary>
+        [DataMember]
+        public Uri ServiceUri { get; set; }
+
+        /// <summary>
         /// Gets or sets the subscription id.
         /// </summary>
+        [DataMember]
         public Guid SubscriptionId { get; set; }
 
         /// <summary>
@@ -60,6 +97,7 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets or sets the user id.
         /// </summary>
+        [DataMember]
         public string UserId { get; set; }
     }
 }

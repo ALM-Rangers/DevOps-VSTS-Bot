@@ -34,6 +34,7 @@ namespace Vsar.TSBot
     public class VstsService : IVstsService
     {
         private const string VstsUrl = "https://{0}.visualstudio.com";
+        private const string VstsRmUrl = "https://{0}.vsrm.visualstudio.com";
 
         private readonly Uri vstsAppUrl = new Uri("https://app.vssps.visualstudio.com");
 
@@ -110,7 +111,9 @@ namespace Vsar.TSBot
             subscription.ThrowIfNull(nameof(subscription));
             token.ThrowIfNull(nameof(token));
 
-            using (var client = await this.ConnectAsync<ServiceHooksHttpClient>(token, account))
+            var isRm = subscription.PublisherId.Equals("RM", StringComparison.OrdinalIgnoreCase);
+
+            using (var client = await this.ConnectAsync<ServiceHooksHttpClient>(token, account, isRm))
             {
                 return await client.CreateSubscriptionAsync(subscription);
             }
@@ -290,13 +293,21 @@ namespace Vsar.TSBot
         /// <typeparam name="T">The client type.</typeparam>
         /// <param name="token">The OAuth token.</param>
         /// <param name="account">The name of the account to connect to.</param>
+        /// <param name="isRM">Forces to connect to the rm url.</param>
         /// <returns>A client.</returns>
-        private async Task<T> ConnectAsync<T>(OAuthToken token, string account = null)
+        private async Task<T> ConnectAsync<T>(OAuthToken token, string account = null, bool isRM = false)
             where T : VssHttpClientBase
         {
             var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
 
-            var uri = !string.IsNullOrWhiteSpace(account) ? new Uri(string.Format(CultureInfo.InvariantCulture, VstsUrl, HttpUtility.UrlEncode(account))) : this.vstsAppUrl;
+            var uri = this.vstsAppUrl;
+
+            if (!string.IsNullOrWhiteSpace(account))
+            {
+                uri = isRM
+                    ? new Uri(string.Format(CultureInfo.InvariantCulture, VstsRmUrl, HttpUtility.UrlEncode(account)))
+                    : new Uri(string.Format(CultureInfo.InvariantCulture, VstsUrl, HttpUtility.UrlEncode(account)));
+            }
 
             return await new VssConnection(uri, credentials).GetClientAsync<T>();
         }

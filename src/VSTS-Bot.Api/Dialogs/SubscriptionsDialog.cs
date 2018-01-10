@@ -104,10 +104,18 @@ namespace Vsar.TSBot.Dialogs
                 typing.Type = ActivityTypes.Typing;
                 await context.PostAsync(typing);
 
+                var querySpec = new SqlQuerySpec
+                {
+                    QueryText = "SELECT * FROM subscriptions s WHERE s.channelId = @channelId AND s.userId = @userId",
+                    Parameters = new SqlParameterCollection
+                    {
+                        new SqlParameter("@channelId", activity.ChannelId),
+                        new SqlParameter("@userId", activity.From.Id)
+                    }
+                };
+
                 var storedSubs = this.documentClient
-                    .CreateDocumentQuery<Subscription>(UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"))
-                    .Where(s => s.ChannelId == activity.ChannelId && s.UserId == activity.From.Id)
-                    .OrderBy(s => s.SubscriptionType)
+                    .CreateDocumentQuery<Subscription>(UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"), querySpec)
                     .ToList();
 
                 var subscriptions = Enum
@@ -166,10 +174,19 @@ namespace Vsar.TSBot.Dialogs
             if (matchSubscribe.Success)
             {
                 var subscriptionType = (SubscriptionType)Enum.Parse(typeof(SubscriptionType), matchSubscribe.Groups[1].Value, true);
+                var querySpec = new SqlQuerySpec
+                {
+                    QueryText = "SELECT * FROM subscriptions s WHERE s.channelId = @channelId AND s.userId = @userId AND s.subscriptionType = @subscriptionType",
+                    Parameters = new SqlParameterCollection
+                    {
+                        new SqlParameter("@channelId", activity.ChannelId),
+                        new SqlParameter("@userId", activity.From.Id),
+                        new SqlParameter("@subscriptionType", subscriptionType)
+                    }
+                };
+
                 var subscription = this.documentClient
-                                       .CreateDocumentQuery<Subscription>(UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"))
-                                       .Where(s => s.ChannelId == activity.ChannelId && s.UserId == activity.From.Id)
-                                       .Where(s => s.SubscriptionType == subscriptionType)
+                                       .CreateDocumentQuery<Subscription>(UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"), querySpec)
                                        .ToList()
                                        .FirstOrDefault();
 
@@ -209,11 +226,18 @@ namespace Vsar.TSBot.Dialogs
 
                 subscription = new Subscription
                 {
+                    BotId = activity.Recipient.Id,
+                    BotName = activity.Recipient.Name,
                     ChannelId = activity.ChannelId,
+                    IsActive = true,
                     ProfileId = this.Profile.Id,
+                    ProfileDisplayName = this.Profile.DisplayName,
+                    RecipientId = activity.From.Id,
+                    RecipientName = activity.From.Name,
+                    ServiceUri = new Uri(activity.ServiceUrl),
                     SubscriptionId = r.Id,
                     SubscriptionType = subscriptionType,
-                    IsActive = true
+                    UserId = activity.From.Id
                 };
 
                 await this.documentClient.UpsertDocumentAsync(
@@ -227,12 +251,21 @@ namespace Vsar.TSBot.Dialogs
             else if (matchUnsubscribe.Success)
             {
                 var subscriptionType = (SubscriptionType)Enum.Parse(typeof(SubscriptionType), matchUnsubscribe.Groups[1].Value, true);
+                var querySpec = new SqlQuerySpec
+                {
+                    QueryText = "SELECT * FROM subscriptions s WHERE s.channelId = @channelId AND s.userId = @userId AND s.subscriptionType = @subscriptionType",
+                    Parameters = new SqlParameterCollection
+                    {
+                        new SqlParameter("@channelId", activity.ChannelId),
+                        new SqlParameter("@userId", activity.From.Id),
+                        new SqlParameter("@subscriptionType", subscriptionType)
+                    }
+                };
+
                 var subscription = this.documentClient
-                                       .CreateDocumentQuery<Subscription>(UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"))
-                                       .Where(s => s.ChannelId == activity.ChannelId && s.UserId == activity.From.Id)
-                                       .Where(s => s.SubscriptionType == subscriptionType)
-                                       .ToList()
-                                       .FirstOrDefault();
+                    .CreateDocumentQuery<Subscription>(UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"), querySpec)
+                    .ToList()
+                    .FirstOrDefault();
 
                 if (subscription != null)
                 {

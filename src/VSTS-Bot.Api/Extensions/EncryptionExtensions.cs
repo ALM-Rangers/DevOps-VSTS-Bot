@@ -53,6 +53,38 @@ namespace Vsar.TSBot
         }
 
         /// <summary>
+        /// Encrypts the target object.
+        /// </summary>
+        /// <param name="target">The target object.</param>
+        /// <param name="securityKey">The security string.</param>
+        /// <returns>Returns the encrypted string.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Being closed by disposing the StreamWriter.")]
+        public static string Encrypt(this string target, string securityKey)
+        {
+            var salt = GenerateRandomSalt();
+            var toEncrypt = target;
+
+            var memStream = new MemoryStream();
+            memStream.Write(salt, 0, salt.Length);
+
+            using (var key = new Rfc2898DeriveBytes(Encoding.UTF8.GetBytes(securityKey), salt, 50000))
+            {
+                using (var provider = CreateCipher(key))
+                {
+                    var encryptor = provider.CreateEncryptor();
+
+                    var cryptoStream = new CryptoStream(memStream, encryptor, CryptoStreamMode.Write);
+                    using (var sw = new StreamWriter(cryptoStream))
+                    {
+                        sw.Write(toEncrypt);
+                    }
+
+                    return Convert.ToBase64String(memStream.ToArray());
+                }
+            }
+        }
+
+        /// <summary>
         /// Decrypts the target string.
         /// </summary>
         /// <typeparam name="T">The object</typeparam>
@@ -79,6 +111,36 @@ namespace Vsar.TSBot
                     {
                         var result = sr.ReadToEnd();
                         return JsonConvert.DeserializeObject<T>(result);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Decrypts the target string.
+        /// </summary>
+        /// <param name="target">The string to decrypt.</param>
+        /// <param name="securityKey">The security string</param>
+        /// <returns>An decrypted object.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Being closed by disposing the StreamReader.")]
+        public static string Decrypt(this string target, string securityKey)
+        {
+            var salt = new byte[32];
+            var toDecrypt = Convert.FromBase64String(target);
+
+            var memStream = new MemoryStream(toDecrypt);
+            memStream.Read(salt, 0, salt.Length);
+
+            using (var key = new Rfc2898DeriveBytes(Encoding.UTF8.GetBytes(securityKey), salt, 50000))
+            {
+                using (var provider = CreateCipher(key))
+                {
+                    var decryptor = provider.CreateDecryptor();
+
+                    var cryptoStream = new CryptoStream(memStream, decryptor, CryptoStreamMode.Read);
+                    using (var sr = new StreamReader(cryptoStream))
+                    {
+                        return sr.ReadToEnd();
                     }
                 }
             }

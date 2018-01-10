@@ -454,9 +454,16 @@
     <Compile Include="Extensions\DocumentClientExtensions.cs" />
     <Compile Include="Extensions\EncryptionExtensions.cs" />
     <Compile Include="Extensions\GuardExtensions.cs" />
+    <Compile Include="Model\EventApprover.cs" />
+    <Compile Include="Model\EventApproval.cs" />
     <Compile Include="Model\Authorize.cs" />
     <Compile Include="Model\BotChannels.cs" />
     <Compile Include="Model\Event.cs" />
+    <Compile Include="Model\EventMessage.cs" />
+    <Compile Include="Model\EventRelease.cs" />
+    <Compile Include="Model\EventReleaseDefinition.cs" />
+    <Compile Include="Model\EventReleaseEnvironment.cs" />
+    <Compile Include="Model\EventResource.cs" />
     <Compile Include="Model\OAuthToken.cs" />
     <Compile Include="Model\Subscription.cs" />
     <Compile Include="Model\SubscriptionType.cs" />
