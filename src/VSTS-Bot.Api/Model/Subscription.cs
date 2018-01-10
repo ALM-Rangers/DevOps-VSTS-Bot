@@ -41,6 +41,17 @@ namespace Vsar.TSBot
         public bool IsActive { get; set; }
 
         /// <summary>
+        /// Gets or sets the Profile Id.
+        /// </summary>
+        [DataMember]
+        public Guid ProfileId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the subscription id.
+        /// </summary>
+        public Guid SubscriptionId { get; set; }
+
+        /// <summary>
         /// Gets or sets the type.
         /// </summary>
         [DataMember]
@@ -49,7 +60,6 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets or sets the user id.
         /// </summary>
-        [DataMember]
         public string UserId { get; set; }
     }
 }

@@ -9,9 +9,14 @@
 namespace Vsar.TSBot.Dialogs
 {
     using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Runtime.Serialization;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
+    using System.Web;
+    using System.Web.Http;
     using Cards;
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
@@ -30,7 +35,8 @@ namespace Vsar.TSBot.Dialogs
         private const string CommandMatchSubscribe = @"^subscribe (.+)";
         private const string CommandMatchUnsubscribe = @"^unsubscribe (.+)";
 
-        private readonly IDocumentClient documentClient;
+        [NonSerialized]
+        private IDocumentClient documentClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SubscriptionsDialog"/> class.
@@ -100,8 +106,7 @@ namespace Vsar.TSBot.Dialogs
 
                 var storedSubs = this.documentClient
                     .CreateDocumentQuery<Subscription>(UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"))
-                    .Where(s => string.Equals(s.ChannelId, activity.ChannelId, StringComparison.Ordinal) &&
-                                string.Equals(s.UserId, activity.From.Id, StringComparison.Ordinal))
+                    .Where(s => s.ChannelId == activity.ChannelId && s.UserId == activity.From.Id)
                     .OrderBy(s => s.SubscriptionType)
                     .ToList();
 
@@ -109,7 +114,7 @@ namespace Vsar.TSBot.Dialogs
                     .GetValues(typeof(SubscriptionType))
                     .Cast<SubscriptionType>()
                     .Where(e => storedSubs.All(s => s.SubscriptionType != e))
-                    .Select(e => new Subscription { SubscriptionType = e,  ChannelId = activity.ChannelId, UserId = activity.From.Id });
+                    .Select(e => new Subscription { SubscriptionType = e, ChannelId = activity.ChannelId, ProfileId = this.Profile.Id, UserId = activity.From.Id });
 
                 var cards = storedSubs
                     .Union(subscriptions)
@@ -163,15 +168,54 @@ namespace Vsar.TSBot.Dialogs
                 var subscriptionType = (SubscriptionType)Enum.Parse(typeof(SubscriptionType), matchSubscribe.Groups[1].Value, true);
                 var subscription = this.documentClient
                                        .CreateDocumentQuery<Subscription>(UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"))
-                                       .Where(s => string.Equals(s.ChannelId, activity.ChannelId, StringComparison.Ordinal) && string.Equals(s.UserId, activity.From.Id, StringComparison.Ordinal))
-                                       .FirstOrDefault(s => s.SubscriptionType == subscriptionType) ??
-                                   new Subscription
-                                   {
-                                       ChannelId = activity.ChannelId,
-                                       UserId = activity.From.Id,
-                                       SubscriptionType = subscriptionType,
-                                       IsActive = true
-                                   };
+                                       .Where(s => s.ChannelId == activity.ChannelId && s.UserId == activity.From.Id)
+                                       .Where(s => s.SubscriptionType == subscriptionType)
+                                       .ToList()
+                                       .FirstOrDefault();
+
+                if (subscription != null)
+                {
+                    context.Done(reply);
+                    return;
+                }
+
+                var teamProjects = await this.VstsService.GetProjects(this.Account, this.Profile.Token);
+                var teamProject = teamProjects.FirstOrDefault(tp => tp.Name.Equals(this.TeamProject, StringComparison.OrdinalIgnoreCase));
+
+                if (teamProject == null)
+                {
+                    context.Done(reply);
+                    return;
+                }
+
+                var s2 = new VSTS_Bot.TeamFoundation.Services.WebApi.Subscription
+                {
+                    ConsumerActionId = "httpRequest",
+                    ConsumerId = "webHooks",
+                    ConsumerInputs = new Dictionary<string, string>
+                    {
+                        { "url", $"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/api/event" }
+                    },
+                    EventType = "ms.vss-release.deployment-approval-pending-event",
+                    PublisherId = "rm",
+                    PublisherInputs = new Dictionary<string, string>
+                    {
+                        { "projectId", teamProject.Id.ToString() }
+                    },
+                    ResourceVersion = "3.0-preview.1"
+                };
+
+                var r = await this.VstsService.CreateSubscription(this.Account, s2, this.Profile.Token);
+
+                subscription = new Subscription
+                {
+                    ChannelId = activity.ChannelId,
+                    ProfileId = this.Profile.Id,
+                    SubscriptionId = r.Id,
+                    SubscriptionType = subscriptionType,
+                    IsActive = true
+                };
+
                 await this.documentClient.UpsertDocumentAsync(
                     UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"), subscription);
 
@@ -185,12 +229,16 @@ namespace Vsar.TSBot.Dialogs
                 var subscriptionType = (SubscriptionType)Enum.Parse(typeof(SubscriptionType), matchUnsubscribe.Groups[1].Value, true);
                 var subscription = this.documentClient
                                        .CreateDocumentQuery<Subscription>(UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"))
-                                       .Where(s => string.Equals(s.ChannelId, activity.ChannelId, StringComparison.Ordinal) && string.Equals(s.UserId, activity.From.Id, StringComparison.Ordinal))
-                                       .FirstOrDefault(s => s.SubscriptionType == subscriptionType);
+                                       .Where(s => s.ChannelId == activity.ChannelId && s.UserId == activity.From.Id)
+                                       .Where(s => s.SubscriptionType == subscriptionType)
+                                       .ToList()
+                                       .FirstOrDefault();
 
                 if (subscription != null)
                 {
                     await this.documentClient.DeleteDocumentAsync(UriFactory.CreateDocumentUri("botdb", "subscriptioncollection", subscription.Id.ToString()));
+
+                    await this.VstsService.DeleteSubscription(this.Account, subscription.SubscriptionId, this.Profile.Token);
 
                     reply.Text = Labels.Unsubscribed;
                     await context.PostAsync(reply);
@@ -202,6 +250,13 @@ namespace Vsar.TSBot.Dialogs
             {
                 context.Fail(new UnknownCommandException(activity.Text));
             }
+        }
+
+        [ExcludeFromCodeCoverage]
+        [OnSerializing]
+        private void OnSerializingMethod(StreamingContext context)
+        {
+            this.documentClient = GlobalConfiguration.Configuration.DependencyResolver.GetService<IDocumentClient>();
         }
     }
 }

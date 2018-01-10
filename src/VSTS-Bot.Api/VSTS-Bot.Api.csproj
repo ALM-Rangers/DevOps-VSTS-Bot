@@ -438,6 +438,7 @@
     <Compile Include="Controllers\AuthorizeController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\EulaController.cs" />
+    <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Dialogs\ApprovalsDialog.cs" />
     <Compile Include="Dialogs\BuildsDialog.cs" />
@@ -455,6 +456,7 @@
     <Compile Include="Extensions\GuardExtensions.cs" />
     <Compile Include="Model\Authorize.cs" />
     <Compile Include="Model\BotChannels.cs" />
+    <Compile Include="Model\Event.cs" />
     <Compile Include="Model\OAuthToken.cs" />
     <Compile Include="Model\Subscription.cs" />
     <Compile Include="Model\SubscriptionType.cs" />
