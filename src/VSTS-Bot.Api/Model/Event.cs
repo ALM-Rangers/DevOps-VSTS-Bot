@@ -47,11 +47,6 @@ namespace Vsar.TSBot
         public string PublisherId { get; set; }
 
         /// <summary>
-        /// Gets or sets the release.
-        /// </summary>
-        public EventRelease Release { get; set; }
-
-        /// <summary>
         /// Gets or sets the resource.
         /// </summary>
         public EventResource Resource { get; set; }

@@ -22,15 +22,15 @@ namespace Vsar.TSBot
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandMetadataAttribute"/> class.
         /// </summary>
-        /// <param name="command">The actual command.</param>
-        public CommandMetadataAttribute(string command)
+        /// <param name="commands">The actual commands.</param>
+        public CommandMetadataAttribute(params string[] commands)
         {
-            this.Command = command;
+            this.Commands = commands;
         }
 
         /// <summary>
         /// Gets the command coming from the users.
         /// </summary>
-        public string Command { get; }
+        public string[] Commands { get; }
     }
 }

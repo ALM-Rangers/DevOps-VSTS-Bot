@@ -47,16 +47,16 @@ namespace Vsar.TSBot
         public Guid Id { get; private set; } = Guid.NewGuid();
 
         /// <summary>
+        /// Gets or sets the identity id.
+        /// </summary>
+        [DataMember]
+        public string IdentityId { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether the Subscription has been activated.
         /// </summary>
         [DataMember]
         public bool IsActive { get; set; }
-
-        /// <summary>
-        /// Gets or sets the profile display name.
-        /// </summary>
-        [DataMember]
-        public string ProfileDisplayName { get; set; }
 
         /// <summary>
         /// Gets or sets the Profile Id.

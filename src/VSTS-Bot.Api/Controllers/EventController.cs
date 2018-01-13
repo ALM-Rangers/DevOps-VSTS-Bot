@@ -9,6 +9,7 @@
 namespace Vsar.TSBot
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
@@ -20,25 +21,29 @@ namespace Vsar.TSBot
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
+    using Resources;
 
     /// <summary>
     /// Handles events from the VSTS Service hooks.
     /// </summary>
     public class EventController : ApiController
     {
+        private readonly IBotDataFactory botDataFactory;
         private readonly MicrosoftAppCredentials credentials;
         private readonly IDocumentClient documentClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EventController"/> class.
         /// </summary>
+        /// <param name="botDataFactory">The bot data factory;</param>
         /// <param name="credentials">The Microsoft Application Credentials.</param>
         /// <param name="documentClient">The document client.</param>
-        public EventController(MicrosoftAppCredentials credentials, IDocumentClient documentClient)
+        public EventController(IBotDataFactory botDataFactory, MicrosoftAppCredentials credentials, IDocumentClient documentClient)
         {
             credentials.ThrowIfNull(nameof(credentials));
             documentClient.ThrowIfNull(nameof(documentClient));
 
+            this.botDataFactory = botDataFactory ?? throw new ArgumentNullException(nameof(botDataFactory));
             this.credentials = credentials;
             this.documentClient = documentClient;
         }
@@ -55,10 +60,10 @@ namespace Vsar.TSBot
                 var querySpec = new SqlQuerySpec
                 {
                     QueryText =
-                        "SELECT * FROM subscriptions s WHERE s.profileDisplayName = @profileDisplayName AND s.subscriptionType = @subscriptionType",
+                        "SELECT * FROM subscriptions s WHERE s.identityId = @identityId AND s.subscriptionType = @subscriptionType",
                     Parameters = new SqlParameterCollection
                     {
-                        new SqlParameter("@profileDisplayName", @event.Resource.Approval.Approver.DisplayName),
+                        new SqlParameter("@identityId", @event.Resource.Approval.Approver.Id),
                         new SqlParameter("@subscriptionType", SubscriptionType.MyApprovals)
                     }
                 };
@@ -68,12 +73,15 @@ namespace Vsar.TSBot
                         UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"), querySpec)
                     .ToList();
 
+                var tasks = new List<Task>();
+
                 foreach (var subscription in subscriptions)
                 {
-                    this.Notify(@event, subscription);
+                    var t = this.Notify(@event, subscription);
+                    tasks.Add(t);
                 }
 
-                await Task.CompletedTask;
+                await Task.WhenAll(tasks);
 
                 return this.Request.CreateResponse(HttpStatusCode.OK);
             }
@@ -83,10 +91,16 @@ namespace Vsar.TSBot
             }
         }
 
-        private void Notify(Event @event, Subscription subscription)
+        private async Task Notify(Event @event, Subscription subscription)
         {
             try
             {
+                var address = new Address(string.Empty, subscription.ChannelId, subscription.UserId, string.Empty, string.Empty);
+                var botData = this.botDataFactory.Create(address);
+                await botData.LoadAsync(CancellationToken.None);
+
+                var data = botData.UserData.GetValue<UserData>("userData");
+
                 MicrosoftAppCredentials.TrustServiceUrl(subscription.ServiceUri.AbsoluteUri);
                 var client = new ConnectorClient(subscription.ServiceUri, this.credentials.MicrosoftAppId, this.credentials.MicrosoftAppPassword);
 
@@ -103,9 +117,12 @@ namespace Vsar.TSBot
                     },
                     From = new ChannelAccount(subscription.BotId, subscription.BotName),
                     Recipient = new ChannelAccount(subscription.RecipientId, subscription.RecipientName),
-                    Text = "Gogo approval",
+                    Text = Labels.PendingApproval,
                     Type = ActivityTypes.Message
                 };
+
+                var card = new ApprovalCard(data.Account, @event.Resource.Approval, data.TeamProject);
+                activity.Attachments.Add(card);
 
                 client.Conversations.SendToConversation(activity, conversation.Id);
             }

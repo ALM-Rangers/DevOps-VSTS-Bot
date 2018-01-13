@@ -293,9 +293,9 @@ namespace Vsar.TSBot
         /// <typeparam name="T">The client type.</typeparam>
         /// <param name="token">The OAuth token.</param>
         /// <param name="account">The name of the account to connect to.</param>
-        /// <param name="isRM">Forces to connect to the rm url.</param>
+        /// <param name="isRm">Forces to connect to the rm url.</param>
         /// <returns>A client.</returns>
-        private async Task<T> ConnectAsync<T>(OAuthToken token, string account = null, bool isRM = false)
+        private async Task<T> ConnectAsync<T>(OAuthToken token, string account = null, bool isRm = false)
             where T : VssHttpClientBase
         {
             var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
@@ -304,7 +304,7 @@ namespace Vsar.TSBot
 
             if (!string.IsNullOrWhiteSpace(account))
             {
-                uri = isRM
+                uri = isRm
                     ? new Uri(string.Format(CultureInfo.InvariantCulture, VstsRmUrl, HttpUtility.UrlEncode(account)))
                     : new Uri(string.Format(CultureInfo.InvariantCulture, VstsUrl, HttpUtility.UrlEncode(account)));
             }

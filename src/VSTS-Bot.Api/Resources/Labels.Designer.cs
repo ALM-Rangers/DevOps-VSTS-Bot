@@ -232,6 +232,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is an approval pending..
+        /// </summary>
+        internal static string PendingApproval {
+            get {
+                return ResourceManager.GetString("PendingApproval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please login to Visual Studio Team Services. After login you will receive a five digit pin number, please enter the pin number..
         /// </summary>
         internal static string PleaseLogin {

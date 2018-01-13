@@ -231,4 +231,7 @@
   <data name="Unsubscribed" xml:space="preserve">
     <value>I unsubscribed you from the feed.</value>
   </data>
+  <data name="PendingApproval" xml:space="preserve">
+    <value>There is an approval pending.</value>
+  </data>
 </root>

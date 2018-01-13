@@ -8,6 +8,8 @@
 // ———————————————————————————————
 namespace Vsar.TSBot
 {
+    using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
+
     /// <summary>
     /// Represents the resource of an event.
     /// </summary>
@@ -16,6 +18,6 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets or sets the approval.
         /// </summary>
-        public EventApproval Approval { get; set; }
+        public ReleaseApproval Approval { get; set; }
     }
 }

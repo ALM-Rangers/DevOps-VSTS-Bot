@@ -454,8 +454,7 @@
     <Compile Include="Extensions\DocumentClientExtensions.cs" />
     <Compile Include="Extensions\EncryptionExtensions.cs" />
     <Compile Include="Extensions\GuardExtensions.cs" />
-    <Compile Include="Model\EventApprover.cs" />
-    <Compile Include="Model\EventApproval.cs" />
+    <Compile Include="Model\IdentityRef.cs" />
     <Compile Include="Model\Authorize.cs" />
     <Compile Include="Model\BotChannels.cs" />
     <Compile Include="Model\Event.cs" />
