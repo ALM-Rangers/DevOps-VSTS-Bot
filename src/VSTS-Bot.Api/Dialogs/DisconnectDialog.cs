@@ -89,24 +89,26 @@ namespace Vsar.TSBot.Dialogs
 
             var activity = await result;
 
-            var data = context.UserData.GetValue<UserData>("userData");
-
-            this.Account = data.Account;
-            this.Profile = await this.GetValidatedProfile(context.UserData);
-            this.TeamProject = data.TeamProject;
-
             var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
 
             if (text.Equals(CommandMatchDisConnect, StringComparison.OrdinalIgnoreCase))
             {
-                var reply = context.MakeMessage();
-                reply.Text = Labels.DisConnected;
-                await context.PostAsync(reply);
-                context.Done(reply);
+                var isRemoveValue = context.UserData.RemoveValue("userData");
+                if (isRemoveValue)
+                {
+                    var reply = context.MakeMessage();
+                    reply.Text = Labels.DisConnected;
+                    await context.PostAsync(reply);
+                    context.Done(reply);
+                }
+                else
+                {
+                    context.Fail(new UnknownCommandException(activity.Text));
+                }
             }
             else
             {
-                context.Fail(new UnknownCommandException(Labels.Connect));
+                context.Fail(new UnknownCommandException(activity.Text));
             }
         }
     }
