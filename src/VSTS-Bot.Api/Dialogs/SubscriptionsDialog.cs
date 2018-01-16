@@ -205,13 +205,17 @@ namespace Vsar.TSBot.Dialogs
                     return;
                 }
 
+                var url = HttpContext.Current != null
+                    ? $"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/api/event"
+                    : string.Empty;
+
                 var s2 = new VSTS_Bot.TeamFoundation.Services.WebApi.Subscription
                 {
                     ConsumerActionId = "httpRequest",
                     ConsumerId = "webHooks",
                     ConsumerInputs = new Dictionary<string, string>
                     {
-                        { "url", $"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/api/event" }
+                        { "url", url }
                     },
                     EventType = "ms.vss-release.deployment-approval-pending-event",
                     PublisherId = "rm",

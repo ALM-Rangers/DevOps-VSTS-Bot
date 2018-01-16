@@ -331,6 +331,10 @@
       <Project>{A8BA1066-5695-4D71-ABB4-65E5A5E0C3D4}</Project>
       <Name>VSTS-Bot.Api</Name>
     </ProjectReference>
+    <ProjectReference Include="..\VSTS-Bot.TeamFoundation.Services.WebApi\VSTS-Bot.TeamFoundation.Services.WebApi.csproj">
+      <Project>{F528C603-F858-4F6C-9961-0691E24BFCA4}</Project>
+      <Name>VSTS-Bot.TeamFoundation.Services.WebApi</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\Common\CustomDictionary.xml">

@@ -17,6 +17,8 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Bot.Connector;
+    using Microsoft.TeamFoundation.Core.WebApi;
+    using Microsoft.VisualStudio.Services.WebApi;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
@@ -161,16 +163,33 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "subscribe MyApprovals";
 
+            var account = "anAccount";
+            var profile = new Profile { Token = new OAuthToken() };
+            var teamProject = "TeamProject1";
+            var teamProjects = new List<TeamProjectReference> { new TeamProjectReference { Name = teamProject } };
+
+            var subscription = new VSTS_Bot.TeamFoundation.Services.WebApi.Subscription { CreatedBy = new IdentityRef { Id = "1" } };
             var subscriptions = new List<Subscription>();
 
             this.Fixture.DocumentClient
-                .Setup(dc => dc.CreateDocumentQuery<Subscription>(It.IsAny<Uri>(), null))
+                .Setup(dc => dc.CreateDocumentQuery<Subscription>(It.IsAny<Uri>(), It.IsAny<SqlQuerySpec>(), null))
                 .Returns(subscriptions.AsQueryable().OrderBy(s => s.Id));
+            this.Fixture.VstsService
+                .Setup(s => s.GetProjects(account, profile.Token))
+                .ReturnsAsync(teamProjects);
+            this.Fixture.VstsService
+                .Setup(s => s.CreateSubscription(account, It.IsAny<VSTS_Bot.TeamFoundation.Services.WebApi.Subscription>(), profile.Token))
+                .ReturnsAsync(subscription);
             this.Fixture.DocumentClient
                 .Setup(dc => dc.UpsertDocumentAsync(It.IsAny<Uri>(), It.IsAny<Subscription>(), null, false))
                 .Returns(Task.FromResult(new ResourceResponse<Document>()));
 
-            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, this.Fixture.VstsService.Object);
+            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, this.Fixture.VstsService.Object)
+            {
+                Account = account,
+                Profile = profile,
+                TeamProject = teamProject
+            };
 
             await target.SubscribeAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -186,22 +205,35 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "unsubscribe MyApprovals";
 
+            var account = "anAccount";
+            var profile = new Profile { Token = new OAuthToken() };
+            var teamProject = "TeamProject1";
+
             var subscription = new Subscription
             {
                 ChannelId = toBot.ChannelId,
+                SubscriptionId = Guid.NewGuid(),
                 SubscriptionType = SubscriptionType.MyApprovals,
                 UserId = toBot.From.Id
             };
             var subscriptions = new List<Subscription> { subscription };
 
             this.Fixture.DocumentClient
-                .Setup(dc => dc.CreateDocumentQuery<Subscription>(It.IsAny<Uri>(), null))
+                .Setup(dc => dc.CreateDocumentQuery<Subscription>(It.IsAny<Uri>(), It.IsAny<SqlQuerySpec>(), null))
                 .Returns(subscriptions.AsQueryable().OrderBy(s => s.Id));
             this.Fixture.DocumentClient
                 .Setup(dc => dc.DeleteDocumentAsync(It.IsAny<Uri>(), null))
-                .Returns(Task.FromResult(new ResourceResponse<Document>()));
+                .ReturnsAsync(new ResourceResponse<Document>());
+            this.Fixture.VstsService
+                .Setup(s => s.DeleteSubscription(account, subscription.SubscriptionId, profile.Token))
+                .Returns(Task.CompletedTask);
 
-            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, this.Fixture.VstsService.Object);
+            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, this.Fixture.VstsService.Object)
+            {
+                Account = account,
+                Profile = profile,
+                TeamProject = teamProject
+            };
 
             await target.SubscribeAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 

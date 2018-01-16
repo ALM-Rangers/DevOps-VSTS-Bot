@@ -79,7 +79,7 @@ namespace Vsar.TSBot.UnitTests
                 From = new ChannelAccount { Id = User, Name = User },
                 Conversation = new ConversationAccount { Id = Guid.NewGuid().ToString() },
                 Recipient = new ChannelAccount { Id = Bot },
-                ServiceUrl = "InvalidServiceUrl",
+                ServiceUrl = "https://looks.likeavalid.url",
                 ChannelId = "Test",
                 Attachments = new List<Attachment>(),
                 Entities = new List<Entity>(),
