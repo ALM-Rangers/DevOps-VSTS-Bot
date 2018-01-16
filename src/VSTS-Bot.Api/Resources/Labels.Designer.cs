@@ -160,6 +160,24 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disconnect.
+        /// </summary>
+        internal static string Disconnect {
+            get {
+                return ResourceManager.GetString("Disconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have been Disconnected..
+        /// </summary>
+        internal static string DisConnected {
+            get {
+                return ResourceManager.GetString("DisConnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to **Error occurred:** {0}.
         /// </summary>
         internal static string ErrorOccurred {
