@@ -19,10 +19,8 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.VisualStudio.Services.Account;
-    using Microsoft.VisualStudio.Services.Profile;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using Profile = TSBot.Profile;
 
     /// <summary>
     /// Tests for <see cref="AuthorizeController"/> class
@@ -55,7 +53,6 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public void Constructor_Missing_AuthenticationService()
         {
-            var authenticationServiceMock = new Mock<IAuthenticationService>();
             var botDataFactoryMock = new Mock<IBotDataFactory>();
             var vstsServiceMock = new Mock<IVstsService>();
 

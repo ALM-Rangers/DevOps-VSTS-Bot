@@ -12,7 +12,7 @@ namespace Vsar.TSBot.Events
     /// Represents an Service hook event.
     /// </summary>
     /// <typeparam name="T">The event resource type.</typeparam>
-    public abstract class Event<T> : EventBase
+    public class Event<T> : EventBase
         where T : Resource
     {
         /// <summary>
