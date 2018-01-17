@@ -454,15 +454,13 @@
     <Compile Include="Extensions\DocumentClientExtensions.cs" />
     <Compile Include="Extensions\EncryptionExtensions.cs" />
     <Compile Include="Extensions\GuardExtensions.cs" />
-    <Compile Include="Model\IdentityRef.cs" />
+    <Compile Include="Model\Events\ApprovalResource.cs" />
+    <Compile Include="Model\Events\EventBase.cs" />
     <Compile Include="Model\Authorize.cs" />
     <Compile Include="Model\BotChannels.cs" />
-    <Compile Include="Model\Event.cs" />
-    <Compile Include="Model\EventMessage.cs" />
-    <Compile Include="Model\EventRelease.cs" />
-    <Compile Include="Model\EventReleaseDefinition.cs" />
-    <Compile Include="Model\EventReleaseEnvironment.cs" />
-    <Compile Include="Model\EventResource.cs" />
+    <Compile Include="Model\Events\Event.cs" />
+    <Compile Include="Model\Events\Message.cs" />
+    <Compile Include="Model\Events\Resource.cs" />
     <Compile Include="Model\OAuthToken.cs" />
     <Compile Include="Model\Subscription.cs" />
     <Compile Include="Model\SubscriptionType.cs" />
@@ -486,6 +484,11 @@
     <Compile Include="Factories\IBotDataFactory.cs" />
     <Compile Include="Services\IVstsService.cs" />
     <Compile Include="Services\VstsService.cs" />
+    <Compile Include="Strategies\Event\ApprovalEventStrategy.cs" />
+    <Compile Include="Strategies\Event\IEventStrategy.cs" />
+    <Compile Include="Strategies\Subscription\ISubscriptionStrategy.cs" />
+    <Compile Include="Strategies\Subscription\MyApprovalSubscriptionStrategy.cs" />
+    <Compile Include="Utils\EventJsonConverter.cs" />
     <Compile Include="WebApiApplication.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

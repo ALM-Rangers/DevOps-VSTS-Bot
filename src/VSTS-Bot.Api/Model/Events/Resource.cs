@@ -1,23 +1,17 @@
 ﻿// ———————————————————————————————
-// <copyright file="EventResource.cs">
+// <copyright file="Resource.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
 // Represents the resource of an event.
 // </summary>
 // ———————————————————————————————
-namespace Vsar.TSBot
+namespace Vsar.TSBot.Events
 {
-    using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
-
     /// <summary>
     /// Represents the resource of an event.
     /// </summary>
-    public class EventResource
+    public abstract class Resource
     {
-        /// <summary>
-        /// Gets or sets the approval.
-        /// </summary>
-        public ReleaseApproval Approval { get; set; }
     }
 }

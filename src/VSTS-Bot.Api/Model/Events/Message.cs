@@ -1,17 +1,17 @@
 ﻿// ———————————————————————————————
-// <copyright file="EventMessage.cs">
+// <copyright file="Message.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
 // Represents an event message.
 // </summary>
 // ———————————————————————————————
-namespace Vsar.TSBot
+namespace Vsar.TSBot.Events
 {
     /// <summary>
     /// Represents an event message.
     /// </summary>
-    public class EventMessage
+    public class Message
     {
         /// <summary>
         /// Gets or sets the html.

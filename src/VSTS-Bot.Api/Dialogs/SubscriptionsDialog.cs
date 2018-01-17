@@ -15,7 +15,6 @@ namespace Vsar.TSBot.Dialogs
     using System.Runtime.Serialization;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
-    using System.Web;
     using System.Web.Http;
     using Cards;
     using Microsoft.Azure.Documents;
@@ -23,6 +22,7 @@ namespace Vsar.TSBot.Dialogs
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
     using Resources;
+    using Strategies.Subscription;
 
     /// <summary>
     /// Represents a dialog for subscriptions.
@@ -38,18 +38,24 @@ namespace Vsar.TSBot.Dialogs
         [NonSerialized]
         private IDocumentClient documentClient;
 
+        [NonSerialized]
+        private IEnumerable<ISubscriptionStrategy> strategies;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SubscriptionsDialog"/> class.
         /// </summary>
         /// <param name="authenticationService">The authenticationService.</param>
         /// <param name="documentClient">The document client.</param>
+        /// <param name="strategies">The subscription strategies.</param>
         /// <param name="vstsService">VSTS accessor.</param>
-        public SubscriptionsDialog(IAuthenticationService authenticationService, IDocumentClient documentClient, IVstsService vstsService)
+        public SubscriptionsDialog(IAuthenticationService authenticationService, IDocumentClient documentClient, IEnumerable<ISubscriptionStrategy> strategies, IVstsService vstsService)
             : base(authenticationService, vstsService)
         {
             documentClient.ThrowIfNull(nameof(documentClient));
+            strategies.ThrowIfNull(nameof(strategies));
 
             this.documentClient = documentClient;
+            this.strategies = strategies;
         }
 
         /// <summary>
@@ -186,9 +192,9 @@ namespace Vsar.TSBot.Dialogs
                 };
 
                 var subscription = this.documentClient
-                                       .CreateDocumentQuery<Subscription>(UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"), querySpec)
-                                       .ToList()
-                                       .FirstOrDefault();
+                    .CreateDocumentQuery<Subscription>(UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"), querySpec)
+                    .ToList()
+                    .FirstOrDefault();
 
                 if (subscription != null)
                 {
@@ -205,44 +211,27 @@ namespace Vsar.TSBot.Dialogs
                     return;
                 }
 
-                var url = HttpContext.Current != null
-                    ? $"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/api/event"
-                    : string.Empty;
-
-                var s2 = new VSTS_Bot.TeamFoundation.Services.WebApi.Subscription
-                {
-                    ConsumerActionId = "httpRequest",
-                    ConsumerId = "webHooks",
-                    ConsumerInputs = new Dictionary<string, string>
-                    {
-                        { "url", url }
-                    },
-                    EventType = "ms.vss-release.deployment-approval-pending-event",
-                    PublisherId = "rm",
-                    PublisherInputs = new Dictionary<string, string>
-                    {
-                        { "projectId", teamProject.Id.ToString() }
-                    },
-                    ResourceVersion = "3.0-preview.1"
-                };
-
-                var r = await this.VstsService.CreateSubscription(this.Account, s2, this.Profile.Token);
-
                 subscription = new Subscription
                 {
                     BotId = activity.Recipient.Id,
                     BotName = activity.Recipient.Name,
                     ChannelId = activity.ChannelId,
-                    IdentityId = r.CreatedBy.Id,
                     IsActive = true,
                     ProfileId = this.Profile.Id,
                     RecipientId = activity.From.Id,
                     RecipientName = activity.From.Name,
                     ServiceUri = new Uri(activity.ServiceUrl),
-                    SubscriptionId = r.Id,
                     SubscriptionType = subscriptionType,
                     UserId = activity.From.Id
                 };
+
+                var strategy = this.strategies.First(s => s.CanGetSubscription(subscriptionType));
+                var s2 = strategy.GetSubscription(subscription.Id, teamProject);
+
+                var r = await this.VstsService.CreateSubscription(this.Account, s2, this.Profile.Token);
+
+                subscription.IdentityId = r.CreatedBy.Id;
+                subscription.SubscriptionId = r.Id;
 
                 await this.documentClient.UpsertDocumentAsync(
                     UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"), subscription);
@@ -294,6 +283,7 @@ namespace Vsar.TSBot.Dialogs
         private void OnSerializingMethod(StreamingContext context)
         {
             this.documentClient = GlobalConfiguration.Configuration.DependencyResolver.GetService<IDocumentClient>();
+            this.strategies = GlobalConfiguration.Configuration.DependencyResolver.GetService<IEnumerable<ISubscriptionStrategy>>();
         }
     }
 }

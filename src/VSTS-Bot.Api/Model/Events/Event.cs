@@ -1,28 +1,23 @@
 ﻿// ———————————————————————————————
-// <copyright file="EventRelease.cs">
+// <copyright file="Event.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Represents a release in an event.
+// Represents an Service hook event.
 // </summary>
 // ———————————————————————————————
-namespace Vsar.TSBot
+namespace Vsar.TSBot.Events
 {
-    using System;
-
     /// <summary>
-    /// Represents a release in an event.
+    /// Represents an Service hook event.
     /// </summary>
-    public class EventRelease
+    /// <typeparam name="T">The event resource type.</typeparam>
+    public abstract class Event<T> : EventBase
+        where T : Resource
     {
         /// <summary>
-        /// Gets or sets the id of the release.
+        /// Gets or sets the resource.
         /// </summary>
-        public Guid Id { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name of the release.
-        /// </summary>
-        public string Name { get; set; }
+        public T Resource { get; set; }
     }
 }

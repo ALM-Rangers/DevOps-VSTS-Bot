@@ -1,20 +1,24 @@
 ﻿// ———————————————————————————————
-// <copyright file="Event.cs">
+// <copyright file="EventBase.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
 // Represents an Service hook event.
 // </summary>
 // ———————————————————————————————
-namespace Vsar.TSBot
+namespace Vsar.TSBot.Events
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Newtonsoft.Json;
+    using Utils;
 
     /// <summary>
     /// Represents an Service hook event.
     /// </summary>
-    public class Event
+    [JsonConverter(typeof(EventJsonConverter))]
+    public abstract class EventBase
     {
         /// <summary>
         /// Gets or sets the created date.
@@ -24,7 +28,7 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets or sets the detailed message.
         /// </summary>
-        public EventMessage DetailedMessage { get; set; }
+        public Message DetailedMessage { get; set; }
 
         /// <summary>
         /// Gets or sets the event type.
@@ -39,17 +43,12 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets or sets the message.
         /// </summary>
-        public EventMessage Message { get; set; }
+        public Message Message { get; set; }
 
         /// <summary>
         /// Gets or sets the publisher id.
         /// </summary>
         public string PublisherId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the resource.
-        /// </summary>
-        public EventResource Resource { get; set; }
 
         /// <summary>
         /// Gets or sets the resource containers.

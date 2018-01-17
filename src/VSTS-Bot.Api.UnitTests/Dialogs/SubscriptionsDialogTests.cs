@@ -21,6 +21,7 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.VisualStudio.Services.WebApi;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using Strategies.Subscription;
 
     [TestClass]
     [TestCategory("Unit")]
@@ -34,7 +35,9 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Constructor_Empty_AuthenticationService()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new SubscriptionsDialog(null, this.Fixture.DocumentClient.Object, this.Fixture.VstsService.Object));
+            var strategies = new List<ISubscriptionStrategy>();
+
+            Assert.ThrowsException<ArgumentNullException>(() => new SubscriptionsDialog(null, this.Fixture.DocumentClient.Object, strategies, this.Fixture.VstsService.Object));
 
             await Task.CompletedTask;
         }
@@ -42,7 +45,17 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Constructor_Empty_DocumentClient()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, null, this.Fixture.VstsService.Object));
+            var strategies = new List<ISubscriptionStrategy>();
+
+            Assert.ThrowsException<ArgumentNullException>(() => new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, null, strategies, this.Fixture.VstsService.Object));
+
+            await Task.CompletedTask;
+        }
+
+        [TestMethod]
+        public async Task Constructor_Empty_Strategies()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, null, this.Fixture.VstsService.Object));
 
             await Task.CompletedTask;
         }
@@ -50,7 +63,9 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Constructor_Empty_VstsService()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, null));
+            var strategies = new List<ISubscriptionStrategy>();
+
+            Assert.ThrowsException<ArgumentNullException>(() => new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, strategies, null));
 
             await Task.CompletedTask;
         }
@@ -58,10 +73,12 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Start()
         {
+            var strategies = new List<ISubscriptionStrategy>();
+
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var mocked = new Mock<SubscriptionsDialog>(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, this.Fixture.VstsService.Object) { CallBase = true };
+            var mocked = new Mock<SubscriptionsDialog>(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, strategies, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             await target.StartAsync(this.Fixture.DialogContext.Object);
@@ -72,7 +89,9 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Builds_Missing_Context()
         {
-            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, this.Fixture.VstsService.Object);
+            var strategies = new List<ISubscriptionStrategy>();
+
+            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, strategies, this.Fixture.VstsService.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.SubscriptionsAsync(null, null));
         }
@@ -80,7 +99,9 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Builds_Missing_Awaitable()
         {
-            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, this.Fixture.VstsService.Object);
+            var strategies = new List<ISubscriptionStrategy>();
+
+            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, strategies, this.Fixture.VstsService.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.SubscriptionsAsync(this.Fixture.DialogContext.Object, null));
         }
@@ -88,10 +109,12 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Subscriptions_No_Text()
         {
+            var strategies = new List<ISubscriptionStrategy>();
+
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, this.Fixture.VstsService.Object);
+            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, strategies, this.Fixture.VstsService.Object);
 
             await target.SubscriptionsAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -101,6 +124,8 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Subscriptions()
         {
+            var strategies = new List<ISubscriptionStrategy>();
+
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "subscriptions";
 
@@ -111,7 +136,7 @@ namespace Vsar.TSBot.UnitTests
             var subscription = new Subscription();
             var subscriptions = new List<Subscription> { subscription };
 
-            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, this.Fixture.VstsService.Object);
+            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, strategies, this.Fixture.VstsService.Object);
 
             this.Fixture.UserData
                 .Setup(ud => ud.TryGetValue("userData", out data))
@@ -129,9 +154,11 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Subscribe_Missing_Context()
         {
+            var strategies = new List<ISubscriptionStrategy>();
+
             var toBot = this.Fixture.CreateMessage();
 
-            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, this.Fixture.VstsService.Object);
+            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, strategies, this.Fixture.VstsService.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => target.SubscribeAsync(null, this.Fixture.MakeAwaitable(toBot)));
         }
@@ -139,7 +166,9 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Subscribe_Missing_Result()
         {
-            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, this.Fixture.VstsService.Object);
+            var strategies = new List<ISubscriptionStrategy>();
+
+            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, strategies, this.Fixture.VstsService.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => target.SubscribeAsync(this.Fixture.DialogContext.Object, null));
         }
@@ -147,10 +176,12 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Subscribe_Empty_Text()
         {
+            var strategies = new List<ISubscriptionStrategy>();
+
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = string.Empty;
 
-            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, this.Fixture.VstsService.Object);
+            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, strategies, this.Fixture.VstsService.Object);
 
             await target.SubscribeAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -160,6 +191,8 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Subscribe_MyApprovals()
         {
+            var strategies = new List<ISubscriptionStrategy> { new MyApprovalSubscriptionStrategy() };
+
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "subscribe MyApprovals";
 
@@ -184,7 +217,7 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(dc => dc.UpsertDocumentAsync(It.IsAny<Uri>(), It.IsAny<Subscription>(), null, false))
                 .Returns(Task.FromResult(new ResourceResponse<Document>()));
 
-            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, this.Fixture.VstsService.Object)
+            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, strategies, this.Fixture.VstsService.Object)
             {
                 Account = account,
                 Profile = profile,
@@ -202,6 +235,8 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Unsubscribe_MyApprovals()
         {
+            var strategies = new List<ISubscriptionStrategy> { new MyApprovalSubscriptionStrategy() };
+
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "unsubscribe MyApprovals";
 
@@ -228,7 +263,7 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(s => s.DeleteSubscription(account, subscription.SubscriptionId, profile.Token))
                 .Returns(Task.CompletedTask);
 
-            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, this.Fixture.VstsService.Object)
+            var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, strategies, this.Fixture.VstsService.Object)
             {
                 Account = account,
                 Profile = profile,

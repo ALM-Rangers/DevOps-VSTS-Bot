@@ -24,6 +24,7 @@ namespace Vsar.TSBot
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Connector;
+    using Strategies.Event;
 
     /// <summary>
     /// Provides method(s) to bootstrap the dependency injection framework.
@@ -115,6 +116,10 @@ namespace Vsar.TSBot
                 .WithParameter("appSecret", Config.ApplicationSecret)
                 .WithParameter("authorizeUrl", Config.AuthorizeUrl)
                 .AsSelf();
+
+            builder
+                .RegisterType<ApprovalEventStrategy>()
+                .As<IEventStrategy>();
 
             builder
                 .RegisterApiControllers(typeof(Bootstrap).Assembly);
