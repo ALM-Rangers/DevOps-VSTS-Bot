@@ -171,9 +171,9 @@ namespace Vsar.TSBot.Resources {
         /// <summary>
         ///   Looks up a localized string similar to You have been Disconnected..
         /// </summary>
-        internal static string DisConnected {
+        internal static string Disconnected {
             get {
-                return ResourceManager.GetString("DisConnected", resourceCulture);
+                return ResourceManager.GetString("Disconnected", resourceCulture);
             }
         }
         

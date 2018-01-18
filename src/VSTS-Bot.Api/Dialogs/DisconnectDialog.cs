@@ -25,7 +25,7 @@ namespace Vsar.TSBot.Dialogs
     /// <summary>
     /// Represents the dialog for disconnecting to a VSTS account and team project.
     /// </summary>
-    [CommandMetadata("Disconnect")]
+    [CommandMetadata("disconnect")]
     [Serializable]
     public class DisconnectDialog : DialogBase, IDialog<object>
     {
@@ -97,7 +97,7 @@ namespace Vsar.TSBot.Dialogs
                 if (isRemoveValue)
                 {
                     var reply = context.MakeMessage();
-                    reply.Text = Labels.DisConnected;
+                    reply.Text = Labels.Disconnected;
                     await context.PostAsync(reply);
                     context.Done(reply);
                 }
