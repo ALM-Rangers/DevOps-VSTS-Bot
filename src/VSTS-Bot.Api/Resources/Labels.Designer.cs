@@ -358,6 +358,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Subscriptions.
+        /// </summary>
+        internal static string Subscriptions {
+            get {
+                return ResourceManager.GetString("Subscriptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to My approvals on {0}..
         /// </summary>
         internal static string SubscriptionTitle_MyApprovals {

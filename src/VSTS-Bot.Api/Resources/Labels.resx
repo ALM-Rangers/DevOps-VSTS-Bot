@@ -212,7 +212,7 @@
   <data name="HelpConnect" xml:space="preserve">
     <value>Please first 'connect' to your account, by clicking or typing connect.</value>
   </data>
-  <data name="DisConnected" xml:space="preserve">
+  <data name="Disconnected" xml:space="preserve">
     <value>You have been Disconnected.</value>
   </data>
   <data name="Disconnect" xml:space="preserve">
@@ -239,5 +239,8 @@
   </data>
   <data name="PendingApproval" xml:space="preserve">
     <value>There is an approval pending.</value>
+  </data>
+  <data name="Subscriptions" xml:space="preserve">
+    <value>Subscriptions</value>
   </data>
 </root>
