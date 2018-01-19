@@ -41,7 +41,9 @@ namespace Vsar.TSBot.Utils
             switch (type)
             {
                 case "ms.vss-release.deployment-approval-pending-event":
-                    return @object.ToObject<Event<ApprovalResource>>();
+                    var target = new Event<ApprovalResource>();
+                    serializer.Populate(@object.CreateReader(), target);
+                    return target;
                 default:
                     return null;
             }
