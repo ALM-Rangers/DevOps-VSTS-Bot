@@ -212,6 +212,12 @@
   <data name="HelpConnect" xml:space="preserve">
     <value>Please first 'connect' to your account, by clicking or typing connect.</value>
   </data>
+  <data name="DisConnected" xml:space="preserve">
+    <value>You have been Disconnected.</value>
+  </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>Disconnect</value>
+  </data>
   <data name="Subscribe" xml:space="preserve">
     <value>Subscribe</value>
   </data>
