@@ -54,7 +54,7 @@ namespace Vsar.TSBot
                 if (string.Equals(activity.Type, ActivityTypes.Message, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(activity.Type, ActivityTypes.ConversationUpdate, StringComparison.OrdinalIgnoreCase))
                 {
-                    RootDialog Dialog() => this.container.Resolve<RootDialog>(new NamedParameter("eulaUri", new Uri($"{this.Request.RequestUri.GetLeftPart(UriPartial.Authority)}/Eula")));
+                    RootDialog Dialog() => this.container.Resolve<RootDialog>(new NamedParameter("licenseUri", new Uri($"{this.Request.RequestUri.GetLeftPart(UriPartial.Authority)}/License")));
                     await Conversation.SendAsync(activity, Dialog);
                 }
             }
