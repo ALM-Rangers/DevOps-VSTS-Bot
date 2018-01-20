@@ -26,7 +26,7 @@ namespace Vsar.TSBot
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Contracts;
     using Microsoft.VisualStudio.Services.WebApi;
-    using VSTS_Bot.TeamFoundation.Services.WebApi;
+    using TeamFoundation.Services.WebApi;
 
     /// <summary>
     /// Contains method(s) for accessing VSTS.
@@ -105,7 +105,7 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc />
-        public async Task<VSTS_Bot.TeamFoundation.Services.WebApi.Subscription> CreateSubscription(string account, VSTS_Bot.TeamFoundation.Services.WebApi.Subscription subscription, OAuthToken token)
+        public async Task<TeamFoundation.Services.WebApi.Subscription> CreateSubscription(string account, TeamFoundation.Services.WebApi.Subscription subscription, OAuthToken token)
         {
             account.ThrowIfNull(nameof(account));
             subscription.ThrowIfNull(nameof(subscription));
@@ -234,7 +234,7 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc />
-        public async Task<VSTS_Bot.TeamFoundation.Services.WebApi.Subscription> GetSubscription(string account, Guid subscriptionId, OAuthToken token)
+        public async Task<TeamFoundation.Services.WebApi.Subscription> GetSubscription(string account, Guid subscriptionId, OAuthToken token)
         {
             account.ThrowIfNullOrWhiteSpace(nameof(account));
             token.ThrowIfNull(nameof(token));
@@ -246,7 +246,7 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc />
-        public async Task<IList<VSTS_Bot.TeamFoundation.Services.WebApi.Subscription>> GetSubscriptions(string account, OAuthToken token)
+        public async Task<IList<TeamFoundation.Services.WebApi.Subscription>> GetSubscriptions(string account, OAuthToken token)
         {
             account.ThrowIfNullOrWhiteSpace(nameof(account));
             token.ThrowIfNull(nameof(token));

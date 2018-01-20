@@ -24,12 +24,15 @@ namespace Vsar.TSBot.Utils
         /// <inheritdoc />
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(EventBase);
+            return objectType == typeof(ServiceHookEventBase);
         }
 
         /// <inheritdoc />
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
+            reader.ThrowIfNull(nameof(reader));
+            serializer.ThrowIfNull(nameof(serializer));
+
             if (reader.TokenType == JsonToken.Null)
             {
                 return null;
@@ -41,7 +44,7 @@ namespace Vsar.TSBot.Utils
             switch (type)
             {
                 case "ms.vss-release.deployment-approval-pending-event":
-                    var target = new Event<ApprovalResource>();
+                    var target = new ServiceHookEvent<ApprovalResource>();
                     serializer.Populate(@object.CreateReader(), target);
                     return target;
                 default:

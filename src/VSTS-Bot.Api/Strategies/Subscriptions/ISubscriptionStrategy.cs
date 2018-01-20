@@ -6,11 +6,11 @@
 // Interface for subscription strategies.
 // </summary>
 // ———————————————————————————————
-namespace Vsar.TSBot.Strategies.Subscription
+namespace Vsar.TSBot.Strategies.Subscriptions
 {
     using System;
     using Microsoft.TeamFoundation.Core.WebApi;
-    using VSTS_Bot.TeamFoundation.Services.WebApi;
+    using TeamFoundation.Services.WebApi;
 
     /// <summary>
     /// Interface for subscription strategies.

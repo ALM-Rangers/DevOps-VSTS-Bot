@@ -16,6 +16,7 @@ namespace Vsar.TSBot
     using Microsoft.TeamFoundation.Core.WebApi;
     using Microsoft.VisualStudio.Services.Account;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
+    using TeamFoundation.Services.WebApi;
 
     /// <summary>
     /// Interface for accessing VSTS.
@@ -51,7 +52,7 @@ namespace Vsar.TSBot
         /// <param name="subscription">The subscription to create.</param>
         /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
         /// <returns>The created subscription.</returns>
-        Task<VSTS_Bot.TeamFoundation.Services.WebApi.Subscription> CreateSubscription(string account, VSTS_Bot.TeamFoundation.Services.WebApi.Subscription subscription, OAuthToken token);
+        Task<TeamFoundation.Services.WebApi.Subscription> CreateSubscription(string account, TeamFoundation.Services.WebApi.Subscription subscription, OAuthToken token);
 
         /// <summary>
         /// Deletes the Service Hook Subscription with the given id.
@@ -153,16 +154,17 @@ namespace Vsar.TSBot
         /// <param name="account">The VSTS account name</param>
         /// <param name="subscriptionId">The subscription id.</param>
         /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
-        /// <returns>Collection of <see cref="VSTS_Bot.TeamFoundation.Services.WebApi.Subscription"/></returns>
-        Task<VSTS_Bot.TeamFoundation.Services.WebApi.Subscription> GetSubscription(string account, Guid subscriptionId, OAuthToken token);
+        /// <returns>Collection of <see cref="TeamFoundation.Services.WebApi.Subscription"/></returns>
+        Task<TeamFoundation.Services.WebApi.Subscription> GetSubscription(string account, Guid subscriptionId, OAuthToken token);
 
         /// <summary>
         /// Gets the Service Hook Subscriptions.
         /// </summary>
         /// <param name="account">The VSTS account name</param>
         /// <param name="token">The <see cref="OAuthToken"/> for authentication.</param>
-        /// <returns>Collection of <see cref="VSTS_Bot.TeamFoundation.Services.WebApi.Subscription"/></returns>
-        Task<IList<VSTS_Bot.TeamFoundation.Services.WebApi.Subscription>> GetSubscriptions(string account, OAuthToken token);
+        /// <returns>Collection of <see cref="TeamFoundation.Services.WebApi.Subscription"/></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Reviewed.")]
+        Task<IList<TeamFoundation.Services.WebApi.Subscription>> GetSubscriptions(string account, OAuthToken token);
 
         /// <summary>
         /// Queues a build.

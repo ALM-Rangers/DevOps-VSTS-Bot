@@ -7,8 +7,8 @@
     <ProjectGuid>{F528C603-F858-4F6C-9961-0691E24BFCA4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>VSTS_Bot.TeamFoundation.Services.WebApi</RootNamespace>
-    <AssemblyName>VSTS-Bot.TeamFoundation.Services.WebApi</AssemblyName>
+    <RootNamespace>Vsar.TeamFoundation.Services.WebApi</RootNamespace>
+    <AssemblyName>Vsar.TeamFoundation.Services.WebApi</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -25,7 +25,7 @@
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>..\Common\ProductionCodeRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Debug\VSTS-Bot.TeamFoundation.Services.WebApi.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\Vsar.TeamFoundation.Services.WebApi.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,7 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\VSTS-Bot.TeamFoundation.Services.WebApi.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Vsar.TeamFoundation.Services.WebApi.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -89,6 +89,9 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
     <Analyzer Include="..\packages\System.Security.Cryptography.Hashing.Algorithms.Analyzers.1.1.0\analyzers\dotnet\cs\System.Security.Cryptography.Hashing.Algorithms.Analyzers.dll" />
     <Analyzer Include="..\packages\System.Security.Cryptography.Hashing.Algorithms.Analyzers.1.1.0\analyzers\dotnet\cs\System.Security.Cryptography.Hashing.Algorithms.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="Properties\CustomDictionary.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

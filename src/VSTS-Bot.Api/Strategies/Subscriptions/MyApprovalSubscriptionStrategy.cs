@@ -6,13 +6,13 @@
 // Subscription strategy for my approvals.
 // </summary>
 // ———————————————————————————————
-namespace Vsar.TSBot.Strategies.Subscription
+namespace Vsar.TSBot.Strategies.Subscriptions
 {
     using System;
     using System.Collections.Generic;
     using System.Web;
     using Microsoft.TeamFoundation.Core.WebApi;
-    using VSTS_Bot.TeamFoundation.Services.WebApi;
+    using TeamFoundation.Services.WebApi;
 
     /// <summary>
     /// Subscription strategy for my approvals.
@@ -28,8 +28,11 @@ namespace Vsar.TSBot.Strategies.Subscription
         /// <inheritdoc />
         public Subscription GetSubscription(Guid subscriptionId, TeamProjectReference teamProject)
         {
+            subscriptionId.ThrowIfEmpty(nameof(subscriptionId));
+            teamProject.ThrowIfNull(nameof(teamProject));
+
             var url = HttpContext.Current != null
-                ? $"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/api/event"
+                ? FormattableString.Invariant($"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/api/event")
                 : string.Empty;
 
             return new Subscription
@@ -39,7 +42,7 @@ namespace Vsar.TSBot.Strategies.Subscription
                 ConsumerInputs = new Dictionary<string, string>
                 {
                     { "url", url },
-                    { "httpHeaders", $"subscriptionToken:{subscriptionId}" }
+                    { "httpHeaders", FormattableString.Invariant($"subscriptionToken:{subscriptionId}") }
                 },
                 EventType = "ms.vss-release.deployment-approval-pending-event",
                 PublisherId = "rm",

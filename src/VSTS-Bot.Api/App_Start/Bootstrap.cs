@@ -24,8 +24,8 @@ namespace Vsar.TSBot
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Connector;
-    using Strategies.Event;
-    using Strategies.Subscription;
+    using Strategies.Events;
+    using Strategies.Subscriptions;
 
     /// <summary>
     /// Provides method(s) to bootstrap the dependency injection framework.

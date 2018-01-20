@@ -10,6 +10,7 @@
 namespace Vsar.TSBot
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.Composition;
 
     /// <summary>
@@ -31,6 +32,6 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets the command coming from the users.
         /// </summary>
-        public string[] Commands { get; }
+        public IEnumerable<string> Commands { get; }
     }
 }

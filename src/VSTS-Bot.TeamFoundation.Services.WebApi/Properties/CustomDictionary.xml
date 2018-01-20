@@ -19,7 +19,6 @@
       <Word>Auth</Word>
       <Word>Awaitable</Word>
       <Word>param</Word>
-      <Word>Utils</Word>
     </Recognized>
     <Compound>
       <Term CompoundAlternate="ANon">anon</Term>

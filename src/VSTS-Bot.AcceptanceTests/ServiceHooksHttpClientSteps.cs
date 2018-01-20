@@ -14,6 +14,7 @@ namespace Vsar.TSBot.AcceptanceTests
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using TeamFoundation.Services.WebApi;
     using TechTalk.SpecFlow;
 
     [Binding]
@@ -27,7 +28,7 @@ namespace Vsar.TSBot.AcceptanceTests
             var teamProjects = await service.GetProjects(Config.Account, Config.Token);
             var tp = teamProjects.FirstOrDefault(p => p.Name.Equals(teamProject.Value, StringComparison.OrdinalIgnoreCase));
 
-            var subscription = new VSTS_Bot.TeamFoundation.Services.WebApi.Subscription
+            var subscription = new Subscription
             {
                  ConsumerActionId = "httpRequest",
                  ConsumerId = "webHooks",

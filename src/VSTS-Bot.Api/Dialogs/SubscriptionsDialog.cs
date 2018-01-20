@@ -22,7 +22,7 @@ namespace Vsar.TSBot.Dialogs
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
     using Resources;
-    using Strategies.Subscription;
+    using Strategies.Subscriptions;
 
     /// <summary>
     /// Represents a dialog for subscriptions.

@@ -19,7 +19,7 @@ namespace Vsar.TSBot
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
     using Resources;
-    using Strategies.Event;
+    using Strategies.Events;
 
     /// <summary>
     /// Handles events from the VSTS Service hooks.
@@ -48,7 +48,7 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="event">The posted @event</param>
         /// <returns>Action results.</returns>
-        public async Task<HttpResponseMessage> Post(EventBase @event)
+        public async Task<HttpResponseMessage> Post(ServiceHookEventBase @event)
         {
             try
             {

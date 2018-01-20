@@ -7,15 +7,15 @@
 // </summary>
 // ———————————————————————————————
 
-namespace Vsar.TSBot.Strategies.Event
+namespace Vsar.TSBot.Strategies.Events
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Cards;
-    using Events;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
     using Resources;
+    using TSBot.Events;
     using Subscription = TSBot.Subscription;
 
     /// <summary>
@@ -41,11 +41,11 @@ namespace Vsar.TSBot.Strategies.Event
         }
 
         /// <inheritdoc />
-        public async Task Handle(EventBase @event, Subscription subscription)
+        public async Task Handle(ServiceHookEventBase serviceHookEvent, Subscription subscription)
         {
-            var ev = @event as Event<ApprovalResource>;
+            var ev = serviceHookEvent as ServiceHookEvent<ApprovalResource>;
 
-            ev.ThrowIfNull(nameof(@event));
+            ev.ThrowIfNull(nameof(serviceHookEvent));
             subscription.ThrowIfNull(nameof(subscription));
 
             var address = new Address(string.Empty, subscription.ChannelId, subscription.UserId, string.Empty, string.Empty);
@@ -81,9 +81,11 @@ namespace Vsar.TSBot.Strategies.Event
         }
 
         /// <inheritdoc />
-        public bool ShouldHandle(EventBase @event)
+        public bool ShouldHandle(ServiceHookEventBase serviceHookEvent)
         {
-            return @event.GetType() == typeof(Event<ApprovalResource>);
+            serviceHookEvent.ThrowIfNull(nameof(serviceHookEvent));
+
+            return serviceHookEvent.GetType() == typeof(ServiceHookEvent<ApprovalResource>);
         }
     }
 }

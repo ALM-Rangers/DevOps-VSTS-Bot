@@ -20,7 +20,7 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.Azure.Documents;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using Strategies.Event;
+    using Strategies.Events;
 
     [TestClass]
     [TestCategory("Unit")]
@@ -45,7 +45,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Post_Missing_SubscriptionId_In_Header()
         {
-            var @event = new Event<ApprovalResource>();
+            var @event = new ServiceHookEvent<ApprovalResource>();
             var strategies = new List<IEventStrategy>();
 
             var dcMock = new Mock<IDocumentClient>();
@@ -64,7 +64,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Post_Invalid_SubscriptionId_In_Header()
         {
-            var @event = new Event<ApprovalResource>();
+            var @event = new ServiceHookEvent<ApprovalResource>();
             var strategies = new List<IEventStrategy>();
 
             var dcMock = new Mock<IDocumentClient>();
@@ -83,7 +83,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Post()
         {
-            var @event = new Event<ApprovalResource>();
+            var @event = new ServiceHookEvent<ApprovalResource>();
             var subscription = new Subscription();
             var strategies = new List<IEventStrategy>();
 

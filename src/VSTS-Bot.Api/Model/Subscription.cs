@@ -44,7 +44,7 @@ namespace Vsar.TSBot
         [DataMember]
         [JsonProperty("id")]
         [Key]
-        public Guid Id { get; private set; } = Guid.NewGuid();
+        public Guid Id { get; } = Guid.NewGuid();
 
         /// <summary>
         /// Gets or sets the identity id.

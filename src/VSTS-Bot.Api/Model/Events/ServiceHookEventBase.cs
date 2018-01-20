@@ -1,5 +1,5 @@
 ﻿// ———————————————————————————————
-// <copyright file="EventBase.cs">
+// <copyright file="ServiceHookEventBase.cs">
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
@@ -18,7 +18,7 @@ namespace Vsar.TSBot.Events
     /// Represents an Service hook event.
     /// </summary>
     [JsonConverter(typeof(EventJsonConverter))]
-    public abstract class EventBase
+    public abstract class ServiceHookEventBase
     {
         /// <summary>
         /// Gets or sets the created date.
@@ -53,6 +53,7 @@ namespace Vsar.TSBot.Events
         /// <summary>
         /// Gets or sets the resource containers.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Reviewed.")]
         public IDictionary<string, object> ResourceContainers { get; set; } = new Dictionary<string, object>();
 
         /// <summary>

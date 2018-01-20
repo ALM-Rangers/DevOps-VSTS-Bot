@@ -3,33 +3,33 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // </copyright>
 // <summary>
-// Represents an interface for event strategies.
+// Represents an interface for serviceHookEvent strategies.
 // </summary>
 // ———————————————————————————————
-namespace Vsar.TSBot.Strategies.Event
+namespace Vsar.TSBot.Strategies.Events
 {
     using System.Threading.Tasks;
-    using Events;
+    using TSBot.Events;
     using Subscription = TSBot.Subscription;
 
     /// <summary>
-    /// Represents an interface for event strategies.
+    /// Represents an interface for serviceHookEvent strategies.
     /// </summary>
     public interface IEventStrategy
     {
         /// <summary>
-        /// Handles and event.
+        /// Handles and serviceHookEvent.
         /// </summary>
-        /// <param name="event">the event.</param>
+        /// <param name="serviceHookEvent">the serviceHookEvent.</param>
         /// <param name="subscription">The matching subscription.</param>
         /// <returns>A task.</returns>
-        Task Handle(EventBase @event, Subscription subscription);
+        Task Handle(ServiceHookEventBase serviceHookEvent, Subscription subscription);
 
         /// <summary>
-        /// Checks if the event should be handled by the strategy.
+        /// Checks if the serviceHookEvent should be handled by the strategy.
         /// </summary>
-        /// <param name="event">An event.</param>
-        /// <returns>A boolean value indicating whether the strategy should handle the event.</returns>
-        bool ShouldHandle(EventBase @event);
+        /// <param name="serviceHookEvent">An serviceHookEvent.</param>
+        /// <returns>A boolean value indicating whether the strategy should handle the serviceHookEvent.</returns>
+        bool ShouldHandle(ServiceHookEventBase serviceHookEvent);
     }
 }

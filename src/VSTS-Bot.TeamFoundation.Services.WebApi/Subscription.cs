@@ -7,7 +7,7 @@
 // </summary>
 // ———————————————————————————————
 
-namespace VSTS_Bot.TeamFoundation.Services.WebApi
+namespace Vsar.TeamFoundation.Services.WebApi
 {
     using System;
     using System.Collections.Generic;
@@ -41,6 +41,7 @@ namespace VSTS_Bot.TeamFoundation.Services.WebApi
         /// <summary>
         /// Gets or sets the consumer inputs.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Reviewed.")]
         [DataMember(EmitDefaultValue = false)]
         public IDictionary<string, string> ConsumerInputs { get; set; }
 
@@ -95,6 +96,7 @@ namespace VSTS_Bot.TeamFoundation.Services.WebApi
         /// <summary>
         /// Gets or sets the publisher inputs.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Reviewed.")]
         [DataMember(EmitDefaultValue = false)]
         public IDictionary<string, string> PublisherInputs { get; set; }
 
@@ -108,6 +110,6 @@ namespace VSTS_Bot.TeamFoundation.Services.WebApi
         /// Gets or sets the url.
         /// </summary>
         [DataMember(EmitDefaultValue = false)]
-        public string Url { get; set; }
+        public Uri Url { get; set; }
     }
 }

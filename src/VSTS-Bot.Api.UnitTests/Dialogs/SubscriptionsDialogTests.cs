@@ -21,7 +21,7 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.VisualStudio.Services.WebApi;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using Strategies.Subscription;
+    using Strategies.Subscriptions;
 
     [TestClass]
     [TestCategory("Unit")]
@@ -201,7 +201,7 @@ namespace Vsar.TSBot.UnitTests
             var teamProject = "TeamProject1";
             var teamProjects = new List<TeamProjectReference> { new TeamProjectReference { Name = teamProject } };
 
-            var subscription = new VSTS_Bot.TeamFoundation.Services.WebApi.Subscription { CreatedBy = new IdentityRef { Id = "1" } };
+            var subscription = new TeamFoundation.Services.WebApi.Subscription { CreatedBy = new IdentityRef { Id = "1" } };
             var subscriptions = new List<Subscription>();
 
             this.Fixture.DocumentClient
@@ -211,7 +211,7 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(s => s.GetProjects(account, profile.Token))
                 .ReturnsAsync(teamProjects);
             this.Fixture.VstsService
-                .Setup(s => s.CreateSubscription(account, It.IsAny<VSTS_Bot.TeamFoundation.Services.WebApi.Subscription>(), profile.Token))
+                .Setup(s => s.CreateSubscription(account, It.IsAny<TeamFoundation.Services.WebApi.Subscription>(), profile.Token))
                 .ReturnsAsync(subscription);
             this.Fixture.DocumentClient
                 .Setup(dc => dc.UpsertDocumentAsync(It.IsAny<Uri>(), It.IsAny<Subscription>(), null, false))
