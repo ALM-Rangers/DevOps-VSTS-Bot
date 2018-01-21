@@ -77,4 +77,4 @@ Please refer to [Contribution guidelines](.github/CONTRIBUTING.md) and the [Code
 Notices for certain third party software included in this solution are provided here: [Third Party Notice](ThirdPartyNotices.txt).
 
 ## Data/Telemetry
-**DevOps VSTS Bot** collects usage data and sends it to Microsoft to help improve our products and services. Read our privacy statement to learn more.
+**DevOps VSTS Bot** collects usage data and sends it to Microsoft to help improve our products and services.
