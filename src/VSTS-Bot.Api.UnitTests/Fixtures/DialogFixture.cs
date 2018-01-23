@@ -29,7 +29,7 @@ namespace Vsar.TSBot.UnitTests
 
         public DialogFixture()
         {
-            this.RootDialog = new RootDialog(new Uri("https://an.url.toEula"), this.TelemetryClient);
+            this.RootDialog = new RootDialog(new Uri("https://an.url.toLicense"), this.TelemetryClient);
             this.DialogContext
                 .Setup(c => c.UserData)
                 .Returns(this.UserData.Object);
