@@ -19,7 +19,7 @@ namespace Vsar.TSBot.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Labels {
@@ -340,7 +340,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hi {0}. Good to see you. I will help you with your Visual Studio Team Services tasks. Please read the [EULA]({1}) if you have not done so..
+        ///   Looks up a localized string similar to Hi {0}. Good to see you. I will help you with your Visual Studio Team Services tasks. Please read the [MIT License]({1}) if you have not done so..
         /// </summary>
         internal static string WelcomeUser {
             get {

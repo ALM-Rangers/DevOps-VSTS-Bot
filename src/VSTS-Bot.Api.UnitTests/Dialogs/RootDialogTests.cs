@@ -40,7 +40,7 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
-        public void Constructor_Missing_EulaUri()
+        public void Constructor_Missing_LicenseUri()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new RootDialog(null, null));
         }
@@ -48,14 +48,14 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public void Constructor_Missing_TelemetryClient()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new RootDialog(new Uri("https://an.url.toEula"), null));
+            Assert.ThrowsException<ArgumentNullException>(() => new RootDialog(new Uri("https://an.url.toLicense"), null));
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "target", Justification = "Test for constructor only.")]
         [TestMethod]
         public void Constructor()
         {
-            var target = new RootDialog(new Uri("https://an.url.toEula"), new TelemetryClient());
+            var target = new RootDialog(new Uri("https://an.url.toLicense"), new TelemetryClient());
             Assert.IsNotNull(target);
         }
 
@@ -65,7 +65,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var mocked = new Mock<RootDialog>(new Uri("https://an.url.toEula"), this.Fixture.TelemetryClient) { CallBase = true };
+            var mocked = new Mock<RootDialog>(new Uri("https://an.url.toLicense"), this.Fixture.TelemetryClient) { CallBase = true };
             var target = mocked.Object;
 
             await target.StartAsync(this.Fixture.DialogContext.Object);
@@ -98,7 +98,7 @@ namespace Vsar.TSBot.UnitTests
 
             this.Fixture.DialogContext
                 .Verify(c => c.PostAsync(
-                    It.Is<IMessageActivity>(a => Regex.IsMatch(a.Text, $"Hi {toBot.From.Name}. Good to see you. I will help you with your Visual Studio Team Services tasks. Please read the \\[EULA\\]\\(.+\\) if you have not done so.")),
+                    It.Is<IMessageActivity>(a => Regex.IsMatch(a.Text, $"Hi {toBot.From.Name}. Good to see you. I will help you with your Visual Studio Team Services tasks. Please read the \\[MIT License\\]\\(.+\\) if you have not done so.")),
                     CancellationToken.None));
         }
 
@@ -188,7 +188,7 @@ namespace Vsar.TSBot.UnitTests
         {
             var fromBot = this.Fixture.CreateMessage();
 
-            var target = new Mock<RootDialog>(new Uri("http://eula.com"), this.Fixture.TelemetryClient) { CallBase = true };
+            var target = new Mock<RootDialog>(new Uri("http://license.com"), this.Fixture.TelemetryClient) { CallBase = true };
 
             await target.Object.ResumeAfterChildDialog(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(fromBot));
 
@@ -216,7 +216,7 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(c => c.Activity)
                 .Returns(toBot);
 
-            var target = new Mock<RootDialog>(new Uri("http://eula.com"), this.Fixture.TelemetryClient) { CallBase = true };
+            var target = new Mock<RootDialog>(new Uri("http://license.com"), this.Fixture.TelemetryClient) { CallBase = true };
 
             target
                 .Setup(d => d.HandleCommandAsync(It.IsAny<IDialogContext>(), It.IsAny<IMessageActivity>()))
@@ -252,7 +252,7 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None))
                 .Returns(Task.CompletedTask);
 
-            var target = new Mock<RootDialog>(new Uri("http://eula.com"), this.Fixture.TelemetryClient) { CallBase = true };
+            var target = new Mock<RootDialog>(new Uri("http://license.com"), this.Fixture.TelemetryClient) { CallBase = true };
 
             await target.Object.ResumeAfterChildDialog(this.Fixture.DialogContext.Object, awaitable.Object);
 
@@ -271,7 +271,7 @@ namespace Vsar.TSBot.UnitTests
                 .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
                 .Returns(true);
 
-            var mocked = new Mock<RootDialog>(new Uri("https://an.url.toEula"), this.Fixture.TelemetryClient) { CallBase = true };
+            var mocked = new Mock<RootDialog>(new Uri("https://an.url.toLicense"), this.Fixture.TelemetryClient) { CallBase = true };
             var target = mocked.Object;
 
             mocked.Setup(m => m.HandleCommandAsync(this.Fixture.DialogContext.Object, message)).Returns(Task.CompletedTask).Verifiable();
@@ -287,7 +287,7 @@ namespace Vsar.TSBot.UnitTests
             var message = this.Fixture.CreateMessage();
             message.Type = ActivityTypes.ConversationUpdate;
 
-            var mocked = new Mock<RootDialog>(new Uri("https://an.url.toEula"), this.Fixture.TelemetryClient) { CallBase = true };
+            var mocked = new Mock<RootDialog>(new Uri("https://an.url.toLicense"), this.Fixture.TelemetryClient) { CallBase = true };
             var target = mocked.Object;
 
             mocked.Setup(m => m.WelcomeAsync(this.Fixture.DialogContext.Object, message)).Returns(Task.CompletedTask).Verifiable();
