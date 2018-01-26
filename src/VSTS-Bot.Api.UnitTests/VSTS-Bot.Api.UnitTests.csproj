@@ -288,7 +288,7 @@
     <Compile Include="Cards\ReleaseDefinitionCardTests.cs" />
     <Compile Include="Controllers\AuthorizeControllerTests.cs" />
     <Compile Include="Controllers\DefaultControllerTests.cs" />
-    <Compile Include="Controllers\EulaControllerTests.cs" />
+    <Compile Include="Controllers\LicenseControllerTests.cs" />
     <Compile Include="Controllers\EventControllerTests.cs" />
     <Compile Include="Controllers\MessagesControllerTests.cs" />
     <Compile Include="Dialogs\ApprovalsDialogTests.cs" />
