@@ -68,7 +68,43 @@ namespace Vsar.TSBot.UnitTests
 
             await target.StartAsync(this.Fixture.DialogContext.Object);
 
-            this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.ApprovalsAsync));
+            this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.SelectResumeAfter));
+        }
+
+        [TestMethod]
+        public async Task SelectResumeAfter_Approvals()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "approvals";
+
+            var mocked = new Mock<ApprovalsDialog>(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
+            var target = mocked.Object;
+
+            mocked
+                .Setup(d => d.ApprovalsAsync(this.Fixture.DialogContext.Object, It.IsAny<IAwaitable<Activity>>()))
+                .Returns(Task.CompletedTask);
+
+            await target.SelectResumeAfter(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            mocked.VerifyAll();
+        }
+
+        [TestMethod]
+        public async Task SelectResumeAfter_Approve()
+        {
+            var toBot = this.Fixture.CreateMessage();
+            toBot.Text = "approve";
+
+            var mocked = new Mock<ApprovalsDialog>(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
+            var target = mocked.Object;
+
+            mocked
+                .Setup(d => d.ApproveOrRejectAsync2(this.Fixture.DialogContext.Object, It.IsAny<IAwaitable<Activity>>()))
+                .Returns(Task.CompletedTask);
+
+            await target.SelectResumeAfter(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
+
+            mocked.VerifyAll();
         }
 
         [TestMethod]

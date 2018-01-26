@@ -28,7 +28,7 @@ namespace Vsar.TSBot.UnitTests.Models
                 DisplayNameEncrypted = "mBfXWXCzx5S/U1aoLy7tzXn4/uqLsjH3rgxnkNDvT7IIKlUJwgcPd5Te5Dd1xjle"
             };
 
-            target.DisplayName.Should().Be("me");
+            target.DisplayName.Should().Be("\"me\"");
             target.Token.AccessToken.Should().Be("x25onorum4neacdjmvzvaxjeosik7qxo7fbnn6lebefeday7fxmq");
         }
     }

@@ -22,7 +22,7 @@ namespace Vsar.TSBot.Dialogs
     /// <summary>
     /// Represents the dialog to retrieve and approve/reject approvals.
     /// </summary>
-    [CommandMetadata("approvals")]
+    [CommandMetadata("approvals", "approve", "reject")]
     [Serializable]
     public class ApprovalsDialog : DialogBase, IDialog<object>
     {
@@ -30,6 +30,7 @@ namespace Vsar.TSBot.Dialogs
 
         private const string CommandMatchApprovals = "approvals";
         private const string CommandMatchApprove = @"approve (\d+) *(.*?)$";
+        private const string CommandMatchApproveOrReject2 = @"(approve|reject) (\d+) (.+) (.+)$";
         private const string CommandMatchReject = @"reject (\d+) *(.*?)$";
 
         /// <summary>
@@ -72,9 +73,29 @@ namespace Vsar.TSBot.Dialogs
         {
             context.ThrowIfNull(nameof(context));
 
-            context.Wait(this.ApprovalsAsync);
+            context.Wait(this.SelectResumeAfter);
 
             await Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Selects the correct resume after.
+        /// </summary>
+        /// <param name="context">The <see cref="IDialogContext"/>.</param>
+        /// <param name="result">The <see cref="IAwaitable{T}"/>.</param>
+        /// <returns>An async <see cref="Task"/>/.</returns>
+        public virtual async Task SelectResumeAfter(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            var activity = await result;
+
+            if (activity.Text.StartsWith("approvals", StringComparison.OrdinalIgnoreCase))
+            {
+                await this.ApprovalsAsync(context, result);
+            }
+            else
+            {
+                await this.ApproveOrRejectAsync2(context, result);
+            }
         }
 
         /// <summary>
@@ -118,7 +139,7 @@ namespace Vsar.TSBot.Dialogs
                 var skip = 0;
                 while (skip < approvals.Count)
                 {
-                    var cards = approvals.Skip(skip).Take(TakeSize).Select(a => new ApprovalCard(this.Account, a, this.TeamProject)).ToList();
+                    var cards = approvals.Skip(skip).Take(TakeSize).Select(a => new ApprovalCard(a)).ToList();
                     var reply = context.MakeMessage();
 
                     foreach (var card in cards)
@@ -152,45 +173,34 @@ namespace Vsar.TSBot.Dialogs
             result.ThrowIfNull(nameof(result));
 
             var activity = await result;
+            var text = activity.RemoveRecipientMention();
 
-            var matchApprove = Regex.Match(activity.RemoveRecipientMention(), CommandMatchApprove);
-            var matchReject = Regex.Match(activity.RemoveRecipientMention(), CommandMatchReject);
+            await this.ApproveOrRejectAsync(context, activity, text);
+        }
 
-            var reply = context.MakeMessage();
+        /// <summary>
+        /// Approves or Rejects an Approval.
+        /// </summary>
+        /// <param name="context">The <see cref="IDialogContext"/>.</param>
+        /// <param name="result">The <see cref="IAwaitable{T}"/>.</param>
+        /// <returns>An async <see cref="Task"/>/.</returns>
+        public virtual async Task ApproveOrRejectAsync2(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
 
-            if (matchApprove.Success)
+            var activity = await result;
+            var text = activity.RemoveRecipientMention();
+
+            var match = Regex.Match(text, CommandMatchApproveOrReject2);
+
+            if (match.Success)
             {
-                this.ApprovalId = Convert.ToInt32(matchApprove.Groups[1].Value);
-                this.IsApproved = true;
-                var comment = matchApprove.Groups[2].Value;
+                this.Account = match.Groups[3].Value;
+                this.Profile = await this.GetValidatedProfile(context.UserData);
+                this.TeamProject = match.Groups[4].Value;
 
-                if (string.IsNullOrWhiteSpace(comment))
-                {
-                    reply.Text = Labels.MissingComment;
-                    await context.PostAsync(reply);
-                    context.Wait(this.ChangeStatusAsync);
-                }
-                else
-                {
-                    await this.ChangeStatusAsync(context, this.ApprovalId, comment, true);
-                }
-            }
-            else if (matchReject.Success)
-            {
-                this.ApprovalId = Convert.ToInt32(matchReject.Groups[1].Value);
-                this.IsApproved = false;
-                var comment = matchReject.Groups[2].Value;
-
-                if (string.IsNullOrWhiteSpace(comment))
-                {
-                    reply.Text = Labels.MissingComment;
-                    await context.PostAsync(reply);
-                    context.Wait(this.ChangeStatusAsync);
-                }
-                else
-                {
-                    await this.ChangeStatusAsync(context, this.ApprovalId, comment, false);
-                }
+                await this.ApproveOrRejectAsync(context, activity, $"{match.Groups[1].Value} {match.Groups[2].Value}");
             }
             else
             {
@@ -239,6 +249,53 @@ namespace Vsar.TSBot.Dialogs
             await context.PostAsync(reply);
 
             context.Done(reply);
+        }
+
+        private async Task ApproveOrRejectAsync(IDialogContext context, IMessageActivity activity, string text)
+        {
+            var matchApprove = Regex.Match(text, CommandMatchApprove);
+            var matchReject = Regex.Match(text, CommandMatchReject);
+
+            var reply = context.MakeMessage();
+
+            if (matchApprove.Success)
+            {
+                this.ApprovalId = Convert.ToInt32(matchApprove.Groups[1].Value);
+                this.IsApproved = true;
+                var comment = matchApprove.Groups[2].Value;
+
+                if (string.IsNullOrWhiteSpace(comment))
+                {
+                    reply.Text = Labels.MissingComment;
+                    await context.PostAsync(reply);
+                    context.Wait(this.ChangeStatusAsync);
+                }
+                else
+                {
+                    await this.ChangeStatusAsync(context, this.ApprovalId, comment, true);
+                }
+            }
+            else if (matchReject.Success)
+            {
+                this.ApprovalId = Convert.ToInt32(matchReject.Groups[1].Value);
+                this.IsApproved = false;
+                var comment = matchReject.Groups[2].Value;
+
+                if (string.IsNullOrWhiteSpace(comment))
+                {
+                    reply.Text = Labels.MissingComment;
+                    await context.PostAsync(reply);
+                    context.Wait(this.ChangeStatusAsync);
+                }
+                else
+                {
+                    await this.ChangeStatusAsync(context, this.ApprovalId, comment, false);
+                }
+            }
+            else
+            {
+                context.Fail(new UnknownCommandException(activity.Text));
+            }
         }
     }
 }

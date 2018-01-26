@@ -250,6 +250,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is an approval pending..
+        /// </summary>
+        internal static string PendingApproval {
+            get {
+                return ResourceManager.GetString("PendingApproval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please login to Visual Studio Team Services. After login you will receive a five digit pin number, please enter the pin number..
         /// </summary>
         internal static string PleaseLogin {
@@ -322,11 +331,74 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Subscribe.
+        /// </summary>
+        internal static string Subscribe {
+            get {
+                return ResourceManager.GetString("Subscribe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I subscribed you to the feed..
+        /// </summary>
+        internal static string Subscribed {
+            get {
+                return ResourceManager.GetString("Subscribed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To be able to get your approval notifications, I have to create a web hook on your account, that pushes notifications to my service..
+        /// </summary>
+        internal static string SubscriptionDescription_MyApprovals {
+            get {
+                return ResourceManager.GetString("SubscriptionDescription_MyApprovals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subscriptions.
+        /// </summary>
+        internal static string Subscriptions {
+            get {
+                return ResourceManager.GetString("Subscriptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My approvals on {0}..
+        /// </summary>
+        internal static string SubscriptionTitle_MyApprovals {
+            get {
+                return ResourceManager.GetString("SubscriptionTitle_MyApprovals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorry, I did not recognize that command. Please select one of the following commands..
         /// </summary>
         internal static string UnknownCommand {
             get {
                 return ResourceManager.GetString("UnknownCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsubscribe.
+        /// </summary>
+        internal static string Unsubscribe {
+            get {
+                return ResourceManager.GetString("Unsubscribe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I unsubscribed you from the feed..
+        /// </summary>
+        internal static string Unsubscribed {
+            get {
+                return ResourceManager.GetString("Unsubscribed", resourceCulture);
             }
         }
         

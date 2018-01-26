@@ -33,7 +33,8 @@ namespace Vsar.TSBot.Cards
                 var button3 = new CardAction(ActionTypes.ImBack, Labels.Connect, value: "connect");
                 var button4 = new CardAction(ActionTypes.ImBack, Labels.Releases, value: "releases");
                 var button5 = new CardAction(ActionTypes.ImBack, Labels.Disconnect, value: "disconnect");
-                this.Buttons = new List<CardAction> { button1, button2, button3, button4, button5 };
+                var button6 = new CardAction(ActionTypes.ImBack, Labels.Subscriptions, value: "subscriptions");
+                this.Buttons = new List<CardAction> { button1, button2, button3, button4, button5, button6 };
             }
             else
             {

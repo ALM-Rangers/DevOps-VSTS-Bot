@@ -36,7 +36,7 @@ namespace Vsar.TSBot
         /// </summary>
         public string DisplayName
         {
-            get => this.displayName ?? (this.displayName = this.DisplayNameEncrypted.Decrypt<string>(this.Id.ToString()));
+            get => this.displayName ?? (this.displayName = this.DisplayNameEncrypted.Decrypt(this.Id.ToString()));
             set
             {
                 this.displayName = value;

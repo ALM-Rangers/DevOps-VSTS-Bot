@@ -212,10 +212,35 @@
   <data name="HelpConnect" xml:space="preserve">
     <value>Please first 'connect' to your account, by clicking or typing connect.</value>
   </data>
-  <data name="DisConnected" xml:space="preserve">
+  <data name="Disconnected" xml:space="preserve">
     <value>You have been Disconnected.</value>
   </data>
   <data name="Disconnect" xml:space="preserve">
     <value>Disconnect</value>
+  </data>
+  <data name="Subscribe" xml:space="preserve">
+    <value>Subscribe</value>
+  </data>
+  <data name="SubscriptionDescription_MyApprovals" xml:space="preserve">
+    <value>To be able to get your approval notifications, I have to create a web hook on your account, that pushes notifications to my service.</value>
+  </data>
+  <data name="SubscriptionTitle_MyApprovals" xml:space="preserve">
+    <value>My approvals on {0}.</value>
+    <comment>{0} = team project;</comment>
+  </data>
+  <data name="Unsubscribe" xml:space="preserve">
+    <value>Unsubscribe</value>
+  </data>
+  <data name="Subscribed" xml:space="preserve">
+    <value>I subscribed you to the feed.</value>
+  </data>
+  <data name="Unsubscribed" xml:space="preserve">
+    <value>I unsubscribed you from the feed.</value>
+  </data>
+  <data name="PendingApproval" xml:space="preserve">
+    <value>There is an approval pending.</value>
+  </data>
+  <data name="Subscriptions" xml:space="preserve">
+    <value>Subscriptions</value>
   </data>
 </root>

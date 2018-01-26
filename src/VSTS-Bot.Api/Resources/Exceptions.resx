@@ -136,4 +136,10 @@
     <value>The command '{0}' is unknown</value>
     <comment>{0} = CommandName</comment>
   </data>
+  <data name="InvalidSubscriptionToken" xml:space="preserve">
+    <value>The subscription token is invalid.</value>
+  </data>
+  <data name="MissingSubscriptionToken" xml:space="preserve">
+    <value>Missing subscription token from the request header.</value>
+  </data>
 </root>

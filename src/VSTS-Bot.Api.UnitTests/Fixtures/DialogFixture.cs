@@ -14,9 +14,11 @@ namespace Vsar.TSBot.UnitTests
     using System.Diagnostics.CodeAnalysis;
     using Dialogs;
     using Microsoft.ApplicationInsights;
+    using Microsoft.Azure.Documents;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
     using Moq;
+    using Attachment = Microsoft.Bot.Connector.Attachment;
 
     /// <summary>
     /// A fixture for dialogs.
@@ -44,6 +46,8 @@ namespace Vsar.TSBot.UnitTests
         public Mock<IAuthenticationService> AuthenticationService { get; } = new Mock<IAuthenticationService>();
 
         public Mock<IDialogContext> DialogContext { get; } = new Mock<IDialogContext>();
+
+        public Mock<IDocumentClient> DocumentClient { get; } = new Mock<IDocumentClient>();
 
         /// <summary>
         /// Gets the root dialog.
@@ -75,7 +79,7 @@ namespace Vsar.TSBot.UnitTests
                 From = new ChannelAccount { Id = User, Name = User },
                 Conversation = new ConversationAccount { Id = Guid.NewGuid().ToString() },
                 Recipient = new ChannelAccount { Id = Bot },
-                ServiceUrl = "InvalidServiceUrl",
+                ServiceUrl = "https://looks.likeavalid.url",
                 ChannelId = "Test",
                 Attachments = new List<Attachment>(),
                 Entities = new List<Entity>(),

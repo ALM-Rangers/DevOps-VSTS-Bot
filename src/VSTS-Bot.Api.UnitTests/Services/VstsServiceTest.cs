@@ -31,6 +31,7 @@ namespace Vsar.TSBot.UnitTests.Services
     using Microsoft.VisualStudio.Services.WebApi;
     using Microsoft.VisualStudio.Services.WebApi.Fakes;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
 
     /// <summary>
     /// Unit tests for <see cref="VstsService"/>.

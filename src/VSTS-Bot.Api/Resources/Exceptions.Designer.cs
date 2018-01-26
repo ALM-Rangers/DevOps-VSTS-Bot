@@ -88,6 +88,24 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The subscription token is invalid..
+        /// </summary>
+        internal static string InvalidSubscriptionToken {
+            get {
+                return ResourceManager.GetString("InvalidSubscriptionToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing subscription token from the request header..
+        /// </summary>
+        internal static string MissingSubscriptionToken {
+            get {
+                return ResourceManager.GetString("MissingSubscriptionToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified project couldn&apos;t be found.
         /// </summary>
         internal static string TeamProjectNotFound {

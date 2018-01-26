@@ -108,9 +108,9 @@ namespace Vsar.TSBot
         {
             return new Profile
             {
+                Id = profile.Id, // First do the id, for the encryption / decryption.
                 Accounts = accounts.Select(a => a.AccountName).ToList(),
                 DisplayName = profile.DisplayName,
-                Id = profile.Id,
                 Token = token
             };
         }

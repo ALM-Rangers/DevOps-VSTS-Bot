@@ -11,13 +11,7 @@ namespace Vsar.TSBot.Dialogs
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
-    using System.Linq;
-    using System.Security.Cryptography;
-    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
-    using Cards;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
     using Resources;
