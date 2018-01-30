@@ -31,6 +31,7 @@ namespace Vsar.TSBot.Dialogs
     {
         private const string CommandMatchConnect = @"connect *(\S*) *(\S*)";
         private const string CommandMatchPin = @"(\d{4})";
+        private const int TakeSize = 7;
 
         private readonly string appId;
         private readonly string appScope;
@@ -206,9 +207,19 @@ namespace Vsar.TSBot.Dialogs
                 .ToList();
 
             reply.Text = Labels.ConnectToAccount;
-            reply.Attachments.Add(new AccountsCard(accounts));
-
             await context.PostAsync(reply);
+            reply.Text = string.Empty;
+
+            var skip = 0;
+            while (skip < accounts.Count)
+            {
+                var local = accounts.Skip(skip).Take(TakeSize).ToList();
+                reply.Attachments.Add(new AccountsCard(local));
+                await context.PostAsync(reply);
+
+                skip += TakeSize;
+            }
+
             context.Wait(this.AccountReceivedAsync);
         }
 
@@ -264,9 +275,19 @@ namespace Vsar.TSBot.Dialogs
                 .ToList();
 
             reply.Text = Labels.ConnectToProject;
-            reply.Attachments.Add(new ProjectsCard(this.TeamProjects));
-
             await context.PostAsync(reply);
+            reply.Text = string.Empty;
+
+            var skip = 0;
+            while (skip < this.TeamProjects.Count)
+            {
+                var teamProjects = this.TeamProjects.Skip(skip).Take(TakeSize).ToList();
+                reply.Attachments.Add(new ProjectsCard(teamProjects));
+                await context.PostAsync(reply);
+
+                skip += TakeSize;
+            }
+
             context.Wait(this.ProjectReceivedAsync);
         }
 
