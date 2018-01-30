@@ -163,9 +163,11 @@ namespace Vsar.TSBot
             teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
             profile.ThrowIfNull(nameof(profile));
 
+            var p = await this.GetProfile(profile.Token);
+
             using (var client = await this.ConnectAsync<ReleaseHttpClient2>(profile.Token, account))
             {
-                return await client.GetApprovalsAsync2(teamProject, profile.DisplayName);
+                return await client.GetApprovalsAsync2(teamProject, p.DisplayName);
             }
         }
 

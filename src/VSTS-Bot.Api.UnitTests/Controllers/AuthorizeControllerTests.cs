@@ -159,7 +159,7 @@ namespace Vsar.TSBot.UnitTests
 
             result.Should().NotBeNull();
             ((Authorize)result.Model).Pin.Should().Be(data.Pin);
-            data.Profiles.Should().Contain(p => string.Equals(p.DisplayName, profile.DisplayName, StringComparison.Ordinal));
+            data.Profiles.Should().Contain(p => p.Id.Equals(profile.Id));
         }
     }
 }
