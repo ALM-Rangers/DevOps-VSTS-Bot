@@ -19,7 +19,7 @@ namespace Vsar.TSBot.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Labels {
@@ -160,6 +160,24 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disconnect.
+        /// </summary>
+        internal static string Disconnect {
+            get {
+                return ResourceManager.GetString("Disconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have been Disconnected..
+        /// </summary>
+        internal static string Disconnected {
+            get {
+                return ResourceManager.GetString("Disconnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to **Error occurred:** {0}.
         /// </summary>
         internal static string ErrorOccurred {
@@ -228,6 +246,15 @@ namespace Vsar.TSBot.Resources {
         internal static string NoReleases {
             get {
                 return ResourceManager.GetString("NoReleases", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is an approval pending..
+        /// </summary>
+        internal static string PendingApproval {
+            get {
+                return ResourceManager.GetString("PendingApproval", resourceCulture);
             }
         }
         
@@ -304,11 +331,74 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Subscribe.
+        /// </summary>
+        internal static string Subscribe {
+            get {
+                return ResourceManager.GetString("Subscribe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I subscribed you to the feed..
+        /// </summary>
+        internal static string Subscribed {
+            get {
+                return ResourceManager.GetString("Subscribed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To be able to get your approval notifications, I have to create a web hook on your account, that pushes notifications to my service..
+        /// </summary>
+        internal static string SubscriptionDescription_MyApprovals {
+            get {
+                return ResourceManager.GetString("SubscriptionDescription_MyApprovals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subscriptions.
+        /// </summary>
+        internal static string Subscriptions {
+            get {
+                return ResourceManager.GetString("Subscriptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My approvals on {0}..
+        /// </summary>
+        internal static string SubscriptionTitle_MyApprovals {
+            get {
+                return ResourceManager.GetString("SubscriptionTitle_MyApprovals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorry, I did not recognize that command. Please select one of the following commands..
         /// </summary>
         internal static string UnknownCommand {
             get {
                 return ResourceManager.GetString("UnknownCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsubscribe.
+        /// </summary>
+        internal static string Unsubscribe {
+            get {
+                return ResourceManager.GetString("Unsubscribe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I unsubscribed you from the feed..
+        /// </summary>
+        internal static string Unsubscribed {
+            get {
+                return ResourceManager.GetString("Unsubscribed", resourceCulture);
             }
         }
         
@@ -322,7 +412,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hi {0}. Good to see you. I will help you with your Visual Studio Team Services tasks. Please read the [EULA]({1}) if you have not done so..
+        ///   Looks up a localized string similar to Hi {0}. Good to see you. I will help you with your Visual Studio Team Services tasks. Please read the [MIT License]({1}) if you have not done so..
         /// </summary>
         internal static string WelcomeUser {
             get {

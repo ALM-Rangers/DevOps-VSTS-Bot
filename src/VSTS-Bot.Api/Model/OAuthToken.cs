@@ -26,6 +26,18 @@ namespace Vsar.TSBot
         public string AccessToken { get; set; }
 
         /// <summary>
+        /// Gets or sets the app secret.
+        /// </summary>
+        [DataMember]
+        public string AppSecret { get; set; }
+
+        /// <summary>
+        /// Gets or sets the authorize url.
+        /// </summary>
+        [DataMember]
+        public Uri AuthorizeUrl { get; set; }
+
+        /// <summary>
         /// Gets or sets when this OAuthToken is created (UTC).
         /// </summary>
         [DataMember(Name = "created_on")]

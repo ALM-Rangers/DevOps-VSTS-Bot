@@ -30,7 +30,7 @@ namespace Vsar.TSBot.Dialogs
     {
         private const string CommandMatchHelp = "help";
 
-        private readonly Uri eulaUri;
+        private readonly Uri licenseUri;
 
         [NonSerialized]
         private TelemetryClient telemetryClient;
@@ -38,11 +38,11 @@ namespace Vsar.TSBot.Dialogs
         /// <summary>
         /// Initializes a new instance of the <see cref="RootDialog"/> class.
         /// </summary>
-        /// <param name="eulaUri">Uri to the EULA.</param>
+        /// <param name="licenseUri">Uri to the license.</param>
         /// <param name="telemetryClient">A <see cref="telemetryClient"/>.</param>
-        public RootDialog(Uri eulaUri, TelemetryClient telemetryClient)
+        public RootDialog(Uri licenseUri, TelemetryClient telemetryClient)
         {
-            this.eulaUri = eulaUri ?? throw new ArgumentNullException(nameof(eulaUri));
+            this.licenseUri = licenseUri ?? throw new ArgumentNullException(nameof(licenseUri));
             this.telemetryClient = telemetryClient ?? throw new ArgumentNullException(nameof(telemetryClient));
         }
 
@@ -102,7 +102,10 @@ namespace Vsar.TSBot.Dialogs
 
             if (dialog == null)
             {
-                var teamProject = context.UserData.GetTeamProject();
+                if (!context.UserData.TryGetValue("userData", out UserData data))
+                {
+                    data = new UserData();
+                }
 
                 var reply = context.MakeMessage();
 
@@ -110,7 +113,7 @@ namespace Vsar.TSBot.Dialogs
                     ? Labels.Help
                     : Labels.UnknownCommand;
 
-                reply.Attachments.Add(new MainOptionsCard(!string.IsNullOrEmpty(teamProject)));
+                reply.Attachments.Add(new MainOptionsCard(!string.IsNullOrEmpty(data.TeamProject)));
 
                 await context.PostAsync(reply);
 
@@ -149,7 +152,7 @@ namespace Vsar.TSBot.Dialogs
                     continue;
                 }
 
-                await context.PostAsync(string.Format(Labels.WelcomeUser, member.Name, this.eulaUri));
+                await context.PostAsync(string.Format(Labels.WelcomeUser, member.Name, this.licenseUri));
             }
         }
 
