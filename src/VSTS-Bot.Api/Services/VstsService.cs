@@ -167,7 +167,7 @@ namespace Vsar.TSBot
 
             using (var client = await this.ConnectAsync<ReleaseHttpClient2>(profile.Token, account))
             {
-                return await client.GetApprovalsAsync2(teamProject, p.DisplayName);
+                return await client.GetApprovalsAsync2(teamProject, profile.DisplayName, includeMyGroupApprovals: true);
             }
         }
 
