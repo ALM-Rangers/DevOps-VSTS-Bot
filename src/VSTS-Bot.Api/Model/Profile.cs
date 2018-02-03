@@ -21,7 +21,6 @@ namespace Vsar.TSBot
     [Serializable]
     public class Profile
     {
-        private string displayName;
         private OAuthToken token;
 
         /// <summary>
@@ -30,25 +29,6 @@ namespace Vsar.TSBot
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Reviewed.")]
         [DataMember]
         public IList<string> Accounts { get; set; } = new List<string>();
-
-        /// <summary>
-        /// Gets or sets the display name.
-        /// </summary>
-        public string DisplayName
-        {
-            get => this.displayName ?? (this.displayName = this.DisplayNameEncrypted.Decrypt(this.Id.ToString()));
-            set
-            {
-                this.displayName = value;
-                this.DisplayNameEncrypted = value.Encrypt(this.Id.ToString());
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the encrypted display name.
-        /// </summary>
-        [DataMember(Name = "DisplayName")]
-        public string DisplayNameEncrypted { get; set; }
 
         /// <summary>
         /// Gets or sets the id.

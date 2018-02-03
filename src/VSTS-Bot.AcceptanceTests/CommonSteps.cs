@@ -136,7 +136,6 @@ namespace Vsar.TSBot.AcceptanceTests
             {
                 Accounts = accounts.Select(a => a.AccountName).ToList(),
                 Id = p.Id,
-                DisplayName = p.DisplayName,
                 Token = token
             };
 

@@ -59,8 +59,7 @@ namespace Vsar.TSBot.UnitTests.Services
             var profile = new Profile
             {
                 Id = Guid.NewGuid(),
-                Token = this.token,
-                DisplayName = "me"
+                Token = this.token
             };
 
             var service = new VstsService();
@@ -271,9 +270,10 @@ namespace Vsar.TSBot.UnitTests.Services
             var profile = new Profile
             {
                 Id = Guid.NewGuid(),
-                Token = this.token,
-                DisplayName = "me"
+                Token = this.token
             };
+            var pr = new Microsoft.VisualStudio.Services.Profile.Profile { DisplayName = "me" };
+
             var service = new VstsService();
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await service.GetApprovals(null, projectName, profile));
@@ -301,7 +301,7 @@ namespace Vsar.TSBot.UnitTests.Services
                             AccountUri = new Uri("https://myaccount.visualstudio.com")
                         }
                     }),
-                    GetProfileHttpClient(new Microsoft.VisualStudio.Services.Profile.Profile()),
+                    GetProfileHttpClient(pr),
                     new ShimReleaseHttpClient2
                     {
                         GetApprovalsAsync2StringStringNullableOfApprovalStatusIEnumerableOfInt32NullableOfApprovalTypeNullableOfInt32NullableOfInt32NullableOfReleaseQueryOrderNullableOfBooleanObjectCancellationToken
