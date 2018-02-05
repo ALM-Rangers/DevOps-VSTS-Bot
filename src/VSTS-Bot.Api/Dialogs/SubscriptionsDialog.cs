@@ -21,6 +21,7 @@ namespace Vsar.TSBot.Dialogs
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
+    using Microsoft.Bot.Connector.Teams;
     using Resources;
     using Strategies.Subscriptions;
 
@@ -222,6 +223,7 @@ namespace Vsar.TSBot.Dialogs
                     RecipientName = activity.From.Name,
                     ServiceUri = new Uri(activity.ServiceUrl),
                     SubscriptionType = subscriptionType,
+                    TenantId = activity.ChannelId.Equals(ChannelIds.Msteams) ? activity.GetTenantId() : string.Empty,
                     UserId = activity.From.Id
                 };
 

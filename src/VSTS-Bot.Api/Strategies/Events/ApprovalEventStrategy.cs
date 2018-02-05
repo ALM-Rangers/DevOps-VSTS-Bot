@@ -57,8 +57,12 @@ namespace Vsar.TSBot.Strategies.Events
             MicrosoftAppCredentials.TrustServiceUrl(subscription.ServiceUri.AbsoluteUri);
             var client = new ConnectorClient(subscription.ServiceUri, this.credentials.MicrosoftAppId, this.credentials.MicrosoftAppPassword);
 
-            var conversation =
-                client.Conversations.CreateDirectConversation(
+            var conversation = subscription.ChannelId.Equals(ChannelIds.Msteams)
+                ? client.Conversations.CreateOrGetDirectConversation(
+                    new ChannelAccount(subscription.BotId, subscription.BotName),
+                    new ChannelAccount(subscription.RecipientId, subscription.RecipientName),
+                    subscription.TenantId)
+                : client.Conversations.CreateDirectConversation(
                     new ChannelAccount(subscription.BotId, subscription.BotName),
                     new ChannelAccount(subscription.RecipientId, subscription.RecipientName));
 

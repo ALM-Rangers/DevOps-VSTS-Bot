@@ -95,6 +95,12 @@ namespace Vsar.TSBot
         public SubscriptionType SubscriptionType { get; set; }
 
         /// <summary>
+        /// Gets or sets the tenant id.
+        /// </summary>
+        [DataMember]
+        public string TenantId { get; set; }
+
+        /// <summary>
         /// Gets or sets the user id.
         /// </summary>
         [DataMember]
