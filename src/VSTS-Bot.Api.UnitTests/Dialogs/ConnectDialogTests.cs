@@ -370,9 +370,7 @@ namespace Vsar.TSBot.UnitTests
             await target.SelectAccountAsync(this.Fixture.DialogContext.Object, toBot);
 
             this.Fixture.DialogContext
-                .Verify(c => c.PostAsync(
-                    It.Is<IMessageActivity>(a => a.Attachments.First().Content is AccountsCard),
-                    CancellationToken.None));
+                .Verify(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None));
             this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.AccountReceivedAsync));
         }
 
@@ -444,9 +442,7 @@ namespace Vsar.TSBot.UnitTests
 
             this.Fixture.VstsService.Verify();
             this.Fixture.DialogContext
-                .Verify(c => c.PostAsync(
-                    It.Is<IMessageActivity>(a => a.Attachments.First().Content is ProjectsCard),
-                    CancellationToken.None));
+                .Verify(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None));
             this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.ProjectReceivedAsync));
 
             target.TeamProjects.Should().Contain("Project1");
