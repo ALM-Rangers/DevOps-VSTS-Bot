@@ -213,6 +213,7 @@ namespace Vsar.TSBot.Dialogs
             var skip = 0;
             while (skip < accounts.Count)
             {
+                reply = context.MakeMessage();
                 var local = accounts.Skip(skip).Take(TakeSize).ToList();
                 reply.Attachments.Add(new AccountsCard(local));
                 await context.PostAsync(reply);
@@ -281,6 +282,7 @@ namespace Vsar.TSBot.Dialogs
             var skip = 0;
             while (skip < this.TeamProjects.Count)
             {
+                reply = context.MakeMessage();
                 var teamProjects = this.TeamProjects.Skip(skip).Take(TakeSize).ToList();
                 reply.Attachments.Add(new ProjectsCard(teamProjects));
                 await context.PostAsync(reply);
