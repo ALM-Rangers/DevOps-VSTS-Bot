@@ -32,24 +32,10 @@ namespace Vsar.TSBot
         private const string MediaType = "application/x-www-form-urlencoded";
         private const string TokenUrl = "https://app.vssps.visualstudio.com/oauth2/token";
 
-        private readonly string appSecret;
-        private readonly Uri authorizeUrl;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AuthenticationService"/> class.
-        /// </summary>
-        /// <param name="appSecret">The appSecret.</param>
-        /// <param name="authorizeUrl">The authorize url.</param>
-        public AuthenticationService(string appSecret, Uri authorizeUrl)
-        {
-            this.appSecret = appSecret;
-            this.authorizeUrl = authorizeUrl;
-        }
-
         /// <inheritdoc />
-        public async Task<OAuthToken> GetToken(string code)
+        public async Task<OAuthToken> GetToken(string appSecret, Uri authorizeUrl, string code)
         {
-            var postData = string.Format(FormatPostData, HttpUtility.UrlEncode(this.appSecret), GrantTypeBearerToken, HttpUtility.UrlEncode(code), this.authorizeUrl);
+            var postData = string.Format(FormatPostData, HttpUtility.UrlEncode(appSecret), GrantTypeBearerToken, HttpUtility.UrlEncode(code), authorizeUrl);
 
             using (var client = new HttpClient())
             {
@@ -57,14 +43,17 @@ namespace Vsar.TSBot
                     .PostAsync(TokenUrl, new StringContent(postData, Encoding.UTF8, MediaType))
                     .ConfigureAwait(false);
 
-                return await response.Content.ReadAsAsync<OAuthToken>();
+                var result = await response.Content.ReadAsAsync<OAuthToken>();
+                result.AppSecret = appSecret;
+                result.AuthorizeUrl = authorizeUrl;
+                return result;
             }
         }
 
         /// <inheritdoc />
         public async Task<OAuthToken> GetToken(OAuthToken token)
         {
-            var postData = string.Format(FormatPostData, HttpUtility.UrlEncode(this.appSecret), GrantTypeRefreshToken, HttpUtility.UrlEncode(token.RefreshToken), this.authorizeUrl);
+            var postData = string.Format(FormatPostData, HttpUtility.UrlEncode(token.AppSecret), GrantTypeRefreshToken, HttpUtility.UrlEncode(token.RefreshToken), token.AuthorizeUrl);
 
             using (var client = new HttpClient())
             {
@@ -72,7 +61,10 @@ namespace Vsar.TSBot
                     .PostAsync(TokenUrl, new StringContent(postData, Encoding.UTF8, MediaType))
                     .ConfigureAwait(false);
 
-                return await response.Content.ReadAsAsync<OAuthToken>();
+                var result = await response.Content.ReadAsAsync<OAuthToken>();
+                result.AppSecret = token.AppSecret;
+                result.AuthorizeUrl = token.AuthorizeUrl;
+                return result;
             }
         }
     }

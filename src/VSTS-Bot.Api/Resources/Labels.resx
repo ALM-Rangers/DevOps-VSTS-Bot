@@ -140,8 +140,8 @@
     <value>QueueRelease</value>
   </data>
   <data name="WelcomeUser" xml:space="preserve">
-    <value>Hi {0}. Good to see you. I will help you with your Visual Studio Team Services tasks. Please read the [EULA]({1}) if you have not done so.</value>
-    <comment>{0} = from name; {1} = link to EULA;</comment>
+    <value>Hi {0}. Good to see you. I will help you with your Visual Studio Team Services tasks. Please read the [MIT License]({1}) if you have not done so.</value>
+    <comment>{0} = from name; {1} = link to MIT License;</comment>
   </data>
   <data name="ConnectToProject" xml:space="preserve">
     <value>Please select a project to connect to.</value>
@@ -211,5 +211,36 @@
   </data>
   <data name="HelpConnect" xml:space="preserve">
     <value>Please first 'connect' to your account, by clicking or typing connect.</value>
+  </data>
+  <data name="Disconnected" xml:space="preserve">
+    <value>You have been Disconnected.</value>
+  </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>Disconnect</value>
+  </data>
+  <data name="Subscribe" xml:space="preserve">
+    <value>Subscribe</value>
+  </data>
+  <data name="SubscriptionDescription_MyApprovals" xml:space="preserve">
+    <value>To be able to get your approval notifications, I have to create a web hook on your account, that pushes notifications to my service.</value>
+  </data>
+  <data name="SubscriptionTitle_MyApprovals" xml:space="preserve">
+    <value>My approvals on {0}.</value>
+    <comment>{0} = team project;</comment>
+  </data>
+  <data name="Unsubscribe" xml:space="preserve">
+    <value>Unsubscribe</value>
+  </data>
+  <data name="Subscribed" xml:space="preserve">
+    <value>I subscribed you to the feed.</value>
+  </data>
+  <data name="Unsubscribed" xml:space="preserve">
+    <value>I unsubscribed you from the feed.</value>
+  </data>
+  <data name="PendingApproval" xml:space="preserve">
+    <value>There is an approval pending.</value>
+  </data>
+  <data name="Subscriptions" xml:space="preserve">
+    <value>Subscriptions</value>
   </data>
 </root>

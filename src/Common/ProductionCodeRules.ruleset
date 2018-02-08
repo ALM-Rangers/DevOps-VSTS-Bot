@@ -7,6 +7,7 @@
   <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
     <Rule Id="CA1020" Action="None" />
     <Rule Id="CA1305" Action="Warning" />
+    <Rule Id="CA1309" Action="None" />
     <Rule Id="CA2235" Action="None" />
   </Rules>
   <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp" RuleNamespace="Microsoft.CodeAnalysis.CSharp">
@@ -14,6 +15,8 @@
   </Rules>
   <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
     <Rule Id="SA1305" Action="Warning" />
+    <Rule Id="SA1636" Action="None" />
+    <Rule Id="SA1640" Action="None" />
   </Rules>
   <Rules AnalyzerId="System.Runtime.Analyzers" RuleNamespace="System.Runtime.Analyzers">
     <Rule Id="CA1813" Action="Warning" />
@@ -21,7 +24,6 @@
   <Rules AnalyzerId="System.Runtime.CSharp.Analyzers" RuleNamespace="System.Runtime.CSharp.Analyzers">
     <Rule Id="CA1003" Action="Warning" />
     <Rule Id="CA1019" Action="Warning" />
-    <Rule Id="CA1309" Action="Warning" />
     <Rule Id="CA1820" Action="Warning" />
   </Rules>
   <Rules AnalyzerId="System.Runtime.InteropServices.Analyzers" RuleNamespace="System.Runtime.InteropServices.Analyzers">
