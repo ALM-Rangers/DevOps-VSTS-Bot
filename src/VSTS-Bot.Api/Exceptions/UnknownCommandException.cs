@@ -23,6 +23,7 @@ namespace Vsar.TSBot
         /// Initializes a new instance of the <see cref="UnknownCommandException"/> class.
         /// </summary>
         public UnknownCommandException()
+            : this(string.Empty, string.Empty, null)
         {
         }
 
@@ -31,7 +32,18 @@ namespace Vsar.TSBot
         /// </summary>
         /// <param name="commandName">The name of the unknown command.</param>
         public UnknownCommandException(string commandName)
-            : base(string.Format(CultureInfo.CurrentCulture, Exceptions.UnknownCommandException, commandName))
+            : this(commandName, string.Format(CultureInfo.CurrentCulture, Exceptions.UnknownCommandException, commandName), null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnknownCommandException"/> class.
+        /// </summary>
+        /// <param name="commandName">A commandName.</param>
+        /// <param name="message">A message.</param>
+        /// <param name="innerException">An <see cref="Exception"/> as inner exception.</param>
+        public UnknownCommandException(string commandName, string message, Exception innerException)
+            : base(message, innerException)
         {
             this.CommandName = commandName;
         }
@@ -39,10 +51,10 @@ namespace Vsar.TSBot
         /// <summary>
         /// Initializes a new instance of the <see cref="UnknownCommandException"/> class.
         /// </summary>
-        /// <param name="commandName">A commandName.</param>
+        /// <param name="message">A message.</param>
         /// <param name="innerException">An <see cref="Exception"/> as inner exception.</param>
-        public UnknownCommandException(string commandName, Exception innerException)
-            : base(commandName, innerException)
+        public UnknownCommandException(string message, Exception innerException)
+            : this(string.Empty, message, innerException)
         {
         }
 
@@ -67,10 +79,7 @@ namespace Vsar.TSBot
         /// <inheritdoc />
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
+            info.ThrowIfNull(nameof(info));
 
             info.AddValue(nameof(this.CommandName), this.CommandName);
             base.GetObjectData(info, context);

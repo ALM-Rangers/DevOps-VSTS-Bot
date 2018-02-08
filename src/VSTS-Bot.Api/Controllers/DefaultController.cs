@@ -28,11 +28,10 @@ namespace Vsar.TSBot
         /// <summary>
         /// Returns how it works page.
         /// </summary>
-        /// <param name="channels">The channels to show</param>
         /// <returns>A view.</returns>
-        public ActionResult HowItWorks(Channel channels = Channel.All)
+        public ActionResult HowItWorks()
         {
-            return this.View(new { Channels = channels });
+            return this.View(new { Channels = BotChannels.All });
         }
     }
 }

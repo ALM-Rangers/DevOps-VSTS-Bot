@@ -11,7 +11,8 @@
                 <ModulePath>.*\.dll$</ModulePath>  
                 <ModulePath>.*\.exe$</ModulePath>  
               </Include>  
-              <Exclude>  
+              <Exclude>
+                <ModulePath>.*moq\.dll$</ModulePath>
                 <ModulePath>.*Fluent.*</ModulePath>
                 <ModulePath>.*UnitTests\.dll$</ModulePath>  
               </Exclude>  

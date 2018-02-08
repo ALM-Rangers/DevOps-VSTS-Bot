@@ -22,7 +22,7 @@ namespace Vsar.TSBot.Dialogs
     /// <summary>
     /// Represents the dialog to retrieve and approve/reject approvals.
     /// </summary>
-    [CommandMetadata("approvals")]
+    [CommandMetadata("approvals", "approve", "reject")]
     [Serializable]
     public class ApprovalsDialog : DialogBase, IDialog<object>
     {
@@ -30,15 +30,16 @@ namespace Vsar.TSBot.Dialogs
 
         private const string CommandMatchApprovals = "approvals";
         private const string CommandMatchApprove = @"approve (\d+) *(.*?)$";
+        private const string CommandMatchApproveOrReject2 = @"(approve|reject) (\d+) (.+) (.+)$";
         private const string CommandMatchReject = @"reject (\d+) *(.*?)$";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ApprovalsDialog"/> class.
         /// </summary>
+        /// <param name="authenticationService">The authenticationService.</param>
         /// <param name="vstsService">The <see cref="IVstsService"/>.</param>
-        /// <param name="applicationRegistry">The <see cref="IVstsApplicationRegistry"/>.</param>
-        public ApprovalsDialog(IVstsService vstsService, IVstsApplicationRegistry applicationRegistry)
-            : base(vstsService, applicationRegistry)
+        public ApprovalsDialog(IAuthenticationService authenticationService, IVstsService vstsService)
+            : base(authenticationService, vstsService)
         {
         }
 
@@ -60,7 +61,7 @@ namespace Vsar.TSBot.Dialogs
         /// <summary>
         /// Gets or sets the profile.
         /// </summary>
-        public VstsProfile Profile { get; set; }
+        public Profile Profile { get; set; }
 
         /// <summary>
         /// Gets or sets the Team Project.
@@ -72,9 +73,29 @@ namespace Vsar.TSBot.Dialogs
         {
             context.ThrowIfNull(nameof(context));
 
-            context.Wait(this.ApprovalsAsync);
+            context.Wait(this.SelectResumeAfter);
 
             await Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Selects the correct resume after.
+        /// </summary>
+        /// <param name="context">The <see cref="IDialogContext"/>.</param>
+        /// <param name="result">The <see cref="IAwaitable{T}"/>.</param>
+        /// <returns>An async <see cref="Task"/>/.</returns>
+        public virtual async Task SelectResumeAfter(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            var activity = await result;
+
+            if (activity.Text.StartsWith("approvals", StringComparison.OrdinalIgnoreCase))
+            {
+                await this.ApprovalsAsync(context, result);
+            }
+            else
+            {
+                await this.ApproveOrRejectAsync2(context, result);
+            }
         }
 
         /// <summary>
@@ -90,11 +111,17 @@ namespace Vsar.TSBot.Dialogs
 
             var activity = await result;
 
-            this.Account = context.UserData.GetAccount();
-            this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(activity));
-            this.TeamProject = context.UserData.GetTeamProject();
+            var data = context.UserData.GetValue<UserData>("userData");
+
+            this.Account = data.Account;
+            this.Profile = await this.GetValidatedProfile(context.UserData);
+            this.TeamProject = data.TeamProject;
 
             var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
+
+            var typing = context.MakeMessage();
+            typing.Type = ActivityTypes.Typing;
+            await context.PostAsync(typing);
 
             if (text.Equals(CommandMatchApprovals, StringComparison.OrdinalIgnoreCase))
             {
@@ -112,7 +139,7 @@ namespace Vsar.TSBot.Dialogs
                 var skip = 0;
                 while (skip < approvals.Count)
                 {
-                    var cards = approvals.Skip(skip).Take(TakeSize).Select(a => new ApprovalCard(this.Account, a, this.TeamProject)).ToList();
+                    var cards = approvals.Skip(skip).Take(TakeSize).Select(a => new ApprovalCard(a)).ToList();
                     var reply = context.MakeMessage();
 
                     foreach (var card in cards)
@@ -146,9 +173,88 @@ namespace Vsar.TSBot.Dialogs
             result.ThrowIfNull(nameof(result));
 
             var activity = await result;
+            var text = activity.RemoveRecipientMention();
 
-            var matchApprove = Regex.Match(activity.RemoveRecipientMention(), CommandMatchApprove);
-            var matchReject = Regex.Match(activity.RemoveRecipientMention(), CommandMatchReject);
+            await this.ApproveOrRejectAsync(context, activity, text);
+        }
+
+        /// <summary>
+        /// Approves or Rejects an Approval.
+        /// </summary>
+        /// <param name="context">The <see cref="IDialogContext"/>.</param>
+        /// <param name="result">The <see cref="IAwaitable{T}"/>.</param>
+        /// <returns>An async <see cref="Task"/>/.</returns>
+        public virtual async Task ApproveOrRejectAsync2(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
+            var activity = await result;
+            var text = activity.RemoveRecipientMention();
+
+            var match = Regex.Match(text, CommandMatchApproveOrReject2);
+
+            if (match.Success)
+            {
+                this.Account = match.Groups[3].Value;
+                this.Profile = await this.GetValidatedProfile(context.UserData);
+                this.TeamProject = match.Groups[4].Value;
+
+                await this.ApproveOrRejectAsync(context, activity, $"{match.Groups[1].Value} {match.Groups[2].Value}");
+            }
+            else
+            {
+                context.Fail(new UnknownCommandException(activity.Text));
+            }
+        }
+
+        /// <summary>
+        /// Changes the status of an Approval.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/>.</param>
+        /// <param name="result">A <see cref="IMessageActivity"/>.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual async Task ChangeStatusAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            context.ThrowIfNull(nameof(context));
+            result.ThrowIfNull(nameof(result));
+
+            var activity = await result;
+
+            await this.ChangeStatusAsync(context, this.ApprovalId, activity.RemoveRecipientMention().Trim(), this.IsApproved);
+        }
+
+        /// <summary>
+        /// Changes the status of an Approval.
+        /// </summary>
+        /// <param name="context">A <see cref="IDialogContext"/>.</param>
+        /// <param name="approvalId">The approval id.</param>
+        /// <param name="comment">A comment.</param>
+        /// <param name="isApproved">Indication if it is approved.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        public virtual async Task ChangeStatusAsync(IDialogContext context, int approvalId, string comment, bool isApproved)
+        {
+            context.ThrowIfNull(nameof(context));
+
+            var typing = context.MakeMessage();
+            typing.Type = ActivityTypes.Typing;
+            await context.PostAsync(typing);
+
+            var reply = context.MakeMessage();
+
+            var status = isApproved ? ApprovalStatus.Approved : ApprovalStatus.Rejected;
+            await this.VstsService.ChangeApprovalStatus(this.Account, this.TeamProject, this.Profile, approvalId, status, comment);
+
+            reply.Text = isApproved ? Labels.Approved : Labels.Rejected;
+            await context.PostAsync(reply);
+
+            context.Done(reply);
+        }
+
+        private async Task ApproveOrRejectAsync(IDialogContext context, IMessageActivity activity, string text)
+        {
+            var matchApprove = Regex.Match(text, CommandMatchApprove);
+            var matchReject = Regex.Match(text, CommandMatchReject);
 
             var reply = context.MakeMessage();
 
@@ -190,45 +296,6 @@ namespace Vsar.TSBot.Dialogs
             {
                 context.Fail(new UnknownCommandException(activity.Text));
             }
-        }
-
-        /// <summary>
-        /// Changes the status of an Approval.
-        /// </summary>
-        /// <param name="context">A <see cref="IDialogContext"/>.</param>
-        /// <param name="result">A <see cref="IMessageActivity"/>.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
-        public virtual async Task ChangeStatusAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
-        {
-            context.ThrowIfNull(nameof(context));
-            result.ThrowIfNull(nameof(result));
-
-            var activity = await result;
-
-            await this.ChangeStatusAsync(context, this.ApprovalId, activity.RemoveRecipientMention().Trim(), this.IsApproved);
-        }
-
-        /// <summary>
-        /// Changes the status of an Approval.
-        /// </summary>
-        /// <param name="context">A <see cref="IDialogContext"/>.</param>
-        /// <param name="approvalId">The approval id.</param>
-        /// <param name="comment">A comment.</param>
-        /// <param name="isApproved">Indication if it is approved.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
-        public virtual async Task ChangeStatusAsync(IDialogContext context, int approvalId, string comment, bool isApproved)
-        {
-            context.ThrowIfNull(nameof(context));
-
-            var reply = context.MakeMessage();
-
-            var status = isApproved ? ApprovalStatus.Approved : ApprovalStatus.Rejected;
-            await this.VstsService.ChangeApprovalStatus(this.Account, this.TeamProject, this.Profile, approvalId, status, comment);
-
-            reply.Text = isApproved ? Labels.Approved : Labels.Rejected;
-            await context.PostAsync(reply);
-
-            context.Done(reply);
         }
     }
 }

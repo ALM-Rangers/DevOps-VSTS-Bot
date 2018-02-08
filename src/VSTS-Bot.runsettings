@@ -7,8 +7,8 @@
     <Parameter name="AuthorizeUrl" value="" />
     <Parameter name="BotId" value="" />
     <Parameter name="BotSecret" value="" />
-    <Parameter name="MicrosoftApplicationId" value="" />
-    <Parameter name="MicrosoftApplicationPassword" value="" />
+    <Parameter name="DocumentDbKey" value="C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==" />
+    <Parameter name="DocumentDbUri" value="https://localhost:8081" />
     <Parameter name="RefreshToken" value="" />
     <Parameter name="RefreshTokenReinitialize" value="false" />
     <Parameter name="TeamProjectOne" value="" />

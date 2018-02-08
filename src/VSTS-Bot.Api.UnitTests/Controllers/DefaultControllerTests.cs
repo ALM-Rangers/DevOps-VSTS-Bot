@@ -28,5 +28,16 @@ namespace Vsar.TSBot.UnitTests
                 result.Should().NotBeNull();
             }
         }
+
+        [TestMethod]
+        public void HowItWorks()
+        {
+            using (var target = new DefaultController())
+            {
+                var result = target.HowItWorks() as ViewResult;
+
+                result.Should().NotBeNull();
+            }
+        }
     }
 }

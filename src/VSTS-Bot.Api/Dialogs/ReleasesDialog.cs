@@ -32,10 +32,10 @@ namespace Vsar.TSBot.Dialogs
         /// <summary>
         /// Initializes a new instance of the <see cref="ReleasesDialog"/> class.
         /// </summary>
-        /// <param name="vstsService">VSTS accessor</param>
-        /// <param name="vstsApplicationRegistry">VSTS Application registry accessor.</param>
-        public ReleasesDialog(IVstsService vstsService, IVstsApplicationRegistry vstsApplicationRegistry)
-            : base(vstsService, vstsApplicationRegistry)
+        /// <param name="authenticationService">The authenticationService.</param>
+        /// <param name="vstsService">The <see cref="IVstsService"/>.</param>
+        public ReleasesDialog(IAuthenticationService authenticationService, IVstsService vstsService)
+            : base(authenticationService, vstsService)
         {
         }
 
@@ -47,7 +47,7 @@ namespace Vsar.TSBot.Dialogs
         /// <summary>
         /// Gets or sets the profile.
         /// </summary>
-        public VstsProfile Profile { get; set; }
+        public Profile Profile { get; set; }
 
         /// <summary>
         /// Gets or sets the Team Project.
@@ -77,14 +77,20 @@ namespace Vsar.TSBot.Dialogs
 
             var activity = await result;
 
-            this.Account = context.UserData.GetAccount();
-            this.Profile = context.UserData.GetProfile(this.GetAuthenticationService(activity));
-            this.TeamProject = context.UserData.GetTeamProject();
+            var data = context.UserData.GetValue<UserData>("userData");
+
+            this.Account = data.Account;
+            this.Profile = await this.GetValidatedProfile(context.UserData);
+            this.TeamProject = data.TeamProject;
 
             var text = (activity.Text ?? string.Empty).Trim().ToLowerInvariant();
 
             if (text.Equals(CommandMatchReleases, StringComparison.OrdinalIgnoreCase))
             {
+                var typing = context.MakeMessage();
+                typing.Type = ActivityTypes.Typing;
+                await context.PostAsync(typing);
+
                 var releaseDefinitions =
                     await this.VstsService.GetReleaseDefinitionsAsync(this.Account, this.TeamProject, this.Profile.Token);
                 if (!releaseDefinitions.Any())
@@ -139,6 +145,10 @@ namespace Vsar.TSBot.Dialogs
             var match = Regex.Match(text, CommandMatchCreate);
             if (match.Success)
             {
+                var typing = context.MakeMessage();
+                typing.Type = ActivityTypes.Typing;
+                await context.PostAsync(typing);
+
                 var definitionId = Convert.ToInt32(match.Groups[1].Value);
                 var release = await this.VstsService.CreateReleaseAsync(this.Account, this.TeamProject, definitionId, this.Profile.Token);
                 reply.Text = string.Format(Labels.ReleaseCreated, release.Id);
