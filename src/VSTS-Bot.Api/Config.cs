@@ -9,11 +9,13 @@
 namespace Vsar.TSBot
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Web.Configuration;
 
     /// <summary>
     /// Represents the configuration needed for the application.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class Config
     {
         /// <summary>
@@ -35,6 +37,16 @@ namespace Vsar.TSBot
         /// Gets the Authorize Url.
         /// </summary>
         public static Uri AuthorizeUrl => new Uri(WebConfigurationManager.AppSettings["AuthorizeUrl"]);
+
+        /// <summary>
+        /// Gets the key for Document DB.
+        /// </summary>
+        public static string DocumentDbKey => WebConfigurationManager.AppSettings["DocumentDbKey"];
+
+        /// <summary>
+        /// Gets the url for Document DB
+        /// </summary>
+        public static Uri DocumentDbUri => new Uri(WebConfigurationManager.AppSettings["DocumentDbUri"]);
 
         /// <summary>
         /// Gets the instrumentation key for application insights.
