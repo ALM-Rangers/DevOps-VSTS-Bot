@@ -16,6 +16,19 @@ namespace Vsar.TSBot
     public static class GuardExtensions
     {
         /// <summary>
+        /// Throws an <see cref="ArgumentNullException"/> if value is Guid.Empty.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="paramName">The name of the parameter.</param>
+        public static void ThrowIfEmpty(this Guid value, string paramName)
+        {
+            if (value == Guid.Empty)
+            {
+                throw new ArgumentNullException(paramName);
+            }
+        }
+
+        /// <summary>
         /// Throws an <see cref="ArgumentNullException"/> if value is null.
         /// </summary>
         /// <param name="value">The value.</param>

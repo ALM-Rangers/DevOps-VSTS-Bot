@@ -13,7 +13,6 @@ namespace Vsar.TSBot.UnitTests
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
-    using Autofac.Features.ResolveAnything;
     using Dialogs;
     using Microsoft.Bot.Connector;
     using Microsoft.TeamFoundation.Build.WebApi;
@@ -33,15 +32,15 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Constructor_Empty_VstsService()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new BuildsDialog(null, this.Fixture.VstsApplicationRegistry.Object));
+            Assert.ThrowsException<ArgumentNullException>(() => new BuildsDialog(this.Fixture.AuthenticationService.Object, null));
 
             await Task.CompletedTask;
         }
 
         [TestMethod]
-        public async Task Constructor_Empty_VstsApplicationRegistry()
+        public async Task Constructor_Empty_AuthenticationService()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new BuildsDialog(this.Fixture.VstsService.Object, null));
+            Assert.ThrowsException<ArgumentNullException>(() => new BuildsDialog(null, this.Fixture.VstsService.Object));
 
             await Task.CompletedTask;
         }
@@ -52,7 +51,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var mocked = new Mock<BuildsDialog>(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object) { CallBase = true };
+            var mocked = new Mock<BuildsDialog>(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { CallBase = true };
             var target = mocked.Object;
 
             await target.StartAsync(this.Fixture.DialogContext.Object);
@@ -63,7 +62,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Builds_Missing_Context()
         {
-            var target = new BuildsDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new BuildsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.BuildsAsync(null, null));
         }
@@ -71,7 +70,7 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Builds_Missing_Awaitable()
         {
-            var target = new BuildsDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new BuildsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await target.BuildsAsync(this.Fixture.DialogContext.Object, null));
         }
@@ -82,17 +81,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var target = new BuildsDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
-
-            var applicationMock = new Mock<IVstsApplication>();
-
-            applicationMock
-                .Setup(application => application.AuthenticationService)
-                .Returns(new Mock<IAuthenticationService>().Object);
-
-            this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
-                .Returns(applicationMock.Object);
+            var target = new BuildsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
 
             await target.BuildsAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -105,37 +94,21 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "builds";
 
-            var account = "anaccount";
             var profile = this.Fixture.CreateProfile();
-            var teamProject = "anteamproject";
+            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
+            data.Profiles.Add(profile);
 
             var buildDefinitions = new List<BuildDefinitionReference>();
 
-            var target = new BuildsDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new BuildsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
 
             this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Account", out account))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Profile", out profile))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
+                .Setup(ud => ud.TryGetValue("userData", out data))
                 .Returns(true);
 
             this.Fixture.VstsService
-                .Setup(s => s.GetBuildDefinitionsAsync(account, teamProject, profile.Token))
+                .Setup(s => s.GetBuildDefinitionsAsync(data.Account, data.TeamProject, profile.Token))
                 .ReturnsAsync(buildDefinitions);
-
-            var applicationMock = new Mock<IVstsApplication>();
-
-            applicationMock
-                .Setup(application => application.AuthenticationService)
-                .Returns(new Mock<IAuthenticationService>().Object);
-
-            this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
-                .Returns(applicationMock.Object);
 
             await target.BuildsAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -151,37 +124,21 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "builds";
 
-            var account = "anaccount";
             var profile = this.Fixture.CreateProfile();
-            var teamProject = "anteamproject";
+            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
+            data.Profiles.Add(profile);
 
             var buildDefinitions = new List<BuildDefinitionReference> { new BuildDefinitionReference { Name = "Build 1" } };
 
-            var target = new BuildsDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new BuildsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
 
             this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Account", out account))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("Profile", out profile))
-                .Returns(true);
-            this.Fixture.UserData
-                .Setup(ud => ud.TryGetValue("TeamProject", out teamProject))
+                .Setup(ud => ud.TryGetValue("userData", out data))
                 .Returns(true);
 
             this.Fixture.VstsService
-                .Setup(s => s.GetBuildDefinitionsAsync(account, teamProject, profile.Token))
+                .Setup(s => s.GetBuildDefinitionsAsync(data.Account, data.TeamProject, profile.Token))
                 .ReturnsAsync(buildDefinitions);
-
-            var applicationMock = new Mock<IVstsApplication>();
-
-            applicationMock
-                .Setup(application => application.AuthenticationService)
-                .Returns(new Mock<IAuthenticationService>().Object);
-
-            this.Fixture.VstsApplicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
-                .Returns(applicationMock.Object);
 
             await target.BuildsAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
@@ -197,7 +154,7 @@ namespace Vsar.TSBot.UnitTests
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = null;
 
-            var target = new BuildsDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object);
+            var target = new BuildsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object);
             await target.QueueAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
             this.Fixture.DialogContext.Verify(c => c.Fail(It.IsAny<UnknownCommandException>()));
@@ -213,7 +170,7 @@ namespace Vsar.TSBot.UnitTests
             var profile = this.Fixture.CreateProfile();
             var teamProject = "anteamproject";
 
-            var target = new BuildsDialog(this.Fixture.VstsService.Object, this.Fixture.VstsApplicationRegistry.Object)
+            var target = new BuildsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object)
             {
                 Account = account,
                 Profile = profile,
@@ -228,9 +185,17 @@ namespace Vsar.TSBot.UnitTests
 
             this.Fixture.VstsService.VerifyAll();
             this.Fixture.DialogContext
-                .Verify(dc => dc.PostAsync(
-                    It.Is<IMessageActivity>(a => a.Text.Equals("Build with id 99 is queued.", StringComparison.OrdinalIgnoreCase)),
-                    CancellationToken.None));
+                .Verify(
+                    dc => dc.PostAsync(
+                        It.Is<IMessageActivity>(a => string.Equals(a.Type, ActivityTypes.Typing, StringComparison.Ordinal)),
+                        CancellationToken.None),
+                    Times.Once);
+            this.Fixture.DialogContext
+                .Verify(
+                    dc => dc.PostAsync(
+                        It.Is<IMessageActivity>(a => !string.IsNullOrEmpty(a.Text) && a.Text.Equals("Build with id 99 is queued.", StringComparison.OrdinalIgnoreCase)),
+                        CancellationToken.None),
+                    Times.Once);
 
             this.Fixture.DialogContext.Verify(c => c.Done(It.IsAny<IMessageActivity>()));
         }

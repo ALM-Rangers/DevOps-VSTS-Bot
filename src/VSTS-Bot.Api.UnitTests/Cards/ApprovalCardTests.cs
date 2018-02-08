@@ -23,21 +23,9 @@ namespace Vsar.TSBot.UnitTests.Cards
     public class ApprovalCardTests
     {
         [TestMethod]
-        public void Constructor_Missing_Account()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => new ApprovalCard(null, null, null));
-        }
-
-        [TestMethod]
         public void Constructor_Missing_Approval()
         {
             Assert.ThrowsException<ArgumentNullException>(() => new ApprovalCard("account1", null, null));
-        }
-
-        [TestMethod]
-        public void Constructor_Missing_TeamProject()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => new ApprovalCard("account1", new ReleaseApproval(), null));
         }
 
         [TestMethod]

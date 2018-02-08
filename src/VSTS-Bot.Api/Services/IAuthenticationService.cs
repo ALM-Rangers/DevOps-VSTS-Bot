@@ -20,9 +20,11 @@ namespace Vsar.TSBot
         /// <summary>
         /// Gets the <see cref="OAuthToken"/>.
         /// </summary>
+        /// <param name="appSecret">The app secret.</param>
+        /// <param name="authorizeUrl">The authorize url.</param>
         /// <param name="code">The code we got from Vsts.</param>
         /// <returns><see cref="OAuthToken"/>.</returns>
-        Task<OAuthToken> GetToken(string code);
+        Task<OAuthToken> GetToken(string appSecret, Uri authorizeUrl, string code);
 
         /// <summary>
         /// Gets the <see cref="OAuthToken"/>.

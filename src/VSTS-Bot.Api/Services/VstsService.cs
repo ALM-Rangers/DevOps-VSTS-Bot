@@ -14,6 +14,7 @@ namespace Vsar.TSBot
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Web;
     using Microsoft.TeamFoundation.Build.WebApi;
     using Microsoft.TeamFoundation.Core.WebApi;
     using Microsoft.VisualStudio.Services.Account;
@@ -25,6 +26,7 @@ namespace Vsar.TSBot
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
     using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Contracts;
     using Microsoft.VisualStudio.Services.WebApi;
+    using TeamFoundation.Services.WebApi;
 
     /// <summary>
     /// Contains method(s) for accessing VSTS.
@@ -32,11 +34,12 @@ namespace Vsar.TSBot
     public class VstsService : IVstsService
     {
         private const string VstsUrl = "https://{0}.visualstudio.com";
+        private const string VstsRmUrl = "https://{0}.vsrm.visualstudio.com";
 
         private readonly Uri vstsAppUrl = new Uri("https://app.vssps.visualstudio.com");
 
         /// <inheritdoc />
-        public async Task ChangeApprovalStatus(string account, string teamProject, VstsProfile profile, int approvalId, ApprovalStatus status, string comments)
+        public async Task ChangeApprovalStatus(string account, string teamProject, Profile profile, int approvalId, ApprovalStatus status, string comments)
         {
             account.ThrowIfNullOrWhiteSpace(nameof(account));
             teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
@@ -101,6 +104,33 @@ namespace Vsar.TSBot
             }
         }
 
+        /// <inheritdoc />
+        public async Task<TeamFoundation.Services.WebApi.Subscription> CreateSubscription(string account, TeamFoundation.Services.WebApi.Subscription subscription, OAuthToken token)
+        {
+            account.ThrowIfNull(nameof(account));
+            subscription.ThrowIfNull(nameof(subscription));
+            token.ThrowIfNull(nameof(token));
+
+            var isRm = subscription.PublisherId.Equals("RM", StringComparison.OrdinalIgnoreCase);
+
+            using (var client = await this.ConnectAsync<ServiceHooksHttpClient>(token, account, isRm))
+            {
+                return await client.CreateSubscriptionAsync(subscription);
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task DeleteSubscription(string account, Guid subscriptionId, OAuthToken token)
+        {
+            account.ThrowIfNull(nameof(account));
+            token.ThrowIfNull(nameof(token));
+
+            using (var client = await this.ConnectAsync<ServiceHooksHttpClient>(token, account))
+            {
+                await client.DeleteSubscriptionAsync(subscriptionId);
+            }
+        }
+
         /// <inheritdoc/>
         public async Task<IList<Account>> GetAccounts(OAuthToken token, Guid memberId)
         {
@@ -127,15 +157,17 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc/>
-        public async Task<IList<ReleaseApproval>> GetApprovals(string account, string teamProject, VstsProfile profile)
+        public async Task<IList<ReleaseApproval>> GetApprovals(string account, string teamProject, Profile profile)
         {
             account.ThrowIfNullOrWhiteSpace(nameof(account));
             teamProject.ThrowIfNullOrWhiteSpace(nameof(teamProject));
             profile.ThrowIfNull(nameof(profile));
 
+            var p = await this.GetProfile(profile.Token);
+
             using (var client = await this.ConnectAsync<ReleaseHttpClient2>(profile.Token, account))
             {
-                return await client.GetApprovalsAsync2(teamProject, profile.DisplayName);
+                return await client.GetApprovalsAsync2(teamProject, p.DisplayName, includeMyGroupApprovals: true);
             }
         }
 
@@ -167,7 +199,7 @@ namespace Vsar.TSBot
         }
 
         /// <inheritdoc/>
-        public async Task<Profile> GetProfile(OAuthToken token)
+        public async Task<Microsoft.VisualStudio.Services.Profile.Profile> GetProfile(OAuthToken token)
         {
             token.ThrowIfNull(nameof(token));
 
@@ -200,6 +232,30 @@ namespace Vsar.TSBot
             using (var client = await this.ConnectAsync<ReleaseHttpClient2>(token, account))
             {
                 return await client.GetReleaseDefinitionsAsync(teamProject);
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task<TeamFoundation.Services.WebApi.Subscription> GetSubscription(string account, Guid subscriptionId, OAuthToken token)
+        {
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
+            token.ThrowIfNull(nameof(token));
+
+            using (var client = await this.ConnectAsync<ServiceHooksHttpClient>(token, account))
+            {
+                return await client.GetSubscriptionAsync(subscriptionId);
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task<IList<TeamFoundation.Services.WebApi.Subscription>> GetSubscriptions(string account, OAuthToken token)
+        {
+            account.ThrowIfNullOrWhiteSpace(nameof(account));
+            token.ThrowIfNull(nameof(token));
+
+            using (var client = await this.ConnectAsync<ServiceHooksHttpClient>(token, account))
+            {
+                return await client.GetSubscriptionsAsync();
             }
         }
 
@@ -239,13 +295,21 @@ namespace Vsar.TSBot
         /// <typeparam name="T">The client type.</typeparam>
         /// <param name="token">The OAuth token.</param>
         /// <param name="account">The name of the account to connect to.</param>
+        /// <param name="isRm">Forces to connect to the rm url.</param>
         /// <returns>A client.</returns>
-        private async Task<T> ConnectAsync<T>(OAuthToken token, string account = null)
+        private async Task<T> ConnectAsync<T>(OAuthToken token, string account = null, bool isRm = false)
             where T : VssHttpClientBase
         {
             var credentials = new VssOAuthAccessTokenCredential(new VssOAuthAccessToken(token.AccessToken));
 
-            var uri = !string.IsNullOrWhiteSpace(account) ? new Uri(string.Format(CultureInfo.InvariantCulture, VstsUrl, account)) : this.vstsAppUrl;
+            var uri = this.vstsAppUrl;
+
+            if (!string.IsNullOrWhiteSpace(account))
+            {
+                uri = isRm
+                    ? new Uri(string.Format(CultureInfo.InvariantCulture, VstsRmUrl, HttpUtility.UrlEncode(account)))
+                    : new Uri(string.Format(CultureInfo.InvariantCulture, VstsUrl, HttpUtility.UrlEncode(account)));
+            }
 
             return await new VssConnection(uri, credentials).GetClientAsync<T>();
         }
