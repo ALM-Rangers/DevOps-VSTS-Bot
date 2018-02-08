@@ -14,9 +14,11 @@ namespace Vsar.TSBot.UnitTests
     using System.Diagnostics.CodeAnalysis;
     using Dialogs;
     using Microsoft.ApplicationInsights;
+    using Microsoft.Azure.Documents;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
     using Moq;
+    using Attachment = Microsoft.Bot.Connector.Attachment;
 
     /// <summary>
     /// A fixture for dialogs.
@@ -29,7 +31,7 @@ namespace Vsar.TSBot.UnitTests
 
         public DialogFixture()
         {
-            this.RootDialog = new RootDialog(new Uri("https://an.url.toEula"), this.TelemetryClient);
+            this.RootDialog = new RootDialog(new Uri("https://an.url.toLicense"), this.TelemetryClient);
             this.DialogContext
                 .Setup(c => c.UserData)
                 .Returns(this.UserData.Object);
@@ -38,7 +40,14 @@ namespace Vsar.TSBot.UnitTests
                 .Returns(this.CreateMessage);
         }
 
+        /// <summary>
+        /// Gets the authentication service.
+        /// </summary>
+        public Mock<IAuthenticationService> AuthenticationService { get; } = new Mock<IAuthenticationService>();
+
         public Mock<IDialogContext> DialogContext { get; } = new Mock<IDialogContext>();
+
+        public Mock<IDocumentClient> DocumentClient { get; } = new Mock<IDocumentClient>();
 
         /// <summary>
         /// Gets the root dialog.
@@ -58,11 +67,6 @@ namespace Vsar.TSBot.UnitTests
         public Mock<IVstsService> VstsService { get; } = new Mock<IVstsService>();
 
         /// <summary>
-        /// Gets mocked <see cref="IVstsApplicationRegistry"/>
-        /// </summary>
-        public Mock<IVstsApplicationRegistry> VstsApplicationRegistry { get; } = new Mock<IVstsApplicationRegistry>();
-
-        /// <summary>
         /// Creates a default <see cref="IMessageActivity"/>.
         /// </summary>
         /// <returns>A <see cref="IMessageActivity"/>.</returns>
@@ -75,17 +79,19 @@ namespace Vsar.TSBot.UnitTests
                 From = new ChannelAccount { Id = User, Name = User },
                 Conversation = new ConversationAccount { Id = Guid.NewGuid().ToString() },
                 Recipient = new ChannelAccount { Id = Bot },
-                ServiceUrl = "InvalidServiceUrl",
+                ServiceUrl = "https://looks.likeavalid.url",
                 ChannelId = "Test",
                 Attachments = new List<Attachment>(),
                 Entities = new List<Entity>(),
             };
         }
 
-        public VstsProfile CreateProfile()
+        public Profile CreateProfile()
         {
-            return new VstsProfile
+            return new Profile
             {
+                IsSelected = true,
+                IsValidated = true,
                 Token = new OAuthToken { ExpiresIn = 3600 }
             };
         }

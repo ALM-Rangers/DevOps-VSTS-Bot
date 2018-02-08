@@ -19,8 +19,8 @@ namespace Vsar.TSBot.UnitTests
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
+    using Microsoft.QualityTools.Testing.Fakes;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
 
     [ExcludeFromCodeCoverage]
     [TestClass]
@@ -30,64 +30,88 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Post_Activity()
         {
-            var activity = new Activity { Type = ActivityTypes.Message, ChannelId = ChannelIds.Directline };
+            using (ShimsContext.Create())
+            {
+                var isValidDialog = false;
 
-            var telemetryClient = new TelemetryClient();
+                var activity = new Activity { Type = ActivityTypes.Message, ChannelId = ChannelIds.Directline };
 
-            var builder = new ContainerBuilder();
-            builder
-                .Register((c, x) => telemetryClient)
-                .AsSelf();
-            builder
-                .RegisterType<RootDialog>()
-                .AsSelf();
+                var telemetryClient = new TelemetryClient();
 
-            var container = builder.Build();
-            var botService = new Mock<IBotService>();
-            var dialogInvoker = new Mock<IDialogInvoker>();
+                var builder = new ContainerBuilder();
+                builder
+                    .Register((c, x) => telemetryClient)
+                    .AsSelf();
+                builder
+                    .RegisterType<RootDialog>()
+                    .AsSelf();
 
-            var target = new MessagesController(botService.Object, container, dialogInvoker.Object, telemetryClient)
+                var container = builder.Build();
+
+                var target = new MessagesController(container, telemetryClient)
                 {
                     Request = new HttpRequestMessage { RequestUri = new Uri("https://somekindofurl/api/messages") }
                 };
 
-            var result = await target.Post(activity);
+                Microsoft.Bot.Builder.Dialogs.Fakes.ShimConversation.SendAsyncIMessageActivityFuncOfIDialogOfObjectCancellationToken =
+                    (a, d, t) =>
+                    {
+                        isValidDialog = d() is RootDialog;
 
-            dialogInvoker.Verify(i => i.SendAsync(activity, It.IsAny<Func<IDialog<object>>>()));
+                        return Task.CompletedTask;
+                    };
 
-            result.StatusCode.Should().Be(HttpStatusCode.OK);
+                var result = await target.Post(activity);
+
+                isValidDialog.Should().BeTrue();
+                result.StatusCode.Should().Be(HttpStatusCode.OK);
+            }
         }
 
         [TestMethod]
         public async Task Post_Activity_ConversationUpdate()
         {
-            var activity = new Activity { Type = ActivityTypes.ConversationUpdate, ChannelId = ChannelIds.Directline };
+            using (ShimsContext.Create())
+            {
+                var isValidDialog = false;
 
-            var telemetryClient = new TelemetryClient();
-
-            var builder = new ContainerBuilder();
-            builder
-                .Register((c, x) => telemetryClient)
-                .AsSelf();
-            builder
-                .RegisterType<RootDialog>()
-                .AsSelf();
-
-            var container = builder.Build();
-            var botService = new Mock<IBotService>();
-            var dialogInvoker = new Mock<IDialogInvoker>();
-
-            var target =
-                new MessagesController(botService.Object, container, dialogInvoker.Object, telemetryClient)
+                var activity = new Activity
                 {
-                    Request = new HttpRequestMessage { RequestUri = new Uri("https://somekindofurl/api/messages") }
+                    Type = ActivityTypes.ConversationUpdate,
+                    ChannelId = ChannelIds.Directline
                 };
 
-            var result = await target.Post(activity);
+                var telemetryClient = new TelemetryClient();
 
-            dialogInvoker.Verify(i => i.SendAsync(activity, It.IsAny<Func<IDialog<object>>>()));
+                var builder = new ContainerBuilder();
+                builder
+                    .Register((c, x) => telemetryClient)
+                    .AsSelf();
+                builder
+                    .RegisterType<RootDialog>()
+                    .AsSelf();
 
-            result.StatusCode.Should().Be(HttpStatusCode.OK);
+                var container = builder.Build();
+
+                var target =
+                    new MessagesController(container, telemetryClient)
+                    {
+                        Request = new HttpRequestMessage { RequestUri = new Uri("https://somekindofurl/api/messages") }
+                    };
+
+                Microsoft.Bot.Builder.Dialogs.Fakes.ShimConversation.SendAsyncIMessageActivityFuncOfIDialogOfObjectCancellationToken =
+                    (a, d, t) =>
+                    {
+                        isValidDialog = d() is RootDialog;
+
+                        return Task.CompletedTask;
+                    };
+
+                var result = await target.Post(activity);
+
+                isValidDialog.Should().BeTrue();
+                result.StatusCode.Should().Be(HttpStatusCode.OK);
+            }
         }
 
         [TestMethod]
@@ -106,16 +130,12 @@ namespace Vsar.TSBot.UnitTests
                 .AsSelf();
 
             var container = builder.Build();
-            var botService = new Mock<IBotService>();
-            var dialogInvoker = new Mock<IDialogInvoker>();
 
             var target =
-                new MessagesController(botService.Object, container, dialogInvoker.Object, telemetryClient)
+                new MessagesController(container, telemetryClient)
                 {
                     Request = new HttpRequestMessage()
                 };
-
-            dialogInvoker.Setup(i => i.SendAsync(activity, It.IsAny<Func<IDialog<object>>>())).Throws<Exception>();
 
             var result = await target.Post(activity);
 

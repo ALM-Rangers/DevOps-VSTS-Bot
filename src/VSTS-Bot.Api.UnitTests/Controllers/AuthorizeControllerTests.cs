@@ -16,9 +16,9 @@ namespace Vsar.TSBot.UnitTests
     using System.Threading.Tasks;
     using System.Web.Mvc;
     using FluentAssertions;
-    using Microsoft.Bot.Connector;
+    using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.VisualStudio.Services.Account;
-    using Microsoft.VisualStudio.Services.Profile;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
@@ -31,40 +31,60 @@ namespace Vsar.TSBot.UnitTests
     public class AuthorizeControllerTests
     {
         [TestMethod]
-        public void ConstructorArgumentCheckForNull()
+        public void Constructor_Missing_AppId()
         {
-            var registryMock = new Mock<IVstsApplicationRegistry>();
-            var vstsMock = new Mock<IVstsService>();
-            var botMock = new Mock<IBotService>();
+            var authenticationServiceMock = new Mock<IAuthenticationService>();
+            var botDataFactoryMock = new Mock<IBotDataFactory>();
+            var vstsServiceMock = new Mock<IVstsService>();
 
-            Assert.ThrowsException<ArgumentNullException>(() =>
-            {
-                using (new AuthorizeController(null, registryMock.Object, vstsMock.Object))
-                {
-                }
-            });
-            Assert.ThrowsException<ArgumentNullException>(() =>
-            {
-                using (new AuthorizeController(botMock.Object, null, vstsMock.Object))
-                {
-                }
-            });
-            Assert.ThrowsException<ArgumentNullException>(() =>
-            {
-                using (new AuthorizeController(botMock.Object, registryMock.Object, null))
-                {
-                }
-            });
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController(null, new Uri("http://authorize.url"), authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object));
+        }
+
+        [TestMethod]
+        public void Constructor_Missing_AuthorizeUrl()
+        {
+            var authenticationServiceMock = new Mock<IAuthenticationService>();
+            var botDataFactoryMock = new Mock<IBotDataFactory>();
+            var vstsServiceMock = new Mock<IVstsService>();
+
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController("appId", null, authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object));
+        }
+
+        [TestMethod]
+        public void Constructor_Missing_AuthenticationService()
+        {
+            var botDataFactoryMock = new Mock<IBotDataFactory>();
+            var vstsServiceMock = new Mock<IVstsService>();
+
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController("appId", new Uri("http://authorize.url"), null, botDataFactoryMock.Object, vstsServiceMock.Object));
+        }
+
+        [TestMethod]
+        public void Constructor_Missing_BotDataFactory()
+        {
+            var authenticationServiceMock = new Mock<IAuthenticationService>();
+            var vstsServiceMock = new Mock<IVstsService>();
+
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController("appId", new Uri("http://authorize.url"), authenticationServiceMock.Object, null, vstsServiceMock.Object));
+        }
+
+        [TestMethod]
+        public void Constructor_Missing_VstsService()
+        {
+            var authenticationServiceMock = new Mock<IAuthenticationService>();
+            var botDataFactoryMock = new Mock<IBotDataFactory>();
+
+            Assert.ThrowsException<ArgumentNullException>(() => new AuthorizeController("appId", new Uri("http://authorize.url"), authenticationServiceMock.Object, botDataFactoryMock.Object, null));
         }
 
         [TestMethod]
         public async Task Authorize_No_Code()
         {
-            var applicationRegistry = new Mock<IVstsApplicationRegistry>();
-            var botService = new Mock<IBotService>();
-            var vstsService = new Mock<IVstsService>();
+            var authenticationServiceMock = new Mock<IAuthenticationService>();
+            var botDataFactoryMock = new Mock<IBotDataFactory>();
+            var vstsServiceMock = new Mock<IVstsService>();
 
-            var target = new AuthorizeController(botService.Object, applicationRegistry.Object, vstsService.Object);
+            var target = new AuthorizeController("appId", new Uri("http://authorize.url"), authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object);
             var result = await target.Index(null, null, null) as ViewResult;
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.ViewData.ModelState.First(pair => pair.Value.Errors.Any()));
@@ -73,11 +93,11 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Authorize_No_State()
         {
-            var applicationRegistry = new Mock<IVstsApplicationRegistry>();
-            var botService = new Mock<IBotService>();
-            var vstsService = new Mock<IVstsService>();
+            var authenticationServiceMock = new Mock<IAuthenticationService>();
+            var botDataFactoryMock = new Mock<IBotDataFactory>();
+            var vstsServiceMock = new Mock<IVstsService>();
 
-            var target = new AuthorizeController(botService.Object, applicationRegistry.Object, vstsService.Object);
+            var target = new AuthorizeController("appId", new Uri("http://authorize.url"), authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object);
             var result = await target.Index("123567890", null, null) as ViewResult;
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.ViewData.ModelState.First(pair => pair.Value.Errors.Any()));
@@ -90,59 +110,56 @@ namespace Vsar.TSBot.UnitTests
         [TestMethod]
         public async Task Authorize_A_Valid_LogOn()
         {
-            var authenticationService = new Mock<IAuthenticationService>();
-            var application = new Mock<IVstsApplication>();
-            var applicationRegistry = new Mock<IVstsApplicationRegistry>();
-            var botService = new Mock<IBotService>();
-            var vstsService = new Mock<IVstsService>();
+            var authenticationServiceMock = new Mock<IAuthenticationService>();
+            var botDataFactoryMock = new Mock<IBotDataFactory>();
+            var botData = new Mock<IBotData>();
+            var botDataBag = new Mock<IBotDataBag>();
+            var vstsServiceMock = new Mock<IVstsService>();
 
             var token = new OAuthToken();
-            var profile = new Profile();
+            var profile = new Microsoft.VisualStudio.Services.Profile.Profile { DisplayName = "UniqueName" };
             var accounts = new List<Account> { new Account(Guid.NewGuid()) { AccountName = "Account1" } };
-            var botData = new BotData();
 
-            var target = new AuthorizeController(botService.Object, applicationRegistry.Object, vstsService.Object);
+            var target = new AuthorizeController("appId", new Uri("http://authorize.url"), authenticationServiceMock.Object, botDataFactoryMock.Object, vstsServiceMock.Object);
 
             const string code = "1234567890";
-            const string pin = "12345";
             const string state = "channel1;user1";
+            var data = new UserData { Pin = "12345" };
 
-            botData.SetProperty("Pin", pin);
-
-            authenticationService
-                .Setup(a => a.GetToken(code))
+            authenticationServiceMock
+                .Setup(a => a.GetToken("appId", new Uri("http://authorize.url"), code))
                 .ReturnsAsync(() => token);
 
-            application
-                .Setup(vstsApplication => vstsApplication.AuthenticationService)
-                .Returns(authenticationService.Object);
-
-            applicationRegistry
-                .Setup(registry => registry.GetVstsApplicationRegistration(It.IsAny<string>()))
-                .Returns(application.Object);
-
-            vstsService
+            vstsServiceMock
                 .Setup(p => p.GetProfile(token))
                 .ReturnsAsync(profile);
 
-            vstsService
+            vstsServiceMock
                 .Setup(p => p.GetAccounts(token, It.IsAny<Guid>()))
                 .ReturnsAsync(accounts);
 
-            botService
-                .Setup(b => b.GetUserData("channel1", "user1"))
-                .ReturnsAsync(botData);
+            botDataFactoryMock
+                .Setup(b => b.Create(It.Is<Address>(a =>
+                    a.ChannelId.Equals("channel1", StringComparison.Ordinal) &&
+                    a.UserId.Equals("user1", StringComparison.Ordinal))))
+                .Returns(botData.Object);
 
-            botService
-                .Setup(b => b.SetUserData("channel1", "user1", botData))
-                .Returns(Task.CompletedTask);
+            botData
+                .Setup(bd => bd.UserData)
+                .Returns(botDataBag.Object);
+
+            botDataBag
+                .Setup(bd => bd.TryGetValue("userData", out data))
+                .Returns(true);
 
             var result = await target.Index(code, string.Empty, state) as ViewResult;
-            var vstsProfile = botData.GetProperty<VstsProfile>("NotValidatedByPinProfile");
+
+            botDataBag
+                .Verify(bd => bd.SetValue("userData", data));
 
             result.Should().NotBeNull();
-            vstsProfile.Should().NotBeNull();
-            ((Authorize)result.Model).Pin.Should().Be(pin);
+            ((Authorize)result.Model).Pin.Should().Be(data.Pin);
+            data.Profiles.Should().Contain(p => p.Id.Equals(profile.Id));
         }
     }
 }

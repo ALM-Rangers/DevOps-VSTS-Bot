@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.14
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSTS-Bot.Api", "VSTS-Bot.Api\VSTS-Bot.Api.csproj", "{A8BA1066-5695-4D71-ABB4-65E5A5E0C3D4}"
 EndProject
@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common Files", "Common File
 		Common\TestCodeRules.ruleset = Common\TestCodeRules.ruleset
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSTS-Bot.TeamFoundation.Services.WebApi", "VSTS-Bot.TeamFoundation.Services.WebApi\VSTS-Bot.TeamFoundation.Services.WebApi.csproj", "{F528C603-F858-4F6C-9961-0691E24BFCA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,8 +44,15 @@ Global
 		{FBE04D69-C8BC-4D0D-9D74-B919A293E53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBE04D69-C8BC-4D0D-9D74-B919A293E53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBE04D69-C8BC-4D0D-9D74-B919A293E53A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F528C603-F858-4F6C-9961-0691E24BFCA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F528C603-F858-4F6C-9961-0691E24BFCA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F528C603-F858-4F6C-9961-0691E24BFCA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F528C603-F858-4F6C-9961-0691E24BFCA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2676CE7D-C84E-403A-A0D0-8A430C8F2090}
 	EndGlobalSection
 EndGlobal

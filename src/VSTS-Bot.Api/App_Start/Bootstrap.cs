@@ -9,17 +9,23 @@
 
 namespace Vsar.TSBot
 {
-    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using Autofac;
     using Autofac.Extras.AttributeMetadata;
     using Autofac.Integration.Mvc;
     using Autofac.Integration.WebApi;
     using Dialogs;
     using Microsoft.ApplicationInsights;
+    using Microsoft.Azure.Documents;
+    using Microsoft.Azure.Documents.Client;
+    using Microsoft.Bot.Builder.Azure;
     using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Connector;
+    using Strategies.Events;
+    using Strategies.Subscriptions;
 
     /// <summary>
     /// Provides method(s) to bootstrap the dependency injection framework.
@@ -30,17 +36,17 @@ namespace Vsar.TSBot
         /// <summary>
         /// Builds a <see cref="IContainer"/> that has all the necessary types registered to run the application.
         /// </summary>
-        /// <param name="isDebugging">Flag that indicates if the application is in debugging modus.</param>
         /// <returns>A <see cref="IContainer"/>.</returns>
-        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Bootstrapper for Autofac. So it is intented to hit all needed dependencies in one place.")]
-        public static IContainer Build(bool isDebugging)
+        public static IContainer Build()
         {
-            var builder = new ContainerBuilder();
+            Conversation.UpdateContainer(Build);
 
-            builder
-                .RegisterType<DialogInvoker>()
-                .As<IDialogInvoker>();
+            return Conversation.Container;
+        }
 
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Bootstrapper for Autofac. So it is intented to hit all needed dependencies in one place.")]
+        private static void Build(ContainerBuilder builder)
+        {
             builder
                 .RegisterModule<AttributedMetadataModule>();
 
@@ -49,45 +55,76 @@ namespace Vsar.TSBot
                 .RegisterType<TelemetryClient>()
                 .SingleInstance();
 
-            var microsoftAppCredentials =
-                new MicrosoftAppCredentials(Config.MicrosoftApplicationId, Config.MicrosoftAppPassword);
+            builder
+                .RegisterInstance(new MicrosoftAppCredentials(Config.MicrosoftApplicationId, Config.MicrosoftAppPassword))
+                .AsSelf();
+
+            var client = new DocumentClient(Config.DocumentDbUri, Config.DocumentDbKey);
+            IBotDataStore<BotData> store = new DocumentDbBotDataStore(client);
+            client.CreateCollectionIfDoesNotExist("botdb", "subscriptioncollection");
+
+            builder
+                .Register(c => client)
+                .As<IDocumentClient>()
+                .SingleInstance();
+
+            builder
+                .Register(c => store)
+                .Keyed<IBotDataStore<BotData>>(AzureModule.Key_DataStore)
+                .AsSelf()
+                .SingleInstance();
+
+            builder
+                .Register(c =>
+                    new CachingBotDataStore(
+                        store,
+                        CachingBotDataStoreConsistencyPolicy.ETagBasedConsistency))
+                .As<IBotDataStore<BotData>>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
 
             // When debugging with the bot emulator we need to use the listening url from the emulator.
-            if (isDebugging && !string.IsNullOrEmpty(Config.EmulatorListeningUrl))
-            {
-                builder.Register(c => new StateClient(new Uri(Config.EmulatorListeningUrl), microsoftAppCredentials));
-            }
-            else
-            {
-                builder.Register(c => new StateClient(microsoftAppCredentials));
-            }
-
+            // if (isDebugging && !string.IsNullOrEmpty(Config.EmulatorListeningUrl))
+            // {
+            //    builder.Register(c => new StateClient(new Uri(Config.EmulatorListeningUrl), microsoftAppCredentials));
+            // }
+            // else
+            // {
+            //    builder.Register(c => new StateClient(microsoftAppCredentials));
+            // }
             builder
                 .RegisterType<BotState>()
                 .AsImplementedInterfaces();
 
             builder
-                .RegisterType<BotService>()
-                .AsImplementedInterfaces();
+                .RegisterType<BotDataFactory>()
+                .As<IBotDataFactory>();
+
+            builder
+                .RegisterType<AuthenticationService>()
+                .As<IAuthenticationService>();
 
             builder
                 .RegisterType<VstsService>()
-                .AsImplementedInterfaces();
+                .As<IVstsService>();
 
             builder
-                .RegisterType<AuthenticationServiceFactory>()
-                .AsImplementedInterfaces();
+                .RegisterControllers(typeof(Bootstrap).Assembly)
+                .Except<AuthorizeController>();
 
             builder
-                .RegisterType<VstsApplicationRegistry>()
-                .WithParameter("applicationId", Config.ApplicationId)
-                .WithParameter("applicationSecret", Config.ApplicationSecret)
-                .WithParameter("applicationScope", Config.ApplicationScope)
-                .WithParameter("redirectUri", Config.AuthorizeUrl)
-                .AsImplementedInterfaces();
+                .RegisterType<AuthorizeController>()
+                .WithParameter("appSecret", Config.ApplicationSecret)
+                .WithParameter("authorizeUrl", Config.AuthorizeUrl)
+                .AsSelf();
 
             builder
-                .RegisterControllers(typeof(Bootstrap).Assembly);
+                .RegisterType<ApprovalEventStrategy>()
+                .As<IEventStrategy>();
+
+            builder
+                .RegisterType<MyApprovalSubscriptionStrategy>()
+                .As<ISubscriptionStrategy>();
 
             builder
                 .RegisterApiControllers(typeof(Bootstrap).Assembly);
@@ -95,14 +132,20 @@ namespace Vsar.TSBot
             builder
                 .RegisterAssemblyTypes(typeof(Bootstrap).Assembly)
                 .Where(t => t.GetInterfaces().Any(i => i.IsAssignableFrom(typeof(IDialog<object>))))
+                .Except<ConnectDialog>()
                 .Except<RootDialog>()
+                .AsImplementedInterfaces();
+
+            builder
+                .RegisterType<ConnectDialog>()
+                .WithParameter("appId", Config.ApplicationId)
+                .WithParameter("appScope", Config.ApplicationScope)
+                .WithParameter("authorizeUrl", Config.AuthorizeUrl)
                 .AsImplementedInterfaces();
 
             builder
                 .RegisterType<RootDialog>()
                 .AsSelf();
-
-            return builder.Build();
         }
     }
 }
