@@ -10,10 +10,9 @@ namespace Vsar.TSBot.AcceptanceTests
 {
     using System;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
+    using System.Threading;
     using FluentAssertions;
     using Microsoft.Bot.Builder.Dialogs;
-    using Microsoft.Bot.Connector;
     using Microsoft.Bot.Connector.DirectLine;
     using TechTalk.SpecFlow;
     using Activity = Microsoft.Bot.Connector.DirectLine.Activity;
@@ -39,13 +38,13 @@ namespace Vsar.TSBot.AcceptanceTests
         [Then(@"I am connected to the account and '(.*)'")]
         public void ThenIAmConnectedToTheAccountAnd(KeyValuePair<string, string> teamProject)
         {
-            var data = Config.BotState.GetUserDataAsync(ChannelIds.Directline, Config.UserName).Result;
+            var botData = Config.GetBotData();
+            botData.LoadAsync(CancellationToken.None).Wait();
 
-            var account = data.GetProperty<string>("Account");
-            var project = data.GetProperty<string>("TeamProject");
+            botData.UserData.TryGetValue("userData", out UserData data);
 
-            account.ToUpperInvariant().Should().Be(Config.Account.ToUpperInvariant());
-            project.ToUpperInvariant().Should().Be(teamProject.Value.ToUpperInvariant());
+            data.Account.ToUpperInvariant().Should().Be(Config.Account.ToUpperInvariant());
+            data.TeamProject.ToUpperInvariant().Should().Be(teamProject.Value.ToUpperInvariant());
         }
     }
 }

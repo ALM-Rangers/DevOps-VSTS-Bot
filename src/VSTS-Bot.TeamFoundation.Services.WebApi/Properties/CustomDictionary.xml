@@ -1,0 +1,32 @@
+<!--
+//———————————————————————————————
+// <copyright file=”name of this file, i.e. CustomDictionary.xml“>
+// Licensed under the MIT License. See License.txt in the project root for license information.
+// </copyright>
+// <summary>
+// Contains words escaped words that violate the 'CA1704: Identifiers should be spelled correctly' check.
+// </summary>
+//———————————————————————————————
+-->
+<Dictionary>
+  <Words>
+    <Recognized>
+      <Word>Behavioural</Word>
+      <Word>Vsar</Word>
+      <Word>Api</Word>
+      <Word>OAuthToken</Word>
+      <Word>Vsts</Word>
+      <Word>Auth</Word>
+      <Word>Awaitable</Word>
+      <Word>param</Word>
+    </Recognized>
+    <Compound>
+      <Term CompoundAlternate="ANon">anon</Term>
+    </Compound>
+  </Words>
+  <Acronyms>
+    <CasingExceptions>
+      <!--<Acronym></Acronym>-->
+    </CasingExceptions>
+  </Acronyms>
+</Dictionary>
