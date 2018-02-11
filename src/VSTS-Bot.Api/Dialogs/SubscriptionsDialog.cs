@@ -258,15 +258,15 @@ namespace Vsar.TSBot.Dialogs
                 };
 
                 var subscription = this.documentClient
-                    .CreateDocumentQuery<Subscription>(UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"), querySpec)
+                    .CreateDocumentQuery<Document>(UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"), querySpec)
                     .ToList()
                     .FirstOrDefault();
 
                 if (subscription != null)
                 {
-                    await this.documentClient.DeleteDocumentAsync(UriFactory.CreateDocumentUri("botdb", "subscriptioncollection", subscription.Id.ToString()));
+                    await this.documentClient.DeleteDocumentAsync(subscription.SelfLink);
 
-                    await this.VstsService.DeleteSubscription(this.Account, subscription.SubscriptionId, this.Profile.Token);
+                    await this.VstsService.DeleteSubscription(this.Account, subscription.GetPropertyValue<Guid>("subscriptionId"), this.Profile.Token);
 
                     reply.Text = Labels.Unsubscribed;
                     await context.PostAsync(reply);
