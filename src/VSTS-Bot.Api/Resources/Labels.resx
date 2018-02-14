@@ -255,4 +255,13 @@
   <data name="UnknownAccount" xml:space="preserve">
     <value>You entered an unknown account.</value>
   </data>
+  <data name="HelpAccount" xml:space="preserve">
+    <value>Please select an account.</value>
+  </data>
+  <data name="HelpPin" xml:space="preserve">
+    <value>Please follow the 'authentication is required' button, which will forward you to the authorization page of Visual Studio Team Services (VSTS). When you 'accept', you will be forwarded to a page with a pin number. Please copy and paste the pin number as a reply.</value>
+  </data>
+  <data name="HelpProject" xml:space="preserve">
+    <value>Please select a Team Project;</value>
+  </data>
 </root>
