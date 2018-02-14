@@ -244,23 +244,18 @@ namespace Vsar.TSBot.UnitTests
             var profile = new Profile { Token = new OAuthToken() };
             var teamProject = "TeamProject1";
 
-            var subscription = new Subscription
-            {
-                ChannelId = toBot.ChannelId,
-                SubscriptionId = Guid.NewGuid(),
-                SubscriptionType = SubscriptionType.MyApprovals,
-                UserId = toBot.From.Id
-            };
-            var subscriptions = new List<Subscription> { subscription };
+            var subscriptionId = Guid.NewGuid();
+            dynamic doc = new Document();
+            doc.subscriptionId = subscriptionId;
 
             this.Fixture.DocumentClient
-                .Setup(dc => dc.CreateDocumentQuery<Subscription>(It.IsAny<Uri>(), It.IsAny<SqlQuerySpec>(), null))
-                .Returns(subscriptions.AsQueryable().OrderBy(s => s.Id));
+                .Setup(dc => dc.CreateDocumentQuery<Document>(It.IsAny<Uri>(), It.IsAny<SqlQuerySpec>(), null))
+                .Returns(new List<Document> { doc }.AsQueryable());
             this.Fixture.DocumentClient
-                .Setup(dc => dc.DeleteDocumentAsync(It.IsAny<Uri>(), null))
+                .Setup(dc => dc.DeleteDocumentAsync(It.IsAny<string>(), null))
                 .ReturnsAsync(new ResourceResponse<Document>());
             this.Fixture.VstsService
-                .Setup(s => s.DeleteSubscription(account, subscription.SubscriptionId, profile.Token))
+                .Setup(s => s.DeleteSubscription(account, subscriptionId, profile.Token))
                 .Returns(Task.CompletedTask);
 
             var target = new SubscriptionsDialog(this.Fixture.AuthenticationService.Object, this.Fixture.DocumentClient.Object, strategies, this.Fixture.VstsService.Object)
