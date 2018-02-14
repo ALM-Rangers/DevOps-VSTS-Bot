@@ -252,4 +252,7 @@
   <data name="SubscriptionShortTitle_MyApprovals" xml:space="preserve">
     <value>My approvals</value>
   </data>
+  <data name="UnknownAccount" xml:space="preserve">
+    <value>You entered an unknown account.</value>
+  </data>
 </root>

@@ -388,7 +388,7 @@ namespace Vsar.TSBot.UnitTests
             var target = mocked.Object;
             target.Profiles = profiles;
 
-            mocked.Setup(m => m.LogOnAsync(this.Fixture.DialogContext.Object, toBot)).Returns(Task.CompletedTask).Verifiable();
+            mocked.Setup(m => m.SelectAccountAsync(this.Fixture.DialogContext.Object, toBot)).Returns(Task.CompletedTask).Verifiable();
 
             await target.AccountReceivedAsync(this.Fixture.DialogContext.Object, this.Fixture.MakeAwaitable(toBot));
 
