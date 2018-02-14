@@ -376,6 +376,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You entered an unknown account..
+        /// </summary>
+        internal static string UnknownAccount {
+            get {
+                return ResourceManager.GetString("UnknownAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorry, I did not recognize that command. Please select one of the following commands..
         /// </summary>
         internal static string UnknownCommand {

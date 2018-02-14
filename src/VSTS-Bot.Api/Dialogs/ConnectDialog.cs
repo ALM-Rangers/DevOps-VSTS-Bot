@@ -243,7 +243,11 @@ namespace Vsar.TSBot.Dialogs
 
             if (this.Profile == null)
             {
-                await this.LogOnAsync(context, activity);
+                var reply = context.MakeMessage();
+                reply.Text = Labels.UnknownAccount;
+                await context.PostAsync(reply);
+
+                await this.SelectAccountAsync(context, activity);
                 return;
             }
 
