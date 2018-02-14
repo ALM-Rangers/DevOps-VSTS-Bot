@@ -196,6 +196,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please select an account..
+        /// </summary>
+        internal static string HelpAccount {
+            get {
+                return ResourceManager.GetString("HelpAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reconnect to another account through &apos;connect&apos;; Get your approvals by typing or clicking &apos;approvals&apos;; With &apos;builds&apos; you can queue a build; And with &apos;releases&apos; you can create a release..
         /// </summary>
         internal static string HelpAll {
@@ -210,6 +219,24 @@ namespace Vsar.TSBot.Resources {
         internal static string HelpConnect {
             get {
                 return ResourceManager.GetString("HelpConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please follow the &apos;authentication is required&apos; button, which will forward you to the authorization page of Visual Studio Team Services (VSTS). When you &apos;accept&apos;, you will be forwarded to a page with a pin number. Please copy and paste the pin number as a reply..
+        /// </summary>
+        internal static string HelpPin {
+            get {
+                return ResourceManager.GetString("HelpPin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select a Team Project;.
+        /// </summary>
+        internal static string HelpProject {
+            get {
+                return ResourceManager.GetString("HelpProject", resourceCulture);
             }
         }
         
