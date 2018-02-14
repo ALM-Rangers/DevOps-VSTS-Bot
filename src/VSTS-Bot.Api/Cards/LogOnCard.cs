@@ -40,7 +40,7 @@ namespace Vsar.TSBot.Cards
             channelId.ThrowIfNullOrWhiteSpace(nameof(channelId));
             userId.ThrowIfNullOrWhiteSpace(nameof(userId));
 
-            this.Subtitle = Labels.PleaseLogin;
+            this.Text = Labels.PleaseLogin;
 
             var button = new CardAction
             {
