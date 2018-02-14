@@ -419,5 +419,14 @@ namespace Vsar.TSBot.Resources {
                 return ResourceManager.GetString("WelcomeUser", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hi everyone. Good to see you. I will help you with your Visual Studio Team Services tasks. Please read the [MIT License]({0}) if you have not done so..
+        /// </summary>
+        internal static string WelcomeUsers {
+            get {
+                return ResourceManager.GetString("WelcomeUsers", resourceCulture);
+            }
+        }
     }
 }
