@@ -232,10 +232,12 @@
     <value>Unsubscribe</value>
   </data>
   <data name="Subscribed" xml:space="preserve">
-    <value>I subscribed you to the feed.</value>
+    <value>I subscribed you to the '{0}' feed.</value>
+    <comment>{0} = Subscription type</comment>
   </data>
   <data name="Unsubscribed" xml:space="preserve">
-    <value>I unsubscribed you from the feed.</value>
+    <value>I unsubscribed you from the '{0}' feed.</value>
+    <comment>{0} = Subscription type</comment>
   </data>
   <data name="PendingApproval" xml:space="preserve">
     <value>There is an approval pending.</value>
