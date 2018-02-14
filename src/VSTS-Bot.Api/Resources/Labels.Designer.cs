@@ -340,7 +340,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I subscribed you to the feed..
+        ///   Looks up a localized string similar to I subscribed you to the &apos;{0}&apos; feed..
         /// </summary>
         internal static string Subscribed {
             get {
@@ -363,6 +363,15 @@ namespace Vsar.TSBot.Resources {
         internal static string Subscriptions {
             get {
                 return ResourceManager.GetString("Subscriptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My approvals.
+        /// </summary>
+        internal static string SubscriptionShortTitle_MyApprovals {
+            get {
+                return ResourceManager.GetString("SubscriptionShortTitle_MyApprovals", resourceCulture);
             }
         }
         
@@ -403,7 +412,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I unsubscribed you from the feed..
+        ///   Looks up a localized string similar to I unsubscribed you from the &apos;{0}&apos; feed..
         /// </summary>
         internal static string Unsubscribed {
             get {
