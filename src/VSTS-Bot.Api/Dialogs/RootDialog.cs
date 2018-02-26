@@ -12,6 +12,7 @@ namespace Vsar.TSBot.Dialogs
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
+    using System.Linq;
     using System.Runtime.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
@@ -142,6 +143,11 @@ namespace Vsar.TSBot.Dialogs
             if (message == null)
             {
                 return;
+            }
+
+            if (!message.MembersAdded.Any() || message.MembersAdded.All(m => m.Id.Equals(message.Recipient.Id, StringComparison.OrdinalIgnoreCase)))
+            {
+                await context.PostAsync(string.Format(Labels.WelcomeUsers, this.licenseUri));
             }
 
             foreach (var member in message.MembersAdded)

@@ -11,6 +11,7 @@ namespace Vsar.TSBot.Dialogs
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.Linq;
     using System.Runtime.Serialization;
     using System.Text.RegularExpressions;
@@ -165,7 +166,7 @@ namespace Vsar.TSBot.Dialogs
             result.ThrowIfNull(nameof(result));
 
             var activity = await result;
-            var text = (activity.RemoveRecipientMention() ?? string.Empty).ToLowerInvariant();
+            var text = (activity.RemoveRecipientMention() ?? string.Empty).ToLowerInvariant().Trim();
             var reply = context.MakeMessage();
 
             var matchSubscribe = Regex.Match(text, CommandMatchSubscribe);
@@ -181,6 +182,7 @@ namespace Vsar.TSBot.Dialogs
             if (matchSubscribe.Success)
             {
                 var subscriptionType = (SubscriptionType)Enum.Parse(typeof(SubscriptionType), matchSubscribe.Groups[1].Value, true);
+                var subscriptionTypeTitle = Labels.ResourceManager.GetString("SubscriptionShortTitle_" + subscriptionType);
                 var querySpec = new SqlQuerySpec
                 {
                     QueryText = "SELECT * FROM subscriptions s WHERE s.channelId = @channelId AND s.userId = @userId AND s.subscriptionType = @subscriptionType",
@@ -238,7 +240,7 @@ namespace Vsar.TSBot.Dialogs
                 await this.documentClient.UpsertDocumentAsync(
                     UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"), subscription);
 
-                reply.Text = Labels.Subscribed;
+                reply.Text = string.Format(Labels.Subscribed, subscriptionTypeTitle);
 
                 await context.PostAsync(reply);
                 context.Done(reply);
@@ -246,6 +248,7 @@ namespace Vsar.TSBot.Dialogs
             else if (matchUnsubscribe.Success)
             {
                 var subscriptionType = (SubscriptionType)Enum.Parse(typeof(SubscriptionType), matchUnsubscribe.Groups[1].Value, true);
+                var subscriptionTypeTitle = Labels.ResourceManager.GetString("SubscriptionShortTitle_" + subscriptionType);
                 var querySpec = new SqlQuerySpec
                 {
                     QueryText = "SELECT * FROM subscriptions s WHERE s.channelId = @channelId AND s.userId = @userId AND s.subscriptionType = @subscriptionType",
@@ -258,17 +261,17 @@ namespace Vsar.TSBot.Dialogs
                 };
 
                 var subscription = this.documentClient
-                    .CreateDocumentQuery<Subscription>(UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"), querySpec)
+                    .CreateDocumentQuery<Document>(UriFactory.CreateDocumentCollectionUri("botdb", "subscriptioncollection"), querySpec)
                     .ToList()
                     .FirstOrDefault();
 
                 if (subscription != null)
                 {
-                    await this.documentClient.DeleteDocumentAsync(UriFactory.CreateDocumentUri("botdb", "subscriptioncollection", subscription.Id.ToString()));
+                    await this.documentClient.DeleteDocumentAsync(subscription.SelfLink);
 
-                    await this.VstsService.DeleteSubscription(this.Account, subscription.SubscriptionId, this.Profile.Token);
+                    await this.VstsService.DeleteSubscription(this.Account, subscription.GetPropertyValue<Guid>("subscriptionId"), this.Profile.Token);
 
-                    reply.Text = Labels.Unsubscribed;
+                    reply.Text = string.Format(Labels.Unsubscribed, subscriptionTypeTitle);
                     await context.PostAsync(reply);
                 }
 

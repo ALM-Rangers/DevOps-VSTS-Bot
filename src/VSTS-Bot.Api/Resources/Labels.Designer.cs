@@ -196,6 +196,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please select an account..
+        /// </summary>
+        internal static string HelpAccount {
+            get {
+                return ResourceManager.GetString("HelpAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reconnect to another account through &apos;connect&apos;; Get your approvals by typing or clicking &apos;approvals&apos;; With &apos;builds&apos; you can queue a build; And with &apos;releases&apos; you can create a release..
         /// </summary>
         internal static string HelpAll {
@@ -210,6 +219,24 @@ namespace Vsar.TSBot.Resources {
         internal static string HelpConnect {
             get {
                 return ResourceManager.GetString("HelpConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please follow the &apos;authentication is required&apos; button, which will forward you to the authorization page of Visual Studio Team Services (VSTS). When you &apos;accept&apos;, you will be forwarded to a page with a pin number. Please copy and paste the pin number as a reply..
+        /// </summary>
+        internal static string HelpPin {
+            get {
+                return ResourceManager.GetString("HelpPin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select a Team Project;.
+        /// </summary>
+        internal static string HelpProject {
+            get {
+                return ResourceManager.GetString("HelpProject", resourceCulture);
             }
         }
         
@@ -340,7 +367,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I subscribed you to the feed..
+        ///   Looks up a localized string similar to I subscribed you to the &apos;{0}&apos; feed..
         /// </summary>
         internal static string Subscribed {
             get {
@@ -367,11 +394,29 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to My approvals.
+        /// </summary>
+        internal static string SubscriptionShortTitle_MyApprovals {
+            get {
+                return ResourceManager.GetString("SubscriptionShortTitle_MyApprovals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to My approvals on {0}..
         /// </summary>
         internal static string SubscriptionTitle_MyApprovals {
             get {
                 return ResourceManager.GetString("SubscriptionTitle_MyApprovals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You entered an unknown account..
+        /// </summary>
+        internal static string UnknownAccount {
+            get {
+                return ResourceManager.GetString("UnknownAccount", resourceCulture);
             }
         }
         
@@ -394,7 +439,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I unsubscribed you from the feed..
+        ///   Looks up a localized string similar to I unsubscribed you from the &apos;{0}&apos; feed..
         /// </summary>
         internal static string Unsubscribed {
             get {
@@ -417,6 +462,15 @@ namespace Vsar.TSBot.Resources {
         internal static string WelcomeUser {
             get {
                 return ResourceManager.GetString("WelcomeUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hi everyone. Good to see you. I will help you with your Visual Studio Team Services tasks. Please read the [MIT License]({0}) if you have not done so..
+        /// </summary>
+        internal static string WelcomeUsers {
+            get {
+                return ResourceManager.GetString("WelcomeUsers", resourceCulture);
             }
         }
     }

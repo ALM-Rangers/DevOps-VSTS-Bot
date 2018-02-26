@@ -232,15 +232,36 @@
     <value>Unsubscribe</value>
   </data>
   <data name="Subscribed" xml:space="preserve">
-    <value>I subscribed you to the feed.</value>
+    <value>I subscribed you to the '{0}' feed.</value>
+    <comment>{0} = Subscription type</comment>
   </data>
   <data name="Unsubscribed" xml:space="preserve">
-    <value>I unsubscribed you from the feed.</value>
+    <value>I unsubscribed you from the '{0}' feed.</value>
+    <comment>{0} = Subscription type</comment>
   </data>
   <data name="PendingApproval" xml:space="preserve">
     <value>There is an approval pending.</value>
   </data>
   <data name="Subscriptions" xml:space="preserve">
     <value>Subscriptions</value>
+  </data>
+  <data name="WelcomeUsers" xml:space="preserve">
+    <value>Hi everyone. Good to see you. I will help you with your Visual Studio Team Services tasks. Please read the [MIT License]({0}) if you have not done so.</value>
+    <comment>{0} = link to MIT License;</comment>
+  </data>
+  <data name="SubscriptionShortTitle_MyApprovals" xml:space="preserve">
+    <value>My approvals</value>
+  </data>
+  <data name="UnknownAccount" xml:space="preserve">
+    <value>You entered an unknown account.</value>
+  </data>
+  <data name="HelpAccount" xml:space="preserve">
+    <value>Please select an account.</value>
+  </data>
+  <data name="HelpPin" xml:space="preserve">
+    <value>Please follow the 'authentication is required' button, which will forward you to the authorization page of Visual Studio Team Services (VSTS). When you 'accept', you will be forwarded to a page with a pin number. Please copy and paste the pin number as a reply.</value>
+  </data>
+  <data name="HelpProject" xml:space="preserve">
+    <value>Please select a Team Project;</value>
   </data>
 </root>

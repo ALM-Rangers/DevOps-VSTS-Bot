@@ -17,6 +17,15 @@ namespace Vsar.TSBot
     public class DefaultController : Controller
     {
         /// <summary>
+        /// Returns the Faq page.
+        /// </summary>
+        /// <returns>A view.</returns>
+        public ActionResult Faq()
+        {
+            return this.View();
+        }
+
+        /// <summary>
         /// Returns the default home page.
         /// </summary>
         /// <returns>A view.</returns>

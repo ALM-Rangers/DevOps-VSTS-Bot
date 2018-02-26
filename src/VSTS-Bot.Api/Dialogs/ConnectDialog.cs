@@ -167,6 +167,15 @@ namespace Vsar.TSBot.Dialogs
             var activity = await result;
 
             var text = (activity.RemoveRecipientMention() ?? string.Empty).Trim().ToLowerInvariant();
+            if (text.Equals("help", StringComparison.OrdinalIgnoreCase))
+            {
+                var reply = context.MakeMessage();
+                reply.Text = Labels.HelpPin;
+                await context.PostAsync(reply);
+                context.Wait(this.PinReceivedAsync);
+                return;
+            }
+
             var match = Regex.Match(text, CommandMatchPin);
 
             if (match.Success && string.Equals(this.Pin, text, StringComparison.OrdinalIgnoreCase))
@@ -237,13 +246,29 @@ namespace Vsar.TSBot.Dialogs
 
             var activity = await result;
 
-            this.Account = activity.RemoveRecipientMention().Trim();
+            var text = activity.RemoveRecipientMention().Trim();
+
+            if (text.Equals("help", StringComparison.OrdinalIgnoreCase))
+            {
+                var reply = context.MakeMessage();
+                reply.Text = Labels.HelpAccount;
+                await context.PostAsync(reply);
+                context.Wait(this.AccountReceivedAsync);
+                return;
+            }
+
+            this.Account = text;
+
             this.Profile = this.Profiles.FirstOrDefault(p => p.Accounts.Any(
                 a => string.Equals(a, this.Account, StringComparison.OrdinalIgnoreCase)));
 
             if (this.Profile == null)
             {
-                await this.LogOnAsync(context, activity);
+                var reply = context.MakeMessage();
+                reply.Text = Labels.UnknownAccount;
+                await context.PostAsync(reply);
+
+                await this.SelectAccountAsync(context, activity);
                 return;
             }
 
@@ -306,6 +331,15 @@ namespace Vsar.TSBot.Dialogs
 
             var activity = await result;
             var text = activity.RemoveRecipientMention().Trim();
+
+            if (text.Equals("help", StringComparison.OrdinalIgnoreCase))
+            {
+                var reply = context.MakeMessage();
+                reply.Text = Labels.HelpProject;
+                await context.PostAsync(reply);
+                context.Wait(this.ProjectReceivedAsync);
+                return;
+            }
 
             if (!this.TeamProjects.Contains(text))
             {
