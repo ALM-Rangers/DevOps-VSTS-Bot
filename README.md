@@ -78,3 +78,8 @@ Notices for certain third party software included in this solution are provided 
 
 ## Data/Telemetry
 This project collects usage data and sends it to Microsoft to help improve our products and services. Read our [privacy statement](http://go.microsoft.com/fwlink/?LinkId=521839) to learn more.
+
+## Terms of Use
+- The service is free to use, please try it and enjoy.
+- The service is an experimental project, designed for broad usage.
+- The service is supported by volunteers in their spare time, so no claims can be made on support or the longevity of the project.

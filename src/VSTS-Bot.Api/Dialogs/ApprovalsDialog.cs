@@ -88,7 +88,7 @@ namespace Vsar.TSBot.Dialogs
         {
             var activity = await result;
 
-            if (activity.Text.StartsWith("approvals", StringComparison.OrdinalIgnoreCase))
+            if (activity.Text.Trim().StartsWith("approvals", StringComparison.OrdinalIgnoreCase))
             {
                 await this.ApprovalsAsync(context, result);
             }

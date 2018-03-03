@@ -70,6 +70,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You denied access to the bot. If you still want to use the bot, please &apos;connect&apos; to a VSTS Profile again..
+        /// </summary>
+        internal static string Authorize_access_denied {
+            get {
+                return ResourceManager.GetString("Authorize_access_denied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorry, I do not recognize the provided pin. Please try again..
         /// </summary>
         internal static string InvalidPin {
@@ -102,6 +111,24 @@ namespace Vsar.TSBot.Resources {
         internal static string MissingSubscriptionToken {
             get {
                 return ResourceManager.GetString("MissingSubscriptionToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your profile has no access to any VSTS accounts. Please contact your VSTS administrator to grant you accesss..
+        /// </summary>
+        internal static string NoAccounts {
+            get {
+                return ResourceManager.GetString("NoAccounts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected account does not have any team projects, which you are granted access. Please contact your VSTS administrator to grant you access..
+        /// </summary>
+        internal static string NoTeamProjects {
+            get {
+                return ResourceManager.GetString("NoTeamProjects", resourceCulture);
             }
         }
         

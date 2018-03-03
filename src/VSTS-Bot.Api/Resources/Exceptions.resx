@@ -142,4 +142,13 @@
   <data name="MissingSubscriptionToken" xml:space="preserve">
     <value>Missing subscription token from the request header.</value>
   </data>
+  <data name="NoAccounts" xml:space="preserve">
+    <value>Your profile has no access to any VSTS accounts. Please contact your VSTS administrator to grant you accesss.</value>
+  </data>
+  <data name="NoTeamProjects" xml:space="preserve">
+    <value>The selected account does not have any team projects, which you are granted access. Please contact your VSTS administrator to grant you access.</value>
+  </data>
+  <data name="Authorize_access_denied" xml:space="preserve">
+    <value>You denied access to the bot. If you still want to use the bot, please 'connect' to a VSTS Profile again.</value>
+  </data>
 </root>
