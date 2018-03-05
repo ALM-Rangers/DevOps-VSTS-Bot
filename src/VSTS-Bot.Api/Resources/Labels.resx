@@ -264,4 +264,10 @@
   <data name="HelpProject" xml:space="preserve">
     <value>Please select a Team Project;</value>
   </data>
+  <data name="NoAccounts" xml:space="preserve">
+    <value>Your profile has no access to any VSTS accounts. Please contact your VSTS administrator to grant you accesss.</value>
+  </data>
+  <data name="NoTeamProjects" xml:space="preserve">
+    <value>The selected account does not have any team projects, which you are granted access. Please contact your VSTS administrator to grant you access.</value>
+  </data>
 </root>

@@ -115,24 +115,6 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your profile has no access to any VSTS accounts. Please contact your VSTS administrator to grant you accesss..
-        /// </summary>
-        internal static string NoAccounts {
-            get {
-                return ResourceManager.GetString("NoAccounts", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The selected account does not have any team projects, which you are granted access. Please contact your VSTS administrator to grant you access..
-        /// </summary>
-        internal static string NoTeamProjects {
-            get {
-                return ResourceManager.GetString("NoTeamProjects", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The specified project couldn&apos;t be found.
         /// </summary>
         internal static string TeamProjectNotFound {

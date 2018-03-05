@@ -217,7 +217,7 @@ namespace Vsar.TSBot.Dialogs
 
             if (!accounts.Any())
             {
-                reply.Text = Exceptions.NoAccounts;
+                reply.Text = Labels.NoAccounts;
                 await context.PostAsync(reply);
                 context.Done(reply);
                 return;
@@ -310,7 +310,7 @@ namespace Vsar.TSBot.Dialogs
 
             if (!this.TeamProjects.Any())
             {
-                reply.Text = Exceptions.NoTeamProjects;
+                reply.Text = Labels.NoTeamProjects;
                 await context.PostAsync(reply);
                 context.Done(reply);
                 return;
