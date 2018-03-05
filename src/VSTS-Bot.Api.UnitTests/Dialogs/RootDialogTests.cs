@@ -135,6 +135,11 @@ namespace Vsar.TSBot.UnitTests
         {
             var toBot = this.Fixture.CreateMessage();
             toBot.Text = "builds";
+            var data = new UserData { Account = "anaccount", TeamProject = "anteamproject" };
+
+            this.Fixture.UserData
+                .Setup(ud => ud.TryGetValue("userData", out data))
+                .Returns(true);
 
             var dialog = new BuildsDialog(new Mock<IAuthenticationService>().Object, new Mock<IVstsService>().Object);
 

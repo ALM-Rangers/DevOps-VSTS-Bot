@@ -250,6 +250,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your profile has no access to any VSTS accounts. Please contact your VSTS administrator to grant you accesss..
+        /// </summary>
+        internal static string NoAccounts {
+            get {
+                return ResourceManager.GetString("NoAccounts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There are no approvals available for you.
         /// </summary>
         internal static string NoApprovals {
@@ -273,6 +282,15 @@ namespace Vsar.TSBot.Resources {
         internal static string NoReleases {
             get {
                 return ResourceManager.GetString("NoReleases", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected account does not have any team projects, which you are granted access. Please contact your VSTS administrator to grant you access..
+        /// </summary>
+        internal static string NoTeamProjects {
+            get {
+                return ResourceManager.GetString("NoTeamProjects", resourceCulture);
             }
         }
         

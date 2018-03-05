@@ -375,6 +375,22 @@ namespace Vsar.TSBot.UnitTests
         }
 
         [TestMethod]
+        public async Task Select_Account_NoAccounts()
+        {
+            var profile1 = new Profile();
+            var profiles = new List<Profile> { profile1 };
+
+            var toBot = this.Fixture.CreateMessage();
+
+            var target = new ConnectDialog("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { Profiles = profiles };
+
+            await target.SelectAccountAsync(this.Fixture.DialogContext.Object, toBot);
+
+            this.Fixture.DialogContext.Verify(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None));
+            this.Fixture.DialogContext.Verify(c => c.Done(It.IsAny<IMessageActivity>()));
+        }
+
+        [TestMethod]
         public async Task Handle_Unknown_Account_Received()
         {
             var profile1 = new Profile { Accounts = new List<string> { "Account1", "Account2" } };
@@ -446,6 +462,27 @@ namespace Vsar.TSBot.UnitTests
             this.Fixture.DialogContext.Verify(c => c.Wait<IMessageActivity>(target.ProjectReceivedAsync));
 
             target.TeamProjects.Should().Contain("Project1");
+        }
+
+        [TestMethod]
+        public async Task Select_Project_NoProjects()
+        {
+            var account = "Account1";
+            var profile = new Profile { Accounts = new List<string> { account }, Token = new OAuthToken() };
+            var projects = new List<TeamProjectReference>();
+
+            var toBot = this.Fixture.CreateMessage();
+
+            var target = new ConnectDialog("appId", "appScope", new Uri("http://authorize.url"), this.Fixture.AuthenticationService.Object, this.Fixture.VstsService.Object) { Account = account, Profile = profile };
+
+            this.Fixture.VstsService.Setup(s => s.GetProjects(account, profile.Token)).ReturnsAsync(projects).Verifiable();
+
+            await target.SelectProjectAsync(this.Fixture.DialogContext.Object, toBot);
+
+            this.Fixture.VstsService.Verify();
+            this.Fixture.DialogContext
+                .Verify(c => c.PostAsync(It.IsAny<IMessageActivity>(), CancellationToken.None));
+            this.Fixture.DialogContext.Verify(c => c.Done<IMessageActivity>(It.IsAny<IMessageActivity>()));
         }
 
         [TestMethod]

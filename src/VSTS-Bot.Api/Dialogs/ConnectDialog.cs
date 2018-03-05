@@ -215,6 +215,14 @@ namespace Vsar.TSBot.Dialogs
                 .OrderBy(a => a)
                 .ToList();
 
+            if (!accounts.Any())
+            {
+                reply.Text = Labels.NoAccounts;
+                await context.PostAsync(reply);
+                context.Done(reply);
+                return;
+            }
+
             reply.Text = Labels.ConnectToAccount;
             await context.PostAsync(reply);
             reply.Text = string.Empty;
@@ -299,6 +307,14 @@ namespace Vsar.TSBot.Dialogs
             this.TeamProjects = projects
                 .Select(project => project.Name)
                 .ToList();
+
+            if (!this.TeamProjects.Any())
+            {
+                reply.Text = Labels.NoTeamProjects;
+                await context.PostAsync(reply);
+                context.Done(reply);
+                return;
+            }
 
             reply.Text = Labels.ConnectToProject;
             await context.PostAsync(reply);

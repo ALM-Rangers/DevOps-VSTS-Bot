@@ -100,10 +100,11 @@ namespace Vsar.TSBot.Dialogs
             }
 
             var dialog = GlobalConfiguration.Configuration.DependencyResolver.Find(result.RemoveRecipientMention());
+            context.UserData.TryGetValue("userData", out UserData data);
 
-            if (dialog == null)
+            if (dialog == null || data == null)
             {
-                if (!context.UserData.TryGetValue("userData", out UserData data))
+                if (data == null)
                 {
                     data = new UserData();
                 }

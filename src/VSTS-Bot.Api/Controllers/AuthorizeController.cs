@@ -69,6 +69,11 @@ namespace Vsar.TSBot
                     throw new ArgumentNullException(nameof(code));
                 }
 
+                if (!string.IsNullOrWhiteSpace(error))
+                {
+                    throw new Exception(Exceptions.ResourceManager.GetString($"Authorize_{error.ToLower()}"));
+                }
+
                 if (stateArray.Length != 2)
                 {
                     throw new ArgumentException(Exceptions.InvalidState, nameof(state));

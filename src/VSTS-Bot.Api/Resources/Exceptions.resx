@@ -142,4 +142,7 @@
   <data name="MissingSubscriptionToken" xml:space="preserve">
     <value>Missing subscription token from the request header.</value>
   </data>
+  <data name="Authorize_access_denied" xml:space="preserve">
+    <value>You denied access to the bot. If you still want to use the bot, please 'connect' to a VSTS Profile again.</value>
+  </data>
 </root>

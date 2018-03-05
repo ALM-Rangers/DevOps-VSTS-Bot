@@ -70,6 +70,15 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You denied access to the bot. If you still want to use the bot, please &apos;connect&apos; to a VSTS Profile again..
+        /// </summary>
+        internal static string Authorize_access_denied {
+            get {
+                return ResourceManager.GetString("Authorize_access_denied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorry, I do not recognize the provided pin. Please try again..
         /// </summary>
         internal static string InvalidPin {

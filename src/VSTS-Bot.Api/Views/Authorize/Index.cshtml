@@ -27,38 +27,41 @@
     }
 }
 
-<div>
-    <div class="row">
-        <div class="col-sm-4"></div>
-        <div class="col-sm-4 text-center">
-            <label id="pinLabel">Pin</label>
+@if (!this.ViewData.ModelState.Any(i => i.Value.Errors.Any()))
+{
+    <div>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4 text-center">
+                <label id="pinLabel">Pin</label>
+            </div>
+            <div class="col-sm-4"></div>
         </div>
-        <div class="col-sm-4"></div>
-    </div>
-    <div class="row">
-        <div class="col-sm-4"></div>
-        <div class="col-sm-4">
-            <textarea class="form-control" id="pin" disabled="disabled">@Model.Pin</textarea>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <textarea class="form-control" id="pin" disabled="disabled">@Model.Pin</textarea>
+            </div>
+            <div class="col-sm-4"></div>
         </div>
-        <div class="col-sm-4"></div>
-    </div>
-    <div class="row">
-        <div class="col-sm-5"></div>
-        <div class="col-sm-2 text-center">
-            <button id="copy" class="btn btn-lg btn-default">
-                <span class="glyphicon glyphicon-copy"></span>
-            </button>
+        <div class="row">
+            <div class="col-sm-5"></div>
+            <div class="col-sm-2 text-center">
+                <button id="copy" class="btn btn-lg btn-default">
+                    <span class="glyphicon glyphicon-copy"></span>
+                </button>
+            </div>
+            <div class="col-sm-5"></div>
         </div>
-        <div class="col-sm-5"></div>
-    </div>
-    <div class="row">
-        <div class="col-sm-3"></div>
-        <div class="col-sm-6 text-center">
-            Please copy this PIN number to your chat application, so that I can help you connect to your team project. Do not share the PIN with anyone to keep our chat secure!
+        <div class="row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6 text-center">
+                Please copy this PIN number to your chat application, so that I can help you connect to your team project. Do not share the PIN with anyone to keep our chat secure!
+            </div>
+            <div class="col-sm-3"></div>
         </div>
-        <div class="col-sm-3"></div>
     </div>
-</div>
+}
 
 @section Scripts {
     <script language="javascript">
