@@ -102,7 +102,7 @@ namespace Vsar.TSBot.Dialogs
             var dialog = GlobalConfiguration.Configuration.DependencyResolver.Find(result.RemoveRecipientMention());
             context.UserData.TryGetValue("userData", out UserData data);
 
-            if (dialog == null || data == null)
+            if (dialog == null || (data == null && !(dialog is ConnectDialog)))
             {
                 if (data == null)
                 {
