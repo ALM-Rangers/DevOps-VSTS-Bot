@@ -71,12 +71,6 @@ namespace Vsar.TSBot
         public string RecipientId { get; set; }
 
         /// <summary>
-        /// Gets or sets the Recipient name.
-        /// </summary>
-        [DataMember]
-        public string RecipientName { get; set; }
-
-        /// <summary>
         /// Gets or sets the service uri.
         /// </summary>
         [DataMember]
