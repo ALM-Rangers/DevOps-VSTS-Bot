@@ -1,9 +1,7 @@
-This project collects usage data and sends it to Microsoft to help improve our products and services. Read our privacy statement to learn more.# VSTS-Bot 
-
-![Build Status](https://almrangers.visualstudio.com/_apis/public/build/definitions/7f3cfb9a-d1cb-4e66-9d36-1af87b906fe9/143/badge)
-
 ## Introduction
 **ALM | DevOps Rangers community Bot** is a Bot for Microsoft Teams, Skype and Slack, based on [Microsoft Bot Framework](https://dev.botframework.com/). Read [VSTS Bot is now in preview](https://blogs.msdn.microsoft.com/visualstudioalmrangers/2017/10/12/visual-studio-team-services-bot-vsts-bot-is-now-in-preview/) for details.
+
+![Build Status](https://almrangers.visualstudio.com/_apis/public/build/definitions/7f3cfb9a-d1cb-4e66-9d36-1af87b906fe9/143/badge)
 
 ## Getting Started
 1. Read the documention about [Microsoft Bot Framework](https://dev.botframework.com/).
@@ -77,10 +75,7 @@ Please refer to [Contribution guidelines](.github/CONTRIBUTING.md) and the [Code
 Notices for certain third party software included in this solution are provided here: [Third Party Notice](ThirdPartyNotices.txt).
 
 ## Data/Telemetry
-This project collects usage data and sends it to Microsoft to help improve our products and services. Read our [privacy statement](http://go.microsoft.com/fwlink/?LinkId=521839) to learn more.
+Please refer to [Privacy Policy](/Privacy-Policy.md).
 
 ## Terms of Use
-- The service is free to use, please try it and enjoy.
-- The service is an experimental project, designed for broad usage.
-- The service is supported by volunteers in their spare time, so no claims can be made on support or the longevity of the project.
- 
+Please refer to [Terms and Conditions of Use](/Terms-Conditions-of-Use.md).
