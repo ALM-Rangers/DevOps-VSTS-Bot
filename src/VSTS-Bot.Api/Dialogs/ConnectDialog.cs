@@ -272,6 +272,12 @@ namespace Vsar.TSBot.Dialogs
 
             if (this.Profile == null)
             {
+                if (text.Equals("disconnect", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Fail(new UnknownCommandException(activity.Text));
+                    return;
+                }
+
                 var reply = context.MakeMessage();
                 reply.Text = Labels.UnknownAccount;
                 await context.PostAsync(reply);
@@ -359,6 +365,12 @@ namespace Vsar.TSBot.Dialogs
 
             if (!this.TeamProjects.Contains(text))
             {
+                if (text.Equals("disconnect", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Fail(new UnknownCommandException(activity.Text));
+                    return;
+                }
+
                 await this.SelectProjectAsync(context, activity);
             }
             else

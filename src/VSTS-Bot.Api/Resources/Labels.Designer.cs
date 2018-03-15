@@ -196,7 +196,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please select an account..
+        ///   Looks up a localized string similar to Please select an account or type &apos;disconnect&apos; if you want to select another profile..
         /// </summary>
         internal static string HelpAccount {
             get {
@@ -232,7 +232,7 @@ namespace Vsar.TSBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please select a Team Project;.
+        ///   Looks up a localized string similar to Please select a Team Project or type &apos;disconnect&apos; if you want to select another profile or account..
         /// </summary>
         internal static string HelpProject {
             get {

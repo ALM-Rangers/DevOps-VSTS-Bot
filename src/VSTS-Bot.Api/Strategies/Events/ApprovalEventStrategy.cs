@@ -60,11 +60,11 @@ namespace Vsar.TSBot.Strategies.Events
             var conversation = subscription.ChannelId.Equals(ChannelIds.Msteams)
                 ? client.Conversations.CreateOrGetDirectConversation(
                     new ChannelAccount(subscription.BotId, subscription.BotName),
-                    new ChannelAccount(subscription.RecipientId, subscription.RecipientName),
+                    new ChannelAccount(subscription.RecipientId, string.Empty),
                     subscription.TenantId)
                 : client.Conversations.CreateDirectConversation(
                     new ChannelAccount(subscription.BotId, subscription.BotName),
-                    new ChannelAccount(subscription.RecipientId, subscription.RecipientName));
+                    new ChannelAccount(subscription.RecipientId, string.Empty));
 
             var activity = new Activity
             {
@@ -73,7 +73,7 @@ namespace Vsar.TSBot.Strategies.Events
                     Id = conversation.Id
                 },
                 From = new ChannelAccount(subscription.BotId, subscription.BotName),
-                Recipient = new ChannelAccount(subscription.RecipientId, subscription.RecipientName),
+                Recipient = new ChannelAccount(subscription.RecipientId, string.Empty),
                 Text = Labels.PendingApproval,
                 Type = ActivityTypes.Message
             };

@@ -256,13 +256,13 @@
     <value>You entered an unknown account.</value>
   </data>
   <data name="HelpAccount" xml:space="preserve">
-    <value>Please select an account.</value>
+    <value>Please select an account or type 'disconnect' if you want to select another profile.</value>
   </data>
   <data name="HelpPin" xml:space="preserve">
     <value>Please follow the 'authentication is required' button, which will forward you to the authorization page of Visual Studio Team Services (VSTS). When you 'accept', you will be forwarded to a page with a pin number. Please copy and paste the pin number as a reply.</value>
   </data>
   <data name="HelpProject" xml:space="preserve">
-    <value>Please select a Team Project;</value>
+    <value>Please select a Team Project or type 'disconnect' if you want to select another profile or account.</value>
   </data>
   <data name="NoAccounts" xml:space="preserve">
     <value>Your profile has no access to any VSTS accounts. Please contact your VSTS administrator to grant you accesss.</value>

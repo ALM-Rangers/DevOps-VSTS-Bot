@@ -222,7 +222,6 @@ namespace Vsar.TSBot.Dialogs
                     IsActive = true,
                     ProfileId = this.Profile.Id,
                     RecipientId = activity.From.Id,
-                    RecipientName = activity.From.Name,
                     ServiceUri = new Uri(activity.ServiceUrl),
                     SubscriptionType = subscriptionType,
                     TenantId = activity.ChannelId.Equals(ChannelIds.Msteams) ? activity.GetTenantId() : string.Empty,
