@@ -3,10 +3,10 @@ Effective date: March 10, 2018
 
 Welcome to the DevOps VSTS Bot, (hereafter “Our Plugin”).
 
-Thank you for our Plugin and making Visual Studio Team Services (VSTS) part of your daily digital conversations.
+Thank you for using our Plugin and making Visual Studio Team Services (VSTS) part of your daily digital conversations.
 
-- Our Plugin allows you to login into Visual Studfio Team Services (VSTS) and authorize Slack, Skype, and Microsoft Teams Application to enable you to access VSTS resources. We do not retain or use the data thus collected for any other purposes.
-- Our Plugin encryts and stores your personal access token to ensure a smooth user experience when you login in future.
+- Our Plugin allows you to login into Visual Studio Team Services (VSTS) and authorize Slack, Skype, and Microsoft Teams Application to enable you to access VSTS resources. We do not retain or use the data thus collected for any other purposes.
+- Our Plugin encrypts and stores your personal access token to ensure a smooth user experience when you login in future.
 - Our Plugin merely passes through your commands to VSTS and returns results from VSTS to you. Therefore, we do not make or retain copies of your conversation or commands you provide during conversations. 
 - Your use of VSTS is governed by VSTS’s privacy statement.
 
