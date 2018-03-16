@@ -40,7 +40,7 @@ namespace Vsar.TSBot.UnitTests.Cards
         {
             var card = new MainOptionsCard(true);
 
-            card.Buttons.Should().HaveCount(6);
+            card.Buttons.Should().HaveCount(7);
         }
     }
 }

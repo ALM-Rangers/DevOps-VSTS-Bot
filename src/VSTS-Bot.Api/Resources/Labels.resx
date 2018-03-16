@@ -270,4 +270,7 @@
   <data name="NoTeamProjects" xml:space="preserve">
     <value>The selected account does not have any team projects, which you are granted access. Please contact your VSTS administrator to grant you access.</value>
   </data>
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
 </root>

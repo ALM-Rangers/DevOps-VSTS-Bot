@@ -451,6 +451,7 @@
     <Compile Include="Dialogs\DisconnectDialog.cs" />
     <Compile Include="Dialogs\ConnectDialog.cs" />
     <Compile Include="Dialogs\DialogBase.cs" />
+    <Compile Include="Dialogs\ExportDialog.cs" />
     <Compile Include="Dialogs\ReleasesDialog.cs" />
     <Compile Include="Dialogs\SubscriptionsDialog.cs" />
     <Compile Include="DI\CommandMetadataAttribute.cs" />
