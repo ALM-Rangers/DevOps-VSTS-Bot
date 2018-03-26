@@ -446,6 +446,8 @@
     <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\LicenseController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
+    <Compile Include="Controllers\PrivacyController.cs" />
+    <Compile Include="Controllers\TermsController.cs" />
     <Compile Include="Dialogs\ApprovalsDialog.cs" />
     <Compile Include="Dialogs\BuildsDialog.cs" />
     <Compile Include="Dialogs\DisconnectDialog.cs" />
@@ -522,6 +524,8 @@
     <Content Include="Scripts\jquery-1.9.1.min.map" />
     <Content Include="Views\Default\HowItWorks.cshtml" />
     <Content Include="Views\Default\Faq.cshtml" />
+    <Content Include="Views\Terms\Index.cshtml" />
+    <Content Include="Views\Privacy\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -566,6 +570,7 @@
       <Name>VSTS-Bot.TeamFoundation.Services.WebApi</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
